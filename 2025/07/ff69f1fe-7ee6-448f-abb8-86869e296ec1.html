@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Ti</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif; /* Fuente más clásica y romántica */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(to bottom right, #800080, #C7B8EA); /* Fondo degradado rosa suave */
+            color: #C7B8EA;
+            gap: 30px; /* Espacio entre los contenedores */
+            padding: 20px;
+            box-sizing: border-box; /* Incluir padding en el tamaño total */
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.85); /* Fondo blanco semitransparente para las tarjetas */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 105, 180, 0.3); /* Borde sutil rosa */
+        }
+        .card:hover {
+            transform: translateY(-8px); /* Efecto de elevación al pasar el ratón */
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+        p.poem {
+            font-style: italic;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #800080;
+            font-size: 1.1em;
+        }
+        .video-container {
+            width: 100%;
+            max-width: 100%; /* Asegura que el video no se desborde */
+            margin-top: 20px; /* Espacio entre el poema y el video */
+            border-radius: 10px; /* Bordes redondeados para el video */
+            overflow: hidden; /* Asegura que el video se ajuste a los bordes redondeados */
+        }
+        .video-container video {
+            width: 100%;
+            height: auto; /* Mantener la relación de aspecto */
+            display: block; /* Eliminar espacio extra bajo el video */
+            border-radius: 10px; /* Bordes redondeados también para el elemento video */
+        }
+        .button-wrapper {
+            margin-top: 20px; /* Espacio entre el poema/video y el botón si lo usamos */
+        }
+        button {
+            background-color: #C7B8EA; /* Rosa vibrante */
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px; /* Bordes más redondeados (pastilla) */
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            letter-spacing: 0.5px;
+            text-transform: uppercase; /* Texto en mayúsculas */
+            font-weight: bold;
+            display: block; /* Hace que el botón ocupe su propia línea */
+            margin: 0 auto; /* Centra el botón */
+        }
+        button:hover {
+            background-color: #C7B8EA; /* Tono más oscuro al pasar el ratón */
+            transform: translateY(-3px); /* Pequeña elevación */
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .hidden {
+            display: none; /* Clase para ocultar elementos */
+        }
+    </style>
+    <script>
+        function toggleVideo(cardId, button) {
+            const videoElement = document.getElementById('video-' + cardId);
+            if (videoElement.paused) {
+                videoElement.play();
+                button.textContent = 'Pausar amor';
+            } else {
+                videoElement.pause();
+                button.textContent = 'Reproducir amor';
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div class="card">
+        <p class="poem">
+            En tus ojos, mi cielo hallo,<br>
+            un brillo que mi alma ilumina.<br>
+            Cada vez que te miro, amor,<br>
+            mi corazón solo exclama: "¡Wow!"
+        </p>
+        <div class="video-container">
+            <video id="video-1" controls preload="none" poster="https://via.placeholder.com/400x225?text=Cargando+video+1">
+                <source src="https://raw.githubusercontent.com/jesuxzx/dx/29cbb98f6b3093cef73b5aaa13afcf4aaca99d92/VID-20250703-WA0081.mp4" type="video/mp4">
+                Tu navegador no soporta el tag de video.
+            </video>
+        </div>
+        <div class="button-wrapper">
+            <button onclick="toggleVideo(1, this)">Mira este amor</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <p class="poem">
+            Juntos, como sapitos de la mano,<br>
+            caminamos este sendero, extraño.<br>
+            Eres mi compañera, mi destino,<br>
+            contigo, cada paso es divino.
+        </p>
+        <div class="video-container">
+            <video id="video-2" controls preload="none" poster="https://via.placeholder.com/400x225?text=Cargando+video+2">
+                <source src="https://raw.githubusercontent.com/jesuxzx/dx/29cbb98f6b3093cef73b5aaa13afcf4aaca99d92/VID-20250703-WA0082.mp4" type="video/mp4">
+                Tu navegador no soporta el tag de video.
+            </video>
+        </div>
+        <div class="button-wrapper">
+            <button onclick="toggleVideo(2, this)">Sentir nuestro lazo</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <p class="poem">
+            Tu voz, dulce canto que me abraza,<br>
+            melodía que en mi ser se graba.<br>
+            Eres la "Linda Muchachita" de mi vida,<br>
+            por quien las estrellas pediría.
+        </p>
+        <div class="video-container">
+            <video id="video-3" controls preload="none" poster="https://via.placeholder.com/400x225?text=Cargando+video+3">
+                <source src="https://raw.githubusercontent.com/jesuxzx/dx/29cbb98f6b3093cef73b5aaa13afcf4aaca99d92/VID-20250703-WA0083.mp4" type="video/mp4">
+                Tu navegador no soporta el tag de video.
+            </video>
+        </div>
+        <div class="button-wrapper">
+            <button onclick="toggleVideo(3, this)">Escuchar tu esencia</button>
+        </div>
+    </div>
+
+</body>
+</html>
