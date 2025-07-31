@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sos</title>
+    <style>
+        
+body{
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #fce4ec, #d696ac);
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+.container{
+    background: white;
+    padding: 2rem;
+    border-radius: 50px;
+    box-shadow: 0 0 15px #892989;
+    text-align: center;
+    align-items: center;
+    max-width: 400px;
+    transition: all 0.3s ease;
+}
+
+h1{
+    color: #ad2259;
+    margin-bottom: 0.5rem;
+}
+
+.button{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1.5rem;
+}
+
+button{
+    background: linear-gradient(to right, #d696ac, #fce4ec);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover{
+    background: linear-gradient(to right, #821a40, #ee6d9a);
+    color: white;
+    cursor: pointer;
+}
+
+.mensaje{
+    margin-top: 10px;
+    color: #6a1b9a;
+    font-size: 1.1rem;
+}
+.ticket{
+    background: #fff3f6;
+    padding: 2rem;
+    border-radius: 30px;
+    text-align: center;
+    animation: fadeIn 1s ease forwards;
+    display: none;
+}
+
+.ticket h2{
+    color: #d81b60;
+}
+
+.ticket p{
+    margin: 0.5rem 0;
+    color: #6a1b9a;
+}
+
+@keyframes fadeIn{
+    from { opacity: 0; transform: scale(0.95);}
+    to { opacity: 1; transform: scale(1);}
+}
+    </style>
+</head>
+<body>
+<div class="container" id="declaracion">
+    <h1>Hola hermosa</h1>
+    <h1>Quieres salir conmigo?💗</h1>
+    <div class="button">
+    <button onclick="Si()">SI💖</button>
+    <button onclick="No()">NO😢</button>
+    </div>
+    <div class="mensaje" id="mensaje"></div>
+</div>
+
+<div class="ticket" id="ticket">
+    <h1>Cita Confirmada</h1>
+    <p>Preparate para nuestra cita especial🎁</p>
+    <p><strong>Hora:</strong> 8:00 p.m</p>
+    <p><strong>Lugar:</strong> Mi Casa🏠</p>
+    <p><strong>No Faltes 💗</strong></p>
+
+</div>
+
+<script>
+    
+let contador = 0;
+
+const declaracion = document.getElementById("declaracion");
+const ticket = document.getElementById("ticket");
+const mensaje = document.getElementById("mensaje");
+
+
+function Si(){
+    declaracion.style.display = 'none';
+    ticket.style.display = 'block';
+}
+
+
+function No(){
+
+    contador++;
+    const respuestas =[
+        "Yo se que quieres ",
+        "Ya dime que si🙂",
+        "Hermosa que si 😚",
+        "Tu quieres 😘",
+        "Dale si 🤗"
+    ]
+mensaje.textContent = respuestas[Math.min(contador,respuestas.length - 1)]
+}
+</script>
+</body>
+</html>
+    
