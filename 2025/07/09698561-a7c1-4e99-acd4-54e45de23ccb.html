@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feliz Cumpleaños 🎉</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Great Vibes', normal;
+      background: linear-gradient(135deg, #C7B8EA, #C7B8EA);
+    }
+
+    .page {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      padding-top: 4rem;
+      overflow-y: auto;
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #c71585;
+      text-shadow: 2px 2px 5px #fff;
+    }
+
+    p {
+      font-size: 1.5rem;
+      color: #800040;
+      max-width: 750px;
+      margin-top: 1rem;
+      line-height: 1.6;
+    }
+
+    .heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      transform: rotate(45deg);
+      animation: float 10s infinite ease-in;
+      opacity: 0.6;
+    }
+
+    .heart::before, .heart::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -10px;
+      left: 0;
+    }
+
+    .heart::after {
+      top: 0;
+      left: -10px;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(45deg);
+      }
+      100% {
+        transform: translateY(-10vh) rotate(45deg);
+      }
+    }
+
+    .play-music {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      background: #800080;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: background 0.3s;
+      z-index: 999;
+    }
+
+    .play-music:hover {
+      background: #C7B8EA;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="play-music" onclick="playMusic()">🎵 Tocá para escuchar música</button>
+  <audio id="bg-music" loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+    Tu navegador no soporta audio HTML5.
+  </audio>
+
+  <div class="page">
+    <h1>Feliz cumpleaños mi amorcito 🎂</h1>
+    <p>
+      Hoy en este día tan hermoso para vos mi amor, le doy gracias a Dios por ponerme en mi camino a una mujer tan maravillosa y perfecta para mí.<br><br>
+
+      Gracias por estar ✨<br><br>
+
+      Gracias porque sos tan dulce, tan vos, tan única y preciosa. Todo de vos me enamora cada día más, me enamoro mi amor 💛<br><br>
+
+      TE AMO ANDREA 💜<br><br>
+
+      Espero que la pases muy lindo amor. Aunque no esté con vos en persona, siempre voy a estar presente en tu corazón, mi vida, abrazándote fuerte. Felices 16.<br><br>
+
+      Yo te amo tal cual sos, amor de mi vida, y los siguientes cumpleaños —si Dios permite— estaremos juntos siempre, festejando los años que Dios nos regala.<br><br>
+
+      TE AMO MUCHOTE, mi mujer hermosa 💜<br><br>
+
+      Te mando muchos besitos y abrazos💛
+    </p>
+  </div>
+
+  <script>
+    const totalHearts = 35;
+    for (let i = 0; i < totalHearts; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = (5 + Math.random() * 5) + 's';
+      heart.style.opacity = Math.random();
+      document.body.appendChild(heart);
+    }
+
+    function playMusic() {
+      const audio = document.getElementById("bg-music");
+      audio.play();
+    }
+  </script>
+
+</body>
+</html>
