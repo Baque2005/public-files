@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <!-- Esta línea es CRUCIAL para que se adapte a móviles -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Una Sorpresa para Papá</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:ital,wght@1,600&family=Roboto+Slab:wght@300;400&display=swap" rel="stylesheet">
+
+    <style>
+        /* ESTILOS BASE (Para computadora y pantallas grandes) */
+        body {
+            font-family: 'Roboto Slab', serif;
+            background: linear-gradient(135deg, #2c3e50, #16222A);
+            color: #f0f0f0;
+            margin: 0;
+            overflow: hidden; /* Evita scroll en escritorio */
+        }
+
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .slide {
+            position: relative;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 900px;
+            min-height: 500px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .slide.active {
+            display: flex;
+            animation: fadeIn 1.2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5em;
+            font-style: italic;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5em;
+            color: #cddce8;
+            margin-bottom: 25px;
+            font-weight: 400;
+        }
+
+        .letter-text {
+            font-size: 1.5em;
+            line-height: 1.8;
+            max-width: 80%;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: #008cff;
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.2em;
+            font-weight: bold;
+            font-family: 'Montserrat', sans-serif;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background: #006acb;
+            transform: scale(1.05);
+        }
+        
+        #startButton {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 140, 255, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(0, 140, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 140, 255, 0); }
+        }
+
+        #tiempo-container { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .tiempo-unidad { background: rgba(255, 255, 255, 0.1); padding: 15px 25px; border-radius: 10px; min-width: 100px; }
+        .tiempo-unidad span { display: block; font-size: 3em; font-family: 'Montserrat', sans-serif; font-weight: 700; }
+        .fecha-nacimiento { margin-top: 15px; font-style: italic; color: #a0b0c0; }
+        
+        .contenido-final { display: flex; gap: 30px; text-align: left; width: 100%; align-items: center; }
+        .foto-container { flex: 1.2; animation: zoomIn 1s ease-out 0.5s backwards; }
+        .carta-final-container { flex: 1; }
+        .foto-container img { width: 100%; border-radius: 15px; border: 4px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .pie-foto { text-align: center; font-style: italic; color: #a0b0c0; margin-top: 10px; }
+        .carta-final-container p { font-size: 1.1em; line-height: 1.8; }
+        .firma { font-style: italic; font-weight: bold; font-family: 'Playfair Display', serif; font-size: 1.4em !important; margin-top: 20px; text-align: right; }
+        @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .progress-indicator { position: absolute; bottom: 25px; font-size: 0.9em; color: #a0b0c0; opacity: 0.6; }
+
+
+        /* ============================================== */
+        /* === ESTILOS PARA MÓVILES (PANTALLAS PEQUEÑAS) === */
+        /* ============================================== */
+        @media (max-width: 768px) {
+            body {
+                overflow-y: auto; /* Permite scroll vertical si el contenido es largo */
+            }
+            
+            .main-container {
+                height: auto; /* La altura se adapta al contenido */
+                min-height: 100vh;
+            }
+
+            .slide {
+                padding: 35px 25px; /* Menos padding a los lados */
+                min-height: auto;
+            }
+
+            h1 { font-size: 2.5em; } /* Título más pequeño */
+            h2 { font-size: 1.2em; }
+            .letter-text { font-size: 1.2em; max-width: 100%; } /* Texto de carta más legible */
+
+            .tiempo-unidad {
+                min-width: 75px; /* Cajas del contador más pequeñas */
+                padding: 10px;
+            }
+            .tiempo-unidad span {
+                font-size: 2em; /* Números del contador más pequeños */
+            }
+
+            /* La magia para la diapositiva final */
+            .contenido-final {
+                flex-direction: column; /* Apila los elementos verticalmente */
+                gap: 25px;
+            }
+            
+            .carta-final-container {
+                text-align: center; /* Centra el texto de la carta final */
+            }
+
+            .firma {
+                text-align: center; /* Centra la firma */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+
+        <!-- DIAPOSITIVA 1: BIENVENIDA -->
+        <div id="slide-1" class="slide active">
+            <h1>¡Feliz Día, Papá!</h1>
+            <h2>Tengo una sorpresa para ti</h2>
+            <button id="startButton" class="btn">Empezar</button>
+        </div>
+
+        <!-- DIAPOSITIVA 2: CONTADOR -->
+        <div id="slide-2" class="slide">
+            <h2>Primero, un dato curioso...</h2>
+            <p>Llevas siendo mi papá desde hace:</p>
+            <div id="tiempo-container">
+                <div class="tiempo-unidad"><span id="dias">0</span> Días</div>
+                <div class="tiempo-unidad"><span id="horas">0</span> Horas</div>
+                <div class="tiempo-unidad"><span id="minutos">0</span> Minutos</div>
+                <div class="tiempo-unidad"><span id="segundos">0</span> Segundos</div>
+            </div>
+            <p class="fecha-nacimiento">... y cada segundo ha sido increíble.</p>
+            <button class="btn" onclick="showSlide('slide-3')">Ver mi regalo</button>
+        </div>
+
+        <!-- DIAPOSITIVA 3: CARTA (PARTE 1) -->
+        <div id="slide-3" class="slide">
+            <!-- CARTA PARTE 1 -->
+            <p class="letter-text">
+                Querido papá, hoy es un día especial, pero para mí, todos los días lo son cuando se trata de agradecerte. Quería recordarte lo mucho que significas para mí...
+            </p>
+            <button class="btn" onclick="showSlide('slide-4')">Continuar...</button>
+            <span class="progress-indicator">1 de 3</span>
+        </div>
+
+        <!-- DIAPOSITIVA 4: CARTA (PARTE 2) -->
+        <div id="slide-4" class="slide">
+            <!-- CARTA PARTE 2 -->
+            <p class="letter-text">
+                Desde que tengo memoria, has sido mi guía, mi protector y mi más grande inspiración. Gracias por cada lección, por cada risa y por tu apoyo incondicional en cada paso que doy.
+            </p>
+            <button class="btn" onclick="showSlide('slide-5')">Un poco más...</button>
+            <span class="progress-indicator">2 de 3</span>
+        </div>
+
+        <!-- DIAPOSITIVA 5: CARTA FINAL Y FOTO -->
+        <div id="slide-5" class="slide">
+            <div class="contenido-final">
+                <div class="foto-container">
+                    <!-- ¡AQUÍ VA LA FOTO! -->
+                    <!-- Cambia la siguiente línea por la ruta de tu foto. -->
+                    <img src="https://via.placeholder.com/400x500.png?text=Nuestra+Foto+Aquí" alt="Foto nuestra">
+                    <p class="pie-foto">Uno de mis momentos favoritos</p>
+                </div>
+                <div class="carta-final-container">
+                    <!-- CARTA PARTE FINAL -->
+                    <p>
+                        Admiro tu fuerza, tu paciencia y el amor tan inmenso que nos das. Espero que tengas un día maravilloso, lleno de alegría y rodeado del cariño que tanto mereces.
+                    </p>
+                    <p class="firma">
+                        Con todo mi amor,<br>
+                        Tu hijo/a.
+                    </p>
+                </div>
+            </div>
+             <span class="progress-indicator">❤️</span>
+        </div>
+
+    </div>
+
+    <script>
+        function showSlide(slideId) {
+            const currentActive = document.querySelector('.slide.active');
+            if (currentActive) currentActive.classList.remove('active');
+            const newActive = document.getElementById(slideId);
+            if (newActive) newActive.classList.add('active');
+        }
+        
+        document.getElementById('startButton').addEventListener('click', () => showSlide('slide-2'));
+
+        const fechaNacimiento = new Date(2005, 8, 1);
+        const diasEl = document.getElementById('dias');
+        const horasEl = document.getElementById('horas');
+        const minutosEl = document.getElementById('minutos');
+        const segundosEl = document.getElementById('segundos');
+
+        function actualizarContador() {
+            const ahora = new Date();
+            const diffSegundos = Math.floor((ahora - fechaNacimiento) / 1000);
+            diasEl.innerText = Math.floor(diffSegundos / 86400).toLocaleString('es-ES');
+            horasEl.innerText = formatoTiempo(Math.floor(diffSegundos / 3600) % 24);
+            minutosEl.innerText = formatoTiempo(Math.floor(diffSegundos / 60) % 60);
+            segundosEl.innerText = formatoTiempo(diffSegundos % 60);
+        }
+
+        function formatoTiempo(tiempo) {
+            return tiempo < 10 ? `0${tiempo}` : tiempo;
+        }
+
+        actualizarContador();
+        setInterval(actualizarContador, 1000);
+    </script>
+</body>
+</html>
