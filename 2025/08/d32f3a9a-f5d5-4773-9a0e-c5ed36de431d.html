@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lluvia de TE AMO</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: black; font-family: 'Segoe UI', sans-serif; }
+    canvas { display: block; }
+
+    /* Botón para ocultar/mostrar panel */
+    #toggle-panel {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: rgba(255,255,255,0.7);
+      border: none;
+      border-radius: 4px;
+      font-size: 18px;
+      padding: 4px 8px;
+      cursor: pointer;
+      z-index: 20;
+    }
+
+    /* Panel de control */
+    #control-panel {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 14px;
+      z-index: 10;
+      user-select: none;
+    }
+    #control-panel h4 { margin: 0 0 5px; font-size: 16px; }
+    #control-panel label { display: block; margin-bottom: 6px; }
+    #control-panel input[type="color"] { width: 32px; height: 32px; padding: 0; border: none; margin-right: 4px; vertical-align: middle; }
+    #control-panel input[type="checkbox"],
+    #control-panel input[type="range"] { margin-right: 4px; vertical-align: middle; }
+  </style>
+</head>
+<body>
+
+  <canvas id="canvas"></canvas>
+  <button id="toggle-panel">⚙</button>
+
+  <!-- Panel de control -->
+  <div id="control-panel">
+    <h4>Control</h4>
+    <label>
+      <input type="color" id="color1" value="#ff4d6d"> Color 1
+    </label>
+    <label>
+      <input type="color" id="color2" value="#ff99aa"> Color 2
+    </label>
+    <label>
+      <input type="color" id="color3" value="#ff1a66"> Color 3
+    </label>
+    <label>
+      <input type="checkbox" id="multiColor"> Modo múltiple
+    </label>
+    <label>
+      Velocidad: <input type="range" id="speedRange" min="0.1" max="5" step="0.1" value="1">
+    </label>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let W = window.innerWidth;
+    let H = window.innerHeight;
+    canvas.width = W;
+    canvas.height = H;
+
+    const phrase = "TE AMO ";
+    let fontSize = Math.max(12, Math.floor(W / 80));
+    let cols = Math.floor(W / fontSize);
+    let drops = Array(cols).fill(1);
+    let speeds = Array(cols).fill().map(() => 0.5 + Math.random() * 2);
+    let speedMultiplier = parseFloat(document.getElementById('speedRange').value);
+
+    let particles = [];
+    const defaultPalettes = [
+      ["#ff4d6d","#ff99aa","#ff1a66"],
+      ["#6dd5ed","#2193b0","#05386b"],
+      ["#fcb045","#fd1d1d","#833ab4"],
+      ["#8e44ad","#3498db","#2ecc71"]
+    ];
+    let currentGradient;
+    let gradientTimer;
+
+    function makeGradient(colors) {
+      const g = ctx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, colors[0]);
+      g.addColorStop(0.5, colors[1]);
+      g.addColorStop(1, colors[2]);
+      return g;
+    }
+
+    function setRandomGradient() {
+      const p = defaultPalettes[Math.floor(Math.random() * defaultPalettes.length)];
+      currentGradient = makeGradient(p);
+    }
+
+    function updatePalette() {
+      const c1 = document.getElementById('color1').value;
+      const c2 = document.getElementById('color2').value;
+      const c3 = document.getElementById('color3').value;
+      const multi = document.getElementById('multiColor').checked;
+      if (!multi) {
+        clearInterval(gradientTimer);
+        currentGradient = makeGradient([c1, c2, c3]);
+      } else {
+        setRandomGradient();
+        gradientTimer = setInterval(setRandomGradient, 5000);
+      }
+    }
+
+    function draw() {
+      ctx.fillStyle = "rgba(0,0,0,0.2)";
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = currentGradient;
+      ctx.font = `${fontSize}px 'Segoe UI'`;
+
+      // lluvia
+      for (let i = 0; i < drops.length; i++) {
+        ctx.fillText(phrase, i * fontSize, drops[i] * fontSize);
+        drops[i] += speeds[i] * speedMultiplier;
+        if (drops[i] * fontSize > H && Math.random() > 0.975) drops[i] = 0;
+      }
+
+      // explosión
+      particles = particles.filter(p => p.life > 0);
+      particles.forEach(p => {
+        ctx.globalAlpha = p.alpha;
+        ctx.fillText("TE AMO", p.x, p.y);
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 1 / p.life;
+        p.life--;
+      });
+      ctx.globalAlpha = 1;
+
+      requestAnimationFrame(draw);
+    }
+
+    // inicialización
+    setRandomGradient();
+    gradientTimer = setInterval(() => {
+      if (document.getElementById('multiColor').checked) setRandomGradient();
+    }, 5000);
+    draw();
+
+    // responsive
+    window.addEventListener('resize', () => {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W;
+      canvas.height = H;
+      fontSize = Math.max(12, Math.floor(W / 80));
+      cols = Math.floor(W / fontSize);
+      drops = Array(cols).fill(1);
+      speeds = Array(cols).fill().map(() => 0.5 + Math.random() * 2);
+      updatePalette();
+    });
+
+    // explosión
+    function triggerExplosion(x, y) {
+      for (let i = 0; i < 30; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 3;
+        particles.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, alpha: 1, life: 60 });
+      }
+    }
+    canvas.addEventListener('click', e => triggerExplosion(e.clientX, e.clientY));
+    canvas.addEventListener('touchstart', e => {
+      const t = e.touches[0];
+      triggerExplosion(t.clientX, t.clientY);
+    });
+
+    // mostrar/ocultar panel
+    const toggleBtn = document.getElementById('toggle-panel');
+    const panel = document.getElementById('control-panel');
+    toggleBtn.addEventListener('click', () => {
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // controles de panel
+    ['color1','color2','color3','multiColor'].forEach(id =>
+      document.getElementById(id).addEventListener('input', updatePalette)
+    );
+    document.getElementById('speedRange').addEventListener('input', e => {
+      speedMultiplier = parseFloat(e.target.value);
+    });
+  </script>
+</body>
+</html>
