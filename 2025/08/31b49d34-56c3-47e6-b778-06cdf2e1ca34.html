@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños Animado!</title>
+    <style>
+        /* --- Configuración General --- */
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Helvetica Neue', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Oculta barras de scroll que puedan crear los fuegos artificiales */
+        }
+
+        /* --- Contenedor Principal de la Tarjeta --- */
+        .birthday-card {
+            text-align: center;
+            position: relative; /* Para mantenerlo por encima de los fuegos artificiales */
+            z-index: 10;
+        }
+
+        /* --- Globos "LOVE" --- */
+        .balloons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .balloon {
+            width: 60px;
+            height: 75px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            font-size: 2em;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        /* Colores y letras de los globos */
+        .balloon:nth-child(1) { background-color: #d83a8f; color: white; animation-delay: 0.5s; } /* 😊 */
+        .balloon:nth-child(2) { background-color: #333; color: white; animation-delay: 0s; } /* L */
+        .balloon:nth-child(3) { background-color: #f0f0f0; color: black; animation-delay: 1s; } /* O */
+        .balloon:nth-child(4) { background-color: #d83a8f; color: white; animation-delay: 0.2s; } /* V */
+        .balloon:nth-child(5) { background-color: #f0f0f0; color: black; animation-delay: 0.7s; } /* E */
+        
+        /* Cuerda del globo */
+        .balloon::after {
+            content: '';
+            position: absolute;
+            background-color: #555;
+            width: 1px;
+            height: 40px;
+            top: 75px;
+            left: 50%;
+        }
+
+        /* --- Texto de Cumpleaños --- */
+        .birthday-text h2 {
+            font-size: 2.5em;
+            font-weight: 300;
+            margin: 0;
+            animation: fadeInDown 1.5s ease-out 0.2s backwards;
+        }
+
+        .birthday-text h1 {
+            font-size: 4em;
+            margin: 10px 0 25px;
+            letter-spacing: 2px;
+            animation: fadeInUp 1.5s ease-out 0.5s backwards;
+        }
+        
+        /* --- Pastel --- */
+        .cake {
+            font-size: 100px;
+            animation: popIn 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) 1s backwards;
+        }
+
+        /* --- Animaciones --- */
+
+        /* Animación para que los globos floten */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(5deg); }
+            50% { transform: translateY(-20px) rotate(-5deg); }
+        }
+
+        /* Animación para que el texto aparezca */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Animación para que el pastel aparezca */
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* --- Contenedor de Fuegos Artificiales --- */
+        .fireworks-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Detrás de la tarjeta */
+        }
+        
+        .firework {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: launch 2s ease-in forwards;
+        }
+
+        /* Diferentes posiciones y retrasos para los fuegos artificiales */
+        .firework:nth-child(1) { top: 80%; left: 20%; animation-delay: 0s; }
+        .firework:nth-child(2) { top: 90%; left: 80%; animation-delay: 1.5s; }
+        .firework:nth-child(3) { top: 85%; left: 50%; animation-delay: 3s; }
+        .firework:nth-child(4) { top: 95%; left: 30%; animation-delay: 4.5s; }
+        .firework:nth-child(5) { top: 80%; left: 70%; animation-delay: 6s; }
+
+        @keyframes launch {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-40vh);
+                opacity: 0;
+                box-shadow: 
+                    0 0 15px 5px #ffdd00, 0 0 15px 5px #ff4444,
+                    20px -20px 15px 5px #00ffaa, -20px 20px 15px 5px #44aaff,
+                    -40px -10px 15px 5px #ff00ff, 40px 10px 15px 5px #00ff00,
+                    -30px 30px 15px 5px #ff8800, 30px -30px 15px 5px #aaffff;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Contenedor de Fuegos Artificiales (detrás de todo) -->
+    <div class="fireworks-container">
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <!-- Se reinician cada 8 segundos aprox. -->
+    </div>
+    
+    <!-- Tarjeta de Cumpleaños -->
+    <div class="birthday-card">
+        <div class="balloons">
+            <div class="balloon">😊</div>
+            <div class="balloon">L</div>
+            <div class="balloon">O</div>
+            <div class="balloon">V</div>
+            <div class="balloon">E</div>
+        </div>
+        
+        <div class="birthday-text">
+            <h2>Happy XX<sup>th</sup> Birthday</h2>
+            <h1>"nombre"</h1>
+        </div>
+        
+        <div class="cake">🎂</div>
+    </div>
+
+</body>
+</html>
