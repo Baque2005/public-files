@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Para Fátima 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to top left, #ffe4ec, #fffdf9);
+      font-family: 'Roboto', sans-serif;
+      color: #4a2c2a;
+      text-align: center;
+    }
+
+    .container {
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.5rem;
+      color: #c25772;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.85);
+      border-radius: 20px;
+      padding: 20px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    input, button {
+      margin-top: 15px;
+      font-size: 1rem;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      width: 90%;
+    }
+
+    button {
+      background-color: #f48ca0;
+      color: white;
+      border: none;
+    }
+
+    button:hover {
+      background-color: #e26c84;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .poem, .final {
+      margin-top: 20px;
+      font-style: italic;
+    }
+
+    audio {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Buenos días, Fátima 🌞</h1>
+
+    <div class="card">
+      <p><strong>Resuelve este acertijo para leer el poema:</strong></p>
+      <p><em>
+        Me ves cada mañana,<br>
+        caliento sin tocar,<br>
+        si cierro los ojos,<br>
+        aún te puedo abrazar.<br>
+        ¿Quién soy?
+      </em></p>
+
+      <input type="text" id="respuesta" placeholder="Tu respuesta aquí..." />
+      <button onclick="mostrarPoema()">Ver Poema</button>
+
+      <div class="poem hidden" id="poema">
+        <p>
+          Cuando amanece en tu risa,<br>
+          despiertan los pájaros del alma.<br>
+          Fátima, mi sol y mi caricia,<br>
+          mi refugio, mi calma.<br><br>
+
+          Si el mundo se apaga,<br>
+          tú enciendes mi día.<br>
+          Con solo tu voz,<br>
+          florece la poesía.
+        </p>
+      </div>
+
+      <div class="final hidden" id="mensajeFinal">
+        🌸 Gracias por ser mi luz, Fátima. Te amo.
+      </div>
+
+      <button onclick="document.getElementById('musica').play()">🎵 Tocar música</button>
+      <audio id="musica" controls loop class="hidden">
+        <source src="Willian - Sol.mp3" type="audio/mpeg">
+        Tu navegador no soporta el audio HTML5.
+      </audio>
+    </div>
+  </div>
+
+  <script>
+    function mostrarPoema() {
+      const respuesta = document.getElementById("respuesta").value.trim().toLowerCase();
+      if (respuesta.includes("sol")) {
+        document.getElementById("poema").classList.remove("hidden");
+        document.getElementById("mensajeFinal").classList.remove("hidden");
+        document.getElementById("musica").classList.remove("hidden");
+      } else {
+        alert("Pista: está en el cielo y brilla cada mañana ☀️");
+      }
+    }
+  </script>
+
+</body>
+</html>
