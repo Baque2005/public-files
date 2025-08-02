@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Ti ❤</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fff5f5;
+            perspective: 1000px;
+        }
+        .gift-box {
+            position: relative;
+            width: 320px;
+            height: 420px;
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+        .gift-box:hover {
+            transform: rotateY(10deg) rotateX(10deg);
+        }
+        .box {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffb6c1, #ffccd5);
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(255, 105, 180, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            box-sizing: border-box;
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+            backface-visibility: hidden;
+            border: 2px solid #ffebee;
+        }
+        .box-front {
+            z-index: 2;
+        }
+        .box-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #ffccd5, #ffebee);
+            display: none;
+        }
+        .gift-box.open .box-front {
+            transform: rotateY(180deg);
+            display: none;
+        }
+        .gift-box.open .box-back {
+            display: flex;
+            transform: rotateY(0deg);
+        }
+        .ribbon {
+            position: absolute;
+            width: 100%;
+            height: 50px;
+            background-color: #fff;
+            top: 20px;
+            left: 0;
+            box-shadow: 0 2px 10px rgba(255, 182, 193, 0.3);
+        }
+        .bow {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 70px;
+            background-color: #fff;
+            border-radius: 50%;
+            z-index: 3;
+        }
+        .bow:before, .bow:after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            border-radius: 50%;
+        }
+        .bow:before {
+            top: -25px;
+            left: -25px;
+        }
+        .bow:after {
+            top: -25px;
+            right: -25px;
+        }
+        .handwriting {
+            font-family: 'Dancing Script', cursive;
+            font-size: 42px;
+            color: #d23669;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+            line-height: 1.2;
+        }
+        p {
+            font-family: 'Pacifico', cursive;
+            color: #555;
+            text-align: center;
+            margin: 12px 0;
+            line-height: 1.6;
+            font-size: 18px;
+        }
+        .heart {
+            color: #ff4757;
+            font-size: 28px;
+            animation: beat 1s infinite alternate;
+            display: inline-block;
+            margin: 0 5px;
+        }
+        @keyframes beat {
+            to { transform: scale(1.3); }
+        }
+        button {
+            background-color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            color: #ff6b8b;
+            font-family: 'Pacifico', cursive;
+            font-size: 18px;
+            font-weight: normal;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(255, 105, 180, 0.2);
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(255, 105, 180, 0.3);
+            background-color: #ffebee;
+        }
+        .sparkles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 10;
+            overflow: hidden;
+            display: none;
+        }
+        .sparkle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: #fff;
+            border-radius: 50%;
+            opacity: 0;
+            animation: sparkle 2s ease-out infinite;
+        }
+        @keyframes sparkle {
+            0% { transform: scale(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="gift-box" onclick="this.classList.toggle('open'); createSparkles()">
+        <div class="box box-front">
+            <div class="ribbon"></div>
+            <div class="bow"></div>
+            <h1 style="font-family: 'Pacifico', cursive; color: #d23669;">¡Para Ti, Mi Amor!</h1>
+            <p>Toca este regalo con cariño</p>
+            <span class="heart">❤</span>
+        </div>
+        <div class="box box-back">
+            <div class="handwriting">Te Amo</div>
+            <p>Quería recordarte lo mucho que brillas en mi vida</p>
+            <p>El tiempo sin verte se hace eterno,</p>
+            <p>porque cada instante a tu lado es mágico <span class="heart">❤</span></p>
+            <button onclick="showLove()">Abrázame Fuerte</button>
+        </div>
+        <div class="sparkles" id="sparkles"></div>
+    </div>
+
+    <script>
+        function createSparkles() {
+            const sparklesContainer = document.getElementById('sparkles');
+            sparklesContainer.style.display = 'block';
+            sparklesContainer.innerHTML = '';
+            
+            for (let i = 0; i < 30; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.classList.add('sparkle');
+                sparkle.style.left = `${Math.random() * 100}%`;
+                sparkle.style.top = `${Math.random() * 100}%`;
+                sparkle.style.animationDelay = `${Math.random() * 2}s`;
+                sparkle.style.backgroundColor = `hsl(${Math.random() * 60 + 330}, 100%, 75%)`;
+                sparklesContainer.appendChild(sparkle);
+            }
+            
+            setTimeout(() => {
+                sparklesContainer.style.display = 'none';
+            }, 2000);
+        }
+        
+        function showLove() {
+            alert("Eres el amor de mi vida\nCada día contigo es un regalo\nTe amo más que ayer,\nmenos que mañana 💖");
+            createSparkles();
+        }
+    </script>
+</body>
+</html>
