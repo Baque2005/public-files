@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pregunta importante :)</title>
+    <style>
+      :root {
+        --bg-color-document: #ff92ad; /* Fondo del documento */
+        --bg-color-container: #fdd3e8; /* Fondo del contenedor */
+        --border-color: #b0436e; /* Bordes */
+        --bg-color-btn-si: #e93d82; /* Botón "Sí" */
+        --bg-color-btn-si-hover: #ff92ad; /* Botón "Sí" al pasar el cursor */
+        --bg-color-btn-no: #37172f; /* Botón "No" */
+        --bg-color-btn-no-hover: #4b143d; /* Botón "No" al pasar el cursor */
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        background: var(--bg-color-document);
+        font-family: "Segoe UI", "Open Sans", "Helvetica Neue", sans-serif;
+        display: grid;
+        place-content: center;
+        height: 100dvh;
+        width: 100%;
+      }
+      .box {
+        width: 80vw;
+        background: var(--bg-color-container);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        h1 {
+          font-size: 18px;
+          font-weight: 500;
+          margin-top: 28px;
+          margin-bottom: 8px;
+          text-align: center;
+        }
+        .btn-container {
+          margin: 10px 0;
+          .btn-si {
+            background: var(--bg-color-btn-si);
+            color: #fff;
+            width: 80px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-right: 5px;
+            &:hover {
+              background: var(--bg-color-btn-si-hover);
+            }
+          }
+          .btn-no {
+            background: var(--bg-color-btn-no);
+            color: #fff;
+            width: 80px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-left: 5px;
+            &:hover {
+              background: var(--bg-color-btn-no-hover);
+            }
+          }
+        }
+        img {
+          width: 90%;
+          margin-bottom: 20px;
+          margin-top: 8px;
+        }
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h1 id="title">¿Quieres ser mi novia? 🥺</h1>
+      <div class="btn-container" id="containerBtns">
+        <button class="btn-si" id="btnSi">Si</button>
+        <button class="btn-no" id="btnNo">No</button>
+      </div>
+      <img src="" alt="gato" id="img" />
+    </div>
+
+    <script>
+      // Aqui puedes editar las frases, el mensaje final y la imagen del principio y del final
+      const FRASES = [
+        "Andale 🤕",
+        "Dí que sii 😖",
+        "Porfa 🥺",
+        "Cuchurrumin 😩",
+        "No seas asi 💔",
+      ];
+      const mensajeFinal = "Sabía que aceptarías ❤️";
+
+      // Coloca los links de las imagenes que quieras usar
+      const TIMAGENES = [
+        "https://i.pinimg.com/236x/8e/b2/b9/8eb2b9b7770d83abc480596af2f48d20.jpg",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIoL2oztE91lPQYpt85X2paDV6uemyee-Lrg&s",
+        "https://i.pinimg.com/originals/ff/53/93/ff53935e6607a7fa92c7dce5e8748c88.png",
+        "https://www.radioacktiva.com/wp-content/uploads/2020/10/1-14-436x291.jpg",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzKL3Vr7nvWQAvuhdI_oSyCYY0LktNWABTFShtrXpRk76GpLxVKoZMPQeIj0rfGg4I3F8&usqp=CAU",
+      ];
+      const imagenPrincipio =
+        "https://st2.depositphotos.com/1031481/9719/i/450/depositphotos_97193380-stock-photo-cat-brought-roses-as-a.jpg";
+      const imageneFinal =
+        "https://stickerly.pstatic.net/sticker_pack/RoQKd7eh2a6EUxtCfRXefw/PTDFFC/16/1673169483582.png";
+
+      //Si quieres entender lo de aqui abajo ⬇️ escribe por dm @ragosorio
+
+      const $ = (e) => document.getElementById(e);
+
+      const btnSi = $("btnSi");
+      const btnNo = $("btnNo");
+      const title = $("title");
+      const img = $("img");
+      const btnContainer = $("containerBtns");
+      let contador = 0;
+
+      const preloadImages = (images) => {
+        images.forEach((src) => {
+          const img = new Image();
+          img.src = src;
+        });
+      };
+
+      preloadImages([imagenPrincipio, imageneFinal, ...TIMAGENES]);
+
+      img.src = imagenPrincipio;
+
+      btnSi.addEventListener("click", () => {
+        title.textContent = mensajeFinal;
+        img.src = imageneFinal;
+        btnContainer.classList.add("hidden");
+      });
+
+      btnNo.addEventListener("click", () => {
+        if (FRASES.length > contador) {
+          title.textContent = FRASES[contador];
+          img.src = TIMAGENES[contador];
+        } else {
+          contador = 0;
+          title.textContent = FRASES[contador];
+          img.src = TIMAGENES[contador];
+        }
+        contador++;
+
+        sizeControl(btnSi, "mas");
+        sizeControl(btnSi, "menos");
+      });
+
+      function sizeControl(btn, size) {
+        const currentSize = parseInt(window.getComputedStyle(btn).fontSize);
+        const currentHeight = parseInt(window.getComputedStyle(btn).height);
+        const currentWidth = parseInt(window.getComputedStyle(btn).width);
+        let newFontSize;
+        let newHeightSize;
+        let newWidthSize;
+
+        if (size == "mas") {
+          newFontSize = currentSize + 5;
+          newHeightSize = currentHeight + 5;
+          newWidthSize = currentWidth + 5;
+          if (newFontSize <= 70) {
+            btn.style.fontSize = newFontSize + "px";
+            btn.style.height = newHeightSize + "px";
+            btn.style.width = newWidthSize + "px";
+          }
+        } else if (size == "menos") {
+          ewFontSize = currentSize - 5;
+          newHeightSize = currentHeight - 5;
+          newWidthSize = currentWidth - 5;
+          if (newFontSize >= 4) {
+            btn.style.fontSize = newFontSize + "px";
+            btn.style.height = newHeightSize + "px";
+            btn.style.width = newWidthSize + "px";
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
