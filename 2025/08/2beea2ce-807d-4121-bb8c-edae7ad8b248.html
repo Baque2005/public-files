@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Para "???" 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@600&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #ffdde1, #ee9ca7, #c6a0f6);
+      background-size: 600% 600%;
+      animation: gradientBG 30s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 2rem 3rem;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 24px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(255, 182, 193, 0.6);
+      z-index: 10;
+    }
+
+    .overlay h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.8rem;
+      color: #c2185b;
+      text-shadow: 2px 2px 8px #fff;
+      margin: 0;
+    }
+
+    .overlay p {
+      margin-top: 1rem;
+      font-size: 1.5rem;
+      color: #6a1b9a;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .heart {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: radial-gradient(circle, #ff9abc, #ff3d7f);
+      transform: rotate(45deg);
+      animation: floatHeart 6s ease-in infinite;
+      z-index: 2;
+    }
+
+    .heart::before, .heart::after {
+      content: '';
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: inherit;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -11px;
+      left: 0;
+    }
+
+    .heart::after {
+      left: -11px;
+      top: 0;
+    }
+
+    @keyframes floatHeart {
+      0% {
+        transform: translateY(100vh) rotate(45deg) scale(0.8);
+        opacity: 0;
+      }
+      25% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) rotate(45deg) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      animation: sparkle 4s ease-in-out infinite;
+      z-index: 2;
+    }
+
+    @keyframes sparkle {
+      0%, 100% {
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.5);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="overlay">
+  <h1>🌸 "???", mi Amor Eterno 💖</h1>
+  <p>El real amor de mi vida.</p>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+  // Canvas efecto "TE AMO"
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const text = "TE AMO";
+  const fontSize = 20;
+  const columns = Math.floor(canvas.width / (fontSize * 2));
+  const drops = new Array(columns).fill(1);
+
+  ctx.font = fontSize + "px Quicksand";
+
+  function draw() {
+    ctx.fillStyle = "rgba(255,255,255,0.04)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#ffe4e1";
+    for (let i = 0; i < drops.length; i++) {
+      const x = i * fontSize * 2;
+      const y = drops[i] * fontSize;
+      ctx.fillText(text, x, y);
+
+      if (y > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+
+      drops[i]++;
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+
+  // Corazones y chispas
+  function spawn(cls, dur) {
+    const el = document.createElement('div');
+    el.className = cls;
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.top = Math.random() * 100 + 'vh';
+    el.style.animationDuration = dur + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), dur * 1000);
+  }
+
+  setInterval(() => spawn('heart', 6 + Math.random() * 3), 300);
+  setInterval(() => spawn('sparkle', 2 + Math.random() * 3), 250);
+</script>
+
+</body>
+</html>
