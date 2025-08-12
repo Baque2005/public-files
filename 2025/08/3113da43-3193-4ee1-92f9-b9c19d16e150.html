@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perdón Val ❤️</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fad0c4);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .container {
+      text-align: center;
+      color: white;
+      animation: fadeIn 2s ease-out forwards;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+
+    p {
+      font-size: 1.5rem;
+      opacity: 0;
+      animation: slideUp 2s ease-out forwards;
+      animation-delay: 1s;
+    }
+
+    .heart {
+      font-size: 5rem;
+      animation: beat 1s infinite alternate;
+      margin-top: 30px;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border: none;
+      background-color: white;
+      color: #e91e63;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      animation: fadeIn 2s ease forwards;
+      animation-delay: 2s;
+      opacity: 0;
+    }
+
+    button:hover {
+      background-color: #f8bbd0;
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes beat {
+      from {
+        transform: scale(1);
+      }
+      to {
+        transform: scale(1.2);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Perdón Amor</h1>
+    <p>Te amo mucho ❤️</p>
+    <div class="heart">💖</div>
+    <button onclick="mostrarMensaje()">Haz clic aquí</button>
+  </div>
+
+  <script>
+    function mostrarMensaje() {
+      alert("Nunca quise herirte. Te amo con todo mi corazón ❤️");
+    }
+  </script>
+</body>
+</html>
+
+
