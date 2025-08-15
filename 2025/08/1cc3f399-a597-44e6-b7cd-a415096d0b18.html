@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Dibujo Tulipanes</title>
+<style>
+  body { margin: 0; overflow: hidden; background: #fff; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<script>
+// URL raw de tu JSON en GitHub
+const urlJSON = "https://raw.githubusercontent.com/Baque2005/public-files/main/2025/08/Tulipanes.json";
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+fetch(urlJSON)
+  .then(res => res.json())
+  .then(data => {
+    data.forEach(item => {
+      const coords = item.coords;
+      const col = item.color;
+      ctx.fillStyle = `rgb(${col[0]*255}, ${col[1]*255}, ${col[2]*255})`;
+      ctx.beginPath();
+      coords.forEach((point, i) => {
+        let x = point[0] + canvas.width/2;
+        let y = -point[1] + canvas.height/2;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      ctx.fill();
+    });
+  })
+  .catch(err => console.error("Error cargando JSON:", err));
+</script>
+
+</body>
+</html>
