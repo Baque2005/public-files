@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Dibujo Tulipanes Animado</title>
+<style>
+  body { margin: 0; overflow: hidden; background: #fff; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<script>
+const urlJSON = "https://raw.githubusercontent.com/Baque2005/public-files/refs/heads/main/2025/08/Tulipanes.json";
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Variables para la animación
+let shapes = [];
+let currentShape = 0;
+let currentPoint = 0;
+
+// Cargar JSON
+fetch(urlJSON)
+  .then(res => res.json())
+  .then(data => {
+    if (!Array.isArray(data)) {
+      console.error("El JSON no es un array:", data);
+      return;
+    }
+
+    // Filtrar objetos válidos
+    shapes = data.filter(item => item && item.coords && item.color);
+    shapes = shapes.map(item => ({
+      coords: item.coords.filter(pt => Array.isArray(pt) && pt.length >= 2),
+      color: item.color
+    }));
+
+    if (shapes.length > 0) requestAnimationFrame(drawStep);
+  })
+  .catch(err => console.error("Error cargando JSON:", err));
+
+// Función de animación
+function drawStep() {
+  if (currentShape >= shapes.length) return; // Terminado
+
+  const shape = shapes[currentShape];
+  const coords = shape.coords;
+  const col = shape.color;
+  ctx.strokeStyle = `rgb(${col[0]*255}, ${col[1]*255}, ${col[2]*255})`;
+  ctx.fillStyle = `rgb(${col[0]*255}, ${col[1]*255}, ${col[2]*255})`;
+  ctx.lineWidth = 1;
+
+  ctx.beginPath();
+  for (let i = 0; i <= currentPoint; i++) {
+    const point = coords[i];
+    if (!point) continue;
+    let x = point[0] + canvas.width/2;
+    let y = -point[1] + canvas.height/2;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.fill();
+
+  currentPoint++;
+  if (currentPoint >= coords.length) {
+    currentShape++;
+    currentPoint = 0;
+  }
+
+  requestAnimationFrame(drawStep);
+}
+
+// Ajustar canvas si se redimensiona
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+</script>
+</body>
+</html>
