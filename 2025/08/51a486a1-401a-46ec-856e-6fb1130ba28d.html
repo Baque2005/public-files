@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Dibujo Tulipanes Animado</title>
+<style>
+  body { margin: 0; overflow: hidden; background: #fff; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<script>
+const urlJSON = "https://raw.githubusercontent.com/Baque2005/public-files/refs/heads/main/2025/08/Tulipanes.json";
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Variables para animación
+let shapes = [];
+let currentShape = 0;
+let currentPoint = 0;
+let drawing = false;
+const scale = 1; // Puedes ajustar el tamaño general de los tulipanes
+
+// Cargar JSON
+fetch(urlJSON)
+  .then(res => res.json())
+  .then(data => {
+    if (!Array.isArray(data)) { console.error("El JSON no es un array:", data); return; }
+
+    // Filtrar objetos válidos y puntos
+    shapes = data.filter(item => item && item.coords && item.color)
+                 .map(item => ({
+                    coords: item.coords.filter(pt => Array.isArray(pt) && pt.length >= 2),
+                    color: item.color
+                 }));
+
+    if (shapes.length > 0) requestAnimationFrame(drawStep);
+  })
+  .catch(err => console.error("Error cargando JSON:", err));
+
+// Animación
+function drawStep() {
+  if (currentShape >= shapes.length) return;
+
+  const shape = shapes[currentShape];
+  const coords = shape.coords;
+  const col = shape.color;
+
+  ctx.strokeStyle = `rgb(${col[0]*255}, ${col[1]*255}, ${col[2]*255})`;
+  ctx.fillStyle = `rgb(${col[0]*255}, ${col[1]*255}, ${col[2]*255})`;
+  ctx.lineWidth = 1;
+
+  if (!drawing) {
+    ctx.beginPath();
+    const first = coords[0];
+    ctx.moveTo(first[0]*scale + canvas.width/2, -first[1]*scale + canvas.height/2);
+    drawing = true;
+    currentPoint = 1;
+  }
+
+  // Dibujar varias líneas por frame para que se vea animado y rápido
+  let stepsPerFrame = 5;
+  for (let i = 0; i < stepsPerFrame && currentPoint < coords.length; i++, currentPoint++) {
+    const point = coords[currentPoint];
+    ctx.lineTo(point[0]*scale + canvas.width/2, -point[1]*scale + canvas.height/2);
+  }
+  ctx.stroke();
+
+  if (currentPoint >= coords.length) {
+    ctx.closePath();
+    ctx.fill();
+    currentShape++;
+    drawing = false;
+  }
+
+  requestAnimationFrame(drawStep);
+}
+
+// Ajustar canvas al redimensionar ventana
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+</script>
+</body>
+</html>
