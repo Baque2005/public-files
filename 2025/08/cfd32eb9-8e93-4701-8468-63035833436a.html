@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Árbol de Amor Animado</title>
+ 
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background: #fcfcfc;
+        box-sizing: border-box;
+    }
+
+    #fireworks-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: block;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    #center-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 5rem;
+        color: #e60026;
+        font-family: 'Arial Black', Arial, sans-serif;
+        text-shadow: 2px 2px 8px #ffb3b3;
+        z-index: 2;
+        letter-spacing: 0.5rem;
+        user-select: none;
+        display: flex;
+        gap: 0.5rem;
+        pointer-events: none;
+    }
+
+    .letter {
+        opacity: 0;
+        transition: opacity 0.5s;
+    }
+
+    .tree-container {
+        width: 38vw;
+        max-width: 480px;
+        min-width: 180px;
+        height: 38vw;
+        max-height: 480px;
+        min-height: 180px;
+        position: absolute;
+        top: 50%;
+        right: 2vw;
+        left: auto;
+        transform: translateY(-50%) scale(0.9);
+        z-index: 2;
+        opacity: 0;
+        transition: opacity 1.2s cubic-bezier(.77,0,.18,1), transform 1.2s cubic-bezier(.77,0,.18,1);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+
+    .tree-container.visible {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+
+    .tree-gif {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 2em;
+        box-shadow: 0 0 32px #e6002633, 0 0 8px #fff8;
+        background: #fff;
+        border: 4px solid #ffb3b3;
+        display: block;
+    }
+
+    .dedication-text {
+        position: absolute;
+        top: 50%;
+        left: 2vw;
+        right: auto;
+        transform: translateY(-50%);
+        min-width: 220px;
+        max-width: 600px;
+        width: 40vw;
+        font-size: 1.5rem;
+        color: #111 !important;
+        font-family: 'Dancing Script', 'Pacifico', 'Courier New', cursive, monospace;
+        white-space: pre-line;
+        z-index: 3;
+        opacity: 0;
+        pointer-events: none;
+        max-height: 90vh;
+        overflow: visible;
+        padding: 2em 2.5em 2em 2em;
+        background: linear-gradient(135deg, #fff6f6 80%, #ffe0e0 100%);
+        border-radius: 2em;
+        box-shadow: 0 4px 32px #e6002611, 0 0 0 8px #ffe0e0;
+        border: 2px dashed #e60026;
+        transition: max-width 0.4s, min-width 0.4s, width 0.4s, opacity 0.8s;
+        text-shadow: 1px 1px 8px #ffb3b3, 0 0 2px #fff;
+    }
+
+    .dedication-text p {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .dedication-text.typing {
+        opacity: 1;
+        animation: fadeInText 0.6s;
+    }
+
+    .signature {
+        position: relative;
+        margin-top: 2em;
+        display: block;
+        font-family: 'Dancing Script', 'Pacifico', cursive, monospace;
+        font-size: 2.2rem;
+        color: #e60026;
+        opacity: 0;
+        z-index: 5;
+        white-space: pre;
+        pointer-events: none;
+        transition: opacity 0.7s;
+        text-align: right;
+        text-shadow: 1px 1px 8px #ffb3b3, 0 0 2px #fff;
+    }
+
+    .signature.visible {
+        opacity: 1;
+        animation: signature-draw 2.2s steps(24) forwards;
+    }
+
+    @keyframes signature-draw {
+        from { clip-path: inset(0 100% 0 0); }
+        to   { clip-path: inset(0 0 0 0); }
+    }
+
+    @keyframes fadeInText {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    #floating-objects {
+        position: fixed;
+        left: 0; top: 0;
+        width: 100vw; height: 100vh;
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .floating-heart {
+        position: absolute;
+        width: 38px;
+        height: 38px;
+        pointer-events: auto;
+        z-index: 10;
+        background: none;
+        animation: heart-float 6s linear forwards;
+        transition: transform 0.3s, opacity 0.3s;
+        cursor: pointer;
+        filter: drop-shadow(0 0 8px #ffb3b3) drop-shadow(0 0 2px #fff);
+    }
+    .floating-heart.pop {
+        transform: scale(1.7) rotate(20deg);
+        opacity: 0 !important;
+        transition: transform 0.3s, opacity 0.3s;
+    }
+    @keyframes heart-float {
+        0% {
+            opacity: 1;
+            transform: scale(1) translateY(0) rotate(0deg);
+        }
+        80% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+            transform: scale(1.2) translateY(-120vh) rotate(360deg);
+        }
+    }
+
+    .countdown {
+        position: fixed;
+        left: 50%;
+        bottom: 3%;
+        transform: translateX(-50%);
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1.3rem;
+        color: #333;
+        background: #fff8;
+        padding: 0.4em 1em;
+        border-radius: 1em;
+        z-index: 6;
+        box-shadow: 0 2px 8px #e6002611;
+        pointer-events: none;
+        letter-spacing: 0.05em;
+        min-width: 180px;
+        text-align: center;
+        transition: opacity 0.8s cubic-bezier(.77,0,.18,1), transform 0.8s cubic-bezier(.77,0,.18,1);
+        opacity: 0;
+        transform: translateX(-50%) translateY(30px);
+    }
+
+    .countdown.visible {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .animated-heart {
+        transform-origin: center;
+        animation: beat 1s infinite;
+    }
+    @keyframes beat {
+        0%, 100% { transform: scale(1); }
+        20% { transform: scale(1.1); }
+        40% { transform: scale(0.95); }
+        60% { transform: scale(1.08); }
+        80% { transform: scale(1); }
+    }
+
+    /* --- Estilos móviles fusionados y ajustados --- */
+    @media (max-width: 900px) {
+        .tree-container {
+            width: 60vw !important;
+            height: 60vw !important;
+            min-width: 180px;
+            min-height: 180px;
+            right: 2vw;
+        }
+        .dedication-text {
+            width: 60vw;
+            min-width: 180px;
+            font-size: 1.2rem;
+            padding: 1.2em 1.2em 1.2em 1.2em;
+        }
+    }
+    @media (max-width: 700px) {
+        body {
+            font-size: 16px;
+        }
+        .tree-container {
+            width: 90vw !important;
+            height: 55vw !important;
+            min-width: 120px;
+            min-height: 120px;
+            top: 10vw;
+            right: 2vw;
+            left: auto;
+            transform: scale(1);
+            z-index: 2;
+        }
+        .dedication-text {
+            left: 2vw;
+            right: auto;
+            top: 12vw;
+            transform: none;
+            min-width: 0;
+            max-width: 95vw;
+            width: 95vw;
+            font-size: 1.05rem;
+            padding: 0.7em 0.7em 0.7em 0.7em;
+        }
+        .signature {
+            font-size: 1.25rem;
+            text-align: center;
+        }
+        .countdown {
+            font-size: 1.05rem;
+            min-width: 120px;
+        }
+    }
+
+    .letter-animate {
+        display: inline;
+        opacity: 0;
+        transform: translateY(-30px) scale(0.7) rotate(-8deg);
+        animation: letterIn 0.42s cubic-bezier(.77,0,.18,1) forwards;
+        margin-right: 0.02em;
+    }
+    @keyframes letterIn {
+        0% {
+            opacity: 0;
+            transform: translateY(-30px) scale(0.7) rotate(-8deg);
+        }
+        60% {
+            opacity: 1;
+            transform: translateY(8px) scale(1.15) rotate(4deg);
+        }
+        80% {
+            opacity: 1;
+            transform: translateY(-2px) scale(0.98) rotate(-2deg);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1) rotate(0deg);
+        }
+    }
+
+    </style>
+</head>
+<body>
+    <div id="floating-objects"></div>
+    <div class="dedication-text" id="dedication-text">
+      <div class="signature" id="signature"></div>
+    </div>
+    <div class="countdown" id="countdown"></div>
+    <div class="tree-container" id="tree-container">
+      <img class="tree-gif" id="tree-gif" src="https://github.com/Baque2005/SVG-ARBOLT/blob/main/c5c673dc3cb4ebd03675713b984a25cd.gif?raw=true" alt="Tree GIF">
+    </div>
+    <audio src="https://github.com/Baque2005/public-files/raw/refs/heads/main/2025/Sarah%20Cothran%20-%20As%20The%20World%20Caves%20In%20(Lyrics).mp3" id="bg-music" preload="auto"></audio>
+    <script>
+    // Efecto máquina de escribir para el texto de dedicatoria (seguidores)
+    function getURLParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    function showDedicationText() {
+      let text = getURLParam('text');
+      if (!text) {
+        text = `Para mi gran amor:\n\nDesde que llegaste a mi vida, todo tiene un brillo distinto. Tu mirada, tu risa y hasta tus pequeños gestos se han convertido en mi lugar seguro.\n\nGracias por estar a mi lado en cada instante, por comprenderme sin necesidad de palabras y por regalarme un amor tan puro.\n\nEres mi razón, mi paz y mi alegría. Te amo con todo lo que soy.`;
+      } else {
+        text = decodeURIComponent(text).replace(/\\n/g, '\n');
+      }
+      const container = document.getElementById('dedication-text');
+      container.classList.add('typing');
+      container.innerHTML = "";
+
+      const paragraphs = text.split(/\n\s*\n/);
+      let letterIndex = 0;
+
+      function typeParagraph(idx) {
+        if (idx >= paragraphs.length) {
+          setTimeout(showSignature, 600);
+          return;
+        }
+        const p = paragraphs[idx];
+        const pElem = document.createElement('p');
+        pElem.style.margin = "0 0 1.2em 0";
+        pElem.style.textAlign = "left";
+        container.appendChild(pElem);
+
+        let i = 0;
+        function typeLetter() {
+          if (i < p.length) {
+            if (p[i] === ' ') {
+              pElem.appendChild(document.createTextNode(' ')); // espacio normal
+            } else {
+              let span = document.createElement('span');
+              span.textContent = p[i];
+              span.className = 'letter-animate';
+              span.style.animationDelay = (letterIndex * 0.04) + "s";
+              pElem.appendChild(span);
+            }
+            i++;
+            letterIndex++;
+            setTimeout(typeLetter, 45);
+          } else {
+            if (idx < paragraphs.length - 1) {
+              container.appendChild(document.createElement('br'));
+            }
+            typeParagraph(idx + 1);
+          }
+        }
+        typeLetter();
+      }
+      typeParagraph(0);
+    }
+
+    // Firma manuscrita animada
+    function showSignature() {
+      // Cambia para buscar la firma dentro del contenedor de dedicatoria
+      const dedication = document.getElementById('dedication-text');
+      let signature = dedication.querySelector('#signature');
+      if (!signature) {
+        signature = document.createElement('div');
+        signature.id = 'signature';
+        signature.className = 'signature';
+        dedication.appendChild(signature);
+      }
+      let firma = getURLParam('firma');
+      signature.textContent = firma ? decodeURIComponent(firma) : "Con amor";
+      signature.classList.add('visible');
+    }
+
+    // Animación de entrada del árbol
+    function showTreeContainer() {
+      const tree = document.getElementById('tree-container');
+      tree.classList.add('visible');
+    }
+
+    // Genera corazones flotantes desde la parte inferior del árbol
+    function spawnHearts(amount = 1, x = null, y = null) {
+      const container = document.getElementById('floating-objects');
+      const tree = document.getElementById('tree-gif');
+      const treeRect = tree.getBoundingClientRect();
+      for (let i = 0; i < amount; i++) {
+        let el = document.createElement('div');
+        el.className = 'floating-heart';
+        el.innerHTML = `<svg viewBox="0 0 32 32" width="38" height="38"><path d="M16 29s-13-8.35-13-17A7 7 0 0 1 16 7a7 7 0 0 1 13 5c0 8.65-13 17-13 17z" fill="#FC6F58" stroke="#C1321F" stroke-width="2"/></svg>`;
+        // Posición inicial: debajo del árbol o en el punto del clic
+        if (x !== null && y !== null) {
+          el.style.left = (x - 19) + "px";
+          el.style.top = (y - 19) + "px";
+        } else {
+          el.style.left = (treeRect.left + treeRect.width / 2 - 19) + "px";
+          el.style.top = (treeRect.bottom - 19) + "px";
+        }
+        const angle = Math.random() * Math.PI - Math.PI / 2; // Solo hacia arriba
+        const distance = 120 + Math.random() * 400;
+        const dx = Math.cos(angle) * distance;
+        const dy = -Math.abs(Math.sin(angle) * distance);
+        el.animate([
+          { transform: `translate(0,0) scale(1)`, opacity: 1 },
+          { transform: `translate(${dx}px,${dy}px) scale(1.2) rotate(${Math.random()*360}deg)`, opacity: 0 }
+        ], {
+          duration: 6000 + Math.random()*2000,
+          easing: 'linear',
+          fill: 'forwards'
+        });
+        el.onclick = function() {
+          el.classList.add('pop');
+          setTimeout(() => {
+            if (el.parentNode) el.parentNode.removeChild(el);
+          }, 300);
+        };
+        container.appendChild(el);
+        setTimeout(() => {
+          if (el.parentNode) el.parentNode.removeChild(el);
+        }, 7000);
+      }
+    }
+
+    // Genera corazones flotantes de forma continua desde el árbol
+    function startFloatingObjects() {
+      let count = 0;
+      function spawnHeart() {
+        spawnHearts(1);
+        if (count++ < 40) setTimeout(spawnHeart, 180 + Math.random() * 220);
+        else setTimeout(spawnHeart, 700 + Math.random() * 900);
+      }
+      spawnHeart();
+    }
+
+    // Cuando el gif termina su animación, lanza unos pocos corazones desde el árbol
+    function setupGifHeartBurst() {
+      const gif = document.getElementById('tree-gif');
+      setInterval(() => {
+        spawnHearts(4);
+      }, 4500); // Ajusta el tiempo según la duración del gif
+    }
+
+    // Corazones en el punto del clic del usuario
+    document.addEventListener('click', function(e) {
+      // Evita que salgan corazones si el click es sobre un botón o input
+      if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+      spawnHearts(2, e.clientX, e.clientY);
+    });
+
+    // Cuenta regresiva o fecha especial
+    function showCountdown() {
+      const container = document.getElementById('countdown');
+      let startParam = getURLParam('start');
+      let eventParam = getURLParam('event');
+      // Usa fechas válidas por defecto si no hay parámetros
+      let startDate = startParam ? new Date(startParam + 'T00:00:00') : new Date('2024-08-03T00:00:00');
+      let eventDate = eventParam ? new Date(eventParam + 'T00:00:00') : new Date('2025-08-03T00:00:00');
+
+      function update() {
+        const now = new Date();
+        // Si la fecha de inicio es en el futuro, muestra 0 días
+        let days = Math.max(0, Math.floor((now - startDate) / (1000 * 60 * 60 * 24)));
+        let eventDiff = eventDate - now;
+        let eventDays = Math.max(0, Math.floor(eventDiff / (1000 * 60 * 60 * 24)));
+        let eventHours = Math.max(0, Math.floor((eventDiff / (1000 * 60 * 60)) % 24));
+        let eventMinutes = Math.max(0, Math.floor((eventDiff / (1000 * 60)) % 60));
+        let eventSeconds = Math.max(0, Math.floor((eventDiff / 1000) % 60));
+
+        container.innerHTML =
+          `Llevamos juntos: <b>${days}</b> días<br>` +
+          `Nuestro aniversario: <b>${eventDays}d ${eventHours}h ${eventMinutes}m ${eventSeconds}s</b>`;
+        container.classList.add('visible');
+      }
+      update();
+      // Actualiza cada segundo
+      setInterval(update, 1000);
+    }
+
+    // --- Música de fondo ---
+    function playBackgroundMusic() {
+      const audio = document.getElementById('bg-music');
+      if (!audio) return;
+
+      // --- Opción archivo local por parámetro 'musica' ---
+      let musicaParam = getURLParam('musica');
+      if (musicaParam) {
+        // Decodifica y previene rutas maliciosas
+        musicaParam = decodeURIComponent(musicaParam).replace(/[^\w\d .\-]/g, '');
+        audio.src = 'Music/' + musicaParam;
+      }
+
+      // --- Opción YouTube (solo mensaje de ayuda) ---
+      let youtubeParam = getURLParam('youtube');
+      if (youtubeParam) {
+        // Muestra mensaje de ayuda para descargar el audio
+        let helpMsg = document.getElementById('yt-help-msg');
+        if (!helpMsg) {
+          helpMsg = document.createElement('div');
+          helpMsg.id = 'yt-help-msg';
+          helpMsg.style.position = 'fixed';
+          helpMsg.style.right = '18px';
+          helpMsg.style.bottom = '180px';
+          helpMsg.style.background = 'rgba(255,255,255,0.95)';
+          helpMsg.style.color = '#e60026';
+          helpMsg.style.padding = '10px 16px';
+          helpMsg.style.borderRadius = '12px';
+          helpMsg.style.boxShadow = '0 2px 8px #e6002633';
+          helpMsg.style.fontSize = '1.05em';
+          helpMsg.style.zIndex = 100;
+          helpMsg.innerHTML = 'Para usar música de YouTube, descarga el audio (por ejemplo, usando y2mate, 4K Video Downloader, etc.), colócalo en la carpeta <b>Music</b> y usa la URL así:<br><br><code>?musica=nombre.mp3</code>';
+          document.body.appendChild(helpMsg);
+          setTimeout(() => { if(helpMsg) helpMsg.remove(); }, 15000);
+        }
+      }
+
+      let btn = document.getElementById('music-btn');
+      if (!btn) {
+        btn = document.createElement('button');
+        btn.id = 'music-btn';
+        btn.textContent = '🔊 Música';
+        btn.style.position = 'fixed';
+        btn.style.bottom = '18px';
+        btn.style.right = '18px';
+        btn.style.zIndex = 99;
+        btn.style.background = 'rgba(255,255,255,0.85)';
+        btn.style.border = 'none';
+        btn.style.borderRadius = '24px';
+        btn.style.padding = '10px 18px';
+        btn.style.fontSize = '1.1em';
+        btn.style.cursor = 'pointer';
+        document.body.appendChild(btn);
+      }
+      audio.volume = 0.7;
+      audio.loop = true;
+      // Intentar reproducir inmediatamente
+      audio.play().then(() => {
+        btn.textContent = '🔊 Música';
+      }).catch(() => {
+        // Si falla el autoplay, esperar click en el botón
+        btn.textContent = '▶️ Música';
+      });
+      btn.onclick = () => {
+        if (audio.paused) {
+          audio.play();
+          btn.textContent = '🔊 Música';
+        } else {
+          audio.pause();
+          btn.textContent = '🔈 Música';
+        }
+      };
+    }
+
+    // Intentar reproducir la música lo antes posible (al cargar la página)
+    window.addEventListener('DOMContentLoaded', () => {
+      showTreeContainer();
+      showDedicationText();
+      startFloatingObjects();
+      showCountdown();
+      playBackgroundMusic();
+      setupGifHeartBurst();
+    });
+
+    // Animar el SVG cargado como objeto y mostrar el árbol con transición
+    function animateSVG() {
+      // Ya no se usa, pero puedes dejar la función vacía si no hay SVG
+    }
+
+    // Espera a que el objeto SVG esté listo
+    document.getElementById('svg-object').addEventListener('load', animateSVG);
+
+    showDedicationText();
+    startFloatingObjects();
+    showCountdown();
+    playBackgroundMusic();
+    </script>
+</body>
+</html>
