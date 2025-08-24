@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dedicatoria Melancólica</title>
+  <style>
+    /* Fondo degradado animado */
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      width: 100vw;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      background: #fff;
+    }
+    /* Elimina los estilos de .lateral-gradient, .lateral-gradient.right, .top-gradient, .corner-gradient */
+    .center-gif {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 80vh;
+      min-height: 400px;
+      position: relative;
+      z-index: 2;
+    }
+    .center-gif img {
+      width: 900px;
+      max-width: 99vw;
+      height: auto;
+      border-radius: 0;
+      box-shadow: none;
+      background: transparent;
+      border: none;
+      display: block;
+      margin: 0 auto;
+      transition: transform 0.7s cubic-bezier(.77,0,.18,1);
+    }
+    /* Mensaje animado encima del árbol */
+    .mensaje-animado {
+      position: absolute;
+      top: -10vh;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Dancing Script', 'Pacifico', 'Courier New', cursive, monospace;
+      font-size: 2.2rem;
+      color: #fff;
+      background: linear-gradient(90deg, #222 60%, #444 100%);
+      padding: 0.5em 2em;
+      border-radius: 2em;
+      box-shadow: 0 2px 16px #2228;
+      z-index: 30;
+      opacity: 0;
+      animation: mensajeFadeIn 2.2s cubic-bezier(.77,0,.18,1) forwards;
+      text-align: center;
+      letter-spacing: 0.04em;
+      text-shadow: 2px 2px 12px #000a;
+    }
+    @keyframes mensajeFadeIn {
+      0% { opacity: 0; transform: translateX(-50%) scale(0.7);}
+      60% { opacity: 1; transform: translateX(-50%) scale(1.08);}
+      100% { opacity: 1; transform: translateX(-50%) scale(1);}
+    }
+    .bubble {
+      position: absolute;
+      min-width: 120px;
+      max-width: 90vw;
+      padding: 1.2em 2em;
+      background: linear-gradient(135deg, #fff 80%, #f7f7f7 100%);
+      border-radius: 2em 2em 2.5em 2em;
+      box-shadow: 0 4px 32px #bdbdbd22, 0 0 0 8px #f7f7f7;
+      border: 2px solid #e0e0e0;
+      font-family: 'Dancing Script', 'Pacifico', 'Courier New', cursive, monospace;
+      font-size: 1.3rem;
+      color: #222;
+      text-align: center;
+      opacity: 0;
+      z-index: 10;
+      cursor: pointer;
+      transition: opacity 0.7s, transform 0.5s;
+      user-select: none;
+      pointer-events: auto;
+      animation: none;
+      will-change: transform, opacity;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      white-space: pre-line;
+      box-sizing: border-box;
+    }
+    .bubble.visible {
+      opacity: 1;
+      animation: bubbleIn 0.7s cubic-bezier(.77,0,.18,1);
+    }
+    .bubble.pop {
+      opacity: 0 !important;
+      transform: scale(1.2) rotate(8deg);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    @keyframes bubbleIn {
+      0% { opacity: 0; transform: scale(0.5) rotate(-12deg);}
+      60% { opacity: 1; transform: scale(1.08) rotate(8deg);}
+      100% { opacity: 1; transform: scale(1) rotate(0deg);}
+    }
+    /* Decorados bonitos y variados */
+    .decor {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.18;
+      font-size: 7vw;
+      user-select: none;
+      transition: opacity 0.6s;
+    }
+    .decor.top-left { top: 2vw; left: 2vw; font-size: 5vw; opacity: 0.22; }
+    .decor.bottom-right { bottom: 2vw; right: 2vw; font-size: 6vw; opacity: 0.18; }
+    .decor.center-left { top: 50%; left: 0; transform: translateY(-50%); font-size: 4vw; opacity: 0.13; }
+    .decor.center-right { top: 55%; right: 0; transform: translateY(-50%); font-size: 4vw; opacity: 0.13; }
+    .decor.top-right { top: 2vw; right: 3vw; font-size: 4vw; opacity: 0.18; }
+    .decor.bottom-left { bottom: 2vw; left: 3vw; font-size: 4vw; opacity: 0.18; }
+    .decor.floating {
+      animation: floatDecor 7s ease-in-out infinite alternate;
+    }
+    @keyframes floatDecor {
+      0% { transform: translateY(0) scale(1); opacity: 0.18; }
+      50% { transform: translateY(-18px) scale(1.08); opacity: 0.28; }
+      100% { transform: translateY(0) scale(1); opacity: 0.18; }
+    }
+    /* Objetos extra decorativos */
+    .obj-flower, .obj-heart, .obj-bird, .obj-leaf,
+    .obj-star, .obj-cloud, .obj-drop, .obj-butterfly, .obj-sparkle, .obj-rose, .obj-tree, .obj-snow {
+      position: absolute;
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0.22;
+      font-size: 2.2rem;
+      animation: floatObj 7s ease-in-out infinite alternate;
+    }
+    .obj-flower { left: 12vw; top: 78vh; font-size: 2.8rem; animation-delay: 0s;}
+    .obj-heart { right: 10vw; top: 18vh; font-size: 2.5rem; animation-delay: 1s;}
+    .obj-bird { left: 8vw; top: 12vh; font-size: 2.7rem; animation-delay: 2s;}
+    .obj-leaf { right: 7vw; bottom: 8vh; font-size: 2.3rem; animation-delay: 1.5s;}
+    .obj-star { left: 18vw; top: 10vh; font-size: 2.5rem; animation-delay: 0.5s;}
+    .obj-cloud { right: 18vw; top: 8vh; font-size: 3rem; animation-delay: 1.2s;}
+    .obj-drop { left: 5vw; bottom: 18vh; font-size: 2.3rem; animation-delay: 2.2s;}
+    .obj-butterfly { right: 8vw; top: 38vh; font-size: 2.7rem; animation-delay: 2.7s;}
+    .obj-sparkle { left: 50vw; top: 85vh; font-size: 2.1rem; animation-delay: 1.7s;}
+    .obj-rose { left: 80vw; top: 70vh; font-size: 2.5rem; animation-delay: 2.9s;}
+    .obj-tree { right: 2vw; bottom: 2vh; font-size: 2.8rem; animation-delay: 1.9s;}
+    .obj-snow { left: 10vw; top: 60vh; font-size: 2.3rem; animation-delay: 2.4s;}
+    @keyframes floatObj {
+      0% { transform: translateY(0) scale(1);}
+      50% { transform: translateY(-12px) scale(1.08);}
+      100% { transform: translateY(0) scale(1);}
+    }
+    @media (max-width: 700px) {
+      .center-gif img {
+        width: 99vw;
+        max-width: 99vw;
+      }
+      .bubble {
+        font-size: 1.05rem;
+        min-width: 90px;
+        max-width: 98vw;
+        padding: 0.7em 1em;
+      }
+      .mensaje-animado {
+        font-size: 1.2rem;
+        padding: 0.4em 0.7em;
+      }
+      .decor {
+        font-size: 11vw;
+      }
+      .obj-flower, .obj-heart, .obj-bird, .obj-leaf,
+      .obj-star, .obj-cloud, .obj-drop, .obj-butterfly, .obj-sparkle, .obj-rose, .obj-tree, .obj-snow {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mensaje-animado">Tú eres mi llave, mi amor y mi luz</div>
+  <div class="center-gif">
+    <img src="https://github.com/Baque2005/SVG-ARBOLT/blob/main/c3919b8cc41556446b3875b7bad72219.gif?raw=true" alt="Personita en árbol pálido">
+    <div class="mensaje-animado">Tú eres mi llave, mi amor y mi luz</div>
+  </div>
+  <div id="mensaje-sutil" style="
+    position: absolute;
+    top: 8vh;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Dancing Script', 'Pacifico', 'Courier New', cursive, monospace;
+    font-size: 1.3rem;
+    color: #888;
+    background: #fff8;
+    padding: 0.5em 1.2em;
+    border-radius: 1em;
+    box-shadow: 0 2px 8px #bdbdbd22;
+    z-index: 20;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.7s;
+  ">
+    Presióname para leer cada frase melancólica
+  </div>
+  <!-- Las burbujas aparecerán aquí -->
+  <script>
+    // Frases melancólicas para mostrar en burbujas
+    const phrases = [
+      "A veces el silencio es el único refugio.",
+      "Te pienso en cada atardecer pálido.",
+      "Aunque el árbol esté sin hojas, mi amor por ti florece.",
+      "La soledad se disipa cuando recuerdo tu sonrisa.",
+      "Eres mi esperanza en los días grises.",
+      "Te extraño más de lo que puedo decir.",
+      "Gracias por existir en mi invierno.",
+      "Tu luz nunca se apaga en mi corazón.",
+      "El tiempo pasa, pero tu recuerdo permanece.",
+      "Te quiero, incluso cuando el mundo parece vacío.",
+      "A veces la luna es mi única compañía.",
+      "Las flores caen, pero tu amor permanece.",
+      "Un pájaro canta solo para ti.",
+      "Las hojas vuelan, mi pensamiento va contigo.",
+      "Las estrellas me recuerdan tu mirada.",
+      "El frío me abraza, pero tu recuerdo me calienta.",
+      "Entre nubes y lluvia, pienso en ti.",
+      "Un suspiro, una mariposa, un pensamiento para ti.",
+      "La nieve cae, pero tu amor nunca se enfría.",
+      "Un árbol sin hojas, pero lleno de esperanza."
+    ];
+
+    // Direcciones aleatorias para animar las burbujas
+    const directions = [
+      { x: 0, y: -120 },
+      { x: -80, y: -100 },
+      { x: 80, y: -100 },
+      { x: -120, y: 0 },
+      { x: 120, y: 0 },
+      { x: -80, y: -40 },
+      { x: 80, y: -40 },
+      { x: 0, y: -150 }
+    ];
+
+    let phrasePool = [...phrases];
+    let showingBubble = false;
+
+    function showPhraseBubble(text) {
+      showingBubble = true;
+      const phraseEl = document.createElement('div');
+      phraseEl.className = 'bubble';
+      phraseEl.textContent = text;
+
+      // Posición aleatoria en la pantalla, evitando el centro del gift y los bordes
+      let left, top, tries = 0;
+      do {
+        left = 10 + Math.random() * 80;
+        top = 15 + Math.random() * 70;
+        tries++;
+      } while (
+        (left > 35 && left < 65 && top > 25 && top < 75) || // evita centro del gift
+        left < 12 || left > 88 || top < 10 || top > 90 && tries < 10 // evita bordes
+      );
+      phraseEl.style.left = left + "vw";
+      phraseEl.style.top = top + "vh";
+      phraseEl.style.transform = `translate(-50%, -50%)`;
+
+      // Limita el ancho máximo para evitar desbordes
+      phraseEl.style.maxWidth = "90vw";
+
+      // Animación de salida tipo burbuja
+      const dir = directions[Math.floor(Math.random() * directions.length)];
+      const duration = 9000;
+
+      phraseEl.animate([
+        { transform: 'translate(-50%, -50%) translate(0, 0)', opacity: 1 },
+        { transform: `translate(-50%, -50%) translate(${dir.x}px, ${dir.y}px) scale(1.2)`, opacity: 0 }
+      ], {
+        duration: duration,
+        easing: 'ease-out',
+        fill: 'forwards'
+      });
+
+      document.body.appendChild(phraseEl);
+      setTimeout(() => phraseEl.classList.add('visible'), 50);
+
+      phraseEl.onclick = function() {
+        phraseEl.classList.remove('visible');
+        phraseEl.classList.add('pop');
+        setTimeout(() => {
+          phraseEl.remove();
+          showingBubble = false;
+          showNextPhrase();
+        }, 350);
+      };
+
+      setTimeout(() => {
+        if (document.body.contains(phraseEl)) {
+          phraseEl.classList.remove('visible');
+          phraseEl.classList.add('pop');
+          setTimeout(() => {
+            phraseEl.remove();
+            showingBubble = false;
+            showNextPhrase();
+          }, 350);
+        }
+      }, duration);
+    }
+
+    function showNextPhrase() {
+      const mensaje = document.getElementById('mensaje-sutil');
+      if (mensaje && mensaje.style.opacity !== "0") {
+        mensaje.style.opacity = "0";
+      }
+      if (phrasePool.length === 0) phrasePool = [...phrases];
+      if (!showingBubble) {
+        const idx = Math.floor(Math.random() * phrasePool.length);
+        const text = phrasePool.splice(idx, 1)[0];
+        showPhraseBubble(text);
+      }
+    }
+
+    document.body.addEventListener('click', function(e) {
+      if (e.target.classList.contains('bubble')) return;
+      showNextPhrase();
+    });
+
+    showNextPhrase();
+  </script>
+</body>
+</html>
