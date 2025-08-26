@@ -1,0 +1,154 @@
+<!<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I Love You Animation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #ffebee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        
+        #message {
+            position: absolute;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #d81b60;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            text-align: center;
+        }
+        
+        .heart {
+            position: absolute;
+            pointer-events: none;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div id="message">I Love You</div>
+    <div class="footer">TE AMO HERMOSA</div>
+    
+    <script>
+        // Función Point similar a la de tu imagen
+        function Point(x, y) {
+            this.x = typeof x !== 'undefined' ? x : 0;
+            this.y = typeof y !== 'undefined' ? y : 0;
+        }
+        
+        Point.prototype.clone = function() {
+            return new Point(this.x, this.y);
+        };
+        
+        // Crear corazones
+        function createHearts() {
+            const colors = ['#ff4081', '#e91e63', '#c2185b', '#ff80ab', '#f50057'];
+            const heartShapes = [
+                '❤', '💖', '💗', '💓', '💞', '💕', '❣', '💘', '💝'
+            ];
+            
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.innerHTML = heartShapes[Math.floor(Math.random() * heartShapes.length)];
+                    heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+                    heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                    
+                    const startPos = new Point(
+                        Math.random() * window.innerWidth,
+                        window.innerHeight + 50
+                    );
+                    
+                    heart.style.left = startPos.x + 'px';
+                    heart.style.top = startPos.y + 'px';
+                    
+                    document.body.appendChild(heart);
+                    
+                    // Animación del corazón
+                    animateHeart(heart, startPos);
+                }, i * 300);
+            }
+        }
+        
+        function animateHeart(heart, startPos) {
+            const duration = Math.random() * 3000 + 5000;
+            const endPos = new Point(
+                startPos.x + (Math.random() * 200 - 100),
+                -50
+            );
+            
+            const startTime = performance.now();
+            
+            function moveHeart(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const currentX = startPos.x + (endPos.x - startPos.x) * progress;
+                const currentY = startPos.y + (endPos.y - startPos.y) * progress;
+                
+                heart.style.left = currentX + 'px';
+                heart.style.top = currentY + 'px';
+                
+                // Rotación y opacidad
+                heart.style.transform = `rotate(${progress * 360}deg)`;
+                heart.style.opacity = 1 - progress;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(moveHeart);
+                } else {
+                    heart.remove();
+                    // Crear un nuevo corazón
+                    setTimeout(() => {
+                        createHearts();
+                    }, 100);
+                }
+            }
+            
+            requestAnimationFrame(moveHeart);
+        }
+        
+        // Iniciar la animación
+        window.addEventListener('load', () => {
+            createHearts();
+            
+            // Hacer el mensaje un poco interactivo
+            const message = document.getElementById('message');
+            message.addEventListener('click', () => {
+                message.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    message.style.transform = 'scale(1)';
+                }, 300);
+                createHearts();
+            });
+        });
+    </script>
+</body>
+</html>
