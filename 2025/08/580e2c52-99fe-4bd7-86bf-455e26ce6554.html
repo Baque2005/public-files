@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calendario del Amor 2025 💖</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fff0f5;
+      color: #333;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    h1 {
+      color: #d63384;
+      margin-bottom: 40px;
+    }
+    .month {
+      margin: 30px auto;
+      max-width: 700px;
+    }
+    .month-name {
+      font-size: 1.5em;
+      color: #b03060;
+      margin-bottom: 10px;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .day {
+      padding: 10px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .special {
+      background-color: #ffe0f0;
+      border: 2px solid #ff69b4;
+      position: relative;
+    }
+    .special::after {
+      content: "\1F496";
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      animation: heartbeat 1s infinite;
+    }
+    .special:hover {
+      cursor: pointer;
+      transform: scale(1.05);
+    }
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+    }
+    .message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff0f8;
+      border: 1px solid #ff69b4;
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-size: 1.2em;
+      color: #c2185b;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      animation: fadeIn 0.4s ease-in-out;
+      z-index: 999;
+      display: none;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -40%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+  </style>
+</head>
+<body>
+  <h1>🌟 Fechas del Amor 2025</h1>
+  <div id="year-calendar"></div>
+  <script>
+    const meses = [
+      { nombre: "Enero", dias: 31 },
+      { nombre: "Febrero", dias: 28 },
+      { nombre: "Marzo", dias: 31 },
+      { nombre: "Abril", dias: 30 },
+      { nombre: "Mayo", dias: 31 },
+      { nombre: "Junio", dias: 30 },
+      { nombre: "Julio", dias: 31 },
+      { nombre: "Agosto", dias: 31 },
+      { nombre: "Septiembre", dias: 30 },
+      { nombre: "Octubre", dias: 31 },
+      { nombre: "Noviembre", dias: 30 },
+      { nombre: "Diciembre", dias: 31 }
+    ];
+
+    const fechasEspeciales = {
+      0: { 1: "Año Nuevo", 6: "Día de los Reyes Magos 🏱", 21: "Día Internacional del Abrazo 🤗" },
+      1: { 7: "Inicio de la Semana del Amor 💌", 14: "San Valentín 💘" },
+      2: { 20: "Equinoccio de primavera 🌸", 25: "Primer 'te quiero' 🥰" },
+      3: { 23: "Día del Libro y el Idioma 📚", 26: "Día del Beso Robado 😘" },
+      4: { 1: "Día del Trabajo (¡también se trabaja el amor!)", 11: "Día de la Madre 💐" },
+      5: { 12: "Día de los Enamorados 💞", 21: "Solsticio de invierno ❄️" },
+      6: { 6: "Beso de medio año 😘", 20: "Día del Amigo 🤝" },
+      7: { 1: "Día de la Pachamama 🌱", 14: "Día Mundial de la Pareja 💑" },
+      8: { 13: "Día del Programador 💻", 21: "Día de la Primavera 🌼" },
+      9: { 4: "Día Mundial de la Sonrisa 😊", 14: "Día de la Carta de Amor 💌" },
+      10: { 11: "Día del Soltero (y del coqueteo 😏)", 28: "Acción de Gracias 🦃" },
+      11: { 24: "Nochebuena 🎄", 31: "Fin de año: promesas de amor ✨" }
+    };
+
+    const container = document.getElementById("year-calendar");
+
+    const msgGlobal = document.createElement("div");
+    msgGlobal.className = "message";
+    document.body.appendChild(msgGlobal);
+
+    meses.forEach((mes, index) => {
+      const mesDiv = document.createElement("div");
+      mesDiv.className = "month";
+
+      const titulo = document.createElement("div");
+      titulo.className = "month-name";
+      titulo.textContent = mes.nombre;
+      mesDiv.appendChild(titulo);
+
+      const calendario = document.createElement("div");
+      calendario.className = "calendar";
+
+      for (let d = 1; d <= mes.dias; d++) {
+        const dia = document.createElement("div");
+        dia.className = "day";
+        dia.textContent = d;
+
+        if (fechasEspeciales[index] && fechasEspeciales[index][d]) {
+          dia.classList.add("special");
+          const mensaje = fechasEspeciales[index][d];
+
+          dia.addEventListener("mouseenter", () => {
+            msgGlobal.textContent = mensaje;
+            msgGlobal.style.display = "block";
+          });
+
+          dia.addEventListener("mouseleave", () => {
+            msgGlobal.style.display = "none";
+          });
+        }
+
+        calendario.appendChild(dia);
+      }
+
+      mesDiv.appendChild(calendario);
+      container.appendChild(mesDiv);
+    });
+  </script>
+</body>
+</html>
