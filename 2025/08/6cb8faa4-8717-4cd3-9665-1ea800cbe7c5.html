@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Regalo para mi esposita</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;600&display=swap');
+  body {
+    height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #FF758C 0%, #FF7EB3 100%);
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    overflow: hidden;
+    user-select: none;
+  }
+  .card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    max-width: 350px;
+    padding: 30px 40px;
+    text-align: center;
+    box-shadow: 0 8px 32px 0 rgba(255, 150, 180, 0.37);
+    position: relative;
+  }
+  h1 {
+    font-family: 'Great Vibes', cursive;
+    font-size: 3rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 6px rgba(255 20 50 / 0.7);
+  }
+  p {
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    line-height: 1.4;
+  }
+  button {
+    background: #FF4E7E;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 78, 126, 0.6);
+  }
+  button:hover {
+    background: #FF92AC;
+    box-shadow: 0 6px 16px rgba(255, 146, 172, 0.8);
+  }
+  .heart {
+    position: absolute;
+    font-size: 3rem;
+    animation: beat 1.2s infinite;
+    color: #FF2D55;
+    top: -20px;
+    right: -20px;
+    user-select: none;
+  }
+  @keyframes beat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+  }
+  .message {
+    font-size: 1.2rem;
+    margin-top: 20px;
+    color: #ffcad4;
+    min-height: 2.5em;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <div class="card" role="main" aria-label="Tarjeta de regalo romántica">
+    <div class="heart" aria-hidden="true">❤️</div>
+    <h1>Para mi esposita</h1>
+    <p>Quiero que sepas que cada momento a tu lado es un regalo que atesoro con todo mi corazón.</p>
+    <button id="showMessageBtn" aria-describedby="hiddenMessage">Haz clic para un mensaje especial</button>
+    <div id="hiddenMessage" class="message" aria-live="polite"></div>
+  </div>
+
+<script>
+  const button = document.getElementById('showMessageBtn');
+  const message = document.getElementById('hiddenMessage');
+  const specialMessages = [
+    "Eres mi inspiración diaria y mi alegría constante.",
+    "Contigo, la vida es un hermoso viaje lleno de amor.",
+    "Gracias por ser la mejor parte de mi vida.",
+    "Cada día contigo es un sueño hecho realidad.",
+    "Mi corazón late más fuerte cuando estoy contigo."
+  ];
+  button.addEventListener('click', () => {
+    const index = Math.floor(Math.random() * specialMessages.length);
+    message.textContent = specialMessages[index];
+    button.disabled = true;
+    button.textContent = "Mensaje mostrado";
+  });
+</script>
+</body>
+</html>
