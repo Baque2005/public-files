@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>201 Cosas que me gustan de ti</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f0f8ff;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      color: #d63384;
+    }
+
+    h1, h2 {
+      margin: 40px 20px 20px;
+    }
+
+    button {
+      background-color: #ff66a3;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      margin-top: 30px;
+    }
+
+    .lista {
+      max-width: 700px;
+      margin: 20px auto;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    .item {
+      background: #fff0f5;
+      border-radius: 15px;
+      padding: 10px 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: showItem 0.5s ease forwards;
+      text-align: left;
+    }
+
+    .razon-titulo {
+        font-weight: bold;
+        font-size: 1.1em;
+        margin-bottom: 5px;
+        color: #c2185b;
+    }
+
+    .poema-texto {
+        font-style: italic;
+        font-size: 0.95em;
+        line-height: 1.4;
+        white-space: pre-line;
+    }
+
+    @keyframes latido {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.2);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .corazon-palpitante {
+      display: inline-block;
+      animation: latido 1s infinite alternate;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    @keyframes showItem {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <audio id="musicaDeFondo" src="https://github.com/jesuxzx/Proyecto-/raw/0bc5794d80c5b528fd30a0a144196b3ec5ead152/yung%20kai%20-%20blue%20(sub.%20espa%C3%B1ol%20%2B%20lyrics).mp3" loop autoplay></audio>
+
+  <h1>Cosas que me gustan de ti <span class="corazon-palpitante">💓</span></h1>
+  <div id="primeraParte">
+    <h2>1.
+Tu sonrisa<br>2. Tus ojos<br>3. Tu forma de hablar<br>4. Cómo me haces sentir<br>5.
+Tu ternura</h2>
+    <button onclick="mostrarSorpresa()">Da click aqui</button>
+  </div>
+
+  <div id="segundaParte" style="display:none;">
+    <h1>¿En serio crees que son solo 5?</h1>
+    <button onclick="mostrarLista()">Aquí van 230 cosas que me encantan de ti</button>
+  </div>
+
+  <div id="lista" class="lista"></div>
+
+  <script>
+    const cosas = [
+      {
+        razon: "El mundo se acomoda cuando llegas",
+        poema: "Andrea, cuando apareces, el espacio se vuelve más blando,\ncomo si la vida respirara más lento solo para mirarte."
+      },
+      {
+        razon: "Cómo sostienes lo que otros sueltan",
+        poema: "Tienes una fuerza que no presume,\npero se nota cuando cuidas lo que a otros se les cae del alma."
+      },
+      {
+        razon: "Tu forma de cerrar los ojos",
+        poema: "Cuando cierras los ojos, Andrea,\nparece que hablas con el universo sin decir nada,\ny yo me quedo ahí, esperando el milagro."
+      },
+      {
+        razon: "Los gestos que no te das cuenta que haces",
+        poema: "Ese mechón que apartas sin pensarlo,\nesa ceja que levantas sin saberlo...\nson pequeños poemas que no sabes que escribes."
+      },
+      {
+        razon: "Lo que haces con un “cómo estás”",
+        poema: "Cuando preguntas eso, Andrea, no es por rutina,\nes como si dijeras: “entrégame tus ruinas, yo sabré abrazarlas”."
+      },
+      {
+        razon: "Tu relación con el tiempo",
+        poema: "No vives deprisa ni te quedas quieta:\ncaminas con el tiempo como si fueran amigos,\ncomo si lo convencieras de ser más amable."
+      },
+      {
+        razon: "Tu mirada cuando estás en silencio",
+        poema: "Cuando callas y me miras,\nno necesito traducciones:\nahí está todo el amor que no cabe en palabras."
+      },
+      {
+        razon: "Esa forma tuya de no rendirte",
+        poema: "Andrea, hay días en los que todo pesa,\npero tú igual te levantas, no por terquedad,\nsino porque tu alma no sabe rendirse."
+      },
+      {
+        razon: "Lo que haces con lo simple",
+        poema: "Donde otros ven rutina, tú ves belleza.\nUn café contigo se vuelve ritual,\nuna caminata contigo se vuelve recuerdo."
+      },
+      {
+        razon: "Cómo hablas de los que amas",
+        poema: "No hay mentira en tus palabras cuando nombras a alguien que quieres.\nEn tu voz se nota la lealtad,\nesa que no se aprende, se nace con ella."
+      },
+      {
+        razon: "Tu olor cuando abrazas",
+        poema: "Andrea, cuando me abrazas,\nno solo huelo tu piel,\nhuelo lo seguro, lo eterno, lo mío."
+      },
+      {
+        razon: "Tu caos hermoso",
+        poema: "No eres orden ni desorden:\neres un mapa secreto lleno de sorpresas,\ny cada una me invita a quedarme a vivirte."
+      },
+      {
+        razon: "La música que te inventas sin darte cuenta",
+        poema: "Tu risa es canción,\ntus pasos suenan como versos,\ny cuando suspiras, todo se afina."
+      },
+      {
+        razon: "Lo que haces con un “te quiero”",
+        poema: "En tu boca, Andrea, un “te quiero”\nno es una frase:\nes un lugar, una promesa, un refugio."
+      },
+      {
+        razon: "Cómo habitas tu tristeza",
+        poema: "No escondes lo que duele.\nLo transformas.\nY eso, Andrea, también es una forma de belleza."
+      },
+      {
+        razon: "Tus manos cuando no sabes qué hacer con ellas",
+        poema: "Andrea, cuando estás nerviosa y tus manos buscan dónde posarse,\nno sabes que esa torpeza tuya me parece la coreografía más honesta del mundo."
+      },
+      {
+        razon: "Cómo cuidas lo que otros olvidan",
+        poema: "Tú recuerdas los detalles que nadie nota:\nel vaso con agua, el mensaje a tiempo,\nla caricia que no se pidió, pero se necesitaba."
+      },
+      {
+        razon: "Tu forma de estar en silencio sin incomodar",
+        poema: "Andrea, estar contigo en silencio no es ausencia:\nes paz. Es compañía sin presión.\nEres el único silencio que nunca se siente solo."
+      },
+      {
+        razon: "Cuando dejas caer la cabeza en mi hombro",
+        poema: "Ese gesto pequeño, Andrea,\nes tu manera de decir “confío”,\ny yo me convierto en refugio sin pensarlo."
+      },
+      {
+        razon: "La pasión con la que hablas cuando algo te importa",
+        poema: "Cuando algo te enciende, Andrea,\nno hablas: ardes.\nY yo podría quedarme a escucharte por horas."
+      },
+      {
+        razon: "Tus errores sin disfraz",
+        poema: "No finges ser perfecta,\ny esa honestidad, Andrea,\nvale más que cualquier maquillaje del alma."
+      },
+      {
+        razon: "Lo que tus ojos hacen cuando ves algo que te emociona",
+        poema: "Andrea, tus pupilas se dilatan como si el mundo te sorprendiera aún,\ny yo me enamoro de tu capacidad de asombro una y otra vez."
+      },
+      {
+        razon: "La ternura de tus despedidas",
+        poema: "Incluso en el adiós más breve,\npones cariño, como si temieras\nque ese fuera el último hasta luego."
+      },
+      {
+        razon: "El respeto con el que dices “no”",
+        poema: "Andrea, cuando decides poner un límite,\nno hieres: enseñas.\nY eso también es una forma de amar."
+      },
+      {
+        razon: "Tu sonrisa cuando estás a punto de llorar",
+        poema: "Hay momentos donde todo en ti tiembla,\npero aún así sonríes.\nEsa valentía frágil me parte y me construye."
+      },
+      {
+        razon: "Lo que haces con tus libros subrayados",
+        poema: "Tus anotaciones al margen, Andrea,\nson pensamientos que me gustaría enmarcar,\nporque en ellos vive la mujer que piensa y siente a la vez."
+      },
+      {
+        razon: "La forma en que acaricias sin darte cuenta",
+        poema: "Rozas un brazo, una mejilla, el aire…\ny en cada gesto hay una poesía que no sabe que es poesía."
+      },
+      {
+        razon: "Cómo celebras lo pequeño",
+        poema: "Un mensaje bonito, una canción que te gusta,\nun día sin lluvia: tú haces fiesta de lo mínimo.\nY eso, Andrea, es un superpoder."
+      },
+      {
+        razon: "Tu voz al despertar",
+        poema: "Entre el sueño y la vigilia,\ntu voz arrastra una dulzura torpe que amo más que cualquier canción."
+      },
+      {
+        razon: "La forma en que me miras cuando crees que no te veo",
+        poema: "Andrea, a veces te sorprendo mirándome\ncon una mezcla de ternura, duda y algo que parece amor…\ny ese instante vale más que mil certezas."
+      },
+      {
+        razon: "Tu manera de sostener una conversación profunda sin miedo",
+        poema: "No le huyes a lo difícil.\nMe hablas de heridas, de sueños rotos,\ny en eso hay una intimidad que no se encuentra fácil."
+      },
+      {
+        razon: "Tu capacidad de estar para otros, incluso rota",
+        poema: "Andrea, incluso cuando te faltas a ti,\nestás para quienes amas.\nY eso es una forma de amar que pocos comprenden."
+      },
+      {
+        razon: "Cómo reaccionas cuando algo te da ternura",
+        poema: "Tus ojos se hacen grandes,\ntu voz se suaviza,\ny juro que en ese instante, todo se vuelve más bonito."
+      },
+      {
+        razon: "Tus cejas cuando te sorprendes",
+        poema: "Esa curva perfecta hacia el cielo\nes una forma de preguntarle al mundo “¿es real esto?”\nY yo quisiera responderte: sí, Andrea, y tú también lo eres."
+      },
+      {
+        razon: "La manera en que pronuncias mi nombre",
+        poema: "En tu voz mi nombre tiene otro peso,\ncomo si por fin fuera mío.\nComo si no hubiera sido verdad hasta que tú lo dijiste."
+      },
+      {
+        razon: "Tu torpeza cuando algo te importa mucho",
+        poema: "Andrea, cuando algo te importa,\nse nota en que tropiezas, te aceleras o te callas.\nY eso, para mí, es una forma hermosa de sentir."
+      },
+      {
+        razon: "Tus mensajes cuando sientes nostalgia",
+        poema: "A veces me escribes cosas simples,\npero yo sé que detrás hay un corazón abierto.\nY eso me basta para quererte más."
+      },
+      {
+        razon: "La forma en que tu risa interrumpe lo serio",
+        poema: "Andrea, incluso en medio de algo triste,\ntu risa entra como una brisa loca que lo desordena todo.\nY ahí entiendo que vivir también es eso."
+      },
+      {
+        razon: "Cómo escuchas canciones tristes sin miedo",
+        poema: "No huyes del dolor: lo cantas.\nY en eso hay una valentía que pocos tienen."
+      },
+      {
+        razon: "Tu sombra junto a la mía",
+        poema: "Cuando caminamos y el sol nos dibuja,\nmi sombra busca la tuya.\nComo yo te busco, incluso cuando no estás."
+      },
+      {
+        razon: "La forma en que te sientas cerca de mí",
+        poema: "Andrea, cuando te sientas cerca,\ntu cuerpo habla sin decir palabra.\nY cada centímetro que decides acercar,\nes un universo que me entregas."
+      },
+      {
+        razon: "Tu manera de guardar los recuerdos",
+        poema: "No acumulas objetos, Andrea.\nGuardas sensaciones, momentos,\ny les das un lugar especial en el corazón."
+      },
+      {
+        razon: "Cómo acaricias con las palabras",
+        poema: "Tus frases no son solo sonidos.\nSon manos invisibles que saben dónde duele\ny cómo sanar sin apuro."
+      },
+      {
+        razon: "Tu conexión con la luna",
+        poema: "Te he visto mirar al cielo\ncomo si alguien ahí te hablara,\ny en tus ojos había algo lunar, algo sagrado."
+      },
+      {
+        razon: "Lo que haces con un abrazo largo",
+        poema: "Cuando abrazas sin prisa, Andrea,\nel tiempo se rinde,\ny el mundo se detiene a vernos."
+      },
+      {
+        razon: "Tu reacción cuando alguien te admira",
+        poema: "No sabes qué hacer con los halagos,\ny eso, lejos de restarte brillo,\nte vuelve más luz todavía."
+      },
+      {
+        razon: "Tu forma de ponerte triste sin rendirte",
+        poema: "Hay tristeza en ti, sí.\nPero también hay dignidad.\nUna forma de continuar sin dejar de sentir."
+      },
+      {
+        razon: "La forma en que comes algo que amas",
+        poema: "Andrea, cuando algo te gusta,\nno lo devoras: lo disfrutas.\nComo si en cada bocado vivieras un recuerdo."
+      },
+      {
+        razon: "Cómo arreglas tu cabello sin pensar",
+        poema: "Ese gesto de manos enredadas entre tus hilos,\nsin espejo ni apuro,\nes un cuadro en movimiento que no me canso de ver."
+      },
+      {
+        razon: "La forma en que a veces te contradices",
+        poema: "No eres lineal, Andrea.\nY eso te hace real.\nEres contradicción honesta,\nuna mujer que se permite cambiar."
+      },
+      {
+        razon: "Tu olor después de la lluvia",
+        poema: "Hay días en que hueles a tierra mojada y calma.\nY yo juro que podría quedarme en tu aroma."
+      },
+      {
+        razon: "Lo que haces con tus ganas de desaparecer",
+        poema: "A veces quieres esconderte,\npero en vez de huir, te quedas.\nY eso es valiente."
+      },
+      {
+        razon: "Cómo tocas los objetos con cuidado",
+        poema: "No rompes. No fuerzas.\nTodo lo que tocas, Andrea,\nparece respirar con más calma."
+      },
+      {
+        razon: "Tu lealtad a quienes ya no están",
+        poema: "No olvidas a los que fueron parte de ti.\nY eso habla de un corazón que honra,\naunque duela."
+      },
+      {
+        razon: "Tu forma de dormir cuando te sientes segura",
+        poema: "Cuando por fin te rindes al sueño,\nhay en tu rostro una paz\nque solo nace cuando el alma descansa."
+      },
+      {
+        razon: "Cómo te ríes de ti misma sin lastimarte",
+        poema: "Andrea, puedes burlarte de tus errores\nsin crueldad.\nCon ternura, como quien entiende que también es humana."
+      },
+      {
+        razon: "La forma en que sientes vergüenza",
+        poema: "Cuando te sonrojas o te escondes,\nhay una inocencia que sobrevive en ti\ncomo una flor terca en medio del concreto."
+      },
+      {
+        razon: "Tu relación con la música vieja",
+        poema: "Tú no escuchas canciones antiguas:\nlas revives.\nComo si cada nota tuviera un rincón en tu historia."
+      },
+      {
+        razon: "Cómo organizas tu caos",
+        poema: "Tu desorden tiene lógica,\ntu mesa revuelta es un mapa.\nY yo amo explorar tus misterios cotidianos."
+      },
+      {
+        razon: "La forma en que tocas tu cuello cuando piensas",
+        poema: "Ese gesto mínimo, Andrea,\ndice tanto.\nEs como si tus dedos buscaran respuestas que tu boca calla."
+      },
+      {
+        razon: "Tu manera de mirar fotos antiguas",
+        poema: "No ves solo imágenes.\nVes lo que dolió, lo que sanó, lo que fuiste.\nY yo admiro tu forma de reconciliarte con tu pasado."
+      },
+      {
+        razon: "Lo que haces con una lágrima sola",
+        poema: "Cuando una sola lágrima baja por tu mejilla,\nes un poema que no se escribió pero que grita."
+      },
+      {
+        razon: "Tu delicadeza para entrar en espacios ajenos",
+        poema: "No irrumpes, Andrea.\nTocas la puerta del alma ajena\ncon los nudillos de la empatía."
+      },
+      {
+        razon: "Cómo abrazas a un animal",
+        poema: "Cuando tienes uno cerca,\nse te nota el corazón sin filtros.\nEres ternura pura."
+      },
+      {
+        razon: "La forma en que te molestas cuando algo duele al otro",
+        poema: "Tu enojo no es por ti.\nEs por quienes amas.\nY ese fuego en tus ojos defiende lo que es justo."
+      },
+      {
+        razon: "Tu silencio en medio de una discusión",
+        poema: "No hablas por hablar.\nEsperas, respiras, piensas.\nY cuando hablas, Andrea, lo haces con verdad."
+      },
+      {
+        razon: "La manera en que escondes cartas, papeles, recuerdos",
+        poema: "Tienes cajitas con cosas que para ti valen el mundo,\ny eso me parece un acto de amor a la memoria."
+      },
+      {
+        razon: "Cómo a veces no sabes qué decir, pero igual te quedas",
+        poema: "No tienes todas las palabras,\npero sí la presencia.\nY eso, Andrea, vale más que mil discursos."
+      },
+      {
+        razon: "Tu forma de mirar cuando escuchas atentamente",
+        poema: "No solo oyes.\nTus ojos siguen cada palabra,\ncomo si acariciaran lo que el otro está diciendo."
+      },
+      {
+        razon: "Lo que haces con un “te extraño”",
+        poema: "Tú no lo dices en vano.\nCuando lo dices, Andrea,\nes porque alguien realmente vive en tu pecho."
+      },
+      {
+        razon: "Tu manera de mirar por la ventana",
+        poema: "Andrea, cuando miras afuera,\nparece que estás viajando por dentro.\nY yo me pregunto qué mundo visitas con esos ojos lentos."
+      },
+      {
+        razon: "La forma en que pronuncias ciertas palabras con ternura",
+        poema: "Hay palabras que, en tu voz,\npierden filo y se vuelven caricias."
+      },
+      {
+        razon: "Tu pausa antes de decir algo importante",
+        poema: "Esa breve pausa, ese segundo exacto…\nme dice que tu alma está buscando la forma más honesta de hablar."
+      },
+      {
+        razon: "Tu amor por lo que nadie ve",
+        poema: "Te detienes en la flor que casi muere,\nen el perro viejo, en el rincón olvidado…\ny eso te hace más hermosa."
+      },
+      {
+        razon: "Cómo caminas cuando estás pensativa",
+        poema: "Tus pasos cambian, Andrea,\ncomo si el suelo pesara menos\ncuando tu mente viaja."
+      },
+      {
+        razon: "Tu expresión cuando algo te sorprende de verdad",
+        poema: "No finges.\nAbres los ojos, sueltas el aire,\ny yo veo en ti la maravilla del asombro intacto."
+      },
+      {
+        razon: "Tu risa cuando intentas no reírte",
+        poema: "Esa risa contenida que se escapa por los ojos\nes la más honesta de todas."
+      },
+      {
+        razon: "La forma en que te arropas cuando tienes frío",
+        poema: "No solo te cubres:\nte abrazas.\nY ese gesto, Andrea,\nme dan ganas de ser tu abrigo."
+      },
+      {
+        razon: "Tu olor al final del día",
+        poema: "Después de todo,\nsigues oliendo a hogar.\nNo importa la hora."
+      },
+      {
+        razon: "Tu respeto por el dolor ajeno",
+        poema: "No minimizas.\nNo compites.\nSolo abrazas, Andrea, y escuchas."
+      },
+      {
+        razon: "La forma en que arreglas lo que no funciona",
+        poema: "No tiras. No huyes.\nTe sientas, piensas, intentas.\nY eso aplica tanto a objetos como a personas."
+      },
+      {
+        razon: "Tu forma de besar con los ojos antes que con los labios",
+        poema: "Hay una mirada tuya, Andrea,\nque me besa antes de tocarme.\nY con eso basta."
+      },
+      {
+        razon: "Tu entusiasmo cuando haces algo que amas",
+        poema: "Brillas.\nComo si todo en ti dijera: “esto me hace sentir viva”."
+      },
+      {
+        razon: "Lo que haces cuando nadie te ve",
+        poema: "Cantas bajito, te hablas, te abrazas.\nY ese mundo secreto me enamora aún más."
+      },
+      {
+        razon: "Tu honestidad cuando no sabes algo",
+        poema: "No finges saberlo todo.\nY esa humildad, Andrea,\nte hace inmensa."
+      },
+      {
+        razon: "Cómo tomas una taza caliente entre tus manos",
+        poema: "Tus dedos rodean el borde con cuidado,\ncomo si la calidez también entrara en ti."
+      },
+      {
+        razon: "Tu expresión cuando alguien te dice algo bonito",
+        poema: "No sabes qué hacer.\nTe ríes, te sonrojas, miras al piso…\ny yo me muero por seguir diciéndotelo."
+      },
+      {
+        razon: "Cómo suspiras cuando estás a solas",
+        poema: "Ese suspiro tuyo\nes como una puerta que se abre al alma\ny deja salir lo que no pudiste decir."
+      },
+      {
+        razon: "Tu relación con los objetos que tienen historia",
+        poema: "Guardas cosas rotas pero significativas,\ncomo quien entiende que el valor no está en lo nuevo,\nsino en lo vivido."
+      },
+      {
+        razon: "Cómo aceptas tus cambios sin pedir perdón por ellos",
+        poema: "Andrea, has evolucionado.\nY aunque a veces cuesta,\nno te niegas a crecer."
+      },
+      {
+        razon: "La forma en que me tomas la mano sin avisar",
+        poema: "No dices nada,\nsolo tu mano llega.\nY con eso me dices todo."
+      },
+      {
+        razon: "Tu risa que aparece cuando todo parecía gris",
+        poema: "Es un rayo de sol desobediente,\nque decide salir cuando nadie lo espera."
+      },
+      {
+        razon: "Cómo piensas en los demás cuando nadie lo nota",
+        poema: "Tú recuerdas cumpleaños, estados de ánimo, ausencias…\naunque nadie te lo pida."
+      },
+      {
+        razon: "Tu forma de escribir con emoción",
+        poema: "Tus letras bailan.\nIncluso en un mensaje corto,\nhay alma."
+      },
+      {
+        razon: "La manera en que reaccionas cuando te llaman por tu nombre completo",
+        poema: "Esa mezcla de risa, fastidio y ternura\nme parece una joya secreta de tu carácter."
+      },
+      {
+        razon: "Tu relación con la nostalgia",
+        poema: "No la rechazas.\nLa invitas a sentarse contigo,\ny juntas recuerdan sin miedo."
+      },
+      {
+        razon: "Cómo cuidas tus plantas (o cómo cuidarías una)",
+        poema: "Incluso si no tienes una,\nsé que sabrías cuándo regarla, cuándo hablarle,\ny cuándo simplemente dejarla estar."
+      },
+      {
+        razon: "Tu habilidad de hacerme sentir importante sin decirlo",
+        poema: "Andrea, a tu lado uno se siente visto.\nEso no se enseña.\nEso se es."
+      },
+      {
+        razon: "La manera en que usas tu ropa favorita",
+        poema: "No es moda:\nes seguridad.\nEs como si esa prenda fuera un escudo que te abraza."
+      },
+      {
+        razon: "Tu presencia que calma hasta mis pensamientos más rotos",
+        poema: "Cuando estás, todo en mí se ordena.\nSin esfuerzo.\nSolo porque eres tú."
+      },
+      {
+        razon: "Tu forma de abrir los ojos cuando algo te emociona",
+        poema: "Andrea, hay un destello infantil,\nuna chispa antigua y pura\nque te enciende entera por dentro."
+      },
+      {
+        razon: "La manera en que pides perdón con el corazón",
+        poema: "No usas excusas.\nSolo verdad,\ny eso desarma cualquier rencor."
+      },
+      {
+        razon: "Tu ternura con los más pequeños",
+        poema: "No importa si son niños, animales o gestos frágiles:\ntú te vuelves suavidad."
+      },
+      {
+        razon: "Cómo esperas lo bueno, incluso cuando tarda",
+        poema: "Tienes la paciencia del alma valiente.\nNo porque no duela,\nsino porque sabes que lo bueno llega."
+      },
+      {
+        razon: "Tu silencio lleno de sentido",
+        poema: "Cuando callas, Andrea,\nno hay vacío.\nHay profundidad."
+      },
+      {
+        razon: "Tu forma de amar lo imperfecto",
+        poema: "No buscas lo pulido,\nsino lo que vibra, lo que siente, lo que es real."
+      },
+      {
+        razon: "Tu instinto para saber cuándo abrazar",
+        poema: "No preguntas:\nintuyes.\nY siempre llegas justo a tiempo."
+      },
+      {
+        razon: "Lo que haces con un recuerdo triste",
+        poema: "No lo ocultas ni lo exageras.\nLo abrazas con respeto\ncomo quien entiende que todo fue necesario."
+      },
+      {
+        razon: "La manera en que te sueltas el cabello",
+        poema: "Ese gesto leve, natural,\ntiene algo de libertad y algo de rito."
+      },
+      {
+        razon: "Tu forma de acompañar sin invadir",
+        poema: "Estás.\nNo como sombra,\nsino como luz que no quema."
+      },
+      {
+        razon: "Cómo dices ‘te quiero’ sin usar esas palabras",
+        poema: "En tus gestos,\nen cómo sirves un café,\nen cómo me cuidas los silencios."
+      },
+      {
+        razon: "Tu forma de mirar cuando estás enamorada",
+        poema: "No necesitas decirlo.\nTus ojos hacen confesiones que el alma escucha."
+      },
+      {
+        razon: "Cómo organizas tu mundo interior",
+        poema: "Tienes desordenes, sí.\nPero hasta en tu caos hay ternura y lógica."
+      },
+      {
+        razon: "La forma en que el sol te toca la piel",
+        poema: "Hay algo sagrado en esa luz sobre ti.\nComo si incluso el sol supiera lo que vales."
+      },
+      {
+        razon: "Tu resistencia cuando nadie lo nota",
+        poema: "Andrea, llevas guerras silenciosas\ny aún así sonríes como si el alma no sangrara."
+      },
+      {
+        razon: "Cómo das las gracias sin palabras",
+        poema: "A veces solo miras,\ny con eso uno entiende que fue visto."
+      },
+      {
+        razon: "Tu forma de celebrar lo pequeño",
+        poema: "Una canción, una coincidencia, una nube bonita…\ntodo contigo se vuelve fiesta."
+      },
+      {
+        razon: "Tu modo de quedarte despierta por amor",
+        poema: "No por obligación,\nsino porque sabes que a veces,\nquedarse, también es amar."
+      },
+      {
+        razon: "Cómo miras cuando estás por llorar y no quieres",
+        poema: "Hay un temblor en tu mirada\nque se queda conmigo por horas."
+      },
+      {
+        razon: "Tu manera de cuidar tus palabras",
+        poema: "No hablas por hablar.\nAndrea, tú eliges con el alma lo que dices."
+      },
+      {
+        razon: "La forma en que tocas cuando amas de verdad",
+        poema: "No es solo piel.\nEs energía, es entrega, es refugio."
+      },
+      {
+        razon: "Cómo recuerdas lo que a otros se les escapa",
+        poema: "Fechas, detalles, gestos, miedos…\nTú registras lo que el amor te dicta."
+      },
+      {
+        razon: "Tu forma de reír cuando por fin te sueltas",
+        poema: "Es una risa de mar abierto:\nincontenible, brillante, libre."
+      },
+      {
+        razon: "Tu alma antigua en un cuerpo joven",
+        poema: "Andrea, tienes una sabiduría\nque no se aprende leyendo,\nsino sintiendo."
+      },
+      {
+        razon: "Tu fidelidad a lo que amas, aunque nadie lo entienda",
+        poema: "Te quedas, luchas, esperas,\ny nunca necesitas aprobación."
+      },
+      {
+        razon: "Cómo saludas a alguien después de mucho tiempo",
+        poema: "Con emoción real,\ncon recuerdos vivos,\ncon ternura acumulada."
+      },
+      {
+        razon: "Tu forma de sostener la mirada cuando amas",
+        poema: "No es desafío,\nes entrega.\nUn “estoy aquí” sin palabras."
+      },
+      {
+        razon: "Lo que haces con la música triste",
+        poema: "No la evitas.\nLa escuchas, la habitas, la lloras.\nY al final, te limpia."
+      },
+      {
+        razon: "Tu forma de dudar sin dejar de avanzar",
+        poema: "Tienes miedo,\npero aún así das el paso.\nY eso te hace fuerte sin perder dulzura."
+      },
+      {
+        razon: "Cómo tu nombre me late en el pecho",
+        poema: "Andrea.\nNo es solo un nombre:\nes un eco en mi costado,\nuna sílaba que me calma."
+      },
+      {
+        razon: "Tu forma de esperar sin perder la esperanza",
+        poema: "Aunque la vida tarde,\ntu fe sigue vestida de ternura."
+      },
+      {
+        razon: "Cómo sostienes tus ideales sin gritar",
+        poema: "Andrea, defiendes lo que crees\ncon la fuerza de quien no necesita alzar la voz\npara ser firme."
+      },
+      {
+        razon: "Tu manera de tocar tus labios cuando estás pensando",
+        poema: "Ese gesto leve,\ncomo si tus dedos buscaran una verdad\nque tus labios aún no han dicho."
+      },
+      {
+        razon: "La forma en que acaricias lo que amas",
+        poema: "No solo con la mano:\ntambién con los ojos,\ncon la voz,\ncon el tiempo."
+      },
+      {
+        razon: "Cómo hablas de lo que te emociona",
+        poema: "Tu voz cambia,\nse ilumina,\ny de pronto, todo lo que nombras se vuelve poesía."
+      },
+      {
+        razon: "Tu rostro bajo la lluvia",
+        poema: "Andrea, cuando llueve,\npareces más viva,\nmás libre,\ncomo si el agua te recordara de qué estás hecha."
+      },
+      {
+        razon: "La manera en que duermes cuando por fin estás en paz",
+        poema: "No hay armaduras,\nno hay dudas,\nsolo tú, en tu forma más pura."
+      },
+      {
+        razon: "Tu obsesión por lo pequeño que otros no notan",
+        poema: "Esa piedrita bonita,\nesa hoja simétrica,\nese sonido leve…\ntú los ves y los celebras."
+      },
+      {
+        razon: "Cómo acaricias los nombres que te importan",
+        poema: "Dices “mamá”, “abuelo”, “amiga”, “amor”\ncomo quien honra, no solo nombra."
+      },
+      {
+        razon: "Tu forma de pedir ayuda sin sentirte menos",
+        poema: "Eres fuerte, sí,\npero también sabes cuándo abrir las manos\ny dejar que alguien te sostenga."
+      },
+      {
+        razon: "Tu abrazo que huele a casa",
+        poema: "Andrea, tu cuerpo sabe envolver\ncomo si tuviera memoria de todos mis inviernos."
+      },
+      {
+        razon: "La manera en que te emocionas con un mensaje bonito",
+        poema: "No lo escondes.\nSonríes con los ojos,\nrelees, suspiras, guardas.\nEso me encanta."
+      },
+      {
+        razon: "Tu voz cuando te acaban de despertar",
+        poema: "Tiene un temblor dulce,\ncomo si el mundo aún no te tocara del todo."
+      },
+      {
+        razon: "La forma en que te preocupas en silencio",
+        poema: "No haces drama.\nSolo vigilas, acompañas, piensas.\nEres refugio sin ruido."
+      },
+      {
+        razon: "Tu conexión con la luna",
+        poema: "No sé si la miras,\npero siento que la luna y tú\nse entienden."
+      },
+      {
+        razon: "Tu manera de decir mi nombre cuando me necesitas",
+        poema: "No lo gritas,\nno lo murmuras.\nLo dices como quien confía,\ncomo quien sabe que ahí estoy."
+      },
+      {
+        razon: "Cómo miras al cielo cuando algo duele",
+        poema: "No sé si es fe, búsqueda o simple rendición,\npero ese gesto tuyo me rompe y me enseña."
+      },
+      {
+        razon: "La forma en que el viento juega contigo",
+        poema: "Tu cabello baila,\ntu rostro se ofrece,\ny tú pareces parte del aire."
+      },
+      {
+        razon: "Tu sinceridad cuando algo no te gusta",
+        poema: "No finges.\nNo hieres.\nSolo dices la verdad con una dulzura\nque no hiere."
+      },
+      {
+        razon: "Cómo encuentras belleza en lo roto",
+        poema: "Ves grietas y piensas en historias.\nVes dolor y piensas en aprendizaje.\nEsa mirada tuya salva."
+      },
+      {
+        razon: "Tu forma de celebrar lo que a otros les parece poco",
+        poema: "Un mensaje, un logro mínimo, una coincidencia…\nTú los haces fiesta."
+      },
+      {
+        razon: "La manera en que acaricias tu propia tristeza",
+        poema: "No la niegas.\nLa sientas contigo,\ncomo quien respeta su sombra."
+      },
+      {
+        razon: "Tu silencio cuando alguien te decepciona",
+        poema: "No explotas.\nNo gritas.\nSolo callas con una dignidad que duele."
+      },
+      {
+        razon: "Cómo escuchas una canción favorita",
+        poema: "Cierras los ojos, sonríes,\ny dejas que la música te atraviese\ncomo si te hablara directo al alma."
+      },
+      {
+        razon: "Tu relación con los atardeceres",
+        poema: "Andrea, sé que los miras\ncomo quien entiende que lo más bello\ntambién puede doler un poco."
+      },
+      {
+        razon: "La forma en que te recuestas en mi hombro",
+        poema: "No es solo descanso.\nEs confianza, refugio, promesa."
+      },
+      {
+        razon: "Cómo defiendes tu espacio sin dejar de amar",
+        poema: "Pones límites,\npero nunca muros.\nTu amor respira libertad."
+      },
+      {
+        razon: "Tu voz cuando lees en voz alta",
+        poema: "Cada palabra en tu boca\nparece recién nacida.\nTú no lees: conjuras."
+      },
+      {
+        razon: "Tu risa cuando te sorprendes de ti misma",
+        poema: "Esa carcajada limpia,\nese “¡no puedo creerlo!”\nte hace niña, mujer y milagro a la vez."
+      },
+      {
+        razon: "Cómo, incluso en tus errores, sigues siendo amor",
+        poema: "Andrea, fallas como todos,\npero hasta tus tropiezos están llenos de luz."
+      },
+      {
+        razon: "Tu manera de pasar los dedos por una flor",
+        poema: "Andrea, como si tu tacto entendiera\nque todo lo vivo merece respeto."
+      },
+      {
+        razon: "Cómo se te escapa el alma cuando bailas",
+        poema: "Tu cuerpo se olvida de todo\ny solo recuerda ser libre."
+      },
+      {
+        razon: "Tu voz cuando cuentas algo que amaste",
+        poema: "Se vuelve canción,\ncomo si narraras una escena de tu propia película favorita."
+      },
+      {
+        razon: "Cómo te quedas pensando cuando algo te toca",
+        poema: "Andrea, hay un silencio tuyo\nque es más profundo que cualquier palabra."
+      },
+      {
+        razon: "Tu forma de besar sin prisa",
+        poema: "No son besos:\nson instantes que se quedan viviendo en la piel."
+      },
+      {
+        razon: "La ternura con que recoges lo que otros tiran",
+        poema: "No solo objetos.\nTambién personas, sueños, momentos rotos."
+      },
+      {
+        razon: "Tu manera de mirar cuando escuchas algo injusto",
+        poema: "Esa chispa en tus ojos me dice:\n“no me callo, no me rindo”."
+      },
+      {
+        razon: "La forma en que respiras cuando estás por llorar",
+        poema: "Ese nudo en el pecho,\nesa pausa leve…\ny aún así, respiras."
+      },
+      {
+        razon: "Tu sombra cuando caminas al atardecer",
+        poema: "Es arte.\nEs poesía dibujada en el suelo."
+      },
+      {
+        razon: "Cómo tomas café como si fuera un ritual",
+        poema: "Taza en mano, pausa exacta,\nsilencio sagrado.\nUna ceremonia de ti contigo."
+      },
+      {
+        razon: "Tu voz cuando dices “todo va a estar bien”",
+        poema: "No lo dices por decirlo.\nLo dices como quien lo va a construir."
+      },
+      {
+        razon: "Tu amor por lo que casi nadie valora",
+        poema: "Un papel doblado,\nuna nota vieja,\nuna historia simple.\nPara ti, todo eso tiene alma."
+      },
+      {
+        razon: "Tu silencio cuando te estás enamorando",
+        poema: "Te vuelves más observadora,\nmás suave,\nmás tú."
+      },
+      {
+        razon: "La forma en que te despides cuando no quieres irte",
+        poema: "Una mirada más larga,\nun roce innecesario,\nuna promesa callada."
+      },
+      {
+        razon: "Tu forma de enojarte sin perder el respeto",
+        poema: "Eres fuego que no destruye,\nsolo calienta el alma."
+      },
+      {
+        razon: "Cómo sostienes un secreto",
+        poema: "Andrea, contigo las palabras se sienten seguras.\nLas sellas con confianza."
+      },
+      {
+        razon: "Tu forma de reaccionar a las sorpresas",
+        poema: "Te brillan los ojos,\nte cubres la boca,\nte vuelve niña la emoción."
+      },
+      {
+        razon: "Tu amor por el agua",
+        poema: "Una ducha larga,\nuna cascada,\nuna playa.\nPareces hecha de río."
+      },
+      {
+        razon: "Tu dulzura al dar un regalo",
+        poema: "Lo importante no es el objeto,\nsino cómo lo entregas:\ncon alma."
+      },
+      {
+        razon: "Cómo apoyas sin prometer eternidades",
+        poema: "No prometes para siempre.\nPrometes presencia real,\ny eso vale más."
+      },
+      {
+        razon: "Tu conexión con los aromas",
+        poema: "Un perfume, una vela, una flor...\nTe veo cerrar los ojos,\ncomo si olfatear fuera recordar."
+      },
+      {
+        razon: "Tu forma de cruzar las piernas con elegancia natural",
+        poema: "No hay pose.\nHay esencia."
+      },
+      {
+        razon: "La manera en que te concentras cuando lees algo que te atrapa",
+        poema: "El mundo desaparece.\nSolo existe esa línea,\nese párrafo,\nese universo."
+      },
+      {
+        razon: "Tu forma de amar en voz baja",
+        poema: "Andrea, no gritas lo que sientes,\npero cada acto tuyo lo grita por ti."
+      },
+      {
+        razon: "Cómo recoges el cabello como si te prepararas para algo grande",
+        poema: "Ese movimiento leve\nsiempre anuncia algo hermoso:\nuna idea, una entrega, una lucha."
+      },
+      {
+        razon: "Tu manera de caminar sin prisa, pero con rumbo",
+        poema: "No necesitas correr.\nSabes que lo que es para ti, te encuentra."
+      },
+      {
+        razon: "La forma en que sostienes un “te extraño” sin decirlo",
+        poema: "Tu mirada se queda más tiempo,\ntus manos buscan más cerca.\nY uno entiende."
+      },
+      {
+        razon: "Cómo observas una pintura, un cuadro, un trazo",
+        poema: "No solo miras.\nInterrogas, sientes, dialogas con el arte."
+      },
+      {
+        razon: "Tu forma de perderte en una canción que te duele",
+        poema: "Cantas bajito,\nte muerdes el labio,\ny aún así no la quitas."
+      },
+      {
+        razon: "La manera en que tu nombre se vuelve refugio",
+        poema: "Andrea.\nDecirlo es encontrar casa,\nrespiro,\nluz."
+      },
+      {
+        razon: "Tu manera de mirar sin invadir",
+        poema: "Andrea, tus ojos no piden permiso,\npero tampoco imponen.\nSolo abrazan."
+      },
+      {
+        razon: "Cómo mantienes viva tu niñez sin perder tu madurez",
+        poema: "Sigues jugando,\nsigues soñando,\npero sabes cuidar y sostener."
+      },
+      {
+        razon: "La forma en que te cubres de frío",
+        poema: "Una bufanda, un gesto, una mirada...\ny de pronto pareces un poema de invierno."
+      },
+      {
+        razon: "Tu fidelidad con lo que te hace bien",
+        poema: "Vuelves a los libros que te salvan,\na la música que te abraza,\na las personas que te cuidan."
+      },
+      {
+        razon: "Cómo no necesitas estar hablando para llenar el espacio",
+        poema: "Andrea, tu silencio es tan hermoso\ncomo tu voz."
+      },
+      {
+        razon: "Tu forma de tocar el agua antes de entrar al mar",
+        poema: "Como si pidieras permiso.\nComo si entendieras que también tiene alma."
+      },
+      {
+        razon: "Tu respeto por lo que otros aman",
+        poema: "No juzgas.\nSolo preguntas, escuchas, te abres."
+      },
+      {
+        razon: "La manera en que miras a alguien cuando te inspira",
+        poema: "Tus ojos cambian.\nY uno se siente parte de algo grande."
+      },
+      {
+        razon: "Tu forma de llorar cuando no puedes evitarlo más",
+        poema: "No hay escándalo.\nHay verdad.\nHay alma desbordándose."
+      },
+      {
+        razon: "La forma en que pronuncias “gracias” como si no bastara la palabra",
+        poema: "Andrea, tú agradeces con el cuerpo,\ncon la piel,\ncon los gestos."
+      },
+      {
+        razon: "Tu valentía al mostrar tu vulnerabilidad",
+        poema: "No te escondes cuando tiemblas.\nY eso es heroico."
+      },
+      {
+        razon: "Tu forma de recibir un cumplido",
+        poema: "Te da risa, te incomoda un poco,\npero en el fondo lo guardas\ncomo quien encuentra una flor caída."
+      },
+      {
+        razon: "La manera en que vistes lo que te hace feliz",
+        poema: "Sin reglas, sin tendencias.\nSolo tú y tu instinto."
+      },
+      {
+        razon: "Cómo te emocionas cuando algo bueno le pasa a alguien que amas",
+        poema: "Tu alegría por otros\nte hace inmensamente grande."
+      },
+      {
+        razon: "Tu mirada cuando ves una película que te rompe por dentro",
+        poema: "Silencio.\nPupilas húmedas.\nUn temblor en el alma."
+      },
+      {
+        razon: "Tu forma de amar sin condiciones",
+        poema: "No exiges.\nDas.\nY das sin perderte."
+      },
+      {
+        razon: "Tu respeto por los tiempos de los demás",
+        poema: "No empujas.\nEsperas.\nAcompañas."
+      },
+      {
+        razon: "Cómo proteges tus recuerdos",
+        poema: "Una foto, una carta, una palabra…\ny contigo todo es sagrado."
+      },
+      {
+        razon: "La manera en que tocas tu pecho cuando sientes algo profundo",
+        poema: "Es como si quisieras guardarlo ahí,\nmuy dentro,\npara siempre."
+      },
+      {
+        razon: "Tu forma de mirar el cielo sin buscar respuestas",
+        poema: "Solo lo observas.\nComo quien agradece sin preguntar nada."
+      },
+      {
+        razon: "La forma en que sonríes cuando te dicen algo bonito sin esperarlo",
+        poema: "Esa sonrisa que empieza en la boca\ny termina en los ojos."
+      },
+      {
+        razon: "Tu dulzura cuando alguien te decepciona pero no quieres herirlo",
+        poema: "Te vas, pero con cuidado.\nNo rompes lo que ya está roto."
+      },
+      {
+        razon: "Tu manera de caminar descalza",
+        poema: "Pies en la tierra,\nalma libre,\npaso firme."
+      },
+      {
+        razon: "Tu ternura cuando tocas a un animal",
+        poema: "No es solo cariño.\nEs lenguaje compartido."
+      },
+      {
+        razon: "Cómo el sol encuentra hogar en tu rostro",
+        poema: "Andrea, el sol te conoce.\nTe sigue.\nTe honra."
+      },
+      {
+        razon: "Tu silencio después de un “te amo”",
+        poema: "No es duda.\nEs plenitud."
+      },
+      {
+        razon: "La forma en que acaricias los bordes de una taza caliente",
+        poema: "Como si fuera una promesa tibia entre tus manos."
+      },
+      {
+        razon: "Tu forma de cuidarte en secreto",
+        poema: "Pequeños rituales,\ndetalles que casi nadie ve.\nPero tú sabes que son amor propio."
+      },
+      {
+        razon: "La manera en que te acercas sin miedo cuando alguien necesita consuelo",
+        poema: "No preguntas.\nSolo llegas."
+      },
+      {
+        razon: "Cómo acompañas sin resolver",
+        poema: "No necesitas tener la solución.\nTu presencia basta."
+      },
+      {
+        razon: "Tu instinto para regalar justo lo que uno necesita",
+        poema: "No es suerte.\nEs sensibilidad."
+      },
+      {
+        razon: "La forma en que te arreglas cuando te sientes bien contigo misma",
+        poema: "No es para nadie.\nEs celebración interna."
+      },
+      {
+        razon: "Tu voz en una nota de audio cuando hablas de algo que te apasiona",
+        poema: "Sube, baja, vibra, baila.\nTu voz se vuelve música."
+      },
+      {
+        razon: "Tu forma de mirar cuando no entiendes algo, pero quieres entenderlo",
+        poema: "Andrea, tu curiosidad es tan hermosa\ncomo tu certeza."
+      },
+      {
+        razon: "La manera en que esperas que alguien termine de hablar",
+        poema: "No interrumpes.\nSostienes el espacio con respeto."
+      },
+      {
+        razon: "Tu forma de no rendirte aunque todo te diga que lo hagas",
+        poema: "Sigues.\nY eso es una forma muy valiente de amar."
+      },
+      {
+        razon: "Cómo sonríes para ti misma cuando te sientes orgullosa",
+        poema: "No lo gritas.\nPero brillas diferente."
+      },
+      {
+        razon: "La dulzura con que saludas por la mañana",
+        poema: "Tu “hola” no es cualquier cosa.\nEs una bendición temprana."
+      },
+      {
+        razon: "Tu manera de vivir el presente aunque el pasado pese",
+        poema: "No olvidas.\nPero eliges estar aquí.\nY eso te hace luz."
+      },
+      {
+        razon: "Tu existencia, Andrea, como poema completo",
+        poema: "Si alguien me pidiera describirte,\nno podría.\nSolo diría:\nella es todo lo que el amor intenta ser."
+      }
+    ];
+
+    function reproducirMusica() {
+      const musica = document.getElementById('musicaDeFondo');
+      if (musica) {
+        musica.play().catch(e => console.error("Error al reproducir la música:", e));
+      }
+    }
+
+    function mostrarSorpresa() {
+      document.getElementById("primeraParte").style.display = "none";
+      document.getElementById("segundaParte").style.display = "block";
+    }
+
+    function mostrarLista() {
+      const lista = document.getElementById("lista");
+      lista.style.display = "flex";
+      cosas.forEach((itemData, i) => {
+        setTimeout(() => {
+          const item = document.createElement("div");
+          item.className = "item";
+
+          const razonElement = document.createElement("div");
+          razonElement.className = "razon-titulo";
+          razonElement.textContent = `${i + 1}. ${itemData.razon}`;
+
+          const poemaElement = document.createElement("div");
+          poemaElement.className = "poema-texto";
+          poemaElement.textContent = itemData.poema;
+
+          item.appendChild(razonElement);
+          item.appendChild(poemaElement);
+          lista.appendChild(item);
+        }, i * 200);
+      });
+      document.getElementById("segundaParte").style.display = "none";
+
+      reproducirMusica();
+    }
+  </script>
+
+</body>
+</html>
