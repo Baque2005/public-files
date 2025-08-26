@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lluvia de TE AMO</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: black;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    .floating-text {
+      position: absolute;
+      color: #ff3366;
+      font-size: 22px;
+      font-weight: bold;
+      pointer-events: none;
+      animation: floatUp 1.2s ease-out forwards;
+      text-shadow: 0 0 5px white;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-80px) scale(1.5); }
+    }
+
+    #control-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px;
+      border-radius: 0 0 10px 10px;
+      font-size: 14px;
+      z-index: 10;
+      display: none;
+      width: 280px;
+    }
+
+    #toggle-btn {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 15;
+      background: #ff3366;
+      border: none;
+      color: white;
+      font-size: 20px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      #control-panel {
+        width: 90%;
+        font-size: 16px;
+      }
+      #toggle-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <button id="toggle-btn">⚙️</button>
+  <div id="control-panel">
+    <label>🎨 Color 1: <input type="color" id="color1" value="#ff4d6d" /></label>
+    <label>🎨 Color 2: <input type="color" id="color2" value="#ff99aa" /></label>
+    <label>🎨 Color 3: <input type="color" id="color3" value="#ff1a66" /></label>
+    <label><input type="checkbox" id="multiColor" /> Activar modo múltiple</label>
+    <label>⏱️ Velocidad: <input type="range" id="speedControl" min="0.1" max="5" step="0.1" value="1" /></label>
+    <label>🔠 Tamaño de letra: <input type="range" id="fontSizeControl" min="10" max="40" step="1" value="18" /></label>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    let fontSize = 18;
+    let columns = Math.floor(width / fontSize);
+    let drops = Array(columns).fill(1);
+    let speedMultiplier = 1;
+
+    const phrase = "My love ";
+    const colors = ["#ff4d6d", "#ff99aa", "#ff1a66"];
+    let useMultipleColors = false;
+    let colorIndex = 0;
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+      ctx.fillRect(0, 0, width, height);
+
+      const gradient = ctx.createLinearGradient(0, 0, width, height);
+      gradient.addColorStop(0, colors[0]);
+      gradient.addColorStop(0.5, colors[1]);
+      gradient.addColorStop(1, colors[2]);
+
+      ctx.fillStyle = useMultipleColors ? gradient : colors[colorIndex];
+      ctx.font = fontSize + "px 'Segoe UI', Arial";
+
+      for (let i = 0; i < drops.length; i++) {
+        ctx.fillText(phrase, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        drops[i] += speedMultiplier;
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    window.addEventListener('resize', () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      columns = Math.floor(width / fontSize);
+      drops = Array(columns).fill(1);
+    });
+
+    // Explosión de "My love"
+    document.addEventListener('click', (e) => {
+      for (let i = 0; i < 10; i++) {
+        const text = document.createElement('div');
+        text.className = 'floating-text';
+        text.innerText = 'TE AMO';
+        text.style.left = (e.clientX + (Math.random() * 100 - 50)) + 'px';
+        text.style.top = (e.clientY + (Math.random() * 100 - 50)) + 'px';
+        document.body.appendChild(text);
+        setTimeout(() => text.remove(), 1200);
+      }
+    });
+
+    // Controles
+    document.getElementById('color1').addEventListener('input', e => colors[0] = e.target.value);
+    document.getElementById('color2').addEventListener('input', e => colors[1] = e.target.value);
+    document.getElementById('color3').addEventListener('input', e => colors[2] = e.target.value);
+    document.getElementById('multiColor').addEventListener('change', e => useMultipleColors = e.target.checked);
+    document.getElementById('speedControl').addEventListener('input', e => speedMultiplier = parseFloat(e.target.value));
+    document.getElementById('fontSizeControl').addEventListener('input', e => {
+      fontSize = parseInt(e.target.value);
+      columns = Math.floor(width / fontSize);
+      drops = Array(columns).fill(1);
+    });
+
+    // Mostrar/Ocultar panel
+    const toggleBtn = document.getElementById('toggle-btn');
+    const controlPanel = document.getElementById('control-panel');
+    toggleBtn.addEventListener('click', () => {
+      controlPanel.style.display = controlPanel.style.display === 'none' ? 'block' : 'none';
+    });
+  </script>
+</body>
+</html>
