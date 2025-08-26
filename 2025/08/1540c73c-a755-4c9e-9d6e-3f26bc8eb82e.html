@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content=
+  "width=device-width, initial-scale=1.0">
+  <!-- MODIFICAR: Título de la pestaña del navegador -->
+  <title>Corazón</title>
+  <style>
+  body {
+    margin: 0;
+    padding: 0;
+    /* FONDO BLANCO */
+    background-color: #fff;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  canvas {
+    display: block;
+    /* FONDO BLANCO */
+    background-color: #fff;
+  }
+
+  #romanticGif {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    width: min(200px, 40vw);
+    height: auto;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+  }
+
+  #declarationText {
+    position: absolute;
+    top: calc(50% + 120px);
+    left: 50%;
+    transform: translate(-50%, 0);
+    color: #d32f2f;
+    font-family: 'Segoe Script', 'Brush Script MT', cursive, sans-serif;
+    font-size: clamp(1.2rem, 3vw, 2.2rem);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+    z-index: 2;
+    pointer-events: none;
+    width: 80%;
+  }
+
+    /* NUEVO: Estilos para los corazones animados */
+    .animated-heart {
+      position: absolute;
+      font-size: 2.2rem;
+      color: #e53935;
+      pointer-events: none;
+      opacity: 0.85;
+      animation: heart-float 2.2s linear forwards;
+      will-change: transform, opacity;
+      z-index: 4;
+    }
+    @keyframes heart-float {
+      0% {
+        opacity: 0.85;
+        transform: scale(1) translateY(0);
+      }
+      80% {
+        opacity: 0.85;
+        transform: scale(1.2) translateY(-60px);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.4) translateY(-120px);
+      }
+    }
+
+  /* MENSAJE DE INSTRUCCIÓN PARA HACER CLIC */
+  #clickMessage {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.85);
+    color: #e53935;
+    font-family: 'Segoe Script', 'Brush Script MT', cursive, sans-serif;
+    font-size: 1.4rem;
+    padding: 10px 22px;
+    border-radius: 30px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    z-index: 10;
+    opacity: 1;
+    transition: opacity 1s;
+    pointer-events: none;
+  }
+  </style>
+</head>
+<body>
+  <canvas id="particleCanvas"></canvas>
+  <!-- GIF CENTRADO EN EL CORAZÓN -->
+  <img id="romanticGif" src="https://github.com/Baque2005/public-files/blob/main/2025/b0fc69471f2c62d4754fe6cc6410c7b2.gif?raw=true" alt="Gif romántico">
+  <!-- CORAZONES ANIMADOS ALREDEDOR DEL GIF -->
+  <div id="heartsContainer" style="position:absolute;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:3;"></div>
+  <!-- TEXTO DE DECLARACIÓN DEBAJO DEL GIF -->
+  <div id="declarationText" style="
+    position: absolute;
+    top: calc(50% + 120px);
+    left: 50%;
+    transform: translate(-50%, 0);
+    color: #d32f2f;
+    font-family: 'Segoe Script', 'Brush Script MT', cursive, sans-serif;
+    font-size: clamp(1.2rem, 3vw, 2.2rem);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+    z-index: 2;
+    pointer-events: none;
+    width: 80%;
+    ">
+    Eres el latido más bonito de mi corazón. Te amo.
+  </div>
+  <!-- MENSAJE DE INSTRUCCIÓN PARA HACER CLIC -->
+  <div id="clickMessage" style="
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.85);
+    color: #e53935;
+    font-family: 'Segoe Script', 'Brush Script MT', cursive, sans-serif;
+    font-size: 1.4rem;
+    padding: 10px 22px;
+    border-radius: 30px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    z-index: 10;
+    opacity: 1;
+    transition: opacity 1s;
+    pointer-events: none;
+    ">
+    Haz clic en el corazón para ver la sorpresa
+  </div>
+  <script>
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const romanticGif = document.getElementById('romanticGif');
+  const declarationText = document.getElementById('declarationText');
+  const clickMessage = document.getElementById('clickMessage');
+
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+  let time = 0;
+  const particles = [];
+  // MODIFICAR: Número de partículas. Un número mayor puede afectar el rendimiento.
+  const particleCount = 12000;
+
+  let heartScale;
+  // MODIFICAR: Cuán hueco es el corazón (0 = relleno, 1 = solo el borde).
+  const hollowness = 0.4;
+
+  let perspective = width * 0.8;
+
+  let isZooming = false;
+  let cameraZ = 0;
+  // MODIFICAR: Velocidad del zoom al hacer clic. Mayor es más rápido.
+  const zoomSpeed = 15;
+  const maxZoom = width * 2;
+
+  let gifShown = false;
+
+  class Particle {
+    constructor(targetX, targetY) {
+        this.x = targetX;
+        this.y = targetY;
+        this.z = Math.random() * width;
+        // PARTICULAS MÁS GRANDES
+        this.radius = Math.random() * 3 + 0.7;
+        this.opacity = this.radius / 3 * (Math.random() * 0.5 + 0.5);
+        // COLOR ROJO INTENSO
+        this.hue = 0;
+        this.color = `hsla(0, 100%, 50%, ${this.opacity})`;
+        // MODIFICAR: Velocidad con la que las partículas vuelven a su posición en el eje Z.
+        this.speed = Math.random() * 2 + 1;
+    }
+
+    update() {
+        if (this.z > 0) {
+            this.z -= this.speed;
+        } else {
+            this.z = 0;
+            this.x += (Math.random() - 0.5) * 0.7;
+            this.y += (Math.random() - 0.5) * 0.7;
+        }
+    }
+
+    draw() {
+        const effectiveZ = this.z - cameraZ;
+        if (effectiveZ < -perspective) {
+            return;
+        }
+
+        const scale = perspective / (perspective + effectiveZ);
+        const projX = (this.x - width / 2) * scale + width / 2;
+        const projY = (this.y - height / 2) * scale + height / 2;
+        const projRadius = this.radius * scale;
+        const alpha = this.opacity * scale;
+
+        if (projRadius <= 0) {
+            return;
+        }
+
+        ctx.beginPath();
+        ctx.arc(projX, projY, projRadius, 0, Math.PI * 2);
+        // ROJO INTENSO, SIN PULSACIÓN DE TONO
+        ctx.fillStyle = `hsla(0, 100%, 50%, ${alpha})`;
+        ctx.fill();
+    }
+  }
+
+  function init() {
+
+    heartScale = Math.min(width / 32, height / 30) * 0.8;
+
+    particles.length = 0;
+    for (let i = 0; i < particleCount; i++) {
+        const t = Math.random() * Math.PI * 2;
+        const randomValue = Math.sqrt(Math.random());
+        const randomFactor = randomValue * (1 - hollowness) + hollowness;
+        const x_outline = 16 * Math.pow(Math.sin(t), 3) * randomFactor;
+        const y_outline = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * randomFactor;
+        const targetX = x_outline * heartScale + width / 2;
+        const targetY = y_outline * heartScale + height / 2;
+        const p = new Particle(targetX, targetY);
+        particles.push(p);
+    }
+  }
+
+  const heartsContainer = document.getElementById('heartsContainer');
+
+  // Función para crear corazones animados alrededor del gif
+  function spawnHeart() {
+    // Posiciones alrededor del gif (círculo)
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const radius = 120;
+    const angle = Math.random() * Math.PI * 2;
+    const x = centerX + Math.cos(angle) * radius;
+    const y = centerY + Math.sin(angle) * radius;
+
+    const heart = document.createElement('span');
+    heart.className = 'animated-heart';
+    heart.textContent = '❤️';
+    heart.style.left = `${x}px`;
+    heart.style.top = `${y}px`;
+    heart.style.fontSize = `${Math.random() * 1.2 + 1.5}rem`;
+
+    heartsContainer.appendChild(heart);
+
+    setTimeout(() => {
+      heart.remove();
+    }, 2200);
+  }
+
+  let heartsInterval = null;
+
+  function startHearts() {
+    if (heartsInterval) return;
+    heartsInterval = setInterval(spawnHeart, 350);
+  }
+
+  function stopHearts() {
+    clearInterval(heartsInterval);
+    heartsInterval = null;
+    heartsContainer.innerHTML = '';
+  }
+
+  function animate() {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.fillRect(0, 0, width, height);
+
+    if (isZooming) {
+        cameraZ += zoomSpeed;
+
+        // APARECE EL GIF Y EL TEXTO DE DECLARACIÓN
+        if (!gifShown && cameraZ > width * 0.6) {
+            romanticGif.style.opacity = '1';
+            declarationText.style.opacity = '1';
+            gifShown = true;
+            startHearts(); // INICIA LOS CORAZONES
+        }
+
+        if (cameraZ > maxZoom) {
+            isZooming = false;
+            setTimeout(() => {
+                romanticGif.style.opacity = '0';
+                declarationText.style.opacity = '0';
+                cameraZ = 0;
+                init();
+                stopHearts(); // DETIENE LOS CORAZONES
+            }, 3000);
+        }
+    }
+
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+    });
+
+    time += 0.02;
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    perspective = width * 0.8;
+
+    romanticGif.style.opacity = '0';
+    declarationText.style.opacity = '0';
+    stopHearts();
+
+    init();
+  });
+
+  canvas.addEventListener('click', () => {
+    if (!isZooming) {
+        isZooming = true;
+        gifShown = false;
+        // Oculta el mensaje al iniciar la animación
+        clickMessage.style.opacity = '0';
+    }
+  });
+
+  init();
+  animate();
+  </script>
+</body>
+</html>
