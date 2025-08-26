@@ -1,0 +1,451 @@
+#<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #000000; /* Negro profundo para el espacio */
+            --secondary-bg: #000000; /* Negro oscuro para bloques */
+            --accent-pink: #9370DB; /* Rosa neón */
+            --accent-cyan: #9370DB; /* Cyan neón */
+            --text-color: #f0f0f0; /* Texto principal claro */
+            --heart-color: #9370DB; /* Lila vibrante para el corazón */
+            --counter-numbers-color: #ffd700; /* Dorado para los números del contador */
+            
+            --font-pixel: 'Press Start 2P', cursive;
+            --font-main-message: 'VT323', monospace; 
+        }
+
+        body {
+            font-family: var(--font-main-message); 
+            background-color: var(--primary-bg); /* Base negra */
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden; /* Evita barras de scroll por elementos animados grandes */
+            position: relative;
+        }
+
+        /* Efecto de Galaxia en Movimiento */
+        body::before { /* Capa de Nebulosa/Galaxia */
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200vmax; /* Muy grande para cubrir y rotar */
+            height: 200vmax;
+            background-image: 
+                radial-gradient(ellipse at center, rgba(120, 0, 180, 0.3) 0%, transparent 40%), /* Morado central */
+                radial-gradient(ellipse at 20% 30%, rgba(255, 20, 147, 0.25) 0%, transparent 35%), /* Rosa */
+                radial-gradient(ellipse at 80% 70%, rgba(0, 100, 200, 0.25) 0%, transparent 35%); /* Azul */
+            transform-origin: center center;
+            transform: translate(-50%, -50%);
+            animation: galaxySwirl 180s linear infinite;
+            z-index: -2; /* Detrás de las estrellas y el contenido */
+            opacity: 0.7;
+        }
+
+        body::after { /* Capa de Estrellas Distantes */
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%; /* Cubre toda la pantalla */
+            background-image: radial-gradient(circle at center, rgba(255,255,255,0.8) 0.5px, transparent 1px);
+            background-size: 50px 50px, 70px 70px, 90px 90px; /* Múltiples tamaños para variedad */
+            background-position: 0 0, 25px 25px, 45px 45px;
+            animation: moveStarsBackground 240s linear infinite;
+            z-index: -1; /* Detrás del contenido, encima de la nebulosa */
+        }
+        
+        @keyframes galaxySwirl {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        @keyframes moveStarsBackground {
+            0% {
+                background-position: 0 0, 25px 25px, 45px 45px;
+            }
+            100% {
+                background-position: 1000px 500px, 1025px 525px, 1045px 545px; /* Movimiento diagonal lento */
+            }
+        }
+
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: stretch; 
+            gap: 30px;
+            width: 100%;
+            max-width: 950px; 
+            z-index: 1; /* Asegura que el contenido esté sobre el fondo */
+        }
+
+        .message-block { 
+            background-color: rgba(26, 7, 50, 0.85); /* Fondo con algo de transparencia */
+            padding: 30px; 
+            border-radius: 10px;
+            border: 2px solid var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan), 0 0 20px var(--accent-cyan) inset;
+            min-height: 280px; 
+            font-size: 1.3em; 
+            line-height: 1.8; 
+            white-space: pre-wrap;
+            flex: 1.2; 
+            min-width: 320px;
+            font-family: var(--font-main-message); 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center;
+            text-align: center; 
+            color: var(--accent-pink); 
+            text-shadow: 0 0 3px var(--accent-pink);
+        }
+
+        .heart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(26, 7, 50, 0.85); /* Fondo con algo de transparencia */
+            border-radius: 10px;
+            border: 2px solid var(--accent-pink); 
+            box-shadow: 0 0 10px var(--accent-pink), 0 0 20px var(--accent-pink) inset;
+            flex: 1;
+            min-width: 300px;
+            min-height: 280px; 
+            font-family: var(--font-pixel); 
+        }
+
+        .heart {
+            width: 100px;
+            height: 90px;
+            position: relative;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: opacity 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 25px;
+            filter: drop-shadow(0 0 8px var(--heart-color));
+            animation: pulse 1.5s infinite ease-in-out;
+            animation-play-state: paused; 
+        }
+
+        .heart.show {
+            opacity: 1;
+            transform: scale(1.1); 
+            animation-play-state: running; 
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1.1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            left: 50px;
+            top: 0;
+            width: 50px;
+            height: 80px;
+            background: var(--heart-color);
+            border-radius: 50px 50px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        .heart-text {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.6s ease-in-out 0.4s, transform 0.6s ease-in-out 0.4s;
+            font-size: 0.7em; 
+            color: var(--text-color);
+            text-shadow: 0 0 5px var(--accent-pink);
+        }
+        
+        .heart-text.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .heart-text p {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .heart-text .counter-line span {
+            display: inline-block;
+            min-width: 3ch; 
+            text-align: right;
+            color: var(--counter-numbers-color); 
+            font-weight: bold;
+            text-shadow: 0 0 3px var(--counter-numbers-color);
+        }
+        .heart-text .counter-line span#days {
+            min-width: 4ch; 
+        }
+
+
+        button#startButton {
+            font-family: var(--font-pixel);
+            background-color: transparent;
+            color: var(--accent-pink);
+            border: 2px solid var(--accent-pink);
+            padding: 15px 30px;
+            font-size: 0.8em; 
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 40px;
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 8px var(--accent-pink);
+            z-index: 1; /* Asegurar que el botón esté sobre el fondo */
+        }
+
+        button#startButton:hover:not(:disabled) {
+            background-color: var(--accent-pink);
+            color: var(--primary-bg);
+            box-shadow: 0 0 15px var(--accent-pink), 0 0 25px var(--accent-pink);
+        }
+        button#startButton:disabled {
+            border-color: #555;
+            color: #555;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Los elementos ::before y ::after del body crearán el fondo galáctico -->
+
+    <div class="container">
+        <div class="message-block" id="romanticMessageBlock">
+            <!-- El mensaje romántico se generará por JS -->
+        </div>
+
+        <div class="heart-container">
+            <div class="heart" id="animatedHeart"></div>
+            <div class="heart-text" id="heartTextContent">
+                <p id="line1"></p>
+                <p class="counter-line" id="line2">
+                    <span id="days">0</span> días, 
+                    <span id="hours">00</span> hs, 
+                    <span id="minutes">00</span> min, 
+                    <span id="seconds">00</span> seg
+                </p>
+                <p id="line3"></p>
+            </div>
+        </div>
+    </div>
+
+    <button id="startButton">Vamosh 💜</button>
+
+    <script>
+        const heartLine1 = "Te sentí antes de tenerte...";
+        const heartLine3 = "Y ahora no quiero soltar tu amor jamás"; 
+        
+        // ----- ¡IMPORTANTE! PERSONALIZA ESTA FRASE ROMÁNTICA -----
+        const romanticMessageLines = [
+            "Te amo sin pausa, sin medida,",
+            "Eres mi paz, mi fuerza, mi vida,",
+            "Contigo todo tiene sentido",
+            "Sin ti, todo estaría perdido."
+        ];
+
+        // ----- ¡IMPORTANTE! CAMBIA ESTA FECHA -----
+        const loveStartDate = new Date(2025, 4, 13, 0 , 0, 0); 
+
+        const romanticMessageElement = document.getElementById('romanticMessageBlock'); 
+        const heartElement = document.getElementById('animatedHeart');
+        const heartTextElement = document.getElementById('heartTextContent');
+        const line1Elem = document.getElementById('line1');
+        const line3Elem = document.getElementById('line3');
+        const daysElem = document.getElementById('days');
+        const hoursElem = document.getElementById('hours');
+        const minutesElem = document.getElementById('minutes');
+        const secondsElem = document.getElementById('seconds');
+        const startButton = document.getElementById('startButton');
+
+        let liveCounterInterval = null;
+
+        // Limpiar contenido inicial
+        romanticMessageElement.innerHTML = ''; 
+        line1Elem.innerHTML = '';
+        line3Elem.innerHTML = '';
+
+
+        function typeWriter(element, textLines, speed = 90) { 
+            return new Promise((resolve) => {
+                element.innerHTML = ''; 
+                let lineIndex = 0;
+                let charIndex = 0;
+                
+                function type() {
+                    if (lineIndex < textLines.length) {
+                        const currentLine = textLines[lineIndex];
+                        if (charIndex < currentLine.length) {
+                            element.innerHTML += currentLine.charAt(charIndex);
+                            charIndex++;
+                            setTimeout(type, speed);
+                        } else {
+                            if (lineIndex < textLines.length -1) {
+                                element.innerHTML += '<br><br>'; 
+                            }
+                            lineIndex++;
+                            charIndex = 0;
+                            setTimeout(type, speed * 4); 
+                        }
+                    } else {
+                        resolve(); 
+                    }
+                }
+                type();
+            });
+        }
+        
+        function countUpToInitial(element, target, duration = 1800, isPadded = false) {
+            return new Promise((resolve) => {
+                let current = 0;
+                const stepTime = 20; 
+                const totalSteps = duration / stepTime;
+                const increment = target === 0 ? 0 : target / totalSteps;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if ((increment >= 0 && current >= target) || (increment < 0 && current <= target) || target === 0) {
+                         current = target; 
+                         clearInterval(timer);
+                         resolve();
+                    }
+                    if (isPadded) { 
+                        element.textContent = String(Math.floor(current)).padStart(2, '0');
+                    } else { 
+                        element.textContent = Math.floor(current);
+                    }
+                }, stepTime);
+                 if (target === 0) { 
+                    if (isPadded) element.textContent = "00"; else element.textContent = "0";
+                    clearInterval(timer); 
+                    resolve();
+                }
+            });
+        }
+
+        function updateLiveCounters() {
+            const now = new Date();
+            let diff = now - loveStartDate; 
+
+            if (diff < 0) { 
+                daysElem.textContent = "0";
+                hoursElem.textContent = "00";
+                minutesElem.textContent = "00";
+                secondsElem.textContent = "00";
+                return;
+            }
+
+            let totalSeconds = Math.floor(diff / 1000);
+            let s = totalSeconds % 60;
+            let totalMinutes = Math.floor(totalSeconds / 60);
+            let m = totalMinutes % 60;
+            let totalHours = Math.floor(totalMinutes / 60);
+            let h = totalHours % 24;
+            let d = Math.floor(totalHours / 24);
+
+            daysElem.textContent = d;
+            hoursElem.textContent = String(h).padStart(2, '0');
+            minutesElem.textContent = String(m).padStart(2, '0');
+            secondsElem.textContent = String(s).padStart(2, '0');
+        }
+
+
+        async function startAnimation() {
+            startButton.disabled = true; 
+            if (liveCounterInterval) clearInterval(liveCounterInterval);
+
+            romanticMessageElement.innerHTML = ''; 
+            line1Elem.innerHTML = '';
+            line3Elem.innerHTML = '';
+            heartElement.classList.remove('show');
+            heartTextElement.classList.remove('show');
+            heartElement.style.animationPlayState = 'paused';
+
+            // 1. Animar el MENSAJE ROMÁNTICO
+            await typeWriter(romanticMessageElement, romanticMessageLines, 100); 
+
+            // 2. Mostrar el corazón y el texto del corazón
+            heartElement.classList.add('show');
+            heartElement.style.animationPlayState = 'running'; 
+            heartTextElement.classList.add('show');
+
+            // 3. Animar el primer texto del corazón
+            await typeWriter(line1Elem, [heartLine1], 70);
+
+            // 4. Animación inicial de "spin-up" para los contadores
+            const nowForInitialCount = new Date();
+            let initialDiff = nowForInitialCount - loveStartDate;
+            if (initialDiff < 0) initialDiff = 0;
+
+            let initialTotalSeconds = Math.floor(initialDiff / 1000);
+            let initialS = initialTotalSeconds % 60;
+            let initialTotalMinutes = Math.floor(initialTotalSeconds / 60);
+            let initialM = initialTotalMinutes % 60;
+            let initialTotalHours = Math.floor(initialTotalMinutes / 60);
+            let initialH = initialTotalHours % 24;
+            let initialD = Math.floor(initialTotalHours / 24);
+
+            daysElem.textContent = "0";
+            hoursElem.textContent = "00";
+            minutesElem.textContent = "00";
+            secondsElem.textContent = "00";
+
+            await Promise.all([
+                countUpToInitial(daysElem, initialD, 1800),
+                countUpToInitial(hoursElem, initialH, 1800, true),
+                countUpToInitial(minutesElem, initialM, 1800, true),
+                countUpToInitial(secondsElem, initialS, 1800, true)
+            ]);
+            
+            // 5. Iniciar el contador en tiempo real
+            updateLiveCounters(); 
+            liveCounterInterval = setInterval(updateLiveCounters, 1000);
+
+            // 6. Animar el último texto del corazón
+            await typeWriter(line3Elem, [heartLine3], 70);
+            
+            startButton.disabled = false; 
+            startButton.textContent = "Otra vez?💜";
+        }
+
+        startButton.addEventListener('click', startAnimation);
+
+    </script>
+</body>
+</html>
