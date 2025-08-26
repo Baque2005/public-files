@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Llueve Amor - Fuegos Artificiales</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    canvas {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .center-message {
+      font-family: 'Courier New', monospace;
+      color: #ff69b4;
+      font-size: 3rem;
+      text-align: center;
+      opacity: 0.1;
+      text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff1493;
+      animation: pulse 3s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.1;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 0.3;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="canvas"></canvas>
+
+  
+
+
+  <div class="overlay">
+    <div class="center-message">TE AMO 💖</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const fontSize = 16;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let columns = Math.floor(canvas.width / (fontSize * 4));
+    let drops = new Array(columns).fill(1);
+    const colors = ['#ff69b4', '#ff1493', '#ffa07a', '#ffc0cb', '#db7093', '#ffb6c1', '#ffffe0', '#ffe4e1'];
+
+    // Corazones flotantes
+    const hearts = [];
+
+    function createHeart() {
+      hearts.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height + 20,
+        size: 16 + Math.random() * 10,
+        speed: 1 + Math.random() * 1.5,
+        opacity: 0.5 + Math.random() * 0.5
+      });
+    }
+
+    function drawHearts() {
+      hearts.forEach((h, index) => {
+        ctx.globalAlpha = h.opacity;
+        ctx.font = `${h.size}px monospace`;
+        ctx.fillStyle = '#ff69b4';
+        ctx.fillText("❤", h.x, h.y);
+        h.y -= h.speed;
+        if (h.y < -50) hearts.splice(index, 1);
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    // Fuegos artificiales
+
+    document.body.addEventListener("click", () => {
+      for (let i = 0; i < 5; i++) {
+        setTimeout(createExplosion, i * 200);
+      }
+    });
+
+    function createExplosion() {
+      const count = 30 + Math.floor(Math.random() * 30);
+      const x = Math.random() * canvas.width * 0.8 + canvas.width * 0.1;
+      const y = Math.random() * canvas.height * 0.5 + canvas.height * 0.1;
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count;
+        const speed = Math.random() * 4 + 2;
+        fireworks.push({
+          x, y,
+          dx: Math.cos(angle) * speed,
+          dy: Math.sin(angle) * speed,
+          alpha: 1,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          text: "TE AMO"
+        });
+      }
+    }
+
+    const fireworks = [];
+
+    function createFirework() {
+      const count = 20 + Math.floor(Math.random() * 30);
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height / 2;
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count;
+        const speed = Math.random() * 3 + 2;
+        fireworks.push({
+          x, y,
+          dx: Math.cos(angle) * speed,
+          dy: Math.sin(angle) * speed,
+          alpha: 1,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        });
+      }
+    }
+
+    function drawFireworks() {
+      fireworks.forEach((p, index) => {
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        if (p.text) {
+          ctx.font = 'bold 16px monospace';
+          ctx.fillText(p.text, p.x, p.y);
+        } else {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        p.x += p.dx;
+        p.y += p.dy;
+        p.alpha -= 0.02;
+        if (p.alpha <= 0) fireworks.splice(index, 1);
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      drawHearts();
+      drawFireworks();
+      if (Math.random() > 0.95) createHeart();
+      if (Math.random() > 0.98) createFirework();
+
+      for (let i = 0; i < drops.length; i++) {
+        const x = i * fontSize * 4;
+        const y = drops[i] * fontSize;
+        ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+        ctx.fillText("TE AMO", x, y);
+
+        if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 50);
+
+    function initializeDrops() {
+      columns = Math.floor(canvas.width / (fontSize * 4));
+      drops = new Array(columns).fill(1);
+    }
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initializeDrops();
+    });
+  </script>
+
+</body>
+</html>
