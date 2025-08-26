@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Burbujas de Amor</title>
+<style>
+:root{
+  --bg1:#0f1226; --bg2:#181c3a;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;}
+body{
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial;
+  background: radial-gradient(1200px 700px at 20% 20%, #ffe3f0 0%, transparent 50%) ,
+              radial-gradient(1200px 700px at 80% 80%, #ffd6e0 0%, transparent 50%),
+              linear-gradient(135deg,#fff6fa,#ffe3f0 60%, #ffd6e0 100%);
+  overflow:hidden;
+  color:#fff;
+}
+
+/* Cañón aún más grande y sin borde */
+.cannon {
+  position: fixed;
+  left: 10px;
+  bottom: 10px;
+  width: 180px; /* tamaño más grande */
+  height: 180px;
+  transform-origin: center center;
+  animation: cannonPulse 1s infinite alternate;
+  z-index: 5;
+}
+.cannon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+@keyframes cannonPulse{
+  0%{ transform: scale(1) rotate(-20deg);}
+  50%{ transform: scale(1.05) rotate(-25deg);}
+  100%{ transform: scale(1) rotate(-20deg);}
+}
+
+.bubble-container{
+  position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:1;
+}
+.bubble{
+  position:absolute; border-radius:50%; overflow:hidden; pointer-events:auto;
+  box-shadow: 0 4px 24px #0006, 0 0 0 2px #fff4, 0 0 40px 10px #fff2;
+  transition: box-shadow 0.2s, opacity 0.3s;
+  will-change: transform, opacity;
+  opacity:1;
+  background: radial-gradient(circle at 30% 30%, #fff8 0 30%, transparent 31%),
+              radial-gradient(circle at 70% 70%, #fff3 0 40%, transparent 41%),
+              var(--bubble-color, #8a5fff);
+  cursor:pointer;
+}
+.bubble__inner{
+  width:100%; height:100%; border-radius:50%;
+  background: radial-gradient(circle at 60% 40%, #fff6 0 20%, transparent 21%),
+              radial-gradient(circle at 30% 70%, #fff2 0 30%, transparent 31%);
+  opacity:0.7;
+  animation: bubblePulse 6s infinite alternate;
+}
+@keyframes bubblePulse{
+  0% { filter: brightness(1) blur(0px);}
+  100% { filter: brightness(1.15) blur(2px);}
+}
+.bubble.exploding{
+  animation: bubbleExplode 0.5s forwards; pointer-events:none;
+}
+@keyframes bubbleExplode{
+  0%{opacity:1; transform: scale(1);}
+  60%{opacity:1; transform: scale(1.2);}
+  100%{opacity:0; transform: scale(0.7);}
+}
+.bubble-particle{
+  position:absolute; border-radius:50%; pointer-events:none; opacity:0.8; z-index:2;
+  animation: particleAnim 0.7s forwards;
+  background: radial-gradient(circle at 40% 40%, #fff8 0 60%, transparent 61%), var(--color);
+  box-shadow: 0 2px 8px #fff4;
+}
+@keyframes particleAnim{
+  0%{opacity:0.8; transform: scale(1) translate(0,0);}
+  80%{opacity:0.7;}
+  100%{opacity:0; transform: scale(0.7) translate(var(--tx), var(--ty));}
+}
+.hint{
+  position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+  font-size:14px; opacity:.75; letter-spacing:.3px;
+  background:#ffffff10; padding:.5rem .75rem; border-radius:999px;
+  backdrop-filter: blur(6px);
+  z-index:10;
+}
+.love-message{
+  position:absolute; left:0; top:0;
+  transform: translate(-50%,-50%);
+  font-size:1.5rem;
+  font-weight:bold;
+  color:#e91e63;
+  text-shadow:0 2px 12px #fff9;
+  background: rgba(255,255,255,0.85);
+  padding: 0.7em 1.5em;
+  border-radius: 1.5em;
+  opacity:0;
+  pointer-events:none;
+  z-index:20;
+  animation: msgPop 1.3s cubic-bezier(.7,-0.2,.3,1.5) forwards;
+}
+@keyframes msgPop{
+  0%{opacity:0; transform:translate(-50%,-50%) scale(0.7);}
+  15%{opacity:1; transform:translate(-50%,-70%) scale(1.12);}
+  40%{opacity:1; transform:translate(-50%,-90%) scale(1);}
+  80%{opacity:1; transform:translate(-50%,-110%) scale(1);}
+  100%{opacity:0; transform:translate(-50%,-160%) scale(0.8);}
+}
+</style>
+</head>
+<body>
+<div class="cannon">
+  <img src="https://github.com/Baque2005/public-files/blob/main/2025/canon.png?raw=true" alt="Cañón">
+</div>
+<div class="bubble-container" id="bubbleContainer"></div>
+<div class="hint">💡 Haz clic en una burbuja para explotar amor</div>
+<script>
+const LOVE_MESSAGES = [
+  "Contigo, todo es mejor 💖","Eres mi lugar favorito ✨",
+  "Te elijo hoy y siempre ❤️","Tu sonrisa es mi sol ☀️",
+  "Mi casa es donde estés tú 🏡","Me encantas, tal como eres 🌙",
+  "Gracias por existir 💞","Te amo infinito ♾️",
+  "Eres mi casualidad favorita 🍀","Qué suerte tenerte 💘"
+];
+const COLORS = ['#ff4f8b','#8a5fff','#4fd1ff','#ffd24f','#ff914f','#66ffc2'];
+let bubbles = [];
+const container = document.getElementById('bubbleContainer');
+
+function rand(min,max){return Math.random()*(max-min)+min;}
+const cannonX = 90; // ajuste por cañón más grande
+const cannonY = window.innerHeight - 90;
+
+function createBubble(){
+  const size = rand(180,240); // burbujas más grandes
+  const el = document.createElement('div');
+  el.className = 'bubble';
+  el.style.width = el.style.height = size+'px';
+  el.style.setProperty('--bubble-color', COLORS[Math.floor(Math.random()*COLORS.length)]);
+  el.style.transform = `translate3d(${cannonX}px,${cannonY}px,0)`; 
+  const inner = document.createElement('div');
+  inner.className='bubble__inner';
+  el.appendChild(inner);
+  container.appendChild(el);
+
+  const angle = rand(-Math.PI/4, -Math.PI/2);
+  const speed = rand(0.5,1); 
+  const b = {
+    el, size, x:cannonX, y:cannonY,
+    vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed
+  };
+  bubbles.push(b);
+
+  el.addEventListener('click', (ev)=>explodeBubble(b, ev));
+  el.addEventListener('touchstart', (ev)=>{ ev.preventDefault(); explodeBubble(b, ev); }, {passive:false});
+}
+
+function explodeBubble(b, ev){
+  if(!b || b.el.classList.contains('exploding')) return;
+  b.el.classList.add('exploding');
+
+  // Calcula el centro de la burbuja correctamente
+  let cx, cy;
+  if(ev && ev.touches && ev.touches[0]){
+    cx = ev.touches[0].clientX; 
+    cy = ev.touches[0].clientY;
+  } else if(ev && typeof ev.clientX === 'number'){
+    cx = ev.clientX; 
+    cy = ev.clientY;
+  } else {
+    // Usa la posición actual de la burbuja
+    const rect = b.el.getBoundingClientRect();
+    cx = rect.left + rect.width/2;
+    cy = rect.top + rect.height/2;
+  }
+
+  for(let i=0;i<20;i++){
+    const p = document.createElement('span');
+    p.className='bubble-particle';
+    const size=rand(16,24); 
+    p.style.width=p.style.height=size+'px';
+    // Usa transform para posicionar correctamente el centro
+    p.style.position = 'fixed';
+    p.style.left = (cx-size/2)+'px'; 
+    p.style.top = (cy-size/2)+'px';
+    p.style.setProperty('--color', b.el.style.getPropertyValue('--bubble-color'));
+    const ang = (Math.PI*2)*(i/20)+rand(-.2,.2);
+    const dist = rand(80,160);
+    p.style.setProperty('--tx', Math.cos(ang)*dist+'px');
+    p.style.setProperty('--ty', Math.sin(ang)*dist+'px');
+    document.body.appendChild(p);
+    p.addEventListener('animationend', ()=>p.remove());
+  }
+
+  const msg = document.createElement('div');
+  msg.className='love-message';
+  msg.style.position = 'fixed'; // Asegura posición fija
+  msg.textContent = LOVE_MESSAGES[Math.floor(Math.random()*LOVE_MESSAGES.length)];
+  msg.style.left = cx+'px'; 
+  msg.style.top = cy+'px';
+  document.body.appendChild(msg);
+  msg.addEventListener('animationend', ()=> msg.remove());
+
+  setTimeout(()=>{ 
+    if(b.el.parentNode) b.el.parentNode.removeChild(b.el);
+    bubbles = bubbles.filter(x=>x!==b);
+    createBubble();
+  },500);
+}
+
+function tick(){
+  // Colisión entre burbujas
+  for(let i=0; i<bubbles.length; i++){
+    const a = bubbles[i];
+    if(!a) continue;
+    // Movimiento y rebote en bordes
+    a.x += a.vx*3; a.y += a.vy*3;
+    if(a.x<=0){a.x=0;a.vx=Math.abs(a.vx);}
+    if(a.y<=0){a.y=0;a.vy=Math.abs(a.vy);}
+    if(a.x+a.size>=window.innerWidth){a.x=window.innerWidth-a.size;a.vx=-Math.abs(a.vx);}
+    if(a.y+a.size>=window.innerHeight){a.y=window.innerHeight-a.size;a.vy=-Math.abs(a.vy);}
+    a.el.style.transform=`translate3d(${a.x}px,${a.y}px,0)`;
+    // Colisión con otras burbujas
+    for(let j=i+1; j<bubbles.length; j++){
+      const b = bubbles[j];
+      if(!b) continue;
+      const dx = b.x + b.size/2 - (a.x + a.size/2);
+      const dy = b.y + b.size/2 - (a.y + a.size/2);
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      const minDist = (a.size + b.size)/2;
+      if(dist < minDist && dist > 0){
+        // Separar burbujas
+        const overlap = minDist - dist;
+        const nx = dx/dist;
+        const ny = dy/dist;
+        a.x -= nx * overlap/2;
+        a.y -= ny * overlap/2;
+        b.x += nx * overlap/2;
+        b.y += ny * overlap/2;
+        // Intercambiar velocidades (simple rebote elástico)
+        const va = {x: a.vx, y: a.vy};
+        a.vx = b.vx;
+        a.vy = b.vy;
+        b.vx = va.x;
+        b.vy = va.y;
+      }
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+for(let i=0;i<9;i++) createBubble();
+requestAnimationFrame(tick);
+
+window.addEventListener('resize', ()=>{
+  bubbles.forEach(b => { if(b.el.parentNode) b.el.parentNode.removeChild(b.el); });
+  bubbles = [];
+  for(let i=0;i<15;i++) createBubble();
+});
+</script>
+</body>
+</html>
