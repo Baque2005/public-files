@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content=
+  "width=device-width, initial-scale=1.0">
+  <title>Kitty</title>
+  <style>
+  /*Cambiar paleta de colores del proyecto*/
+  :root {
+    --kitty-white: #fff;
+    --kitty-border: #000;
+    --kitty-bow: #d81b60;
+    --kitty-nose: #ffc700;
+    --bg-grad-1: #ffdde1;
+    --bg-grad-2: #ee9ca7;
+    --bg-grad-3: #ffc3a0;
+    --bg-grad-4: #ffafbd;
+  }
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+
+    background: linear-gradient(135deg,var(--bg-grad-1), var(--bg-grad-2), var(--bg-grad-3), var(--bg-grad-4));
+    background-size: 400% 400%;
+    animation: animated-gradient 15s ease infinite;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+  }
+
+  .container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .hello-kitty {
+    position: relative;
+    width: 250px;
+    height: 210px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(5px 10px 4px rgba(0, 0, 0, 0.35));
+  }
+
+  .head {
+    position: absolute;
+    width: 100%;
+    height: 90%;
+    background-color: var(--kitty-white);
+    border: 4px solid var(--kitty-border);
+    border-radius: 48% 48% 35% 35% / 60% 60% 40% 40%;
+    bottom: 0;
+    z-index: 2;
+  }
+
+  .ear {
+    content: '';
+    position: absolute;
+    width: 65px;
+    height: 70px;
+    background-color: var(--kitty-white);
+    border: 4px solid var(--kitty-border);
+    border-radius: 50% 50% 20% 20% / 60% 60% 40% 40%;
+    top: -10px;
+    z-index: 1;
+  }
+
+  .left-ear {
+    left: 10px;
+    transform: rotate(-35deg);
+  }
+
+  .right-ear {
+    right: 10px;
+    animation: ear-wiggle 7s ease-in-out infinite;
+  }
+
+  .eye {
+    position: absolute;
+    width: 10px;
+    height: 15px;
+    background-color: var(--kitty-border);
+    border-radius: 50%;
+    top: 45%;
+    transition: transform 0.1s ease-out;
+  }
+
+  .left-eye { left: 25%; }
+  .right-eye { right: 25%; }
+
+  .nose {
+    position: absolute;
+    width: 15px;
+    height: 11px;
+    background-color: var(--kitty-nose);
+    border: 2px solid var(--kitty-border);
+    border-radius: 50%;
+    top: 58%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .whiskers {
+    position: absolute;
+    width: 60px;
+    height: 2.5px;
+    background-color: var(--kitty-border);
+  }
+
+  .left-whiskers {
+    position: absolute;
+    top: 60%;
+    left: 1%;
+    width: 50px;
+    height: 35px;
+  }
+
+  .right-whiskers {
+    position: absolute;
+    top: 60%;
+    right: 1%;
+    width: 50px;
+    height: 35px;
+  }
+
+  .left-whiskers .whisker-1 { top: 0; transform: rotate(18deg); transform-origin: right; }
+  .left-whiskers .whisker-2 { top: 12px; }
+  .left-whiskers .whisker-3 { top: 24px; transform: rotate(-18deg); transform-origin: right; }
+
+  .right-whiskers .whisker-1 { top: 0; transform: rotate(-18deg); transform-origin: left; }
+  .right-whiskers .whisker-2 { top: 12px; }
+  .right-whiskers .whisker-3 { top: 24px; transform: rotate(20deg); transform-origin: left; }
+
+  .bow {
+    position: absolute;
+    width: 90px;
+    height: 70px;
+    top: 0;
+    right: 15px;
+    z-index: 3;
+    transform-origin: bottom center;
+    animation: bow-wiggle 5s ease-in-out infinite;
+    animation-delay: 0.5s;
+  }
+
+  .bow-part {
+    position: absolute;
+    width: 45px;
+    height: 100%;
+    background-color: var(--kitty-bow);
+    border: 3px solid var(--kitty-border);
+    border-radius: 50% 50% 40% 40%;
+  }
+
+  .bow-left { left: 0; transform: rotate(25deg); }
+  .bow-right { right: 0; transform: rotate(-25deg); }
+
+  .bow-knot {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background-color: var(--kitty-bow);
+    border: 3px solid var(--kitty-border);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+  }
+
+  #sparkle-container {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+  .sparkle {
+    position: absolute;
+    width: 10px; height: 10px;
+    background: #fff799;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    animation: sparkle-anim 0.8s forwards;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  @keyframes sparkle-anim {
+    0% { transform: scale(0) rotate(0deg); opacity: 1; }
+    50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+    100% { transform: scale(0) rotate(360deg); opacity: 0; }
+  }
+  @keyframes bow-wiggle {
+    0%   { transform: rotate(20deg); }
+    33%  { transform: rotate(22deg); }
+    66%  { transform: rotate(18deg); }
+    100% { transform: rotate(20deg); }
+  }
+
+  @keyframes ear-wiggle {
+    0%   { transform: rotate(35deg); }
+    33%  { transform: rotate(37deg); }
+    66%  { transform: rotate(33deg); }
+    100% { transform: rotate(35deg); }
+  }
+  @keyframes animated-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .circulo {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    background-color: white;
+    border-radius: 50%;
+    top: 15px;
+    left: 26px;
+    z-index: 3;
+  }
+  .cheek {
+    position: absolute;
+    width: 30px;
+    height: 20px;
+    background: var(--bg-grad-1);
+    border-radius: 50%;
+    top: 60%;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    filter: blur(3px);
+  }
+
+  .left-cheek { left: 15%; }
+  .right-cheek { right: 15%; }
+
+  .container:hover .cheek {
+    opacity: 0.8;
+  }
+  .cute-message {
+    position: absolute;
+    z-index: 1000;
+    background: rgba(255, 192, 203, 0.85);
+    color: #a50d4d;
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 2px solid var(--kitty-white);
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transform: translateX(-50%);
+    pointer-events: none;
+    animation: floatAndFade 2.5s ease-out forwards;
+  }
+
+  @keyframes floatAndFade {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+    80% {
+        opacity: 1;
+        transform: translate(-50%, -50px);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -80px);
+    }
+  }
+  .friend-star {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: #fffb8f;
+    top: 10%;
+    left: 90%;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    animation: float 4s ease-in-out infinite;
+    animation-delay: 0.5s;
+  }
+  </style>
+</head>
+<body class="body-container">
+  <div class="container">
+    <div id="sparkle-container"></div>
+    <div class="hello-kitty">
+      <div class="ear left-ear"></div>
+      <div class="ear right-ear"></div>
+      <div class="head">
+        <div class="eye left-eye"></div>
+        <div class="eye right-eye"></div>
+        <div class="nose"></div>
+        <div class="left-whiskers">
+          <div class="whiskers whisker-1"></div>
+          <div class="whiskers whisker-2"></div>
+          <div class="whiskers whisker-3"></div>
+        </div>
+        <div class="right-whiskers">
+          <div class="whiskers whisker-1"></div>
+          <div class="whiskers whisker-2"></div>
+          <div class="whiskers whisker-3"></div>
+        </div>
+        <div class="cheek left-cheek"></div>
+        <div class="cheek right-cheek"></div>
+      </div>
+      <div class="bow">
+        <div class="bow-part bow-left"></div>
+        <div class="bow-part bow-right"></div>
+        <div class="bow-knot"></div>
+      </div>
+      <div class="circulo"></div>
+    </div>
+    <div class="friend-star"></div>
+  </div>
+  <script>
+  const sparkleContainer = document.getElementById('sparkle-container');
+  const container = document.querySelector('.container');
+  const bodyContainer = document.querySelector('.body-container');
+  // CAMBIAR: Frases que saldran al hacer clic
+  const cuteMessages = [
+    "¡Eres especial! ✨",
+    "Te Amo Mucho 💛",
+    "¡Qué tengas un día genial!",
+    "¡Tu sonrisa ilumina todo! 😊",
+    "I Love You 🤗",
+    "Eres increíble 💖",
+    "¡Nunca dejes de brillar!",
+  ];
+  document.addEventListener('mousemove', (e) => {
+    const eyes = document.querySelectorAll('.eye');
+    eyes.forEach(eye => {
+        const rect = eye.getBoundingClientRect();
+        const eyeX = rect.left + rect.width / 2;
+        const eyeY = rect.top + rect.height / 2;
+
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+
+        const angle = Math.atan2(mouseY - eyeY, mouseX - eyeX);
+
+        const moveX = Math.cos(angle) * 3;
+        const moveY = Math.sin(angle) * 4;
+
+        eye.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    });
+  });
+  function createSparkle() {
+    const sparkle = document.createElement('div');
+    sparkle.className = 'sparkle';
+
+    const x = Math.random() * container.offsetWidth;
+    const y = Math.random() * container.offsetHeight;
+
+    sparkle.style.left = `${x}px`;
+    sparkle.style.top = `${y}px`;
+
+    sparkleContainer.appendChild(sparkle);
+
+    setTimeout(() => {
+        sparkle.remove();
+    }, 800);
+  }
+
+  setInterval(createSparkle, 300);
+
+  bodyContainer.addEventListener('click',(event) => {
+    createCuteMessage(event);
+  })
+
+  function createCuteMessage(e) {
+    const randomIndex = Math.floor(Math.random() * cuteMessages.length);
+    const messageText = cuteMessages[randomIndex];
+
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('cute-message');
+    messageElement.innerText = messageText;
+
+    document.body.appendChild(messageElement);
+
+    messageElement.style.left = `${e.clientX}px`;
+    messageElement.style.top = `${e.clientY}px`;
+
+    setTimeout(() => {
+        messageElement.remove();
+    }, 2500);
+  }
+  </script>
+</body>
+</html>
