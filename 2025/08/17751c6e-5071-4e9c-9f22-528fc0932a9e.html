@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jardín del Amor - Para Ti</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%);
+            color: #5a3e36;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+            position: relative;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ff69b4' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+            padding: 40px 0;
+        }
+        
+        .heart-header {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            color: #ff6b6b;
+            animation: heartbeat 1.5s infinite;
+        }
+        
+        h1 {
+            font-size: 4rem;
+            color: #d44d5c;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            display: inline-block;
+            margin-top: 40px;
+        }
+        
+        h1::after {
+            content: "❤";
+            position: absolute;
+            right: -40px;
+            top: 0;
+            font-size: 3rem;
+            color: #ff6b6b;
+            animation: pulse 2s infinite;
+        }
+        
+        h1::before {
+            content: "❤";
+            position: absolute;
+            left: -40px;
+            top: 0;
+            font-size: 3rem;
+            color: #ff6b6b;
+            animation: pulse 2s infinite 0.5s;
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            color: #d44d5c;
+            max-width: 700px;
+            margin: 20px auto;
+            line-height: 1.6;
+            font-style: italic;
+        }
+        
+        .dedication {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px auto;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: relative;
+            border: 2px solid #ffd1dc;
+        }
+        
+        .dedication::before {
+            content: """;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 5rem;
+            color: #ffd1dc;
+            font-family: Georgia, serif;
+        }
+        
+        .dedication-text {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #5a3e36;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .signature {
+            text-align: right;
+            font-size: 1.5rem;
+            color: #d44d5c;
+            font-style: italic;
+            margin-top: 30px;
+        }
+        
+        .garden {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+        
+        .flower-card {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            border: 1px solid #ffd1dc;
+        }
+        
+        .flower-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .flower-card::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 5px;
+            background: linear-gradient(90deg, #ffafbd, #ffc3a0);
+            border-radius: 5px;
+        }
+        
+        .flower-title {
+            font-size: 1.8rem;
+            color: #d44d5c;
+            margin-bottom: 20px;
+        }
+        
+        .flower {
+            height: 180px;
+            position: relative;
+            margin: 20px auto;
+        }
+        
+        .flower-info {
+            margin-top: 20px;
+            line-height: 1.6;
+            color: #7a5a5a;
+            font-style: italic;
+        }
+        
+        /* Flores individuales */
+        .rose {
+            width: 150px;
+            height: 150px;
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        .petal {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            border-radius: 50%;
+            top: 35px;
+            left: 45px;
+            transform-origin: center 100px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .center {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #ffd166;
+            border-radius: 50%;
+            top: 55px;
+            left: 55px;
+            z-index: 10;
+        }
+        
+        .tulip {
+            width: 120px;
+            height: 150px;
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        .tulip-petal {
+            position: absolute;
+            width: 50px;
+            height: 80px;
+            background: linear-gradient(to bottom, #ff6b6b, #ff8e8e);
+            border-radius: 50% 50% 0 0;
+            top: 30px;
+        }
+        
+        .tulip-stem {
+            position: absolute;
+            width: 8px;
+            height: 100px;
+            background: #a8e6cf;
+            top: 110px;
+            left: 56px;
+        }
+        
+        .tulip-leaf {
+            position: absolute;
+            width: 30px;
+            height: 60px;
+            background: #a8e6cf;
+            border-radius: 0 50% 50% 0;
+            top: 120px;
+            left: 64px;
+            transform: rotate(-15deg);
+        }
+        
+        .sunflower {
+            width: 160px;
+            height: 160px;
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        .sunflower-center {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: #3a2c00;
+            border-radius: 50%;
+            top: 50px;
+            left: 50px;
+            z-index: 5;
+        }
+        
+        .sunflower-petal {
+            position: absolute;
+            width: 20px;
+            height: 70px;
+            background: #ffd700;
+            border-radius: 10px;
+            top: 40px;
+            left: 70px;
+            transform-origin: center 100px;
+        }
+        
+        .orchid {
+            width: 140px;
+            height: 140px;
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        .orchid-petal {
+            position: absolute;
+            width: 50px;
+            height: 70px;
+            background: linear-gradient(135deg, #c06c84, #f8b195);
+            border-radius: 50% 50% 0 50%;
+            top: 40px;
+            left: 45px;
+            transform: rotate(45deg);
+        }
+        
+        .orchid-center {
+            position: absolute;
+            width: 20px;
+            height: 30px;
+            background: #ffd700;
+            top: 65px;
+            left: 60px;
+            border-radius: 50%;
+        }
+        
+        .love-section {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 50px 0;
+        }
+        
+        .love-item {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            text-align: center;
+            border: 1px solid #ffd1dc;
+        }
+        
+        .love-icon {
+            font-size: 3rem;
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            animation: float 3s infinite ease-in-out;
+        }
+        
+        .love-title {
+            font-size: 1.5rem;
+            color: #d44d5c;
+            margin-bottom: 15px;
+        }
+        
+        .love-text {
+            color: #7a5a5a;
+            line-height: 1.6;
+        }
+        
+        .love-quote {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #d44d5c;
+            font-style: italic;
+            margin: 40px auto;
+            max-width: 800px;
+            padding: 20px;
+            border-left: 3px solid #ff6b6b;
+            background: rgba(255, 255, 255, 0.7);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            color: #d44d5c;
+            border-top: 1px solid rgba(212, 77, 92, 0.2);
+        }
+        
+        .floating-flowers {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .floating-flower {
+            position: absolute;
+            font-size: 1.8rem;
+            opacity: 0.7;
+            animation: float 15s infinite linear;
+        }
+        
+        .floating-flower:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; color: #ff9a9e; }
+        .floating-flower:nth-child(2) { top: 20%; left: 80%; animation-delay: 2s; color: #ff6b6b; }
+        .floating-flower:nth-child(3) { top: 50%; left: 15%; animation-delay: 4s; color: #ffd3b6; }
+        .floating-flower:nth-child(4) { top: 70%; left: 75%; animation-delay: 6s; color: #ffaaa5; }
+        .floating-flower:nth-child(5) { top: 40%; left: 90%; animation-delay: 8s; color: #ff8e8e; }
+        .floating-flower:nth-child(6) { top: 85%; left: 10%; animation-delay: 10s; color: #c06c84; }
+        .floating-flower:nth-child(7) { top: 30%; left: 50%; animation-delay: 3s; color: #ff6b6b; }
+        .floating-flower:nth-child(8) { top: 60%; left: 30%; animation-delay: 5s; color: #ff9a9e; }
+        
+        @keyframes heartbeat {
+            0% { transform: translateX(-50%) scale(1); }
+            14% { transform: translateX(-50%) scale(1.3); }
+            28% { transform: translateX(-50%) scale(1); }
+            42% { transform: translateX(-50%) scale(1.3); }
+            70% { transform: translateX(-50%) scale(1); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(10deg); }
+            50% { transform: translateY(-40px) rotate(0deg); }
+            75% { transform: translateY(-20px) rotate(-10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+            background: linear-gradient(135deg, #ffc3a0, #ffafbd);
+        }
+        
+        .kiss-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+        }
+        
+        .photo-frame {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border: 10px solid #ffd1dc;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .photo-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffd1dc, #ffafbd);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 5rem;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h1::before, h1::after {
+                font-size: 1.8rem;
+                top: -10px;
+            }
+            
+            .garden, .love-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .dedication-text {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-flowers">
+        <div class="floating-flower">❤</div>
+        <div class="floating-flower">✿</div>
+        <div class="floating-flower">❀</div>
+        <div class="floating-flower">✽</div>
+        <div class="floating-flower">❁</div>
+        <div class="floating-flower">❤</div>
+        <div class="floating-flower">✿</div>
+        <div class="floating-flower">❀</div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <div class="heart-header">❤</div>
+            <h1>Para Mi Amor</h1>
+            <p class="subtitle">Cada flor en este jardín representa un momento especial que he vivido a tu lado</p>
+            
+            <div class="photo-frame">
+                <div class="photo-placeholder">
+                    <i class="fas fa-heart"></i>
+                </div>
+            </div>
+            <p class="subtitle">El lugar donde guardo tu foto en mi corazón</p>
+        </header>
+        
+        <div class="dedication">
+            <p class="dedication-text">Desde el momento en que entraste en mi vida, todo cobró un nuevo significado. Tu sonrisa ilumina mis días más oscuros, tu voz calma mis tormentas y tu amor llena cada espacio de mi corazón.</p>
+            <p class="dedication-text">Cada día a tu lado es un regalo que atesoro, cada risa compartida es una melodía que guardo en mi memoria, y cada mirada tuya en cada foto que veo de ti es un recuerdo que atesoro en lo más profundo de mi ser.</p>
+            <p class="dedication-text">Este jardín es solo un pequeño reflejo de la belleza que veo en ti cada día. Como estas flores, nuestro amor crece, florece y se hace más hermoso con el tiempo.</p>
+            <p class="signature">Con todo mi amor,<br>Para siempre tuyo</p>
+        </div>
+        
+        <div class="garden">
+            <div class="flower-card">
+                <h2 class="flower-title">Rosa de Nuestro Amor</h2>
+                <div class="flower">
+                    <div class="rose">
+                        <div class="center"></div>
+                    </div>
+                </div>
+                <p class="flower-info">Como esta rosa, nuestro amor es delicado pero fuerte, con pétalos que representan cada promesa que nos hemos hecho.</p>
+                <button class="btn" onclick="animateFlower(this)">Enviar un Beso</button>
+            </div>
+            
+            <div class="flower-card">
+                <h2 class="flower-title">Tulipán de la Pasión</h2>
+                <div class="flower">
+                    <div class="tulip">
+                        <div class="tulip-petal" style="left: 35px;"></div>
+                        <div class="tulip-petal" style="left: 65px;"></div>
+                        <div class="tulip-stem"></div>
+                        <div class="tulip-leaf"></div>
+                    </div>
+                </div>
+                <p class="flower-info">Este tulipán simboliza la pasión que siento por ti, que crece día a día y se hace más fuerte con cada momento compartido.</p>
+                <button class="btn" onclick="animateFlower(this)">Enviar un Beso</button>
+            </div>
+            
+            <div class="flower-card">
+                <h2 class="flower-title">Girasol de la Fidelidad</h2>
+                <div class="flower">
+                    <div class="sunflower">
+                        <div class="sunflower-center"></div>
+                    </div>
+                </div>
+                <p class="flower-info">Como el girasol sigue al sol, yo seguiré siempre a tu lado, iluminando tu camino y siendo tu apoyo incondicional.</p>
+                <button class="btn" onclick="animateFlower(this)">Enviar un Beso</button>
+            </div>
+            
+            <div class="flower-card">
+                <h2 class="flower-title">Orquídea de la Belleza</h2>
+                <div class="flower">
+                    <div class="orchid">
+                        <div class="orchid-petal"></div>
+                        <div class="orchid-petal" style="transform: rotate(135deg); left: 65px;"></div>
+                        <div class="orchid-petal" style="transform: rotate(225deg); top: 70px;"></div>
+                        <div class="orchid-petal" style="transform: rotate(315deg); top: 70px; left: 65px;"></div>
+                        <div class="orchid-center"></div>
+                    </div>
+                </div>
+                <p class="flower-info">Exótica y única, como tú, que con tu belleza interior y exterior iluminas cada rincón de mi mundo.</p>
+                <button class="btn" onclick="animateFlower(this)">Enviar un Beso</button>
+            </div>
+        </div>
+        
+        <div class="love-quote">
+            "El amor no se mira, se siente. Y aún más, se lleva en el alma."<br>-
+        </div>
+        
+        <div class="love-section">
+            <div class="love-item">
+                <div class="love-icon"><i class="fas fa-heart"></i></div>
+                <h3 class="love-title">Razón de Mi Alegría</h3>
+                <p class="love-text">Tu presencia en mi vida es el mayor regalo que he recibido. Eres la razón por la que mi corazón late con tanta fuerza.</p>
+            </div>
+            
+            <div class="love-item">
+                <div class="love-icon"><i class="fas fa-star"></i></div>
+                <h3 class="love-title">Mi Estrella Brillante</h3>
+                <p class="love-text">En la oscuridad, eres la luz que guía mi camino. En la tormenta, eres mi refugio seguro.</p>
+            </div>
+            
+            <div class="love-item">
+                <div class="love-icon"><i class="fas fa-infinity"></i></div>
+                <h3 class="love-title">Amor Eterno</h3>
+                <p class="love-text">Mi amor por ti no tiene fin. Crece cada día, se fortalece con cada desafío y florece con cada sonrisa tuya.</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 50px 0;">
+            <button class="btn kiss-btn" onclick="sendKisses()">❤ Enviar Besos Virtuales ❤</button>
+            <div id="kisses-container" style="margin-top: 20px; min-height: 60px;"></div>
+        </div>
+        
+        <footer>
+            <p>Este jardín fue creado con todo mi amor para ti</p>
+            <p>Porque cada día contigo es una nueva flor en el jardín de mi vida</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Crear pétalos para la rosa
+        const rose = document.querySelector('.rose');
+        for (let i = 0; i < 12; i++) {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.style.transform = `rotate(${i * 30}deg)`;
+            rose.prepend(petal);
+        }
+        
+        // Crear pétalos para el girasol
+        const sunflower = document.querySelector('.sunflower');
+        for (let i = 0; i < 20; i++) {
+            const petal = document.createElement('div');
+            petal.className = 'sunflower-petal';
+            petal.style.transform = `rotate(${i * 18}deg)`;
+            sunflower.prepend(petal);
+        }
+        
+        // Animación de las flores
+        function animateFlower(button) {
+            const card = button.closest('.flower-card');
+            const flower = card.querySelector('.flower > div');
+            
+            flower.style.animation = 'none';
+            setTimeout(() => {
+                flower.style.animation = 'float 3s ease';
+            }, 10);
+            
+            setTimeout(() => {
+                flower.style.animation = 'none';
+            }, 3000);
+            
+            // Crear corazón flotante
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤';
+            heart.style.position = 'absolute';
+            heart.style.fontSize = '2rem';
+            heart.style.color = '#ff6b6b';
+            heart.style.zIndex = '100';
+            heart.style.left = `${button.getBoundingClientRect().left + 20}px`;
+            heart.style.top = `${button.getBoundingClientRect().top}px`;
+            heart.style.opacity = '1';
+            heart.style.transition = 'all 1s ease';
+            document.body.appendChild(heart);
+            
+            // Animación del corazón
+            setTimeout(() => {
+                heart.style.top = `${window.innerHeight}px`;
+                heart.style.opacity = '0';
+            }, 100);
+            
+            // Eliminar el corazón después de la animación
+            setTimeout(() => {
+                document.body.removeChild(heart);
+            }, 1100);
+        }
+        
+        // Enviar besos
+        function sendKisses() {
+            const container = document.getElementById('kisses-container');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const kiss = document.createElement('div');
+                    kiss.innerHTML = '❤';
+                    kiss.style.position = 'absolute';
+                    kiss.style.fontSize = '2rem';
+                    kiss.style.color = '#ff6b6b';
+                    kiss.style.left = `${Math.random() * 80 + 10}%`;
+                    kiss.style.top = '0';
+                    kiss.style.opacity = '1';
+                    kiss.style.zIndex = '100';
+                    kiss.style.transition = 'all 2s ease';
+                    container.appendChild(kiss);
+                    
+                    setTimeout(() => {
+                        kiss.style.top = '100%';
+                        kiss.style.opacity = '0';
+                    }, 100);
+                    
+                    setTimeout(() => {
+                        if (container.contains(kiss)) {
+                            container.removeChild(kiss);
+                        }
+                    }, 2100);
+                }, i * 200);
+            }
+        }
+        
+        // Animación inicial
+        document.querySelectorAll('.flower-card, .love-item').forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 300 * index);
+        });
+        
+        // Inicializar opacidad para animación de entrada
+        document.querySelectorAll('.flower-card, .love-item').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        });
+        
+        // Animación de corazones flotantes aleatorios
+        setInterval(() => {
+            const heart = document.createElement('div');
+            heart.innerHTML = Math.random() > 0.5 ? '❤' : '💖';
+            heart.style.position = 'fixed';
+            heart.style.fontSize = `${Math.random() * 20 + 15}px`;
+            heart.style.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
+            heart.style.left = `${Math.random() * 100}%`;
+            heart.style.top = '100%';
+            heart.style.opacity = '0.7';
+            heart.style.zIndex = '0';
+            heart.style.pointerEvents = 'none';
+            document.body.appendChild(heart);
+            
+            const animationDuration = Math.random() * 10 + 10;
+            
+            heart.animate([
+                { transform: 'translateY(0)', opacity: 0.7 },
+                { transform: `translateY(-${window.innerHeight + 100}px)`, opacity: 0 }
+            ], {
+                duration: animationDuration * 1000,
+                easing: 'linear'
+            });
+            
+            setTimeout(() => {
+                if (document.body.contains(heart)) {
+                    document.body.removeChild(heart);
+                }
+            }, animationDuration * 1000);
+        }, 1000);
+    </script>
+</body>
+</html>
