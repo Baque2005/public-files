@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content=
+  "width=device-width, initial-scale=1.0">
+  <!-- MODIFICAR: Título de la pestaña del navegador -->
+  <title>Corazón</title>
+  <style>
+  body {
+    margin: 0;
+    padding: 0;
+    /* MODIFICAR: Color de fondo principal (se recomienda oscuro) */
+    background-color: #000;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  canvas {
+    display: block;
+    /* MODIFICAR: Color de fondo del canvas (debe coincidir con el body) */
+    background-color: #000;
+  }
+
+  #romanticText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* MODIFICAR: Color de la fuente del mensaje */
+    color: white;
+    /* MODIFICAR: Familia de fuentes para el mensaje */
+    font-family: 'cursive', 'Brush Script MT', sans-serif;
+
+    font-size: clamp(1.5rem, 6vw, 3.5rem);
+    text-align: center;
+    opacity: 0;
+    /* MODIFICAR: Duración de la transición de opacidad (aparición/desaparición del texto) */
+    transition: opacity 1.5s ease-in-out;
+    pointer-events: none;
+    /* MODIFICAR: Color y extensión del brillo del texto */
+    text-shadow: 0 0 10px #ff8a80, 0 0 20px #ff8a80;
+    width: 80%;
+  }
+  </style>
+</head>
+<body>
+  <canvas id="particleCanvas"></canvas>
+  <!-- MODIFICAR: El mensaje de texto que se revela durante la animación -->
+  <div id="romanticText">
+    Vic Pas .
+  </div>
+  <script>
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const romanticText = document.getElementById('romanticText');
+
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+  let time = 0;
+  const particles = [];
+  // MODIFICAR: Número de partículas. Un número mayor puede afectar el rendimiento.
+  const particleCount = 8000;
+
+  let heartScale;
+  // MODIFICAR: Cuán hueco es el corazón (0 = relleno, 1 = solo el borde).
+  const hollowness = 0.4;
+
+  let perspective = width * 0.8;
+
+  let isZooming = false;
+  let cameraZ = 0;
+  // MODIFICAR: Velocidad del zoom al hacer clic. Mayor es más rápido.
+  const zoomSpeed = 15;
+  const maxZoom = width * 2;
+
+  let textShown = false;
+
+  class Particle {
+    constructor(targetX, targetY) {
+        this.x = targetX;
+        this.y = targetY;
+        this.z = Math.random() * width;
+        this.radius = Math.random() * 1.5 + 0.2;
+        this.opacity = this.radius / 1.7 * (Math.random() * 0.5 + 0.5);
+        // MODIFICAR: Rango de tonos de color (HSL). 0/360=rojo, 30=naranja/amarillo.
+        this.hue = Math.random() * 15 + 30;
+        this.color = `hsla(${this.hue}, 100%, 70%, ${this.opacity})`;
+        // MODIFICAR: Velocidad con la que las partículas vuelven a su posición en el eje Z.
+        this.speed = Math.random() * 2 + 1;
+    }
+
+    update() {
+        if (this.z > 0) {
+            this.z -= this.speed;
+        } else {
+            this.z = 0;
+            this.x += (Math.random() - 0.5) * 0.7;
+            this.y += (Math.random() - 0.5) * 0.7;
+        }
+    }
+
+    draw() {
+        const effectiveZ = this.z - cameraZ;
+        if (effectiveZ < -perspective) {
+            return;
+        }
+
+        const scale = perspective / (perspective + effectiveZ);
+        const projX = (this.x - width / 2) * scale + width / 2;
+        const projY = (this.y - height / 2) * scale + height / 2;
+        const projRadius = this.radius * scale;
+        const alpha = this.opacity * scale;
+
+        if (projRadius <= 0) {
+            return;
+        }
+
+        ctx.beginPath();
+        ctx.arc(projX, projY, projRadius, 0, Math.PI * 2);
+        const pulsatingHue = this.hue + Math.sin(time) * 10;
+        ctx.fillStyle = `hsla(${pulsatingHue}, 100%, 70%, ${alpha})`;
+        ctx.fill();
+    }
+  }
+
+  function init() {
+
+    heartScale = Math.min(width / 32, height / 30) * 0.8;
+
+    particles.length = 0;
+    for (let i = 0; i < particleCount; i++) {
+        const t = Math.random() * Math.PI * 2;
+        const randomValue = Math.sqrt(Math.random());
+        const randomFactor = randomValue * (1 - hollowness) + hollowness;
+        const x_outline = 16 * Math.pow(Math.sin(t), 3) * randomFactor;
+        const y_outline = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * randomFactor;
+        const targetX = x_outline * heartScale + width / 2;
+        const targetY = y_outline * heartScale + height / 2;
+        const p = new Particle(targetX, targetY);
+        particles.push(p);
+    }
+  }
+
+  function animate() {
+    // MODIFICAR: Opacidad del rastro de las partículas. 'rgba(0,0,0,0.2)' crea un efecto de estela.
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.fillRect(0, 0, width, height);
+
+    if (isZooming) {
+        cameraZ += zoomSpeed;
+
+        // MODIFICAR: Momento en que aparece el texto durante el zoom.
+        if (!textShown && cameraZ > width * 0.6) {
+            romanticText.style.opacity = '1';
+            textShown = true;
+        }
+
+        if (cameraZ > maxZoom) {
+            isZooming = false;
+
+            // MODIFICAR: Tiempo (en milisegundos) que el texto permanece visible antes de reiniciar.
+            setTimeout(() => {
+                romanticText.style.opacity = '0';
+                cameraZ = 0;
+                init();
+            }, 3000);
+        }
+    }
+
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+    });
+
+    time += 0.02;
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    perspective = width * 0.8;
+
+    romanticText.style.opacity = '0';
+
+    init();
+  });
+
+  canvas.addEventListener('click', () => {
+    if (!isZooming) {
+        isZooming = true;
+        textShown = false;
+    }
+  });
+
+  init();
+  animate();
+  </script>
+</body>
+</html>
