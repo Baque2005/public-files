@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Ti</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000 url('https://cdn.pixabay.com/photo/2020/04/09/19/47/universe-5014530_1280.jpg') no-repeat center center;
+            background-size: cover;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        .title-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            text-align: center;
+            perspective: 500px;
+        }
+        .title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 3.5em;
+            color: #ff5555;
+            text-shadow: 
+                4px 4px 0 #ff0000,
+                6px 6px 0 #aa0000,
+                8px 8px 0 #550000;
+            transform: rotateX(10deg) rotateY(-5deg);
+            animation: heartbeat 1.5s infinite, float 3s ease-in-out infinite;
+            display: inline-block;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 4px solid #ff5555;
+            box-shadow: 
+                0 0 20px #ff0000,
+                inset 0 0 20px #ff0000;
+        }
+        @keyframes heartbeat {
+            0% { transform: rotateX(10deg) rotateY(-5deg) scale(1); }
+            50% { transform: rotateX(10deg) rotateY(-5deg) scale(1.05); }
+            100% { transform: rotateX(10deg) rotateY(-5deg) scale(1); }
+        }
+        @keyframes float {
+            0%, 100% { transform: rotateX(10deg) rotateY(-5deg) translateY(0); }
+            50% { transform: rotateX(10deg) rotateY(-5deg) translateY(-10px); }
+        }
+        .pixel-corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff5555;
+            z-index: 3;
+        }
+        .pixel-corner:nth-child(1) {
+            top: 0;
+            left: 0;
+        }
+        .pixel-corner:nth-child(2) {
+            top: 0;
+            right: 0;
+        }
+        .pixel-corner:nth-child(3) {
+            bottom: 0;
+            left: 0;
+        }
+        .pixel-corner:nth-child(4) {
+            bottom: 0;
+            right: 0;
+        }
+        .galaxy-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(123, 31, 162, 0.2) 0%, rgba(0, 0, 0, 0.9) 70%);
+            z-index: 0;
+        }
+    
+.galaxy-overlay::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url('https://www.transparenttextures.com/patterns/stardust.png');
+  animation: shimmer 20s infinite linear;
+  opacity: 0.2;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+@keyframes shimmer {
+  0% { background-position: 0 0; }
+  100% { background-position: 1000px 1000px; }
+}
+</style>
+</head>
+<body>
+    <div class="galaxy-overlay"></div>
+    <div class="title-container">
+        <div class="pixel-corner"></div>
+        <div class="pixel-corner"></div>
+        <div class="pixel-corner"></div>
+        <div class="pixel-corner"></div>
+        <h1 class="title">Te quiero  </h1>
+    </div>
+    <canvas id="loveRain"></canvas>
+
+    <script>
+        const canvas = document.getElementById('loveRain');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Símbolos y mensajes
+        const symbols = [
+            "❤️", "💕", "🌹", "✨", "🥰", "💖", "💘", "💝",
+            "♥", "♡", "★", "☆", "✧", "❀", "✿", "❁",
+            "PRECIOSA", "LINDA", "<3", "PERFECTA", "GUAPA"
+        ];
+
+        // Colores vibrantes estilo Minecraft
+        const colors = [
+            "#ff5555", "#ffaa00", "#55ff55", "#5555ff",
+            "#aa00aa", "#00aaaa", "#ffff55", "#ff55ff",
+            "#55ffff", "#aaaaaa"
+        ];
+
+        const particles = [];
+        const particleCount = 100;
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * -canvas.height,
+                speed: 1 + Math.random() * 3,
+                size: 12 + Math.random() * 20,
+                symbol: symbols[Math.floor(Math.random() * symbols.length)],
+                color: colors[Math.floor(Math.random() * colors.length)],
+                rotation: 0,
+                opacity: 0.9,
+                sway: Math.random() * 2 - 1,
+                swaySpeed: 0.01 + Math.random() * 0.03,
+                isPixel: Math.random() > 0.7
+            });
+        }
+
+        function drawPixel(x, y, size, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, size, size);
+            ctx.fillStyle = "#000";
+            ctx.fillRect(x + size*0.2, y + size*0.2, size*0.6, size*0.6);
+            ctx.fillStyle = color;
+            ctx.fillRect(x + size*0.3, y + size*0.3, size*0.4, size*0.4);
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Efecto de estrellas pixeladas
+            ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+            for (let i = 0; i < 30; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const size = Math.random() > 0.8 ? 2 : 1;
+                ctx.fillRect(x, y, size, size);
+            }
+            
+            particles.forEach(particle => {
+                ctx.save();
+                ctx.translate(particle.x, particle.y);
+                
+                if (particle.isPixel) {
+                    // Dibujar partículas como bloques pixelados
+                    drawPixel(-particle.size/2, -particle.size/2, particle.size, particle.color);
+                } else {
+                    // Texto normal
+                    ctx.globalAlpha = particle.opacity;
+                    ctx.fillStyle = particle.color;
+                    ctx.font = `${particle.size}px 'Press Start 2P', cursive`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(particle.symbol, 0, 0);
+                }
+                
+                ctx.restore();
+
+                particle.y += particle.speed;
+                particle.x += particle.sway * Math.sin(particle.y * particle.swaySpeed);
+                particle.rotation += 0.02;
+
+                if (particle.y > canvas.height + 50) {
+                    particle.y = -20;
+                    particle.x = Math.random() * canvas.width;
+                    particle.symbol = symbols[Math.floor(Math.random() * symbols.length)];
+                    particle.color = colors[Math.floor(Math.random() * colors.length)];
+                    particle.size = 12 + Math.random() * 20;
+                    particle.isPixel = Math.random() > 0.7;
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
