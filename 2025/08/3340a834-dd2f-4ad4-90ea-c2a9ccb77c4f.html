@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 Para Ti, Mi Amor 💕</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: 25px;
+            animation: floatUpRandom 6s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes floatUpRandom {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0.8);
+                opacity: 0.8;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        .distance-particles {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: twinkleMove 4s ease-in-out infinite;
+        }
+
+        @keyframes twinkleMove {
+            0%, 100% { 
+                opacity: 0.3; 
+                transform: scale(1) translateX(0px);
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1.5) translateX(20px);
+            }
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 10;
+            max-width: 90%;
+            width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .love-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 30px 25px;
+            margin: 20px 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: translateY(20px);
+            animation: slideInUp 1.2s ease-out forwards;
+            text-align: center;
+        }
+
+        @keyframes slideInUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .distance-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            animation: heartbeatGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes heartbeatGlow {
+            0%, 100% { 
+                transform: scale(1); 
+                text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            }
+            50% { 
+                transform: scale(1.08); 
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 2px 2px 8px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        .distance-counter {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .counter-text {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .counter-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            animation: numberPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes numberPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .interactive-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .magic-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 12px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .magic-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .magic-button:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .magic-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s;
+        }
+
+        .magic-button:hover::before {
+            left: 100%;
+        }
+
+        .full-width-button {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            font-size: 1rem;
+            padding: 15px 20px;
+        }
+
+        .love-emoji-circle {
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f093fb, #f5576c, #4facfe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            animation: rotateGlow 6s linear infinite;
+            box-shadow: 0 0 30px rgba(240, 147, 251, 0.5);
+        }
+
+        @keyframes rotateGlow {
+            0% { 
+                transform: rotate(0deg); 
+                box-shadow: 0 0 30px rgba(240, 147, 251, 0.5);
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(245, 87, 108, 0.7);
+            }
+            100% { 
+                transform: rotate(360deg); 
+                box-shadow: 0 0 30px rgba(79, 172, 254, 0.5);
+            }
+        }
+
+        .distance-message {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInMessage 1s ease-out 0.8s forwards;
+        }
+
+        @keyframes fadeInMessage {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-text {
+            color: white;
+            font-size: 1rem;
+            line-height: 1.6;
+            text-align: center;
+            font-weight: 500;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .coordinates-display {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            gap: 10px;
+        }
+
+        .coordinate-box {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .coordinate-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .coordinate-value {
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .connection-line {
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            margin: 15px 0;
+            border-radius: 1px;
+            animation: connectionPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes connectionPulse {
+            0%, 100% { opacity: 0.6; transform: scaleX(1); }
+            50% { opacity: 1; transform: scaleX(1.02); }
+        }
+
+        .floating-words {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+            animation: wordFloat 4s ease-out forwards;
+        }
+
+        @keyframes wordFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(0px) scale(0.8);
+            }
+            20% {
+                opacity: 1;
+                transform: translateY(-20px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(1.2);
+            }
+        }
+
+        .kiss-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            z-index: 1000;
+            animation: kissFloat 3s ease-out forwards;
+        }
+
+        @keyframes kissFloat {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8) translateY(-50px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                width: 95%;
+                margin: 10px auto;
+            }
+            .distance-title { font-size: 2rem; }
+            .love-emoji-circle { width: 100px; height: 100px; font-size: 2.5rem; }
+            .counter-number { font-size: 2rem; }
+            .interactive-buttons { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements" id="floatingElements"></div>
+
+    <div class="main-container">
+        <div class="love-card">
+            <h1 class="distance-title">🌍 Amor Sin Fronteras 🌍</h1>
+            
+            <div class="love-emoji-circle">
+                <span id="mainEmoji">💕</span>
+            </div>
+
+            <div class="distance-counter">
+                <div class="counter-text">📍 Kilómetros que nos separan</div>
+                <div class="counter-number" id="distanceCounter">∞</div>
+                <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 10px;">
+                    Pero nuestro amor es más fuerte
+                </div>
+            </div>
+
+            <div class="coordinates-display">
+                <div class="coordinate-box">
+                    <div class="coordinate-label">📍 Tú</div>
+                    <div class="coordinate-value">❤️ Allá</div>
+                </div>
+                <div class="coordinate-box">
+                    <div class="coordinate-label">📍 Yo</div>
+                    <div class="coordinate-value">💙 Aquí</div>
+                </div>
+            </div>
+
+            <div class="connection-line"></div>
+
+            <div class="distance-message">
+                <div class="message-text" id="loveMessage">
+                    La distancia no es nada cuando alguien significa todo para ti 💖
+                </div>
+            </div>
+
+            <div class="interactive-buttons">
+                <button class="magic-button" onclick="sendVirtualHug()">
+                    🤗 Abrazo Virtual
+                </button>
+                <button class="magic-button" onclick="sendKiss()">
+                    😘 Beso a Distancia
+                </button>
+                <button class="magic-button" onclick="createStarConnection()">
+                    ⭐ Conectar Estrellas
+                </button>
+                <button class="magic-button" onclick="sendLoveWave()">
+                    💫 Onda de Amor
+                </button>
+                <button class="magic-button full-width-button" onclick="createMagicMoment()">
+                    ✨ Momento Mágico Juntos ✨
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mensajes románticos para relación a distancia
+        const distanceMessages = [
+            "Cada kilómetro entre nosotros es una razón más para amarte 💕",
+            "Miro las mismas estrellas que tú, pensando en ti 🌟",
+            "Tu amor viaja más rápido que la luz hasta mi corazón ⚡",
+            "Somos dos corazones latiendo al mismo ritmo a distancia 💓",
+            "El amor verdadero no conoce fronteras ni distancias 🌍",
+            "Cada día espero el momento de estar juntos para siempre 💖",
+            "Eres mi hogar, sin importar dónde estés 🏠",
+            "Nuestro amor es la conexión más fuerte del universo 🌌"
+        ];
+
+        const loveWords = [
+            "Extraño", "Amo", "Necesito", "Deseo", "Espero", "Sueño", "Abrazo", "Beso"
+        ];
+
+        const emojis = ["💕", "💖", "💓", "💗", "💘", "💝", "💞", "💟"];
+
+        let messageIndex = 0;
+
+        // Crear partículas flotantes
+        function createFloatingElements() {
+            const container = document.getElementById('floatingElements');
+            
+            // Corazones flotantes
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                heart.style.left = Math.random() * window.innerWidth + 'px';
+                heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                heart.style.fontSize = (Math.random() * 15 + 20) + 'px';
+                container.appendChild(heart);
+
+                setTimeout(() => heart.remove(), 7000);
+            }, 2000);
+
+            // Partículas de conexión
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'distance-particles';
+                particle.style.left = Math.random() * window.innerWidth + 'px';
+                particle.style.top = Math.random() * window.innerHeight + 'px';
+                particle.style.animationDelay = Math.random() * 4 + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Abrazo virtual
+        function sendVirtualHug() {
+            createFloatingWords("🤗 ABRAZO GIGANTE 🤗");
+            
+            // Efecto de abrazo con múltiples corazones
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const hugHeart = document.createElement('div');
+                    hugHeart.textContent = "🤗";
+                    hugHeart.style.cssText = `
+                        position: fixed;
+                        left: ${Math.random() * window.innerWidth}px;
+                        top: ${Math.random() * window.innerHeight}px;
+                        font-size: ${Math.random() * 30 + 25}px;
+                        z-index: 1000;
+                        animation: hugPulse 2s ease-out forwards;
+                        pointer-events: none;
+                    `;
+                    document.body.appendChild(hugHeart);
+                    setTimeout(() => hugHeart.remove(), 2000);
+                }, i * 100);
+            }
+        }
+
+        // Beso a distancia
+        function sendKiss() {
+            const kiss = document.createElement('div');
+            kiss.className = 'kiss-animation';
+            kiss.textContent = '😘💋';
+            document.body.appendChild(kiss);
+            
+            createFloatingWords("💋 Te mando mil besos 💋");
+            
+            // Onda de besos
+            setTimeout(() => {
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => {
+                        const miniKiss = document.createElement('div');
+                        miniKiss.textContent = "💋";
+                        miniKiss.style.cssText = `
+                            position: fixed;
+                            left: ${Math.random() * window.innerWidth}px;
+                            top: ${Math.random() * window.innerHeight}px;
+                            font-size: 25px;
+                            z-index: 999;
+                            animation: wordFloat 3s ease-out forwards;
+                            pointer-events: none;
+                        `;
+                        document.body.appendChild(miniKiss);
+                        setTimeout(() => miniKiss.remove(), 3000);
+                    }, i * 150);
+                }
+            }, 1000);
+            
+            setTimeout(() => kiss.remove(), 3000);
+        }
+
+        // Conectar estrellas
+        function createStarConnection() {
+            createFloatingWords("⭐ Conectando nuestras almas ⭐");
+            
+            // Crear línea de estrellas
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const star = document.createElement('div');
+                    star.textContent = "⭐";
+                    star.style.cssText = `
+                        position: fixed;
+                        left: ${(i / 30) * window.innerWidth}px;
+                        top: ${Math.sin(i * 0.2) * 100 + window.innerHeight / 2}px;
+                        font-size: 20px;
+                        z-index: 1000;
+                        animation: twinkleMove 3s ease-in-out infinite;
+                        pointer-events: none;
+                    `;
+                    document.body.appendChild(star);
+                    setTimeout(() => star.remove(), 4000);
+                }, i * 50);
+            }
+        }
+
+        // Onda de amor
+        function sendLoveWave() {
+            createFloatingWords("💫 Enviando toda mi energía de amor 💫");
+            
+            // Crear ondas concéntricas
+            for (let wave = 0; wave < 5; wave++) {
+                setTimeout(() => {
+                    const waveElement = document.createElement('div');
+                    waveElement.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        width: 0px;
+                        height: 0px;
+                        border: 3px solid rgba(255, 255, 255, 0.6);
+                        border-radius: 50%;
+                        transform: translate(-50%, -50%);
+                        animation: waveExpand 2s ease-out forwards;
+                        pointer-events: none;
+                        z-index: 1000;
+                    `;
+                    document.body.appendChild(waveElement);
+                    setTimeout(() => waveElement.remove(), 2000);
+                }, wave * 400);
+            }
+        }
+
+        // Momento mágico
+        function createMagicMoment() {
+            // Cambiar mensaje
+            document.getElementById('loveMessage').textContent = distanceMessages[messageIndex];
+            messageIndex = (messageIndex + 1) % distanceMessages.length;
+            
+            // Cambiar emoji principal
+            document.getElementById('mainEmoji').textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            createFloatingWords("✨ Creando magia juntos ✨");
+            
+            // Explosión de efectos
+            sendVirtualHug();
+            setTimeout(() => sendKiss(), 1000);
+            setTimeout(() => createStarConnection(), 2000);
+            setTimeout(() => sendLoveWave(), 3000);
+        }
+
+        // Crear palabras flotantes
+        function createFloatingWords(text) {
+            const words = text.split(' ');
+            words.forEach((word, index) => {
+                setTimeout(() => {
+                    const wordElement = document.createElement('div');
+                    wordElement.className = 'floating-words';
+                    wordElement.textContent = word;
+                    wordElement.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+                    wordElement.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+                    document.body.appendChild(wordElement);
+                    setTimeout(() => wordElement.remove(), 4000);
+                }, index * 200);
+            });
+        }
+
+        // Contador de distancia simulado
+        function updateDistanceCounter() {
+            const distances = ["∞", "💖", "0", "∞", "💕"];
+            let index = 0;
+            
+            setInterval(() => {
+                document.getElementById('distanceCounter').textContent = distances[index];
+                index = (index + 1) % distances.length;
+            }, 3000);
+        }
+
+        // Cambio automático de mensajes
+        function autoChangeMessage() {
+            setInterval(() => {
+                document.getElementById('loveMessage').textContent = distanceMessages[messageIndex];
+                messageIndex = (messageIndex + 1) % distanceMessages.length;
+            }, 8000);
+        }
+
+        // Agregar estilos dinámicos
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes hugPulse {
+                0% { transform: scale(0.5); opacity: 0; }
+                50% { transform: scale(1.3); opacity: 1; }
+                100% { transform: scale(0.8); opacity: 0; }
+            }
+            @keyframes waveExpand {
+                0% { width: 0px; height: 0px; opacity: 1; }
+                100% { width: 300px; height: 300px; opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            createFloatingElements();
+            updateDistanceCounter();
+            autoChangeMessage();
+            
+            // Efectos automáticos cada cierto tiempo
+            setInterval(() => {
+                if (Math.random() > 0.8) {
+                    createFloatingWords(loveWords[Math.floor(Math.random() * loveWords.length)]);
+                }
+            }, 5000);
+        });
+
+        // Efecto de clic en cualquier parte
+        document.addEventListener('click', function(e) {
+            if (!e.target.classList.contains('magic-button')) {
+                const clickHeart = document.createElement('div');
+                clickHeart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                clickHeart.style.cssText = `
+                    position: fixed;
+                    left: ${e.clientX}px;
+                    top: ${e.clientY}px;
+                    font-size: 25px;
+                    z-index: 1000;
+                    animation: wordFloat 2s ease-out forwards;
+                    pointer-events: none;
+                    transform: translate(-50%, -50%);
+                `;
+                document.body.appendChild(clickHeart);
+                setTimeout(() => clickHeart.remove(), 2000);
+            }
+        });
+    </script>
+</body>
+</html>
