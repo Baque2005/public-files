@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content=
+  "width=device-width, initial-scale=1.0">
+  <title>Para la Más Bella</title>
+  <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #fff5f9;
+            cursor: pointer; /* Para indicar que es clickeable */
+        }
+        #galaxyCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        #loveRain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        .title-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            text-align: center;
+            perspective: 500px;
+        }
+        .title {
+            font-family: 'Comic Neue', cursive;
+            font-size: 3.5em;
+            color: #ff9bb8;
+            text-shadow:
+                2px 2px 0 #ffc0d5,
+                3px 3px 0 #ffd9e4;
+            transform: rotateX(10deg) rotateY(-5deg);
+            animation: heartbeat 1.5s infinite, float 3s ease-in-out infinite;
+            display: inline-block;
+            padding: 30px 40px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 4px solid #ffc0d5;
+            border-radius: 30px;
+            box-shadow:
+                0 0 15px rgba(255, 155, 184, 0.5),
+                inset 0 0 15px rgba(255, 155, 184, 0.3);
+        }
+        @keyframes heartbeat {
+            0% { transform: rotateX(10deg) rotateY(-5deg) scale(1); }
+            50% { transform: rotateX(10deg) rotateY(-5deg) scale(1.05); }
+            100% { transform: rotateX(10deg) rotateY(-5deg) scale(1); }
+        }
+        @keyframes float {
+            0%, 100% { transform: rotateX(10deg) rotateY(-5deg) translateY(0); }
+            50% { transform: rotateX(10deg) rotateY(-5deg) translateY(-10px); }
+        }
+        .pixel-corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: #ffc0d5;
+            border-radius: 50%;
+            z-index: 3;
+        }
+        .pixel-corner:nth-child(1) {
+            top: -15px;
+            left: -15px;
+        }
+        .pixel-corner:nth-child(2) {
+            top: -15px;
+            right: -15px;
+        }
+        .pixel-corner:nth-child(3) {
+            bottom: -15px;
+            left: -15px;
+        }
+        .pixel-corner:nth-child(4) {
+            bottom: -15px;
+            right: -15px;
+        }
+        #music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+  </style>
+</head>
+<body>
+  <audio id="backgroundMusic" loop>
+    <source src="https://raw.githubusercontent.com/jesuxzx/Dxd/12b41701eaec8b4bb589ba9836cad12287227c8a/64bd93a0914a26c9440e3a9803715e03%20(online-audio-converter.com).mp3" type="audio/mpeg">
+  </audio>
+  <div id="music-control">
+    🎵
+  </div>
+  <canvas id="galaxyCanvas"></canvas>
+  <div class="title-container">
+    <div class="pixel-corner"></div>
+    <div class="pixel-corner"></div>
+    <div class="pixel-corner"></div>
+    <div class="pixel-corner"></div>
+    <h1 class="title">MI BONITA</h1>
+  </div>
+  <canvas id="loveRain"></canvas>
+  <script>
+        // Configuración del reproductor de música
+        const music = document.getElementById('backgroundMusic');
+        const musicControl = document.getElementById('music-control');
+        let musicPlaying = false;
+
+        // Control de música al hacer clic
+        musicControl.addEventListener('click', function() {
+            if (musicPlaying) {
+                music.pause();
+                musicControl.textContent = '🔇';
+            } else {
+                music.play();
+                musicControl.textContent = '🎵';
+            }
+            musicPlaying = !musicPlaying;
+        });
+
+        // Intenta reproducir automáticamente al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            music.volume = 0.7; // Volumen moderado
+
+            const playMusic = () => {
+                music.play()
+                    .then(() => {
+                        musicPlaying = true;
+                        musicControl.textContent = '🎵';
+                    })
+                    .catch(error => {
+                        console.log("Autoplay bloqueado. Esperando interacción del usuario.");
+                        musicControl.textContent = '🔇';
+                    });
+            };
+
+            // Intenta reproducir al hacer clic en cualquier parte si falla el autoplay
+            document.body.addEventListener('click', function firstClick() {
+                playMusic();
+                document.body.removeEventListener('click', firstClick);
+            }, { once: true });
+
+            playMusic(); // Intento inicial
+        });
+
+        // Configuración del canvas de galaxia
+        const galaxyCanvas = document.getElementById('galaxyCanvas');
+        const galaxyCtx = galaxyCanvas.getContext('2d');
+
+        // Configuración del canvas de partículas
+        const loveCanvas = document.getElementById('loveRain');
+        const loveCtx = loveCanvas.getContext('2d');
+
+        function resizeCanvases() {
+            galaxyCanvas.width = loveCanvas.width = window.innerWidth;
+            galaxyCanvas.height = loveCanvas.height = window.innerHeight;
+        }
+        resizeCanvases();
+
+        // Galaxia y estrellas en tonos pastel
+        class Star {
+            constructor() {
+                this.x = Math.random() * galaxyCanvas.width;
+                this.y = Math.random() * galaxyCanvas.height;
+                this.size = Math.random() * 1.2;
+                this.brightness = 0.1 + Math.random() * 0.7;
+                this.speed = 0.1 + Math.random() * 0.5;
+                this.opacity = 0;
+                this.targetOpacity = this.brightness;
+                this.twinkleSpeed = 0.01 + Math.random() * 0.03;
+                this.color = `hsl(${Math.random() * 60 + 300}, 60%, ${80 + Math.random() * 15}%)`;
+            }
+
+            update() {
+                this.y += this.speed;
+                if (this.y > galaxyCanvas.height) {
+                    this.y = 0;
+                    this.x = Math.random() * galaxyCanvas.width;
+                }
+
+                if (Math.random() < 0.003) {
+                    this.targetOpacity = Math.random() * this.brightness;
+                }
+
+                if (this.opacity < this.targetOpacity) {
+                    this.opacity += this.twinkleSpeed;
+                } else if (this.opacity > this.targetOpacity) {
+                    this.opacity -= this.twinkleSpeed;
+                }
+            }
+
+            draw() {
+                galaxyCtx.beginPath();
+                galaxyCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                galaxyCtx.fillStyle = this.color.replace(')', `, ${this.opacity})`).replace('hsl', 'hsla');
+                galaxyCtx.fill();
+            }
+        }
+
+        const stars = [];
+        for (let i = 0; i < 600; i++) {
+            stars.push(new Star());
+        }
+
+        function animateGalaxy() {
+            galaxyCtx.fillStyle = 'rgba(255, 245, 249, 0.15)';
+            galaxyCtx.fillRect(0, 0, galaxyCanvas.width, galaxyCanvas.height);
+
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+
+            requestAnimationFrame(animateGalaxy);
+        }
+        animateGalaxy();
+
+        // Partículas de amor
+        const compliments = [
+            "Tus ojos brillan", "Sonrisa perfecta", "Eres angelical",
+            "Belleza única", "Piel de seda", "Labios de miel",
+            "Mirada cautivante", "Eres un sueño", "Figura divina",
+            "Eres luz", "Cabello hermoso", "Elegante y bella",
+            "Radiante", "Eres magia", "Belleza sin igual",
+            "De otro mundo", "Eres arte", "Diosa terrenal",
+            "Hermosa por siempre", "Lo más bello", "Perfecta en todo",
+            "Eres la mejor", "Belleza pura", "Me vuelves loco",
+            "Eres increíble", "Me fascinas", "Todo en ti es perfecto",
+            "Eres especial", "Mi razón", "Mi inspiración"
+        ];
+
+        const symbols = ["❤️", "💖", "💘", "💝", "🌹", "✨", "🥰", "💕"];
+        const colors = [
+            "#ff6b8b", "#ff8fab", "#ffb3c6", "#ffc2d1",
+            "#f8a1c6", "#f4b3d9", "#e893c7", "#d89ce8",
+            "#c98cff", "#b89cff", "#9cb5ff", "#8cc9ff"
+        ];
+
+        const particles = [];
+        const particleCount = 100;
+
+        for (let i = 0; i < particleCount; i++) {
+            const isText = Math.random() > 0.2;
+            particles.push({
+                x: Math.random() * loveCanvas.width,
+                y: Math.random() * -loveCanvas.height,
+                speed: 1 + Math.random() * 3,
+                size: isText ? 16 + Math.random() * 14 : 24 + Math.random() * 24,
+                content: isText ?
+                    compliments[Math.floor(Math.random() * compliments.length)] :
+                    symbols[Math.floor(Math.random() * symbols.length)],
+                color: colors[Math.floor(Math.random() * colors.length)],
+                rotation: 0,
+                opacity: isText ? 0.95 : 0.85,
+                sway: Math.random() * 3 - 1.5,
+                swaySpeed: 0.02 + Math.random() * 0.05,
+                isText: isText,
+                fontWeight: isText ? 'bold' : 'normal',
+                shadow: isText
+            });
+        }
+
+        function animateLove() {
+            loveCtx.clearRect(0, 0, loveCanvas.width, loveCanvas.height);
+
+            particles.forEach(particle => {
+                loveCtx.save();
+                loveCtx.translate(particle.x, particle.y);
+                loveCtx.globalAlpha = particle.opacity;
+
+                if (!particle.isText) {
+                    loveCtx.font = `${particle.size}px serif`;
+                    loveCtx.fillStyle = particle.color;
+                    loveCtx.textAlign = 'center';
+                    loveCtx.textBaseline = 'middle';
+                    loveCtx.fillText(particle.content, 0, 0);
+                } else {
+                    const fontSize = particle.size;
+                    loveCtx.font = `${particle.fontWeight} ${fontSize}px 'Comic Neue', cursive`;
+                    loveCtx.fillStyle = particle.color;
+                    loveCtx.textAlign = 'center';
+                    loveCtx.textBaseline = 'middle';
+
+                    if (particle.shadow) {
+                        loveCtx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+                        loveCtx.shadowBlur = 5;
+                        loveCtx.shadowOffsetX = 1;
+                        loveCtx.shadowOffsetY = 1;
+                    }
+
+                    const words = particle.content.split(' ');
+                    if (words.length > 2 && particle.content.length > 12) {
+                        const middle = Math.floor(words.length / 2);
+                        const line1 = words.slice(0, middle).join(' ');
+                        const line2 = words.slice(middle).join(' ');
+                        loveCtx.fillText(line1, 0, -fontSize/2);
+                        loveCtx.fillText(line2, 0, fontSize/2);
+                    } else {
+                        loveCtx.fillText(particle.content, 0, 0);
+                    }
+
+                    loveCtx.shadowColor = 'transparent';
+                }
+
+                loveCtx.restore();
+
+                particle.y += particle.speed;
+                particle.x += particle.sway * Math.sin(particle.y * particle.swaySpeed);
+
+                if (particle.y > loveCanvas.height + 50) {
+                    particle.y = -30;
+                    particle.x = Math.random() * loveCanvas.width;
+                    const isText = Math.random() > 0.2;
+                    particle.content = isText ?
+                        compliments[Math.floor(Math.random() * compliments.length)] :
+                        symbols[Math.floor(Math.random() * symbols.length)];
+                    particle.color = colors[Math.floor(Math.random() * colors.length)];
+                    particle.size = isText ? 16 + Math.random() * 14 : 24 + Math.random() * 24;
+                    particle.isText = isText;
+                    particle.opacity = isText ? 0.95 : 0.85;
+                    particle.shadow = isText;
+                }
+            });
+
+            requestAnimationFrame(animateLove);
+        }
+        animateLove();
+
+        window.addEventListener('resize', () => {
+            resizeCanvases();
+        });
+  </script>
+</body>
+</html>
