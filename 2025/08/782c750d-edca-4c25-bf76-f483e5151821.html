@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* Estilos Generales y Fondo */
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+            color: #4a4a4a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Evita el scroll por las flores */
+            text-align: center;
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            width: 400px;
+            z-index: 10;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Título */
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: #800080;
+            font-size: 1.8rem; /* Ajustado para mejor visualización en móvil */
+            margin-bottom: 20px;
+        }
+
+        /* Osito de Peluche */
+        .teddy-bear-container {
+            margin: 20px 0;
+        }
+
+        .teddy-bear {
+            max-width: 150px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Caja de Mensajes */
+        .message-box {
+            background: #C7B8EA;
+            color: #800080;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.5s ease, transform 0.5s ease, height 0.5s ease, padding 0.5s ease, margin 0.5s ease;
+        }
+
+        .message-box.hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+            height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        #message-text {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Botones Interactivos */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            background-color: #C7B8EA;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(128, 0, 128);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn:hover, .btn:focus {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(199, 134, 128,);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(199, 134, 128);
+        }
+
+        /* Animación de Flores */
+        .flower-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Para que no interfiera con los clics */
+            z-index: 0;
+        }
+
+        .flower {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(255, 26, 255, 0,6);
+            animation: fall linear infinite;
+            user-select: none;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(105vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="flower-container"></div>
+
+    <div class="main-container">
+        <header>
+            <!-- 👇 CAMBIA EL NOMBRE AQUÍ 👇 -->
+            <h1>Para mi persona favorita, <br> Andrea</h1>
+        </header>
+
+        <main>
+            <div class="teddy-bear-container">
+                <!-- Usamos una imagen de internet para que no tengas que descargar nada -->
+                <img src="https://png.pngtree.com/png-clipart/20240216/original/pngtree-baby-teddy-bear-cute-romantic-valentines-day-love-png-image_14331126.png" alt="Osito de Peluche" class="teddy-bear">
+            </div>
+
+            <div id="message-box" class="message-box hidden">
+                <p id="message-text"></p>
+            </div>
+
+            <div class="button-container">
+                <!-- 👇 CAMBIA LOS MENSAJES DE LOS BOTONES AQUÍ 👇 -->
+                <button class="btn" data-message="Porque cada día a tu lado es una nueva aventura llena de risas y felicidad. Eres mi sol.">¿Por qué te quiero?</button>
+                <button class="btn" data-message="Recuerdo el día que te vi y quede pasmado con lo que veían mis ojos. Ese día supe que eras especial.">¿Un recuerdo?</button>
+                <button class="btn" data-message="¡Claro que sí! Quiero pasar todos mis días contigo, creando más recuerdos y amándote cada vez más. Te amo.">¿Quieres estar conmigo para siempre?</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.btn');
+            const messageBox = document.getElementById('message-box');
+            const messageText = document.getElementById('message-text');
+
+            // Manejar clics en los botones
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const message = button.getAttribute('data-message');
+                    
+                    // Si el mensaje actual es el mismo y la caja es visible, la oculta.
+                    if (messageText.textContent === message && !messageBox.classList.contains('hidden')) {
+                        messageBox.classList.add('hidden');
+                    } else {
+                        // Si no, muestra el nuevo mensaje.
+                        messageText.textContent = message;
+                        messageBox.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // Crear la animación de flores cayendo
+            const flowerContainer = document.querySelector('.flower-container');
+            const flowers = ['🌸', '🌺', '🌹', '🌷', '🌼', '💛']; // Añadí un corazón
+
+            function createFlower() {
+                const flower = document.createElement('div');
+                flower.classList.add('flower');
+                
+                // Elige una flor al azar
+                flower.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+                
+                // Posición y animación aleatorias
+                flower.style.left = `${Math.random() * 100}vw`;
+                flower.style.animationDuration = `${Math.random() * 5 + 7}s`; // Duración entre 7s y 12s
+                flower.style.animationDelay = `${Math.random() * 3}s`; // Empieza con un retraso
+                flower.style.fontSize = `${Math.random() * 1.5 + 1}rem`; // Tamaño aleatorio
+                flower.style.opacity = Math.random() * 0.5 + 0.4; // Opacidad aleatoria
+
+                flowerContainer.appendChild(flower);
+
+                // Elimina la flor después de que termine su animación
+                setTimeout(() => {
+                    flower.remove();
+                }, 12000); // Debe ser mayor que la duración máxima de la animación
+            }
+
+            // Generar flores cada 300 milisegundos
+            setInterval(createFlower, 300);
+        });
+    </script>
+
+</body>
+</html>
