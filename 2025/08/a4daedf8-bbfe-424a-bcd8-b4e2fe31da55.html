@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librito Romántico</title>
+    <style>
+        body {
+            font-family: 'Cursive', sans-serif;
+            background: #fce7f1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            margin: 0;
+            overflow: auto;
+        }
+
+        .book {
+            width: 350px;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            perspective: 1200px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        .page {
+            background-color: #fff;
+            border: 1px solid #f0a1c7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px;
+            opacity: 0;
+            transform: rotateY(180deg);
+            animation: flip 2s forwards, fadeInMessage 1s ease-in-out forwards;
+            cursor: pointer;
+        }
+
+        .message {
+            font-size: 24px;
+            color: #9b2d6d;
+            text-align: center;
+            letter-spacing: 1px;
+            opacity: 0;
+            animation: fadeInMessage 2s ease-out forwards;
+            font-family: 'Cursive', sans-serif;
+        }
+
+        .heart {
+            font-size: 40px;
+            color: #ff4f58;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes flip {
+            0% {
+                transform: rotateY(180deg);
+                opacity: 0;
+            }
+            100% {
+                transform: rotateY(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInMessage {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.2);
+            }
+        }
+
+        .page:hover {
+            background-color: #ffebf3;
+        }
+
+        .page::before {
+            content: "❤️";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 60px;
+            color: #ff4f58;
+            opacity: 0.3;
+        }
+
+        .book::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            opacity: 0.1;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="book">
+        <!-- 20 mensajes románticos -->
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                ¡Bienvenido al librito romántico!
+            </div>
+        </div>
+        <!-- Agrega todas las páginas -->
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                Los corazones laten fuerte por ti.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                El amor está en el aire.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                Todo lo que necesito es tu sonrisa.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                La magia de los abrazos.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                Gracias por hacer mi vida más feliz.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                A tu lado, todo es posible.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                Tu amor me inspira a ser mejor.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                Mi felicidad tiene tu nombre.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                El sol brilla más cuando estoy contigo.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                No hay distancia entre nuestros corazones.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                Eres mi razón para sonreír.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                El amor es nuestro lenguaje secreto.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                Cada momento contigo es mágico.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                Los días contigo siempre son los mejores.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                Juntos somos invencibles.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                Tú haces que todo sea hermoso.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                La vida es más dulce a tu lado.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                La felicidad tiene tu cara.
+            </div>
+        </div>
+        <div class="page">
+            <div class="message">
+                <span class="heart">❤️</span><br>
+                Gracias por ser mi todo.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        const pages = document.querySelectorAll('.page');
+
+        // Función para cambiar la página al hacer clic
+        function changePage() {
+            if (currentPage < pages.length) {
+                pages[currentPage].style.opacity = 1;
+                pages[currentPage].style.transform = "rotateY(0deg)";
+                currentPage++;
+            } else {
+                currentPage = 0;
+                pages.forEach(page => {
+                    page.style.opacity = 0;
+                    page.style.transform = "rotateY(180deg)";
+                });
+            }
+        }
+
+        // Hacer que las páginas cambien al hacer clic
+        pages.forEach(page => {
+            page.addEventListener('click', changePage);
+        });
+    </script>
+</body>
+</html>
