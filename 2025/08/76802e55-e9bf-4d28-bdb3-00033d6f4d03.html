@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bebe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #800080;
+            --secondary-color: #C7B8EA;
+            --dark-accent: #800080;
+            --darker-accent: #FFD700;
+            --glow-color: rgba(255, 85, 85, 0.7);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: #C7B8EA url('https://cdn.pixabay.com/photo/2020/04/09/19/47/universe-5014530_1280.jpg') no-repeat center center;
+            background-size: cover;
+            overflow: hidden;
+            font-family: 'Press Start 2P', cursive;
+            color: white;
+            touch-action: manipulation;
+        }
+        
+        canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        .galaxy-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(123, 31, 162, 0.2) 0%, rgba(0, 0, 0, 0.9) 70%);
+            z-index: 0;
+        }
+        
+        .galaxy-overlay::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png');
+            animation: shimmer 20s infinite linear;
+            opacity: 0.2;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        
+        .main-container {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .title-container {
+            position: relative;
+            text-align: center;
+            perspective: 500px;
+            margin-bottom: 20px;
+        }
+        
+        .title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            text-shadow: 
+                3px 3px 0 var(--secondary-color),
+                5px 5px 0 var(--dark-accent),
+                7px 7px 0 var(--darker-accent);
+            transform: rotateX(10deg) rotateY(-5deg);
+            animation: heartbeat 1.5s infinite, float 3s ease-in-out infinite;
+            display: inline-block;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 3px solid var(--primary-color);
+            box-shadow: 
+                0 0 15px var(--secondary-color),
+                inset 0 0 15px var(--secondary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .title:hover {
+            transform: rotateX(10deg) rotateY(-5deg) scale(1.1);
+            box-shadow: 
+                0 0 25px var(--secondary-color),
+                inset 0 0 25px var(--secondary-color);
+        }
+        
+        .subtitle {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-top: 15px;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.7);
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out 1s forwards;
+        }
+        
+        .pixel-corner {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: var(--primary-color);
+            z-index: 3;
+            transition: all 0.3s ease;
+        }
+        
+        .pixel-corner:nth-child(1) {
+            top: 0;
+            left: 0;
+        }
+        
+        .pixel-corner:nth-child(2) {
+            top: 0;
+            right: 0;
+        }
+        
+        .pixel-corner:nth-child(3) {
+            bottom: 0;
+            left: 0;
+        }
+        
+        .pixel-corner:nth-child(4) {
+            bottom: 0;
+            right: 0;
+        }
+        
+        .title-container:hover .pixel-corner {
+            width: 20px;
+            height: 20px;
+            background-color: #FFD700;
+        }
+        
+        /* Nuevos elementos interactivos */
+        .love-counter {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 10px 20px;
+            margin: 20px 0;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            text-align: center;
+            box-shadow: 0 0 10px var(--glow-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .love-counter:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--glow-color);
+        }
+        
+        .love-counter span {
+            color: #FFD700;
+            font-size: 1.2rem;
+        }
+        
+        .secret-messages {
+            width: 90%;
+            margin: 15px auto;
+            text-align: center;
+        }
+        
+        .secret-btn {
+            background-color: rgba(255, 85, 85, 0.3);
+            color: white;
+            border: 1px dashed #C7B8EA;
+            padding: 8px 15px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .secret-btn:hover {
+            background-color: rgba(255, 85, 85, 0.5);
+            transform: translateY(-3px);
+        }
+        
+        .secret-message {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid #800080;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px auto;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.1rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .action-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 0 var(--dark-accent);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 0 var(--dark-accent);
+        }
+        
+        .action-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 0 var(--dark-accent);
+        }
+        
+        .message-box {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px auto;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 15px var(--glow-color);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 1s ease-out 1.5s forwards;
+        }
+        
+        .message-box p {
+            margin-bottom: 12px;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+        
+        .heart-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 0 var(--dark-accent);
+        }
+        
+        .heart-btn:hover {
+            background-color: #800080;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 var(--dark-accent);
+        }
+        
+        .heart-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 var(--dark-accent);
+        }
+        
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0;
+            animation: float-up 4s linear forwards;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: rotateX(10deg) rotateY(-5deg) scale(1); }
+            50% { transform: rotateX(10deg) rotateY(-5deg) scale(1.05); }
+            100% { transform: rotateX(10deg) rotateY(-5deg) scale(1); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: rotateX(10deg) rotateY(-5deg) translateY(0); }
+            50% { transform: rotateX(10deg) rotateY(-5deg) translateY(-8px); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 0 0; }
+            100% { background-position: 1000px 1000px; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  (function(){
+    emailjs.init("f5N1a8wT1MOV4WKcP");
+  })();
+</script>
+<!-- CSS_ADSBLOCK_START -->
+<link rel="stylesheet" href="https://adblockers.opera-mini.net/css_block/default-domainless.css" type="text/css" />
+<!-- CSS_ADSBLOCK_END -->
+</head>
+<body>
+    <div class="galaxy-overlay"></div>
+    <canvas id="loveRain"></canvas>
+    <div class="floating-hearts" id="floatingHearts"></div>
+    
+    <div class="main-container">
+        <div class="title-container">
+            <div class="pixel-corner"></div>
+            <div class="pixel-corner"></div>
+            <div class="pixel-corner"></div>
+            <div class="pixel-corner"></div>
+            <h1 class="title">ANDREA 💛</h1>
+            <h2 class="subtitle">Te amo con todo mi corazón</h2>
+        </div>
+        
+        <!-- Nuevos elementos interactivos -->
+        <div class="love-counter" id="loveCounter">
+            Corazones acumulados: <span id="heartCount">0</span> 💛
+        </div>
+        
+        <div class="action-buttons">
+            <button class="action-btn" id="surpriseBtn">Sorpresa</button>
+            <button class="action-btn" id="poemBtn">Poema</button>
+        </div>
+        
+        <div class="secret-messages">
+            <button class="secret-btn" id="secretBtn">Mensaje secreto</button>
+            <div class="secret-message" id="secretMessage">
+                Eres el sol que ilumina mis días. Cada segundo a tu lado es un regalo.
+            </div>
+        </div>
+        
+        <div class="message-box">
+            <p>Cada día a tu lado es un regalo del universo.</p>
+            <p>Tu sonrisa ilumina mi mundo más que todas las estrellas juntas.</p>
+            <p>Eres mi razón, mi todo, mi eterno amor.</p>
+            <button class="heart-btn" id="heartBtn">¡Dame un beso!</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuración del canvas de lluvia de amor
+            const canvas = document.getElementById('loveRain');
+            const ctx = canvas.getContext('2d');
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            const symbols = [
+                "💛", "💕", "🌹", "✨", "🥰", "💖", "💘", "💝", "💗", "💓", "💞", "🅰️",
+                "♥", "🆎️", "🅱️", "👸", "♾", "💜", "✿", "🖤", "🌸", "🌺", "🌻", "🌼",
+                "ANDREA", "TE AMO", "MI AMOR", "BEBE", "PRECIOSA", "LINDA", "ERES MI TODO"
+            ];
+            
+            const colors = [
+                "#ff5555", "#ffaa00", "#55ff55", "#5555ff", "#aa00aa", 
+                "#00aaaa", "#ffff55", "#ff55ff", "#55ffff", "#ff9966",
+                "#ff66cc", "#66ff66", "#6699ff", "#ffcc33", "#cc99ff"
+            ];
+            
+            const particles = [];
+            const particleCount = 100;
+            
+            function createParticleImage(size, color, symbol, isPixel) {
+                const buffer = document.createElement('canvas');
+                buffer.width = size * 2;
+                buffer.height = size * 2;
+                const bCtx = buffer.getContext('2d');
+                
+                if (isPixel) {
+                    bCtx.fillStyle = color;
+                    bCtx.fillRect(0, 0, size, size);
+                    bCtx.fillStyle = "#000";
+                    bCtx.fillRect(size*0.2, size*0.2, size*0.6, size*0.6);
+                    bCtx.fillStyle = color;
+                    bCtx.fillRect(size*0.3, size*0.3, size*0.4, size*0.4);
+                } else {
+                    bCtx.font = `${size}px 'Press Start 2P', cursive`;
+                    bCtx.textAlign = 'center';
+                    bCtx.textBaseline = 'middle';
+                    bCtx.fillStyle = color;
+                    bCtx.fillText(symbol, size, size);
+                }
+                
+                return buffer;
+            }
+            
+            for (let i = 0; i < particleCount; i++) {
+                const size = 10 + Math.random() * 15;
+                const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const isPixel = Math.random() > 0.7;
+                
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * -canvas.height,
+                    speed: 1 + Math.random() * 2,
+                    size: size,
+                    symbol: symbol,
+                    color: color,
+                    rotation: Math.random() * Math.PI * 2,
+                    rotationSpeed: (Math.random() - 0.5) * 0.03,
+                    opacity: 0.8 + Math.random() * 0.2,
+                    sway: Math.random() * 2 - 1,
+                    swaySpeed: 0.01 + Math.random() * 0.02,
+                    isPixel: isPixel,
+                    buffer: createParticleImage(size, color, symbol, isPixel)
+                });
+            }
+            
+            let lastTime = 0;
+            const fps = 60;
+            const interval = 1000 / fps;
+            
+            function animate(currentTime) {
+                requestAnimationFrame(animate);
+                
+                const deltaTime = currentTime - lastTime;
+                if (deltaTime < interval) return;
+                
+                lastTime = currentTime - (deltaTime % interval);
+                
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+                for (let i = 0; i < 10; i++) {
+                    if (Math.random() > 0.95) {
+                        const x = Math.random() * canvas.width;
+                        const y = Math.random() * canvas.height;
+                        const size = Math.random() > 0.9 ? 2 : 1;
+                        ctx.fillRect(x, y, size, size);
+                    }
+                }
+                
+                particles.forEach(particle => {
+                    ctx.save();
+                    ctx.translate(particle.x, particle.y);
+                    ctx.rotate(particle.rotation);
+                    ctx.globalAlpha = particle.opacity;
+                    ctx.drawImage(
+                        particle.buffer, 
+                        -particle.size, 
+                        -particle.size, 
+                        particle.size * 2, 
+                        particle.size * 2
+                    );
+                    ctx.restore();
+                    
+                    particle.y += particle.speed;
+                    particle.x += particle.sway * Math.sin(particle.y * particle.swaySpeed);
+                    particle.rotation += particle.rotationSpeed;
+                    
+                    if (particle.y > canvas.height + 50) {
+                        resetParticle(particle);
+                    }
+                });
+            }
+            
+            function resetParticle(particle) {
+                particle.y = -20;
+                particle.x = Math.random() * canvas.width;
+                
+                if (Math.random() > 0.7) {
+                    particle.symbol = symbols[Math.floor(Math.random() * symbols.length)];
+                    particle.color = colors[Math.floor(Math.random() * colors.length)];
+                    particle.size = 10 + Math.random() * 15;
+                    particle.isPixel = Math.random() > 0.7;
+                    particle.buffer = createParticleImage(particle.size, particle.color, particle.symbol, particle.isPixel);
+                }
+            }
+            
+            animate();
+            
+            // Interacciones nuevas
+            const floatingHearts = document.getElementById('floatingHearts');
+            const heartBtn = document.getElementById('heartBtn');
+            const loveCounter = document.getElementById('loveCounter');
+            const heartCount = document.getElementById('heartCount');
+            const secretBtn = document.getElementById('secretBtn');
+            const secretMessage = document.getElementById('secretMessage');
+            const surpriseBtn = document.getElementById('surpriseBtn');
+            const poemBtn = document.getElementById('poemBtn');
+            
+            let hearts = 0;
+            const secretMessages = [
+                "Eres la dueña de mis sueños y mi realidad",
+                "Tu voz es mi melodía favorita en este universo",
+                "Contigo quiero recorrer todos los caminos de la vida",
+                "Eres mi refugio seguro en cualquier tormenta",
+                "Mi amor por ti crece con cada latido",
+                "En tus ojos encontré mi hogar eterno",
+                "Eres la respuesta a todas mis preguntas"
+            ];
+            
+            // Función para crear corazones flotantes
+            function createFloatingHeart(x, y) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerHTML = ['💛', '🖤', '👸', '💜'][Math.floor(Math.random() * 4)];
+                heart.style.left = `${x}px`;
+                heart.style.top = `${y}px`;
+                heart.style.fontSize = `${15 + Math.random() * 25}px`;
+                heart.style.animationDuration = `${3 + Math.random() * 3}s`;
+                floatingHearts.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, 4000);
+            }
+            
+            // Contador de corazones
+            loveCounter.addEventListener('click', () => {
+                hearts++;
+                heartCount.textContent = hearts;
+
+    // Enviar email con EmailJS
+    emailjs.send("service_0bhp1eq", "template_yvdbzug", {
+        message: `Andrea ha acumulado ${hearts} corazones 💛`
+    });
+                createFloatingHeart(
+                    loveCounter.getBoundingClientRect().left + loveCounter.offsetWidth / 2,
+                    loveCounter.getBoundingClientRect().top
+                );
+                
+                if (hearts % 10 === 0) {
+                    secretMessage.textContent = `¡${hearts} corazones para ti! 💛`;
+                    secretMessage.style.display = 'block';
+                    setTimeout(() => {
+                        secretMessage.style.display = 'none';
+                    }, 3000);
+                }
+            });
+            
+            // Mensaje secreto
+            secretBtn.addEventListener('click', () => {
+                const randomMessage = secretMessages[Math.floor(Math.random() * secretMessages.length)];
+                secretMessage.textContent = randomMessage;
+                secretMessage.style.display = secretMessage.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            // Botón de sorpresa FUNCIONANDO
+            surpriseBtn.addEventListener('click', () => {
+                // Crear 30 corazones en diferentes posiciones
+                for (let i = 0; i < 30; i++) {
+                    setTimeout(() => {
+                        createFloatingHeart(
+                            Math.random() * window.innerWidth,
+                            Math.random() * window.innerHeight
+                        );
+                    }, i * 50);
+                }
+                
+                // Efecto visual adicional
+                surpriseBtn.textContent = "🎉 ¡Sorpresa!";
+                setTimeout(() => {
+                    surpriseBtn.textContent = "Sorpresa";
+                }, 2000);
+            });
+            
+            // Botón de poema MEJORADO
+            poemBtn.addEventListener('click', () => {
+                const poem = `Andrea, luz de mi existir,
+En tus ojos encuentro el porvenir.
+Cada latido que en mi pecho late,
+Es un verso de amor que a ti dedico.
+
+Eres el sol que nunca deja de brillar,
+La melodía que no cesa de sonar.
+En el universo de mis sentimientos,
+Eres la estrella de todos los momentos.
+
+Si pudiera contar las veces que te amo,
+No bastarían los cielos ni los mares.
+Eres mi eterno y único deseo,
+El milagro más bello que poseo.`;
+                
+                secretMessage.innerHTML = poem.replace(/\n/g, '<br>');
+                secretMessage.style.display = 'block';
+            });
+            
+            // Botón de beso
+            heartBtn.addEventListener('click', () => {
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => {
+                        createFloatingHeart(
+                            heartBtn.getBoundingClientRect().left + heartBtn.offsetWidth / 2,
+                            heartBtn.getBoundingClientRect().top + heartBtn.offsetHeight / 2
+                        );
+                    }, i * 50);
+                }
+                
+                heartBtn.textContent = "💛 MUACK 💛";
+                setTimeout(() => {
+                    heartBtn.textContent = "¡Dame un beso!";
+
+    // Enviar email con EmailJS
+    emailjs.send("service_0bhp1eq", "template_yvdbzug", {
+        message: "Andrea te acaba de dar un beso 💋 desde la página"
+    });
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>
