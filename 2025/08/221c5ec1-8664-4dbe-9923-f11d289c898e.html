@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>¿Quieres ser mi novia?</title>
+<!-- Evita zoom en móviles -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+  body, html { 
+    margin: 0; 
+    padding: 0; 
+    width: 100%; 
+    height: 100%; 
+    overflow: hidden; 
+    background: #000; 
+    font-family: 'Segoe UI', sans-serif; 
+  }
+  canvas { display: block; }
+  #questionPanel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #ffe0f7 60%, #fff0f0 100%);
+    backdrop-filter: blur(18px);
+    padding: 2.5rem 2.2rem 2.2rem 2.2rem;
+    border-radius: 30px;
+    text-align: center;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: #000;
+    z-index: 5;
+    box-shadow: 0 0 60px 30px #ffb6e6, 0 0 40px 20px rgba(255,192,203,0.18), 0 0 25px rgba(255,0,100,0.6);
+    max-width: 92vw;
+    border: 3px dashed #ff1493;
+    position: absolute;
+    overflow: visible;
+  }
+  #questionPanel::before {
+    content: "🌸";
+    position: absolute;
+    top: -32px; left: 18px;
+    font-size: 2.2rem;
+    opacity: 0.7;
+    pointer-events: none;
+    filter: drop-shadow(0 0 8px #ffb3b3);
+  }
+  #questionPanel::after {
+    content: "💖";
+    position: absolute;
+    bottom: -32px; right: 18px;
+    font-size: 2.2rem;
+    opacity: 0.7;
+    pointer-events: none;
+    filter: drop-shadow(0 0 8px #ffb3b3);
+  }
+  #questionPanel .panel-decor {
+    position: absolute;
+    left: 50%; top: -38px;
+    transform: translateX(-50%);
+    font-size: 2.1rem;
+    opacity: 0.7;
+    pointer-events: none;
+    filter: drop-shadow(0 0 8px #ffb3b3);
+    z-index: 6;
+  }
+  #questionPanel .panel-decor-bottom {
+    position: absolute;
+    left: 50%; bottom: -38px;
+    transform: translateX(-50%);
+    font-size: 2.1rem;
+    opacity: 0.7;
+    pointer-events: none;
+    filter: drop-shadow(0 0 8px #ffb3b3);
+    z-index: 6;
+  }
+  #buttons {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  #buttons button {
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #fff;
+    transition: transform 0.2s;
+    min-width: 80px;
+    box-shadow: 0 2px 12px #ffb3b3, 0 0 2px #fff;
+    border: 2px solid #ffb3b3;
+    font-family: 'Dancing Script', 'Pacifico', 'Courier New', cursive, monospace;
+  }
+  #btnYes { background-color: #ff1493; }
+  #btnNo {
+    background-color: #444;
+    position: relative;
+  }
+  #buttons button:hover { transform: scale(1.1); background-color: #ff69b4; }
+
+  .bubble-msg {
+    position: fixed;
+    min-width: 120px;
+    max-width: 70vw;
+    padding: 1em 1.5em;
+    background: linear-gradient(135deg, #fff 80%, #ffe0f7 100%);
+    border-radius: 2em 2em 2.5em 2em;
+    box-shadow: 0 4px 32px #ffb3b3, 0 0 0 8px #ffc1e1;
+    border: 2px solid #ff69b4;
+    font-family: 'Dancing Script', 'Pacifico', 'Courier New', cursive, monospace;
+    font-size: 1.15rem;
+    color: #222;
+    text-align: center;
+    z-index: 20;
+    pointer-events: none;
+    animation: bubbleIn 0.7s cubic-bezier(.77,0,.18,1);
+    white-space: pre-line;
+    box-sizing: border-box;
+    opacity: 0;
+    transition: opacity 0.6s;
+  }
+  .bubble-msg.visible { opacity: 1; }
+  @keyframes bubbleIn {
+    0% { opacity: 0; transform: scale(0.5) rotate(-12deg);}
+    60% { opacity: 1; transform: scale(1.08) rotate(8deg);}
+    100% { opacity: 1; transform: scale(1) rotate(0deg);}
+  }
+
+  /* Estrellas decorativas extra en el fondo */
+  .extra-star {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1;
+    color: #fff;
+    font-size: 1.2rem;
+    opacity: 0.7;
+    filter: drop-shadow(0 0 8px #fff) drop-shadow(0 0 2px #ffb3b3);
+    animation: twinkleStar 2.5s infinite alternate;
+  }
+  @keyframes twinkleStar {
+    0% { opacity: 0.5; transform: scale(1);}
+    50% { opacity: 1; transform: scale(1.2);}
+    100% { opacity: 0.5; transform: scale(1);}
+  }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<div id="questionPanel">
+  <span class="panel-decor">✨</span>
+  💖 ¿Quieres ser mi novia? 💖
+  <div id="buttons">
+    <button id="btnYes">Sí 💕</button>
+    <button id="btnNo">No 😢</button>
+  </div>
+  <span class="panel-decor-bottom">🌟</span>
+</div>
+<!-- Estrellas decorativas extra -->
+<span class="extra-star" style="top:8vh;left:7vw;">⭐</span>
+<span class="extra-star" style="top:18vh;right:8vw;">🌟</span>
+<span class="extra-star" style="bottom:12vh;left:12vw;">✨</span>
+<span class="extra-star" style="bottom:18vh;right:14vw;">⭐</span>
+<span class="extra-star" style="top:50vh;left:3vw;">🌟</span>
+<span class="extra-star" style="top:60vh;right:4vw;">✨</span>
+<!-- Importar Three.js -->
+<script async src="https://ga.jspm.io/npm:es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.154.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.154.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+let scene, camera, renderer, controls;
+const canvas = document.getElementById('canvas');
+const PARTICLES = 200;
+const MAX_RADIUS = 120;
+let hearts = [];
+let centralHeart;
+let pulseTime = 0;
+
+function createHeartShape() {
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0);
+  shape.bezierCurveTo(0, 0, -1.5, -1.5, -4, -1.5);
+  shape.bezierCurveTo(-8, -1.5, -8, 4, -8, 4);
+  shape.bezierCurveTo(-8, 7, -4, 9, 0, 12);
+  shape.bezierCurveTo(4, 9, 8, 7, 8, 4);
+  shape.bezierCurveTo(8, 4, 8, -1.5, 4, -1.5);
+  shape.bezierCurveTo(1.5, -1.5, 0, 0, 0, 0);
+  return shape;
+}
+
+function createParticles() {
+  const shape = createHeartShape();
+  const reds = [0xff0000,0xff1a1a,0xff3333,0xff4d4d,0xff6666];
+  for(let i=0;i<PARTICLES;i++){
+    const angle = Math.random()*Math.PI*2;
+    const radius = Math.random()*MAX_RADIUS;
+    const x = Math.cos(angle)*radius;
+    const z = Math.sin(angle)*radius;
+    const y = (Math.random()-0.5)*MAX_RADIUS;
+    const depth = Math.random()*2 + 1;
+    const geom = new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:true,bevelThickness:depth/2,bevelSize:depth/2,bevelSegments:2});
+    const color = reds[Math.floor(Math.random()*reds.length)];
+    const material = new THREE.MeshStandardMaterial({color,metalness:0.9,roughness:0.05,emissive: color,emissiveIntensity:0.5});
+    const mesh = new THREE.Mesh(geom,material);
+    mesh.position.set(x,y,z);
+    mesh.rotation.set(Math.random()*Math.PI,Math.random()*Math.PI,Math.random()*Math.PI);
+    const scale = Math.random()*0.5+0.3;
+    mesh.scale.set(scale,scale,scale);
+    mesh.userData = {angle,radius,speed:0.003+Math.random()*0.002,ySpeed:(Math.random()-0.5)*0.008};
+    hearts.push(mesh);
+    scene.add(mesh);
+  }
+}
+
+function createCentralHeart() {
+  const shape = createHeartShape();
+  const geom = new THREE.ExtrudeGeometry(shape,{depth:5,bevelEnabled:true,bevelThickness:2,bevelSize:2,bevelSegments:3});
+  const material = new THREE.MeshStandardMaterial({color:0xff1493,metalness:0.9,roughness:0.05,emissive:0xff69b4,emissiveIntensity:0.8});
+  centralHeart = new THREE.Mesh(geom,material);
+  centralHeart.scale.set(2,2,2);
+  scene.add(centralHeart);
+}
+
+function createStarsTwinkle() {
+  // Más estrellas y más dispersión
+  const starCount = 600;
+  const stars = [];
+  for(let i=0;i<starCount;i++){
+    const starGeo = new THREE.SphereGeometry(Math.random()*0.7+0.3, 8, 8);
+    const starMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: Math.random()*0.5+0.5 });
+    const star = new THREE.Mesh(starGeo, starMat);
+    // Mantén las estrellas dentro de un rango más grande
+    star.position.set(
+      (Math.random()-0.5)*3200,
+      (Math.random()-0.5)*2200,
+      (Math.random()-0.5)*3200
+    );
+    star.userData.twinkleSpeed = 0.008 + Math.random()*0.012;
+    star.userData.twinklePhase = Math.random()*Math.PI*2;
+    stars.push(star);
+    scene.add(star);
+  }
+  function twinkleStars() {
+    stars.forEach(star => {
+      star.material.opacity = 0.4 + 0.6 * Math.abs(Math.sin(performance.now()*star.userData.twinkleSpeed/1000 + star.userData.twinklePhase));
+    });
+    requestAnimationFrame(twinkleStars);
+  }
+  twinkleStars();
+}
+
+function init() {
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(50,window.innerWidth/window.innerHeight,0.1,2000);
+  camera.position.set(0,0,MAX_RADIUS*2.2);
+  renderer = new THREE.WebGLRenderer({canvas,antialias:true});
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+
+  const ambient = new THREE.AmbientLight(0xffffff,0.6);
+  scene.add(ambient);
+  const directional = new THREE.DirectionalLight(0xffffff,1);
+  directional.position.set(0,MAX_RADIUS*2,MAX_RADIUS*2);
+  scene.add(directional);
+
+  controls = new OrbitControls(camera,renderer.domElement);
+  controls.enableDamping = true;
+  controls.enablePan = false;
+
+  createStarsTwinkle();
+  createParticles();
+  createCentralHeart();
+  animate();
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  pulseTime += 0.05;
+  centralHeart.scale.set(2+0.2*Math.sin(pulseTime),2+0.2*Math.sin(pulseTime),2+0.2*Math.sin(pulseTime));
+
+  hearts.forEach(h=>{
+    h.userData.angle += h.userData.speed;
+    h.position.x = Math.cos(h.userData.angle)*h.userData.radius;
+    h.position.z = Math.sin(h.userData.angle)*h.userData.radius;
+    h.position.y += h.userData.ySpeed;
+    if(h.position.y>MAX_RADIUS/1.2||h.position.y<-MAX_RADIUS/1.2) h.userData.ySpeed*=-1;
+    h.rotation.x +=0.01;
+    h.rotation.y +=0.01;
+  });
+
+  controls.update();
+  renderer.render(scene,camera);
+}
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+
+init();
+
+/* ----------- Lógica de botones ----------- */
+const btnYes = document.getElementById("btnYes");
+const btnNo = document.getElementById("btnNo");
+
+const reasons = [
+  "vamos di que si :c",
+  "Te haré feliz",
+  "No te arrepentiras!",
+  "Pienso en ti cada momento 💭",
+  "Vamos a ser felices juntos 💑",
+  "Te daré todo mi amor :c"
+];
+let reasonIndex = 0;
+let noMoving = false;
+let noClicks = 0;
+let escapeActive = false;
+let escapeTimeout = null;
+const maxNoClicks = 4; // A la cuarta vez, empieza a escapar
+
+btnNo.addEventListener("click", (e)=>{
+  let msg;
+  if(reasonIndex < reasons.length){
+    msg = "👉 " + reasons[reasonIndex];
+    reasonIndex++;
+    noClicks++;
+  } else if (noClicks < maxNoClicks) {
+    msg = "Ya no tienes escapatoria 😏💘";
+    noClicks++;
+  } else if (!noMoving) {
+    // Empieza a escapar del panel y del mouse/click
+    noMoving = true;
+    escapeActive = true;
+    btnNo.style.position = "fixed";
+    btnNo.style.zIndex = 100;
+    msg = "¡Ahora el 'No' escapa de ti! 😜";
+    // Después de 6 segundos, se convierte en "Sí"
+    escapeTimeout = setTimeout(() => {
+      escapeActive = false;
+      btnNo.textContent = "Sí 💕";
+      btnNo.style.backgroundColor = "#ff1493";
+      btnNo.onclick = () => {
+        document.getElementById("questionPanel").innerHTML = 
+          "<h2>💖 ¡Sabía que dirías que SÍ! 💖</h2><p>Me haces la persona más feliz del mundo 🌹</p>";
+      };
+      showBubbleMsg("¡Ahora solo puedes decir que sí! 😍", {clientX: window.innerWidth/2, clientY: window.innerHeight/2});
+    }, 6000);
+  } else if (!escapeActive) {
+    // Ya convertido en "Sí"
+    btnNo.onclick = () => {
+      document.getElementById("questionPanel").innerHTML = 
+        "<h2>💖 ¡Sabía que dirías que SÍ! 💖</h2><p>Me haces la persona más feliz del mundo 🌹</p>";
+    };
+    btnNo.click();
+    return;
+  }
+  showBubbleMsg(msg, e);
+});
+
+// Mueve el botón "No" por toda la pantalla (no solo el panel) y escapa del mouse/click
+function moveNoButtonRandom() {
+  // Mantén el botón cerca del centro (rango más pequeño)
+  const centerX = window.innerWidth / 2;
+  const centerY = window.innerHeight / 2;
+  const maxDistX = Math.min(centerX, window.innerWidth * 0.13); // aún más cerca del centro
+  const maxDistY = Math.min(centerY, window.innerHeight * 0.13);
+  const randAngle = Math.random() * Math.PI * 2;
+  const randRadiusX = Math.random() * maxDistX;
+  const randRadiusY = Math.random() * maxDistY;
+  let x = centerX + Math.cos(randAngle) * randRadiusX - btnNo.offsetWidth / 2;
+  let y = centerY + Math.sin(randAngle) * randRadiusY - btnNo.offsetHeight / 2;
+  x = Math.max(10, Math.min(window.innerWidth - btnNo.offsetWidth - 10, x));
+  y = Math.max(10, Math.min(window.innerHeight - btnNo.offsetHeight - 10, y));
+  btnNo.style.left = x + "px";
+  btnNo.style.top = y + "px";
+}
+
+btnNo.addEventListener("mouseover", ()=>{
+  if (escapeActive) {
+    moveNoButtonRandom();
+  }
+});
+
+btnNo.addEventListener("mousemove", ()=>{
+  if (escapeActive) {
+    moveNoButtonRandom();
+  }
+});
+
+btnNo.addEventListener("mousedown", ()=>{
+  if (escapeActive) {
+    moveNoButtonRandom();
+  }
+});
+
+document.addEventListener("mousemove", (e)=>{
+  if (escapeActive) {
+    // Si el mouse está cerca del botón, lo mueve
+    const rect = btnNo.getBoundingClientRect();
+    const dist = Math.hypot(e.clientX - (rect.left + rect.width/2), e.clientY - (rect.top + rect.height/2));
+    if (dist < 80) moveNoButtonRandom();
+  }
+});
+
+// Burbuja animada en posición aleatoria alrededor del botón "No"
+function showBubbleMsg(text, event) {
+  const bubble = document.createElement("div");
+  bubble.className = "bubble-msg";
+  bubble.textContent = text;
+  // Posición aleatoria cerca del botón "No"
+  const rect = btnNo.getBoundingClientRect();
+  const angle = Math.random() * Math.PI * 2;
+  const radius = 60 + Math.random() * 60;
+  let x = rect.left + rect.width/2 + Math.cos(angle)*radius;
+  let y = rect.top + rect.height/2 + Math.sin(angle)*radius;
+  x = Math.max(10, Math.min(window.innerWidth-180, x));
+  y = Math.max(10, Math.min(window.innerHeight-80, y));
+  bubble.style.left = x + "px";
+  bubble.style.top = y + "px";
+  document.body.appendChild(bubble);
+  setTimeout(() => bubble.classList.add("visible"), 10);
+  setTimeout(() => {
+    bubble.classList.remove("visible");
+    setTimeout(() => bubble.remove(), 400);
+  }, 2600);
+}
+
+btnYes.addEventListener("click", ()=>{
+  document.getElementById("questionPanel").innerHTML = 
+    "<h2>💖 ¡Sabía que dirías que SÍ! 💖</h2><p>Me haces la persona más feliz del mundo 🌹</p>";
+});
+</script>
+</body>
+</html>
