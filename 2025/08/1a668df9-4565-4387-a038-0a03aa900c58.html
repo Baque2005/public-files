@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background: #1a0b1f; /* Fondo púrpura oscuro misterioso */
+            color: #ff6b8b;      /* Rosa sensual */
+            font-family: 'Georgia', serif; /* Tipografía elegante */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        #poema {
+            font-size: 1.8em;
+            text-align: center;
+            white-space: pre;
+            text-shadow: 0 0 10px rgba(255, 107, 139, 0.5); /* Brillo suave */
+        }
+        .cursor {
+            animation: parpadeo 0.8s infinite;
+        }
+        @keyframes parpadeo {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .corazon {
+            position: absolute;
+            font-size: 20px;
+            animation: flotar 4s infinite ease-in-out;
+        }
+        @keyframes flotar {
+            0%, 100% { transform: translateY(0); opacity: 0.7; }
+            50% { transform: translateY(-20px); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="poema"></div>
+    <script>
+        const texto = "Tus labios...\nson el poema\nque nunca termino de escribir.\n\nY en cada latido,\nmi corazón\nte susurra:\n«Eres mi eterna dolencia q amo mucho».";
+        let i = 0;
+        
+        // Crear corazones flotantes
+        function crearCorazones() {
+            for (let j = 0; j < 15; j++) {
+                const corazon = document.createElement('div');
+                corazon.className = 'corazon';
+                corazon.innerHTML = '♥';
+                corazon.style.left = `${Math.random() * 100}%`;
+                corazon.style.top = `${Math.random() * 100}%`;
+                corazon.style.animationDelay = `${Math.random() * 2}s`;
+                corazon.style.color = `hsl(${Math.random() * 30 + 330}, 80%, 70%)`; // Rosas/rojos
+                document.body.appendChild(corazon);
+            }
+        }
+
+        function escribir() {
+            if (i < texto.length) {
+                document.getElementById('poema').innerHTML = 
+                    texto.substring(0, i) + '<span class="cursor">❚</span>';
+                i++;
+                setTimeout(escribir, 90); // Velocidad más sensual
+            } else {
+                document.getElementById('poema').innerHTML = texto;
+                crearCorazones();
+                // Efecto final: brillo pulsante
+                setInterval(() => {
+                    const hue = Math.sin(Date.now() / 2000) * 30 + 330;
+                    document.getElementById('poema').style.textShadow = 
+                        `0 0 15px hsl(${hue}, 100%, 70%)`;
+                }, 50);
+            }
+        }
+        
+        escribir();
+    </script>
+</body>
+</html>
