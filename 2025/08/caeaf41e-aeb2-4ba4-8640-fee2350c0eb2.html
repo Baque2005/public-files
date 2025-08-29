@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lamp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            height: 100vh;
+            min-height: 100vh;
+            width: 100vw;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+        body {
+            min-height: 100vh;
+            height: 100vh;
+            margin: 0;
+            background: #222; /* followers: color de fondo principal */
+            background-size: initial;
+            animation: none;
+        }
+        body.lamp-on {
+            background: #FFD700; /* followers: color de fondo cuando la lámpara está encendida */
+        }
+        body.light-on {
+            background: linear-gradient(270deg, #800080, #FFD700, #C7B8EA, #800080, #FFD700, #C7B8EA); /* followers: gradiente de fondo con la luz encendida */
+            background-size: 400% 400%;
+            animation: gradientMoveBodyDesktop 8s ease infinite;
+            transition: background 0.7s;
+        }
+        body.lamp-on::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse at 50% 120px, rgba(255,255,255,0) 0%, rgba(34,34,34,0.85) 70%); /* followers: gradiente de sombra alrededor de la lámpara */
+            z-index: 1;
+            transition: background 0.5s;
+        }
+        .center-desktop {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #desktop-btn {
+            width: 120px;
+            height: 56px;
+            border: 2px solid #e52e71; /* followers: color del borde del botón */
+            border-radius: 28px;
+            background: #ccc; /* followers: color de fondo del botón */
+            position: relative;
+            color: #fff; /* followers: color del texto del botón */
+            font-size: 1.3rem;
+            font-weight: bold;
+            box-shadow:
+                0 4px 24px rgba(229, 46, 113, 0.18),
+                0 2px 8px rgba(0,0,0,0.18),
+                0 12px 0 #b85d1c;
+            transition:
+                background 0.3s,
+                border 0.3s,
+                box-shadow 0.3s,
+                filter 0.2s;
+            cursor: pointer;
+            padding: 0;
+            overflow: hidden;
+        }
+        #desktop-btn::before {
+            content: "";
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(270deg, #ff8a00, #e52e71, #ff8a00);
+            background-size: 400% 400%;
+            animation: gradientMoveDesktop 6s ease infinite;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(229, 46, 113, 0.25), 0 1px 3px rgba(0,0,0,0.12);
+            transition: left 0.3s, box-shadow 0.3s;
+            z-index: 1;
+            filter: brightness(1.15) saturate(1.2);
+        }
+        #desktop-btn.on {
+            background: #4caf50;
+            border: 2px solid #43cea2;
+            color: #fff;
+            box-shadow:
+                0 6px 32px rgba(67, 206, 162, 0.18),
+                0 2px 8px rgba(0,0,0,0.18),
+                0 12px 0 #2e7d32;
+        }
+        #desktop-btn.on::before {
+            left: 72px;
+            box-shadow: 0 2px 12px rgba(67, 206, 162, 0.25), 0 1px 3px rgba(0,0,0,0.12);
+            filter: brightness(1.2) saturate(1.3);
+        }
+        #desktop-btn span {
+            position: relative;
+            z-index: 2;
+            transition: color 0.3s;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.12);
+            /* followers: aquí puedes cambiar el estilo del texto del botón */
+        }
+        #desktop-btn.on span {
+            color: #fff;
+        }
+        #desktop-btn:active {
+            filter: brightness(0.97);
+            box-shadow:
+                0 2px 8px rgba(229, 46, 113, 0.15),
+                0 1px 3px rgba(0,0,0,0.10),
+                0 6px 0 #b85d1c;
+        }
+        @keyframes gradientMoveDesktop {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes gradientMoveBodyDesktop {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .center-mobile { display: none; }        @media (max-width: 600px) {
+            .center-desktop { display: none; }
+            .center-mobile {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+            #mobile-btn {
+                width: 100px;
+                height: 48px;
+                border: 2px solid #e52e71;
+                border-radius: 24px;
+                background: #ccc;
+                position: relative;
+                color: #fff;
+                font-size: 1.1rem;
+                font-weight: bold;
+                box-shadow:
+                    0 4px 24px rgba(229, 46, 113, 0.18),
+                    0 2px 8px rgba(0,0,0,0.18),
+                    0 12px 0 #b85d1c;
+                transition:
+                    background 0.3s,
+                    border 0.3s,
+                    box-shadow 0.3s,
+                    filter 0.2s;
+                cursor: pointer;
+                padding: 0;
+                overflow: hidden;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+                user-select: none;
+            }
+            #mobile-btn::before {
+                content: "";
+                position: absolute;
+                left: 6px;
+                top: 6px;
+                width: 32px;
+                height: 32px;
+                background: linear-gradient(270deg, #ff8a00, #e52e71, #ff8a00);
+                background-size: 400% 400%;
+                animation: gradientMoveMobile 6s ease infinite;
+                border-radius: 50%;
+                box-shadow: 0 2px 8px rgba(229, 46, 113, 0.25), 0 1px 3px rgba(0,0,0,0.12);
+                transition: left 0.3s, box-shadow 0.3s;
+                z-index: 1;
+                filter: brightness(1.15) saturate(1.2);
+            }
+            #mobile-btn.on {
+                background: #4caf50;
+                border: 2px solid #43cea2;
+                color: #fff;
+                box-shadow:
+                    0 6px 32px rgba(67, 206, 162, 0.18),
+                    0 2px 8px rgba(0,0,0,0.18),
+                    0 12px 0 #2e7d32;
+            }
+            #mobile-btn.on::before {
+                left: 54px;
+                box-shadow: 0 2px 12px rgba(67, 206, 162, 0.25), 0 1px 3px rgba(0,0,0,0.12);
+                filter: brightness(1.2) saturate(1.3);
+            }            #mobile-btn span {
+                position: relative;
+                z-index: 2;
+                transition: color 0.3s;
+                letter-spacing: 1px;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.12);
+                pointer-events: none;
+            }
+            #mobile-btn.on span {
+                color: #fff;
+            }
+            #mobile-btn:active {
+                filter: brightness(0.97);
+                box-shadow:
+                    0 2px 8px rgba(229, 46, 113, 0.15),
+                    0 1px 3px rgba(0,0,0,0.10),
+                    0 6px 0 #b85d1c;
+                transform: translateY(2px);
+            }
+            #lamp-container {
+                width: 120px;
+                height: 140px;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                transition: opacity 1s cubic-bezier(.4,2,.3,1), transform 5s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            #lamp-container.lamp-down {
+                opacity: 1;
+                transform: translateX(-50%) translateY(60px) scale(1);
+                transition: opacity 1s cubic-bezier(.4,2,.3,1), transform 5s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            .lamp-cable {
+                width: 3px;
+                height: 28px;
+                margin-bottom: -6px;
+            }
+            #svg-lamp {
+                width: 100px;
+                height: 120px;
+            }
+            #svg-lamp svg {
+                width: 100px;
+                height: 120px;
+            }            #love-message {
+                font-size: 1.2em; /* followers: tamaño del mensaje mobile */
+                top: 180px;
+                padding: 0 15px;
+                word-break: break-word;
+                line-height: 1.4;
+            }
+            body.lamp-on::before {
+                background: radial-gradient(ellipse at 50% 80px, rgba(255,255,255,0) 0%, rgba(34,34,34,0.85) 70%);
+            }
+            @keyframes gradientMoveMobile {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            #lamp-glow {
+                opacity: 0;
+                transition: opacity 4.5s cubic-bezier(0.22, 1, 0.36, 1);
+                filter: blur(24px);
+            }
+            .lamp-on #lamp-glow {
+                opacity: 1;
+                animation: lamp-glow-pulse 1.2s 4.5s infinite alternate;
+            }
+        }
+        .lamp-switch-group {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .lamp-icon {
+            font-size: 48px;
+            color: #bbb;
+            transition: color 0.3s, filter 0.3s, text-shadow 0.3s;
+            filter: brightness(0.7);
+            text-shadow: none;
+        }
+        .lamp-icon.on {
+            color: #ffe066;
+            filter: brightness(1.5) drop-shadow(0 0 16px #fffbe6);
+            text-shadow: 0 0 24px #fffbe6, 0 0 8px #ffe066;
+        }
+        #lamp-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateX(-50%) translateY(-40px) scale(0.9);
+            transition: opacity 1s cubic-bezier(.4,2,.3,1), transform 3.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .lamp-on #lamp-container {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+        .lamp-cable {
+            width: 4px;
+            height: 40px;
+            background: #444;
+            margin-bottom: -8px;
+            border-radius: 2px;
+        }
+        #svg-lamp {
+            width: 180px;
+            height: 210px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+            overflow: visible;
+        }
+        #svg-lamp svg {
+            display: block;
+            width: 180px;
+            height: 210px;
+            overflow: visible;
+        }
+        #lamp-shape {
+            fill: #888;
+            transition: fill 0.4s;
+        }
+        .lamp-on #lamp-shape {
+            fill: #ffe066;
+            filter: drop-shadow(0 8px 24px #fffbe6);
+        }
+        #lamp-glow {
+            opacity: 0;
+            transition: opacity 4.5s cubic-bezier(0.22, 1, 0.36, 1);
+            filter: blur(24px);
+        }
+        .lamp-on #lamp-glow {
+            opacity: 1;
+            animation: lamp-glow-pulse 1.2s 4.5s infinite alternate;
+        }
+        #lamp-bulb {
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .lamp-on #lamp-bulb {
+            opacity: 1;
+            animation: lamp-bulb-flicker 1.5s infinite alternate;
+        }
+        @keyframes lamp-glow-pulse {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        @keyframes lamp-bulb-flicker {
+            0% { opacity: 0.85; }
+            20% { opacity: 1; }
+            40% { opacity: 0.9; }
+            60% { opacity: 1; }
+            80% { opacity: 0.95; }
+            100% { opacity: 1; }
+        }
+        .center-desktop, .center-mobile {
+            margin-top: 120px;
+            transition: margin-top 0.5s cubic-bezier(.4,2,.3,1);
+        }        body.lamp-on .center-desktop,
+        body.lamp-on .center-mobile {
+            margin-top: 280px;
+        }#love-message {
+            display: block;
+            position: absolute;
+            left: 5vw;
+            right: 5vw;
+            margin-left: auto;
+            margin-right: auto;
+            top: 240px;
+            font-size: 2.5em; /* followers: tamaño del mensaje */
+            color: #ffffff; /* followers: color del mensaje */
+            text-shadow: 0 2px 16px #fffbe7, 0 1px 2px #000;
+            z-index: 20;
+            text-align: center;
+            font-family: 'Segoe Script', cursive, sans-serif;
+            transition: opacity 0.7s;
+            opacity: 0;
+            white-space: pre-line;
+            border-right: 2px solid #e52e71; /* followers: color del borde animado del mensaje */
+            overflow: hidden;
+            padding: 0.25em 1em;
+            box-sizing: border-box;
+            width: auto;
+            max-width: 90vw;
+            line-height: 1.3;
+        }
+        body.lamp-on #love-message {
+            display: block;
+            opacity: 1;
+            animation: fadeInMsg 1.2s 0.5s both;
+        }
+        @keyframes fadeInMsg {
+            from { opacity: 0; transform: translateY(30px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+    </style>
+</head>
+<body>
+    <!-- Lámpara SVG colgante -->
+    <div id="lamp-container">
+        <div class="lamp-cable"></div>
+        <div id="svg-lamp">
+
+            <?xml version="1.0" encoding="utf-8"?>
+            <svg fill="#000000" width="120" height="140" viewBox="-13.79 0 122.88 180" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="lamp-gradient" cx="48" cy="130" r="65" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#fffbe7" stop-opacity="1"/>
+                        <stop offset="60%" stop-color="#fffbe7" stop-opacity="0.7"/>
+                        <stop offset="100%" stop-color="#fffbe7" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+                <g>
+                    <ellipse id="lamp-glow" cx="48" cy="130" rx="65" ry="38" style="fill: url(#lamp-gradient); opacity: 0; transition: opacity 0.4s;" />
+                    <path id="lamp-shape" class="st0" d="M0.91,73.04h93.37c1.47-1.96,1.25-3.97,0-6L59.64,22.9H37.03L0.91,67.03C-0.1,69.08-0.5,71.1,0.91,73.04 L0.91,73.04z M45.38,97.3c0-1.25,1.02-2.27,2.27-2.27c1.25,0,2.27,1.02,2.27,2.27v23.32c0,1.25-1.02,2.27-2.27,2.27 c-1.25,0-2.27-1.02-2.27-2.27V97.3L45.38,97.3z M65.66,93.83c-0.91-0.85-0.97-2.27-0.12-3.19c0.85-0.91,2.27-0.97,3.19-0.12 l17.98,16.63c0.91,0.85,0.97,2.27,0.12,3.19c-0.85,0.91-2.28,0.97-3.19,0.12L65.66,93.83L65.66,93.83z M27.15,90.47 c0.94-0.82,2.37-0.73,3.19,0.21c0.82,0.94,0.73,2.37-0.21,3.19L12.15,109.6c-0.94,0.82-2.37,0.73-3.19-0.21 c-0.82-0.94-0.73-2.37,0.21-3.19L27.15,90.47L27.15,90.47z M45.09,0h5.13v8.9c4.88,1.17,8.53,5.58,8.53,10.8v0.72h-22.2v-0.72 c0-5.22,3.66-9.63,8.54-10.8V0L45.09,0z M47.82,88.58L47.82,88.58c5.99,0,10.9-4.9,10.9-10.9v-0.7H36.92v0.7 C36.92,83.68,41.82,88.58,47.82,88.58L47.82,88.58z"/>
+                    <!-- Luz intensa en la base de la lámpara -->
+                    <circle id="lamp-bulb" cx="48" cy="73" r="8" style="fill: #fffbe7; opacity: 0; filter: blur(2px);" />
+                </g>
+            </svg>
+        </div>
+    </div>
+    <div id="love-message">💛Eres todo lo que siempre quise, y eres el único dueño de mi corazón, David💛 </div> <!--Followers : Cambiar el texto-->
+    <!-- Botón para escritorio -->
+    <div class="center-desktop">
+        <button id="desktop-btn" type="button"><span>OFF</span></button>
+    </div>
+    <!-- Botón para mobile -->
+    <div class="center-mobile">
+        <button id="mobile-btn" type="button"><span>OFF</span></button>
+    </div>    <!-- Audio oculto para la música -->
+    <audio id="lamp-audio" src="Music/music2.mp3" preload="auto"></audio><script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const audio = document.getElementById('lamp-audio');
+            const desktopBtn = document.getElementById('desktop-btn');
+            const mobileBtn = document.getElementById('mobile-btn');
+            const lampGlow = document.getElementById('lamp-glow');
+            const lampBulb = document.getElementById('lamp-bulb');
+            const lampContainer = document.getElementById('lamp-container');
+            const loveMessage = document.getElementById('love-message');
+
+            // Variables de estado
+            let lampOn = false;
+            let lampAnimated = false;
+
+            // Texto original del mensaje
+            const originalMessage = loveMessage ? loveMessage.textContent : '';
+
+            // Función para el efecto máquina de escribir
+            function typeLoveMessage() {
+                if (!loveMessage) return;
+                loveMessage.textContent = '';
+                loveMessage.style.opacity = '1';
+                let i = 0;
+                function type() {
+                    if (i <= originalMessage.length) {
+                        loveMessage.textContent = originalMessage.slice(0, i);
+                        i++;
+                        setTimeout(type, 80);
+                    }
+                }
+                setTimeout(type, 500); // Espera medio segundo antes de empezar a escribir
+            }
+
+            // Función para resetear el mensaje
+            function resetLoveMessage() {
+                if (!loveMessage) return;
+                loveMessage.textContent = '';
+                loveMessage.style.opacity = '0';
+            }
+
+            // Función principal para alternar lámpara y música
+            function toggleLampAndMusic() {
+                lampOn = !lampOn;
+
+                // Sincronizar ambos botones
+                const buttons = [desktopBtn, mobileBtn].filter(btn => btn);
+                buttons.forEach(btn => {
+                    if (lampOn) {
+                        btn.classList.add('on');
+                        btn.querySelector('span').textContent = 'ON';
+                    } else {
+                        btn.classList.remove('on');
+                        btn.querySelector('span').textContent = 'OFF';
+                    }
+                });
+
+                // Control de las clases del body y lámpara
+                if (lampOn) {
+                    document.body.classList.add('lamp-on', 'light-on');
+                    lampContainer.classList.add('lamp-on');
+                    
+                    // Reproducir música
+                    if (audio) {
+                        audio.currentTime = 0;
+                        audio.play().catch(e => console.log('Error reproduciendo audio:', e));
+                    }
+
+                    // Animación de la lámpara en móvil
+                    if (window.innerWidth <= 600) {
+                        if (!lampAnimated) {
+                            lampAnimated = true;
+                            lampContainer.classList.add('lamp-down');
+                        }
+                    }
+
+                    // Mostrar mensaje con delay
+                    setTimeout(() => {
+                        typeLoveMessage();
+                    }, window.innerWidth <= 600 ? 3000 : 1000);
+
+                } else {
+                    document.body.classList.remove('lamp-on', 'light-on');
+                    lampContainer.classList.remove('lamp-on');
+                    
+                    // Pausar música
+                    if (audio) {
+                        audio.pause();
+                        audio.currentTime = 0;
+                    }
+
+                    // Resetear mensaje
+                    resetLoveMessage();
+                }
+            }
+
+            // Event listeners para ambos botones
+            if (desktopBtn) {
+                desktopBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggleLampAndMusic();
+                });
+            }            if (mobileBtn) {
+                // Event listener para click regular
+                mobileBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleLampAndMusic();
+                });
+
+                // Event listener adicional para touch en móvil
+                mobileBtn.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleLampAndMusic();
+                });
+            }
+
+            // Inicializar mensaje oculto
+            resetLoveMessage();
+        });
+    </script>
+</body>
+</html>
+
