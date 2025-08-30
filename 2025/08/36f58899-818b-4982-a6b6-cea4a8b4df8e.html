@@ -1,0 +1,361 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductor</title>
+    <link rel="icon" href="https://beat-tinhyeu.vercel.app/tiendev_logo.jpeg"> <!--them icon web nha-->
+<style>
+            body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(45deg, #0a0a0a, #1a1a1a);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        #visualizer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        .controls {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+        }
+        
+        .upload-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e, #ff6b6b);
+            background-size: 200% 200%;
+            border: none;
+            padding: 15px 30px;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.5s ease;
+            animation: gradient 3s ease infinite;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+        }
+        
+        .upload-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 107, 107, 0.8);
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        #songTitle {
+            margin-top: 15px;
+            font-size: 20px;
+            color: #ff8e8e;
+            text-shadow: 0 0 10px rgba(255, 142, 142, 0.5);
+            font-weight: bold;
+        }
+        
+        .love-quote {
+            position: absolute;
+            bottom: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-style: italic;
+            text-align: center;
+            width: 100%;
+            z-index: 2;
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+</style>
+</head>
+<body>
+    <div class="floating-hearts"></div>
+    <canvas id="visualizer"></canvas>
+    <div class="controls">
+        <input type="file" id="audioInput" accept="audio/*" style="display: none">
+        <button class="upload-btn" onclick="document.getElementById('audioInput').click()">
+            Elije Tú Música
+        </button>
+        <div id="songTitle"></div>
+    </div>
+    <div class="love-quote">
+        "Ands" ♫💛
+    </div>
+
+    <script>
+                function visualize() {
+            analyser.fftSize = 512;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            
+            function animate() {
+                animationId = requestAnimationFrame(animate);
+                analyser.getByteFrequencyData(dataArray);
+                
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                gradient.addColorStop(0, 'rgba(10, 10, 10, 0.2)');
+                gradient.addColorStop(1, 'rgba(26, 26, 26, 0.2)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                let sum = dataArray.reduce((a, b) => a + b, 0);
+                let avg = sum / bufferLength;
+                
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const mainHeartSize = (avg / 255) * 50 + 30;
+                const mainHeartColor = `hsl(${(avg + Date.now() / 50) % 360}, 80%, 60%)`;
+                drawHeart(centerX, centerY, mainHeartSize, mainHeartColor, Math.sin(Date.now() / 1000) * 0.1);
+                
+                const numHearts = 12;
+                const radius = 200;
+                for (let i = 0; i < numHearts; i++) {
+                    const angle = (i / numHearts) * Math.PI * 2;
+                    const freq = dataArray[Math.floor(i * bufferLength / numHearts)];
+                    const x = centerX + Math.cos(angle + Date.now() / 2000) * radius;
+                    const y = centerY + Math.sin(angle + Date.now() / 2000) * radius;
+                    const size = (freq / 255) * 20 + 10;
+                    const hue = (freq + i * 30) % 360;
+                    drawHeart(x, y, size, `hsla(${hue}, 80%, 60%, 0.6)`, angle);
+                }
+                
+if (avg > 100) {
+    for (let i = 0; i < 3; i++) { // Tăng số lượng trái tim khi mà beat nhạc có nha
+        particles.push(new HeartParticle(
+            centerX + (Math.random() - 0.5) * 10,
+            centerY + (Math.random() - 0.5) * 10,
+            Math.random() * 2 + 1, 
+            `hsla(${Math.random() * 60 + 330}, 100%, 70%, 0.8)`,
+            Math.random() * 8 + 4
+        ));
+    }
+}
+
+particles = particles.filter(particle => {
+    if (particle.update()) {
+        particle.draw(ctx);
+        return true;
+    }
+    return false;
+});
+                
+         
+ctx.beginPath();
+ctx.moveTo(0, canvas.height / 2);
+ctx.lineWidth = 2;
+const barWidth = canvas.width / bufferLength;
+const barSpacing = 2; 
+
+for (let i = 0; i < bufferLength; i++) {
+    const barHeight = dataArray[i] * 0.5;
+    const x = i * (barWidth + barSpacing);
+    
+    ctx.beginPath();
+    ctx.moveTo(x, canvas.height / 2);
+    ctx.lineTo(x, canvas.height / 2 - barHeight); 
+    
+    const hue = (Date.now() / 50 + i * 2) % 360;
+    ctx.strokeStyle = `hsla(${hue}, 80%, 60%, 0.8)`;
+    ctx.stroke();
+}
+ctx.lineTo(canvas.width, canvas.height / 2);
+ctx.strokeStyle = `hsla(${Date.now() / 50 % 360}, 80%, 60%, 0.3)`;
+ctx.lineWidth = 2;
+ctx.stroke();
+
+            }
+            
+            animate();
+        }
+document.querySelector('.controls').style.transition = 'all 0.5s ease';
+    </script>
+    <script>
+
+
+                const canvas = document.getElementById('visualizer');
+        const ctx = canvas.getContext('2d');
+        const audioInput = document.getElementById('audioInput');
+        const songTitle = document.getElementById('songTitle');
+        let particles = [];
+        
+        let audioContext;
+        let analyser;
+        let source;
+        let animationId;
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+class HeartParticle {
+    constructor(x, y, size, color, speed) {
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.color = color;
+        this.speed = speed;
+        this.angle = Math.random() * Math.PI * 2;
+        this.vx = Math.cos(this.angle) * this.speed;
+        this.vy = Math.sin(this.angle) * this.speed;
+        this.alpha = 1;
+        this.rotation = Math.random() * Math.PI * 2;
+    }
+    
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.1; 
+        this.rotation += 0.02;
+        this.alpha -= 0.01;
+        return this.alpha > 0;
+    }
+    
+    draw(ctx) {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.scale(this.size, this.size);
+        
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.bezierCurveTo(-2, -2, -4, -1, -4, 1);
+        ctx.bezierCurveTo(-4, 3, -2, 4, 0, 5);
+        ctx.bezierCurveTo(2, 4, 4, 3, 4, 1);
+        ctx.bezierCurveTo(4, -1, 2, -2, 0, 0);
+        
+        ctx.fillStyle = this.color;
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        
+        ctx.restore();
+    }
+}
+      
+        function drawHeart(x, y, size, color, rotation = 0) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rotation);
+            ctx.scale(size, size);
+            
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.bezierCurveTo(-2, -2, -4, -1, -4, 1);
+            ctx.bezierCurveTo(-4, 3, -2, 4, 0, 5);
+            ctx.bezierCurveTo(2, 4, 4, 3, 4, 1);
+            ctx.bezierCurveTo(4, -1, 2, -2, 0, 0);
+            
+            ctx.fillStyle = color;
+            ctx.fill();
+            
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 15;
+            ctx.fill();
+            
+            ctx.restore();
+        }
+        
+        function createFloatingHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '💛';
+            heart.style.position = 'absolute';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animation = `float ${Math.random() * 3 + 2}s linear forwards`;
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            heart.style.opacity = '0.6';
+            document.querySelector('.floating-hearts').appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+        
+        setInterval(createFloatingHeart, 300);
+        
+audioInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    songTitle.textContent = '♫ ' + file.name + ' ♫';
+    
+    // Hide controls
+    document.querySelector('.controls').style.opacity = '0';
+    setTimeout(() => {
+        document.querySelector('.controls').style.display = 'none';
+    }, 500);
+    
+    if (audioContext) {
+        audioContext.close();
+    }
+    
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+    }
+    
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioContext.createAnalyser();
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        audioContext.decodeAudioData(e.target.result, function(buffer) {
+            if (source) {
+                source.disconnect();
+            }
+            
+            source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+            
+            source.start(0);
+            visualize();
+            
+            source.onended = function() {
+                document.querySelector('.controls').style.display = 'block';
+                setTimeout(() => {
+                    document.querySelector('.controls').style.opacity = '1';
+                }, 100);
+            };
+        });
+    };
+    
+    reader.readAsArrayBuffer(file);
+});
+    </script>
+</body>
+</html>
