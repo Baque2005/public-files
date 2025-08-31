@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flores amarillas</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { overflow: hidden; height: 100%; }
+
+      body {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        min-height: 100vh;
+        background-color: #fff;
+        font-family: 'Montserrat', Arial, sans-serif;
+      }
+
+      .titulo {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        text-align: center;
+        font-family: 'Pacifico', cursive;
+        font-size: 5vh;
+        color: #ffe066;
+        letter-spacing: 3px;
+        text-shadow: 2px 2px 10px #000, 0 0 18px #fff200, 0 0 4px #ffec80;
+        opacity: 0;
+        animation: fadeIn 4s ease-in-out forwards;
+      }
+      @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+
+      .gif-bottom-bar {
+        position: fixed;
+        left: 0; bottom: 0;
+        width: 100vw; height: 170px;
+        z-index: 20;
+        pointer-events: none;
+        display: flex;
+        align-items: flex-end;
+        overflow: hidden;
+      }
+      .gif-bottom-bar img {
+        height: 170px; min-width: 180px;
+        object-fit: cover;
+        user-select: none; pointer-events: none;
+      }
+      @media (max-width: 600px) {
+        .gif-bottom-bar, .gif-bottom-bar img {
+          height: 90px; min-width: 90px;
+        }
+      }
+
+      .gif-middle {
+        position: fixed;
+        left: 50%; top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        max-width: 40vw; width: 220px;
+        pointer-events: none;
+      }
+      @media (max-width: 600px) {
+        .gif-middle { max-width: 60vw; width: 60vw; }
+      }
+
+      /* Partículas cayendo */
+      .bg-particle {
+        position: fixed;
+        left: 0;
+        top: 0;
+        pointer-events: none;
+        z-index: 1;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 60% 40%, #fffbe0 0%, #ffe066 60%, #e6c200 100%);
+        opacity: 0.7;
+        filter: blur(1px);
+        animation: fall-bg-particle linear forwards;
+      }
+      @keyframes fall-bg-particle {
+        0% {opacity: 0.7; transform: translateY(-20px) scale(1);}
+        100% {opacity: 0; transform: translateY(110vh) scale(1.2);}
+      }
+
+      /* FLORES al hacer click */
+      .flower {
+        position: absolute;
+        pointer-events: none;
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="titulo">Las flores amarillas simbolizan la felicidad. <br> Tú eres la mía❤️</h1>
+    <img class="gif-middle" src="https://i.pinimg.com/originals/9b/8b/16/9b8b16e0435d8cccd334dc65fffb5fe1.gif" alt="Imagen central">
+    <div class="gif-bottom-bar" id="gif-bottom-bar"></div>
+
+    <audio id="bg-music" src="https://github.com/Asprog3rX/Tareas/raw/refs/heads/main/saim.co.za%20-%20Coldplay%20-%20Yellow(Sub%20Espa%C3%B1ol%20Lyrics)%20(256%20KBps)%20(1).mp3" autoplay loop></audio>
+
+    <script>
+      // Partículas amarillas cayendo
+      function createBgParticle() {
+        const p = document.createElement('div');
+        p.className = 'bg-particle';
+        p.style.left = (Math.random() * 100) + 'vw';
+        const size = 8 + Math.random() * 16;
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.opacity = 0.5 + Math.random() * 0.5;
+        p.style.animationDuration = (3 + Math.random() * 3) + 's';
+        document.body.appendChild(p);
+        p.addEventListener('animationend', () => p.remove());
+      }
+      setInterval(() => {
+        for (let i = 0; i < 2; i++) createBgParticle();
+      }, 350);
+
+      // Rellenar parte inferior con GIFs
+      function fillBottomBar() {
+        const bar = document.getElementById('gif-bottom-bar');
+        bar.innerHTML = '';
+        const gifUrl = "https://i.pinimg.com/originals/3d/3c/b1/3d3cb1090cb648efa2c55d542ae5d49d.gif";
+        const imgWidth = window.innerWidth < 600 ? 90 : 180;
+        const count = Math.ceil(window.innerWidth / imgWidth) + 2;
+        for (let i = 0; i < count; i++) {
+          const img = document.createElement('img');
+          img.src = gifUrl;
+          bar.appendChild(img);
+        }
+      }
+      window.addEventListener('resize', fillBottomBar);
+      fillBottomBar();
+
+      // Música autoplay requiere click a veces
+      document.addEventListener('click', function playMusicOnce() {
+        const audio = document.getElementById('bg-music');
+        if (audio && audio.paused) audio.play();
+        document.removeEventListener('click', playMusicOnce);
+      });
+
+      // Crear varias FLORES amarillas en cada click
+      document.addEventListener("click", (e) => {
+        const total = 8 + Math.floor(Math.random() * 4); // entre 8 y 12 flores
+        for (let i = 0; i < total; i++) {
+          const flower = document.createElement("img");
+          flower.src = "https://i.pinimg.com/736x/71/5e/33/715e33b42809d7f58348cf4ef1bf2382.jpg"; // NUEVA IMAGEN
+          flower.className = "flower";
+
+          // tamaño aleatorio
+          const size = 40 + Math.random() * 60;
+          flower.style.width = size + "px";
+          flower.style.height = "auto";
+
+          // posición inicial = click
+          flower.style.left = e.clientX + "px";
+          flower.style.top = e.clientY + "px";
+
+          // animación con trayectoria aleatoria
+          const angle = Math.random() * 2 * Math.PI;
+          const dx = Math.cos(angle) * (80 + Math.random() * 120);
+          const dy = Math.sin(angle) * (80 + Math.random() * 120);
+
+          flower.animate([
+            { transform: `translate(-50%, -50%) scale(0.2)`, opacity: 0 },
+            { transform: `translate(calc(-50% + ${dx/2}px), calc(-50% + ${dy/2}px)) scale(1)`, opacity: 1 },
+            { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1.2)`, opacity: 0 }
+          ], {
+            duration: 2000 + Math.random() * 1000,
+            easing: "ease-out",
+            fill: "forwards"
+          });
+
+          document.body.appendChild(flower);
+          setTimeout(() => flower.remove(), 3000);
+        }
+      });
+    </script>
+  </body>
+</html>
