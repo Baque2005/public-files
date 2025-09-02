@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Cubo 3D Rebotante</title>
+  <style>
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      touch-action: none;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #000 url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/fondo.jpg') no-repeat center center;
+      background-size: cover;
+    }
+
+    .scene {
+      position: absolute;
+      perspective: 1000px;
+      width: 85vmin;
+      height: 85vmin;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      transition: all 0.5s ease-out;
+    }
+
+    .cube {
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.5s ease-out;
+      transform: scale(0.65) rotateX(-15deg) rotateY(15deg);
+      will-change: transform;
+    }
+
+    .face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border: 3px solid;
+      box-shadow: 0 0 15px rgba(255, 105, 180, 0.8),
+                  0 0 30px rgba(255, 105, 180, 0.6),
+                  0 0 45px rgba(255, 105, 180, 0.4);
+      animation: borderPulse 0s infinite alternate, 
+                 colorChange 0s infinite alternate;
+      backface-visibility: visible;
+      filter: brightness(1);
+    }
+
+    @keyframes colorChange {
+      0%, 100% {
+        border-color: rgba(255, 105, 180, 0.9); /* Rosa */
+        box-shadow: 0 0 15px rgba(255, 105, 180, 0.9),
+                    0 0 30px rgba(255, 105, 180, 0.7),
+                    0 0 45px rgba(255, 105, 180, 0.5);
+      }
+      50% {
+        border-color: rgba(0, 0, 0, 0.9); /* Negro */
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.9),
+                    0 0 30px rgba(0, 0, 0, 0.7),
+                    0 0 45px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    @keyframes borderPulse {
+      0%, 100% {
+        border-color: rgba(255, 105, 180, 0.9); /* Rosa */
+        box-shadow: 0 0 20px rgba(255, 105, 180, 0.9),
+                    0 0 40px rgba(255, 105, 180, 0.7),
+                    0 0 60px rgba(255, 105, 180, 0.5);
+      }
+      50% {
+        border-color: rgba(0, 0, 0, 0.9); /* Negro */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.9),
+                    0 0 40px rgba(0, 0, 0, 0.7),
+                    0 0 60px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    .front  { transform: translateZ(42.5vmin); }
+    .back   { transform: rotateY(180deg) translateZ(42.5vmin); }
+    .right  { transform: rotateY(90deg) translateZ(42.5vmin); }
+    .left   { transform: rotateY(-90deg) translateZ(42.5vmin); }
+    .top    { transform: rotateX(90deg) translateZ(42.5vmin); }
+    .bottom { transform: rotateX(-90deg) translateZ(42.5vmin); }
+
+    .rain-symbol {
+      position: absolute;
+      top: -50px;
+      font-size: 4.5vmin;
+      color: rgba(255, 105, 180, 0.7); /* Rosa */
+      text-shadow: 0 0 5px rgba(255, 105, 180, 0.7);
+      z-index: 1;
+      animation: fall linear forwards;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(120vh);
+        opacity: 0;
+      }
+    }
+
+    #audioPlayer {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      max-width: 320px;
+      z-index: 10;
+      background-color: rgba(20, 20, 20, 0.8);
+      border-radius: 12px;
+      padding: 8px;
+      border: 1px solid rgba(255, 105, 180, 0.5); /* Rosa */
+      box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+    }
+
+    /* Ajustes para pantallas muy pequeñas */
+    @media (max-height: 600px) {
+      .scene {
+        width: 75vmin;
+        height: 75vmin;
+      }
+      
+      #audioPlayer {
+        bottom: 5px;
+        padding: 6px;
+        max-width: 280px;
+      }
+    }
+
+    /* Estilos específicos para móviles */
+    .mobile-controls {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+      background-color: rgba(20, 20, 20, 0.8);
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid rgba(255, 105, 180, 0.5); /* Rosa */
+      box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+    }
+
+    @media (min-width: 1024px) {
+      .mobile-controls {
+        display: none;
+      }
+    }
+
+    .mobile-controls button {
+      padding: 10px 15px;
+      background: rgba(255, 105, 180, 0.3); /* Rosa */
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+
+    .mobile-controls button:active {
+      background: rgba(255, 105, 180, 0.5); /* Rosa más intenso */
+    }
+
+    /* Estilos específicos para PC */
+    @media (min-width: 1024px) {
+      .scene {
+        width: 60vmin;
+        height: 60vmin;
+        perspective: 1200px;
+      }
+
+      .cube {
+        transform: scale(0.8) rotateX(-15deg) rotateY(15deg);
+      }
+
+      .front, .back, .right, .left, .top, .bottom {
+        transform: translateZ(30vmin);
+      }
+
+      .front  { transform: translateZ(30vmin); }
+      .back   { transform: rotateY(180deg) translateZ(30vmin); }
+      .right  { transform: rotateY(90deg) translateZ(30vmin); }
+      .left   { transform: rotateY(-90deg) translateZ(30vmin); }
+      .top    { transform: rotateX(90deg) translateZ(30vmin); }
+      .bottom { transform: rotateX(-90deg) translateZ(30vmin); }
+
+      #audioPlayer {
+        max-width: 400px;
+        bottom: 30px;
+      }
+
+      .rain-symbol {
+        font-size: 24px;
+      }
+    }
+
+    /* Controles para PC */
+    .controls-panel {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(20, 20, 20, 0.8);
+      border-radius: 12px;
+      padding: 15px;
+      border: 1px solid rgba(255, 105, 180, 0.5); /* Rosa */
+      box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+      z-index: 10;
+      display: none;
+    }
+
+    @media (min-width: 1024px) {
+      .controls-panel {
+        display: block;
+      }
+    }
+
+    .controls-panel h3 {
+      color: white;
+      margin-bottom: 10px;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .controls-panel button {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      margin: 5px 0;
+      background: rgba(255, 105, 180, 0.3); /* Rosa */
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .controls-panel button:hover {
+      background: rgba(255, 105, 180, 0.5); /* Rosa más intenso */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scene">
+    <div class="cube" id="cube">
+      <div class="face front"  style="background-image: url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/cara1.jpg')"></div>
+      <div class="face back"   style="background-image: url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/cara2.jpg')"></div>
+      <div class="face right"  style="background-image: url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/cara3.jpg')"></div>
+      <div class="face left"   style="background-image: url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/cara4.jpg')"></div>
+      <div class="face top"    style="background-image: url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/cara5.jpg')"></div>
+      <div class="face bottom" style="background-image: url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/cara6.jpg')"></div>
+    </div>
+  </div>
+
+  <!-- Controles para móviles -->
+  <div class="mobile-controls">
+    <button id="mobileBounceBtn">Rebotar</button>
+    <button id="mobileResetBtn">Resetear</button>
+    <button id="mobileRotateBtn">Rotar</button>
+  </div>
+
+  <div class="controls-panel">
+    <h3>Controles</h3>
+    <button id="bounceBtn">Activar Rebote (Doble Click)</button>
+    <button id="resetBtn">Resetear Posición</button>
+    <button id="rotateBtn">Rotación Automática</button>
+  </div>
+
+  <audio id="audioPlayer" controls loop>
+    <source src="https://github.com/Gon-p/Galery/raw/refs/heads/main/musica_fondo.mp3" type="audio/mpeg">
+    Tu navegador no soporta el elemento de audio.
+  </audio>
+
+  <script>
+    // Detección de dispositivo
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isPC = !isMobile;
+    const cube = document.getElementById('cube');
+    const scene = document.querySelector('.scene');
+    const audio = document.getElementById('audioPlayer');
+    const bounceBtn = document.getElementById('bounceBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const rotateBtn = document.getElementById('rotateBtn');
+    const mobileBounceBtn = document.getElementById('mobileBounceBtn');
+    const mobileResetBtn = document.getElementById('mobileResetBtn');
+    const mobileRotateBtn = document.getElementById('mobileRotateBtn');
+    const symbols = ["A", "💛", "Te Amo", "💜", "I Love You", "💛"];
+
+    // Configuración inicial
+    let rotateX = -15;
+    let rotateY = 15;
+    let startX, startY, isDragging = false;
+    let lluviaInterval = null;
+    let lastTapTime = 0;
+    let isBouncing = false;
+    let bounceAnimationId = null;
+    let autoRotateId = null;
+    let isAutoRotating = false;
+
+    function updateRotation() {
+      cube.style.transform = `scale(${isPC ? 0.8 : 0.65}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    }
+
+    // Control para dispositivos táctiles
+    function handleStart(x, y) {
+      if (isBouncing || isAutoRotating) return;
+      
+      isDragging = true;
+      startX = x;
+      startY = y;
+      cube.style.transition = 'none';
+      scene.style.transition = 'none';
+    }
+
+    function handleMove(x, y) {
+      if (!isDragging || isBouncing || isAutoRotating) return;
+      
+      const sensitivity = isPC ? 0.5 : 0.8;
+      rotateY += (x - startX) * sensitivity;
+      rotateX -= (y - startY) * sensitivity;
+      
+      startX = x;
+      startY = y;
+      updateRotation();
+    }
+
+    function handleEnd() {
+      isDragging = false;
+      if (!isBouncing && !isAutoRotating) {
+        cube.style.transition = 'transform 0.1s linear';
+        scene.style.transition = 'all 0.1s linear';
+      }
+    }
+
+    // Eventos táctiles para móviles
+    document.addEventListener('touchstart', e => {
+      if (e.target.closest('.mobile-controls')) return;
+      e.preventDefault();
+      handleStart(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+    
+    document.addEventListener('touchmove', e => {
+      if (e.target.closest('.mobile-controls')) return;
+      e.preventDefault();
+      handleMove(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+    
+    document.addEventListener('touchend', e => {
+      if (e.target.closest('.mobile-controls')) return;
+      e.preventDefault();
+      handleEnd();
+    });
+
+    // Eventos de ratón para PC
+    if (isPC) {
+      document.addEventListener('mousedown', e => {
+        if (e.target.closest('.controls-panel')) return;
+        handleStart(e.clientX, e.clientY);
+      });
+      
+      document.addEventListener('mousemove', e => {
+        handleMove(e.clientX, e.clientY);
+      });
+      
+      document.addEventListener('mouseup', e => {
+        handleEnd();
+      });
+
+      // Rueda del ratón para zoom
+      document.addEventListener('wheel', e => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.05 : 0.05;
+        const currentScale = parseFloat(cube.style.transform.match(/scale\(([^)]+)\)/)[1]) || (isPC ? 0.8 : 0.65);
+        const newScale = Math.min(Math.max(currentScale + delta, 0.4), 1.2);
+        
+        cube.style.transition = 'transform 0.2s ease-out';
+        cube.style.transform = `scale(${newScale}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      }, { passive: false });
+    }
+
+    // Efecto de lluvia optimizado
+    function crearSimbolo() {
+      const el = document.createElement('div');
+      el.className = 'rain-symbol';
+      el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.animationDuration = (3 + Math.random() * 4) + 's';
+      document.body.appendChild(el);
+      
+      // Limpieza de elementos
+      setTimeout(() => {
+        if (el.parentNode) {
+          el.parentNode.removeChild(el);
+        }
+      }, 7000);
+    }
+
+    function iniciarLluvia() {
+      clearInterval(lluviaInterval);
+      lluviaInterval = setInterval(crearSimbolo, isPC ? 300 : 400);
+    }
+
+    function detenerLluvia() {
+      clearInterval(lluviaInterval);
+      lluviaInterval = null;
+    }
+
+    // Animación de rebote con física
+    function bounceCube() {
+      if (isBouncing) {
+        resetPosition();
+        return;
+      }
+      
+      // Detener rotación automática si está activa
+      if (isAutoRotating) {
+        toggleAutoRotate();
+      }
+      
+      isBouncing = true;
+      cube.style.transition = 'none';
+      scene.style.transition = 'none';
+      
+      // Parámetros de física
+      const gravity = 0.2;
+      const damping = 0.7;
+      const bounceRandomness = 0.3;
+      
+      let posX = window.innerWidth / 2;
+      let posY = window.innerHeight / 2;
+      let velX = (Math.random() - 0.5) * 15;
+      let velY = -12 - Math.random() * 5;
+      let scale = isPC ? 0.8 : 0.65;
+      
+      const sceneRect = scene.getBoundingClientRect();
+      const cubeSize = sceneRect.width;
+      
+      // Cancelar animación previa si existe
+      if (bounceAnimationId) {
+        cancelAnimationFrame(bounceAnimationId);
+      }
+      
+      function animate() {
+        // Aplicar gravedad
+        velY += gravity;
+        
+        // Actualizar posición
+        posX += velX;
+        posY += velY;
+        
+        // Detección de colisión con bordes
+        const leftBound = cubeSize / 2;
+        const rightBound = window.innerWidth - cubeSize / 2;
+        const topBound = cubeSize / 2;
+        const bottomBound = window.innerHeight - cubeSize / 2;
+        
+        // Rebote en los bordes
+        if (posX < leftBound) {
+          posX = leftBound;
+          velX = -velX * damping * (0.9 + Math.random() * bounceRandomness);
+          velY *= 0.95;
+        } else if (posX > rightBound) {
+          posX = rightBound;
+          velX = -velX * damping * (0.9 + Math.random() * bounceRandomness);
+          velY *= 0.95;
+        }
+        
+        if (posY < topBound) {
+          posY = topBound;
+          velY = -velY * damping;
+        } else if (posY > bottomBound) {
+          posY = bottomBound;
+          velY = -velY * damping * (0.8 + Math.random() * bounceRandomness);
+          velX *= 0.9;
+          
+          // Reducir escala cuando toca el fondo para efecto de "aplastamiento"
+          scale = (isPC ? 0.7 : 0.55) + Math.random() * 0.1;
+        } else {
+          // Restaurar escala gradualmente
+          scale = Math.min(isPC ? 0.8 : 0.65, scale + 0.01);
+        }
+        
+        // Rotación basada en la velocidad
+        rotateY += velX * 0.5;
+        rotateX += velY * 0.3;
+        
+        // Aplicar transformaciones
+        scene.style.left = `${posX - cubeSize / 2}px`;
+        scene.style.top = `${posY - cubeSize / 2}px`;
+        scene.style.transform = 'none';
+        cube.style.transform = `scale(${scale}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        
+        // Continuar animación
+        bounceAnimationId = requestAnimationFrame(animate);
+      }
+      
+      // Iniciar animación
+      bounceAnimationId = requestAnimationFrame(animate);
+    }
+
+    function resetPosition() {
+      // Cancelar animación de rebote si está activa
+      if (bounceAnimationId) {
+        cancelAnimationFrame(bounceAnimationId);
+        bounceAnimationId = null;
+      }
+      
+      isBouncing = false;
+      
+      // Restaurar posición y rotación original
+      scene.style.transition = 'all 0.5s ease-out';
+      scene.style.left = '50%';
+      scene.style.top = '50%';
+      scene.style.transform = 'translate(-50%, -50%)';
+      
+      cube.style.transition = 'transform 0.5s ease-out';
+      rotateX = -15;
+      rotateY = 15;
+      updateRotation();
+    }
+
+    // Rotación automática
+    function toggleAutoRotate() {
+      if (isBouncing) return;
+      
+      isAutoRotating = !isAutoRotating;
+      
+      if (isAutoRotating) {
+        if (isPC) rotateBtn.textContent = 'Detener Rotación';
+        else mobileRotateBtn.textContent = 'Detener Rotación';
+        cube.style.transition = 'transform 0.1s linear';
+        
+        function autoRotate() {
+          if (!isAutoRotating) return;
+          rotateY += 0.5;
+          updateRotation();
+          autoRotateId = requestAnimationFrame(autoRotate);
+        }
+        
+        autoRotateId = requestAnimationFrame(autoRotate);
+      } else {
+        if (isPC) rotateBtn.textContent = 'Rotación Automática';
+        else mobileRotateBtn.textContent = 'Rotar';
+        if (autoRotateId) {
+          cancelAnimationFrame(autoRotateId);
+          autoRotateId = null;
+        }
+      }
+    }
+
+    // Detección de doble tap/clic
+    function handleDoubleTap() {
+      const now = Date.now();
+      const doubleTapDelay = isPC ? 500 : 300;
+      
+      if (now - lastTapTime < doubleTapDelay) {
+        // Doble tap/clic detectado
+        if (isBouncing) {
+          resetPosition();
+        } else {
+          bounceCube();
+        }
+      }
+      
+      lastTapTime = now;
+    }
+
+    // Event listeners para el cubo
+    cube.addEventListener('click', handleDoubleTap);
+    
+    cube.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleDoubleTap();
+    });
+
+    // Botones de control para PC
+    if (isPC) {
+      bounceBtn.addEventListener('click', bounceCube);
+      resetBtn.addEventListener('click', resetPosition);
+      rotateBtn.addEventListener('click', toggleAutoRotate);
+    }
+
+    // Botones de control para móviles
+    mobileBounceBtn.addEventListener('click', bounceCube);
+    mobileResetBtn.addEventListener('click', resetPosition);
+    mobileRotateBtn.addEventListener('click', toggleAutoRotate);
+
+    // Reproducir música de fondo automáticamente
+    audio.addEventListener('play', iniciarLluvia);
+    audio.addEventListener('pause', detenerLluvia);
+    audio.addEventListener('ended', iniciarLluvia);
+
+    // Solución para autoplay
+    document.addEventListener('click', function initAudio() {
+      // Intenta reproducir la música
+      audio.play().catch(e => console.log("Autoplay no permitido hasta interacción del usuario"));
+      document.removeEventListener('click', initAudio);
+    }, { once: true });
+
+    // Ajustar al cambiar tamaño
+    window.addEventListener('resize', () => {
+      if (!isBouncing) {
+        scene.style.left = '50%';
+        scene.style.top = '50%';
+        scene.style.transform = 'translate(-50%, -50%)';
+      }
+    });
+
+    // Inicializar
+    updateRotation();
+  </script>
+</body>
+</html>
