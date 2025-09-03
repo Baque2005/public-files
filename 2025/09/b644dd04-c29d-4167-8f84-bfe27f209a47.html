@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Corazón Cósmico con Flechas</title>
+<style>
+html, body { margin:0; padding:0; overflow:hidden; background:white; }
+canvas { display:block; position:absolute; top:0; left:0; z-index:-1; }
+#centerGif {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:200px; z-index:1; pointer-events:none;
+    border:6px solid #ff2d55; border-radius:20px; box-shadow:0 0 30px #ff2d55aa;
+}
+#mensaje-arriba {
+    position:absolute; top:5vh; left:50%; transform:translateX(-50%);
+    width:90vw; max-width:700px; color:#d9004c;
+    font-family:'Dancing Script', cursive, Arial, sans-serif; font-size:2.1em;
+    font-weight:bold; text-align:center; z-index:10;
+    text-shadow:0 2px 12px #fff,0 0 8px #ffb3c1; letter-spacing:0.02em;
+    background: rgba(255,255,255,0.7); border-radius:18px; padding:0.4em 0.8em;
+    box-shadow:0 2px 18px #ffb3c133; user-select:none;
+}
+</style>
+</head>
+<body>
+<div id="mensaje-arriba">
+No importa lo que pase, 
+siempre estaré a tu lado para cuidarte y proteger tu corazón. 
+Mi amor por ti es un refugio seguro donde nunca sentirás miedo. ❤️
+</div>
+<canvas id="canvas"></canvas>
+<img id="centerGif" src="https://i.pinimg.com/originals/26/2b/76/262b76e0aae5282ed1f8f1a88a5652f3.gif" />
+
+<script>
+let w,h;
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; }
+window.addEventListener("resize",resize);
+resize();
+
+// ================================
+// Partículas del corazón
+// ================================
+const microbots=[]; const numBots=3500; const numEdgeBots=1800;
+const mouse={x:-9999, y:-9999, radius:80};
+
+function heartShape(t,scale=20){
+    const x=scale*16*Math.pow(Math.sin(t),3);
+    const y=-scale*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+    return [x,y];
+}
+function randomHeartColor(){
+    const reds=["#ff2d55","#ff0033","#ff4d6d","#ff1744","#ff5252","#ff5e78","#ff1a40"];
+    return reds[Math.floor(Math.random()*reds.length)];
+}
+
+// Partículas internas
+for(let i=0;i<numBots;i++){
+    const t=Math.random()*Math.PI*2;
+    const [hx,hy]=heartShape(t,20+Math.random()*8);
+    const rand=Math.random()<0.8?1:Math.pow(Math.random(),0.5);
+    const x=w/2+hx*rand+Math.sin(t*8)*2*Math.random();
+    const y=h/2+hy*rand+Math.cos(t*8)*2*Math.random();
+    microbots.push({x,y,baseX:x,baseY:y,vx:0,vy:0,color:randomHeartColor()});
+}
+
+// Partículas borde
+for(let i=0;i<numEdgeBots;i++){
+    const t=Math.random()*Math.PI*2;
+    const [hx,hy]=heartShape(t,28+Math.random()*2);
+    const x=w/2+hx+Math.sin(t*12)*2*Math.random();
+    const y=h/2+hy+Math.cos(t*12)*2*Math.random();
+    microbots.push({x,y,baseX:x,baseY:y,vx:0,vy:0,color:randomHeartColor()});
+}
+
+window.addEventListener("mousemove",e=>{ mouse.x=e.clientX; mouse.y=e.clientY; });
+window.addEventListener("touchmove",e=>{
+    if(e.touches.length>0){ mouse.x=e.touches[0].clientX; mouse.y=e.touches[0].clientY; }
+},{passive:true});
+
+// ================================
+// Estrellas
+// ================================
+const starfield=[];
+for(let i=0;i<80;i++) starfield.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.3,speed:0.15+Math.random()*0.15});
+function drawStars(){
+    ctx.fillStyle="black"; ctx.globalAlpha=0.2;
+    for(let s of starfield){ ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y+=s.speed; if(s.y>h){s.y=0; s.x=Math.random()*w;} }
+    ctx.globalAlpha=1;
+}
+
+// ================================
+// Flechas y explosión de partículas
+// ================================
+const arrowImg=new Image();
+arrowImg.src="https://i.pinimg.com/1200x/a8/d1/4a/a8d14a86a6f39938bf44e554d482c1a9.jpg";
+let arrows=[];
+let explosions=[]; // explosiones visuales
+
+function spawnArrow(){
+    const dirs=[[-1,-1],[-1,1],[1,-1],[1,1]];
+    const dir=dirs[Math.floor(Math.random()*dirs.length)];
+    let x=dir[0]<0?w:0, y=dir[1]<0?h:0;
+    const angle=Math.atan2(h/2 - y, w/2 - x);
+    const speed=11+Math.random()*2;
+    arrows.push({x,y,speed,angle});
+    if(arrows.length>20) arrows.shift();
+}
+setInterval(spawnArrow,1200);
+
+// ================================
+// Animación flechas y colisión
+// ================================
+function drawArrows(){
+    const gif=document.getElementById("centerGif");
+    const gifRect={x:w/2-gif.width/2-6, y:h/2-gif.width/2-6, width:gif.width+12, height:gif.width+12};
+
+    for(let i=arrows.length-1;i>=0;i--){
+        let a=arrows[i];
+        ctx.save(); ctx.translate(a.x,a.y); ctx.rotate(a.angle);
+        ctx.drawImage(arrowImg,-90,-27,180,54); ctx.restore();
+
+        a.x+=Math.cos(a.angle)*a.speed;
+        a.y+=Math.sin(a.angle)*a.speed;
+
+        // Explosión de corazones al chocar con GIF + explosión visual
+        if(a.x>gifRect.x && a.x<gifRect.x+gifRect.width &&
+           a.y>gifRect.y && a.y<gifRect.y+gifRect.height){
+            // Partículas de corazón
+            for(let j=0;j<20;j++){
+                const t=Math.random()*Math.PI*2;
+                const scale=4+Math.random()*3;
+                const [hx,hy]=heartShape(t,scale);
+                microbots.push({
+                    x:a.x+hx, y:a.y+hy, baseX:a.x, baseY:a.y,
+                    vx:(Math.random()-0.5)*8, vy:(Math.random()-0.5)*8,
+                    color: randomHeartColor()
+                });
+            }
+            // Partículas de explosión visual (más grandes)
+            let exps = [];
+            for(let k=0;k<32;k++){
+                const ang = Math.random()*2*Math.PI;
+                const vel = 6+Math.random()*7; // velocidad igual, pero radio mayor
+                exps.push({
+                    x: a.x, y: a.y,
+                    vx: Math.cos(ang)*vel,
+                    vy: Math.sin(ang)*vel,
+                    r: 8+Math.random()*7, // radio mucho mayor
+                    alpha: 1,
+                    color: `rgba(${220+Math.floor(Math.random()*35)},${40+Math.floor(Math.random()*60)},${80+Math.floor(Math.random()*60)},1)`
+                });
+            }
+            explosions.push({particles: exps, t: 0});
+            arrows.splice(i,1);
+        }
+    }
+}
+
+// ================================
+// Explosión visual
+// ================================
+function drawExplosions(){
+    for(let e of explosions){
+        for(let p of e.particles){
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+            ctx.fillStyle = p.color;
+            ctx.shadowColor = "#ffb3c1";
+            ctx.shadowBlur = 18;
+            ctx.fill();
+            ctx.restore();
+
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vx *= 0.93;
+            p.vy *= 0.93;
+            p.alpha *= 0.93;
+        }
+        e.t++;
+    }
+    // Limpia explosiones terminadas
+    explosions = explosions.filter(e => e.particles.some(p => p.alpha > 0.05));
+}
+
+// ================================
+// Animación general con interacción de flechas
+// ================================
+function animate(){
+    ctx.clearRect(0,0,w,h);
+    drawStars();
+    drawArrows();
+    drawExplosions();
+
+    for(let bot of microbots){
+        // interacción con mouse
+        let dx=bot.x - mouse.x, dy=bot.y - mouse.y;
+        let dist2=dx*dx+dy*dy;
+        if(dist2<mouse.radius*mouse.radius){
+            let force=(mouse.radius - Math.sqrt(dist2))/mouse.radius;
+            let angle=Math.atan2(dy,dx);
+            bot.vx+=Math.cos(angle)*1.2;
+            bot.vy+=Math.sin(angle)*1.2;
+        }
+
+        // interacción con flechas
+        for(let a of arrows){
+            let dx2=bot.x - a.x, dy2=bot.y - a.y;
+            let dist2a=dx2*dx2+dy2*dy2;
+            const arrowRadius=60;
+            if(dist2a<arrowRadius*arrowRadius){
+                let force=(arrowRadius - Math.sqrt(dist2a))/arrowRadius;
+                let angle=Math.atan2(dy2,dx2);
+                bot.vx+=Math.cos(angle)*1.1;
+                bot.vy+=Math.sin(angle)*1.1;
+            }
+        }
+
+        // regreso a base
+        bot.vx+=(bot.baseX - bot.x)*0.01;
+        bot.vy+=(bot.baseY - bot.y)*0.01;
+        bot.vx*=0.9; bot.vy*=0.9;
+        bot.x+=bot.vx; bot.y+=bot.vy;
+
+        ctx.beginPath();
+        ctx.arc(bot.x,bot.y,2,0,Math.PI*2);
+        ctx.fillStyle=bot.color; ctx.fill();
+    }
+    requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
