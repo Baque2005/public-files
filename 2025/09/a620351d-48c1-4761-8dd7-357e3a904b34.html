@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>heart animation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://use.typekit.net/trt3ngp.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Parisienne&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      overflow: hidden;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #1a0d1a 0%, #2b0f2b 100%);
+      color: #ffccff;
+      -webkit-font-smoothing: antialiased;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    }
+
+    .webgl {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      outline: none;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      border: 6px solid #ff99cc;
+      inset: clamp(8px, 2vw, 16px);
+      z-index: 100;
+      pointer-events: none;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255, 153, 204, 0.5);
+    }
+
+    h1 {
+      position: absolute;
+      top: 8vh;
+      left: 2rem; right: 2rem;
+      text-align: center;
+      font-family: 'Parisienne', cursive;
+      font-weight: 800;
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      text-shadow: 0 0 10px rgba(255, 153, 204, 0.7);
+      opacity: 0;
+      animation: fadeIn 1.2s ease-in forwards .6s;
+      z-index: 110;
+      letter-spacing: .02em;
+    }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* ===== Modal ===== */
+    #modal-novia {
+      position: fixed; inset: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(255, 153, 204, 0.18);
+      display: grid; place-items: center;
+      z-index: 9999;
+      backdrop-filter: blur(2px);
+      padding: clamp(8px, 3vw, 24px);
+    }
+
+    .modal-card {
+      background: rgba(255,255,255,0.15);
+      border-radius: 18px;
+      box-shadow: 0 0 24px #ff99cc55;
+      padding: clamp(20px, 4vw, 36px);
+      text-align: center;
+      width: min(92vw, 560px);
+      border: 2px solid #ff99cc;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-title {
+      font-family:'Parisienne', cursive;
+      font-size: clamp(1.9rem, 5.2vw, 2.6rem);
+      color:#fff;
+      margin-bottom: clamp(12px, 2.8vw, 20px);
+      text-shadow:
+        0 2px 12px rgba(255,255,255,.8),
+        0 0 2px #d6007a,
+        0 0 18px rgba(214,0,122,.45);
+      font-weight: 800;
+      letter-spacing: .03em;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: clamp(12px, 3.2vw, 28px);
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-size: clamp(1rem, 2.8vw, 1.25rem);
+      border-radius: 12px;
+      border: 2px solid #ff77b6;
+      background: #fff;
+      color: #d6007a;
+      font-weight: 900; /* más gorditas */
+      cursor: pointer;
+      padding: clamp(10px, 2.4vw, 14px) clamp(18px, 4.2vw, 28px);
+      box-shadow: 0 8px 18px rgba(214,0,122,0.15);
+      transition: transform .18s ease, box-shadow .18s ease, background .2s ease, color .2s ease;
+      letter-spacing: .04em;
+      user-select: none;
+    }
+    .btn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 10px 26px rgba(214,0,122,0.22); }
+    .btn:active { transform: translateY(0) scale(.98); }
+
+    .btn-si { background: #ffebf6; border-color:#ff93c8; }
+    .btn-no { background: #fff; border-color:#ff93c8; }
+
+    .respuesta {
+      margin-top: clamp(12px, 2.8vw, 22px);
+      font-size: clamp(1.05rem, 3.4vw, 1.35rem);
+      color:#ffe6f4;
+      font-family:'Parisienne', cursive;
+      font-weight: 800;
+      text-shadow: 0 0 10px rgba(255, 153, 204, 0.6);
+      min-height: 1.6em;
+      letter-spacing: .03em;
+    }
+
+    /* Asegurar fuentes “gorditas” en todo lo importante */
+    .h1text,
+    .modal-title,
+    .btn,
+    .respuesta { font-weight: 800 !important; }
+
+    /* Cambiar fuente del modal a sistema más neutro */
+    .modal-title,
+    .modal-actions .btn,
+    .respuesta,
+    .modal-msg-neutra,
+    .mensaje-flotante-si {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif !important;
+      font-weight: 700 !important;
+      font-style: normal !important;
+      letter-spacing: .03em;
+    }
+
+    /* Accesibilidad táctil */
+    .btn { min-width: 110px; }
+
+    @media (max-width: 420px) {
+      .btn { flex: 1 1 42%; min-width: 130px; }
+    }
+
+    .mensaje-flotante-si {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Parisienne', cursive;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      color: #fff;
+      background: rgba(255, 153, 204, 0.18);
+      padding: 24px 48px;
+      border-radius: 24px;
+      box-shadow: 0 0 32px #ff99cc55;
+      text-align: center;
+      z-index: 99999;
+      pointer-events: none;
+      text-shadow: 0 2px 18px #ff99cc, 0 0 2px #d6007a;
+      opacity: 0;
+      animation: fadeInFlotante 1.2s ease-in forwards;
+    }
+    @keyframes fadeInFlotante { to { opacity: 1; } }
+  </style>
+</head>
+<body>
+  <canvas class="webgl"></canvas>
+  <h1 class="h1text">Para Ti</h1>
+
+  <!-- Modal -->
+  <div id="modal-novia" aria-modal="true" role="dialog">
+    <div class="modal-card">
+      <div class="modal-title">¿Quieres ser mi novia?</div>
+      <div class="modal-actions">
+        <button id="btn-si"  class="btn btn-si" aria-label="Sí">Sí</button>
+        <button id="btn-no"  class="btn btn-no" aria-label="No">No</button>
+      </div>
+      <div id="respuesta-novia" class="respuesta" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- Shaders -->
+  <script type="x-shader/x-vertex" id="vertexShader">
+    #define M_PI 3.1415926535897932384626433832795
+    uniform float uTime;
+    uniform float uSize;
+    attribute float aScale;
+    attribute vec3 aColor;
+    attribute float random;
+    attribute float random1;
+    attribute float aSpeed;
+    varying vec3 vColor;
+    varying vec2 vUv;
+
+    void main() {
+      float sign = 2.0 * (step(random, 0.5) - 0.5);
+      float t = sign * mod(-uTime * aSpeed * 0.005 + 10.0 * aSpeed * aSpeed, M_PI);
+      float a = pow(t, 2.0) * pow((t - sign * M_PI), 2.0);
+      float radius = 0.08;
+      vec3 myOffset = vec3(
+        radius * 16.0 * pow(sin(t), 2.0) * sin(t),
+        radius * (13.0 * cos(t) - 5.0 * cos(2.0 * t) - 2.0 * cos(3.0 * t) - cos(4.0 * t)),
+        0.15 * (a * (random1 - 0.5)) * sin(abs(10.0 * (sin(0.2 * uTime + 0.2 * random))) * t)
+      );
+      vec4 modelPosition = modelMatrix * vec4(myOffset, 1.0);
+      vec4 viewPosition = viewMatrix * modelPosition;
+      viewPosition.xyz += position * aScale * uSize * pow(a, 0.5) * 0.5;
+      gl_Position = projectionMatrix * viewPosition;
+      vColor = aColor;
+      vUv = uv;
+    }
+  </script>
+
+  <script type="x-shader/x-fragment" id="fragmentShader">
+    varying vec3 vColor;
+    varying vec2 vUv;
+    void main() {
+      vec2 uv = vUv;
+      vec3 color = vColor;
+      float strength = distance(uv, vec2(0.5));
+      strength *= 2.0;
+      strength = 1.0 - strength;
+      gl_FragColor = vec4(strength * color, 1.0);
+    }
+  </script>
+
+  <script type="x-shader/x-vertex" id="vertexShader1">
+    #define M_PI 3.1415926535897932384626433832795
+    uniform float uTime;
+    uniform float uSize;
+    attribute float aScale;
+    attribute vec3 aColor;
+    attribute float phi;
+    attribute float random;
+    attribute float random1;
+    varying vec3 vColor;
+    varying vec2 vUv;
+
+    void main() {
+      float t = 0.01 * uTime + 12.0;
+      float angle = phi;
+      t = mod((-uTime + 100.0) * 0.06 * random1 + random * 2.0 * M_PI, 2.0 * M_PI);
+      vec3 myOffset = vec3(
+        5.85 * cos(angle * t),
+        2.0 * (t - M_PI),
+        3.0 * sin(angle * t / t)
+      );
+      vec4 modelPosition = modelMatrix * vec4(myOffset, 1.0);
+      vec4 viewPosition = viewMatrix * modelPosition;
+      viewPosition.xyz += position * aScale * uSize;
+      gl_Position = projectionMatrix * viewPosition;
+      vColor = aColor;
+      vUv = uv;
+    }
+  </script>
+
+  <script type="x-shader/x-fragment" id="fragmentShader1">
+    uniform sampler2D uTex;
+    varying vec3 vColor;
+    varying vec2 vUv;
+    void main() {
+      vec2 uv = vUv;
+      vec3 color = vColor;
+      float strength = distance(uv, vec2(0.5, 0.65));
+      strength *= 2.0;
+      strength = 1.0 - strength;
+      vec3 texture = texture2D(uTex, uv).rgb;
+      gl_FragColor = vec4(texture * color * (strength + 0.3), 1.0);
+    }
+  </script>
+
+  <!-- Scripts -->
+  <script type="module">
+    import * as THREE from "https://cdn.skypack.dev/three@0.135.0";
+    import { gsap } from "https://cdn.skypack.dev/gsap@3.8.0";
+    import { GLTFLoader } from "https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/GLTFLoader";
+
+    class World {
+      constructor({ canvas, width, height, cameraPosition, fieldOfView = 75, nearPlane = 0.1, farPlane = 100 }) {
+        this.parameters = { count: 1500, max: 12.5 * Math.PI, a: 2, c: 4.5 };
+
+        this.textureLoader = new THREE.TextureLoader();
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0x000000);
+        this.clock = new THREE.Clock();
+        this.data = 0;
+        this.time = { current: 0, t0: 0, t1: 0, t: 0, frequency: 0.0005 };
+        this.angle = { x: 0, z: 0 };
+        this.width = width || window.innerWidth;
+        this.height = height || window.innerHeight;
+        this.aspectRatio = this.width / this.height;
+        this.fieldOfView = fieldOfView;
+
+        this.camera = new THREE.PerspectiveCamera(fieldOfView, this.aspectRatio, nearPlane, farPlane);
+        this.camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+        this.scene.add(this.camera);
+
+        this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        this.pixelRatio = Math.min(window.devicePixelRatio, 2);
+        this.renderer.setPixelRatio(this.pixelRatio);
+        this.renderer.setSize(this.width, this.height);
+
+        this.timer = 0;
+        this.addToScene();
+        this.start(); // autoplay (puede requerir interacción del usuario en algunos navegadores)
+
+        this.render();
+        this.listenToResize();
+        this.listenToMouseMove();
+      }
+
+      start() {
+        this.loadMusic().then(() => {
+          this.isRunning = true;
+          this.time.t0 = this.clock.getElapsedTime();
+          this.data = 0;
+        }).catch(()=>{ /* si el navegador bloquea autoplay, igual sigue la animación sin audio */ });
+      }
+
+      render() {
+        this.renderer.render(this.scene, this.camera);
+        this.composer && this.composer.render();
+      }
+
+      loop() {
+        this.time.elapsed = this.clock.getElapsedTime();
+        this.time.delta = Math.min(60, (this.time.current - this.time.elapsed) * 1000);
+
+        if (this.analyser && this.isRunning) {
+          this.time.t = this.time.elapsed - this.time.t0 + this.time.t1;
+          this.data = this.analyser.getAverageFrequency();
+          this.data *= this.data / 2000;
+          this.angle.x += this.time.delta * 0.001 * 0.63;
+          this.angle.z += this.time.delta * 0.001 * 0.39;
+
+          const justFinished = this.isRunning && !this.sound.isPlaying;
+          if (justFinished) {
+            this.time.t1 = this.time.t;
+            this.isRunning = false;
+            const tl = gsap.timeline();
+            this.angle.x = 0; this.angle.z = 0;
+            tl.to(this.camera.position, { x: 0, z: 4.5, duration: 4, ease: "expo.in" });
+          } else {
+            this.camera.position.x = Math.sin(this.angle.x) * this.parameters.a;
+            this.camera.position.z = Math.min(Math.max(Math.cos(this.angle.z) * this.parameters.c, 1.75), 6.5);
+          }
+        }
+
+        this.camera.lookAt(this.scene.position);
+
+        if (this.heartMaterial) {
+          this.heartMaterial.uniforms.uTime.value += this.time.delta * this.time.frequency * (1 + this.data * 0.2);
+        }
+        if (this.model) {
+          this.model.rotation.y -= 0.0005 * this.time.delta * (1 + this.data);
+        }
+        if (this.snowMaterial) {
+          this.snowMaterial.uniforms.uTime.value += this.time.delta * 0.0004 * (1 + this.data);
+        }
+
+        this.render();
+        this.time.current = this.time.elapsed;
+        requestAnimationFrame(this.loop.bind(this));
+      }
+
+      listenToResize() {
+        window.addEventListener("resize", () => {
+          this.width = window.innerWidth;
+          this.height = window.innerHeight;
+          this.camera.aspect = this.width / this.height;
+          this.camera.updateProjectionMatrix();
+          this.renderer.setSize(this.width, this.height);
+        });
+      }
+
+      listenToMouseMove() {
+        window.addEventListener("mousemove", e => {
+          const x = e.clientX; const y = e.clientY;
+          gsap.to(this.camera.position, {
+            x: gsap.utils.mapRange(0, window.innerWidth, 0.2, -0.2, x),
+            y: gsap.utils.mapRange(0, window.innerHeight, 0.2, -0.2, -y)
+          });
+        });
+      }
+
+      addHeart() {
+        this.heartMaterial = new THREE.ShaderMaterial({
+          fragmentShader: document.getElementById("fragmentShader").textContent,
+          vertexShader: document.getElementById("vertexShader").textContent,
+          uniforms: {
+            uTime: { value: 0 },
+            uSize: { value: 0.2 },
+            uTex: { value: new THREE.TextureLoader().load("https://assets.codepen.io/74321/heart.png") }
+          },
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+          transparent: true,
+          opacity: 1
+        });
+
+        const count = 3000;
+        const scales = new Float32Array(count);
+        const colors = new Float32Array(count * 3);
+        const speeds = new Float32Array(count);
+        const randoms = new Float32Array(count);
+        const randoms1 = new Float32Array(count);
+        const colorChoices = ["#ff66cc","#ff99ff","#ffccff","#ff3366","#ffffff"];
+
+        const squareGeometry = new THREE.PlaneGeometry(1, 1);
+        this.instancedGeometry = new THREE.InstancedBufferGeometry();
+        Object.keys(squareGeometry.attributes).forEach(attr => {
+          this.instancedGeometry.attributes[attr] = squareGeometry.attributes[attr];
+        });
+        this.instancedGeometry.index = squareGeometry.index;
+        this.instancedGeometry.maxInstancedCount = count;
+
+        for (let i = 0; i < count; i++) {
+          const i3 = 3 * i;
+          randoms[i] = Math.random();
+          randoms1[i] = Math.random();
+          scales[i] = Math.random() * 0.35;
+          const colorIndex = Math.floor(Math.random() * colorChoices.length);
+          const color = new THREE.Color(colorChoices[colorIndex]);
+          colors[i3 + 0] = color.r;
+          colors[i3 + 1] = color.g;
+          colors[i3 + 2] = color.b;
+          speeds[i] = Math.random() * this.parameters.max;
+        }
+        this.instancedGeometry.setAttribute("random",  new THREE.InstancedBufferAttribute(randoms, 1, false));
+        this.instancedGeometry.setAttribute("random1", new THREE.InstancedBufferAttribute(randoms1,1, false));
+        this.instancedGeometry.setAttribute("aScale",  new THREE.InstancedBufferAttribute(scales, 1, false));
+        this.instancedGeometry.setAttribute("aSpeed",  new THREE.InstancedBufferAttribute(speeds, 1, false));
+        this.instancedGeometry.setAttribute("aColor",  new THREE.InstancedBufferAttribute(colors, 3, false));
+
+        this.heart = new THREE.Mesh(this.instancedGeometry, this.heartMaterial);
+        this.heart.position.set(0,0,0);
+        this.scene.add(this.heart);
+      }
+
+      addToScene() {
+        this.addModel();
+        this.addHeart();
+        this.addSnow();
+      }
+
+      async addModel() {
+        this.model = await this.loadObj("https://assets.codepen.io/74321/heart.glb");
+        this.model.scale.set(0.001, 0.001, 0.001);
+        this.model.material = new THREE.MeshMatcapMaterial({
+          matcap: this.textureLoader.load("https://assets.codepen.io/74321/3.png", () => {
+            gsap.to(this.model.scale, { x: 0.25, y: 0.25, z: 0.25, duration: 1.5, ease: "Elastic.easeOut" });
+          }),
+          color: "#ff3366",
+          transparent: true,
+          opacity: 1
+        });
+        this.model.position.set(0,0,0);
+        this.scene.add(this.model);
+      }
+
+      loadObj(path) {
+        const loader = new GLTFLoader();
+        return new Promise(resolve => {
+          loader.load(
+            path,
+            response => resolve(response.scene.children[0]),
+            () => {},
+            err => console.log(err)
+          );
+        });
+      }
+
+      loadMusic() {
+        return new Promise((resolve, reject) => {
+          const listener = new THREE.AudioListener();
+          this.camera.add(listener);
+          this.sound = new THREE.Audio(listener);
+          const audioLoader = new THREE.AudioLoader();
+          audioLoader.load(
+            "https://assets.codepen.io/74321/ukulele.mp3",
+            buffer => {
+              try {
+                this.sound.setBuffer(buffer);
+                this.sound.setLoop(false);
+                this.sound.setVolume(0.5);
+                this.sound.play(); // puede ser bloqueado por autoplay
+              } catch(e) {}
+              this.analyser = new THREE.AudioAnalyser(this.sound, 32);
+              const data = this.analyser.getAverageFrequency();
+              this.isRunning = true;
+              this.t0 = this.time?.elapsed ?? 0;
+              resolve(data);
+            },
+            undefined,
+            error => { console.log(error); reject(error); }
+          );
+        });
+      }
+
+      addSnow() {
+        this.snowMaterial = new THREE.ShaderMaterial({
+          fragmentShader: document.getElementById("fragmentShader1").textContent,
+          vertexShader: document.getElementById("vertexShader1").textContent,
+          uniforms: {
+            uTime: { value: 0 },
+            uSize: { value: 0.3 },
+            uTex: { value: new THREE.TextureLoader().load("https://assets.codepen.io/74321/heart.png") }
+          },
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+          transparent: true,
+          opacity: 1
+        });
+
+        const count = 550;
+        const scales = new Float32Array(count);
+        const colors = new Float32Array(count * 3);
+        const phis = new Float32Array(count);
+        const randoms = new Float32Array(count);
+        const randoms1 = new Float32Array(count);
+        const colorChoices = ["#ff66cc","#ff99ff","#ffccff","#ffffff"];
+
+        const squareGeometry = new THREE.PlaneGeometry(1, 1);
+        this.instancedGeometry = new THREE.InstancedBufferGeometry();
+        Object.keys(squareGeometry.attributes).forEach(attr => {
+          this.instancedGeometry.attributes[attr] = squareGeometry.attributes[attr];
+        });
+        this.instancedGeometry.index = squareGeometry.index;
+        this.instancedGeometry.maxInstancedCount = count;
+
+        for (let i = 0; i < count; i++) {
+          const phi = (Math.random() - 0.5) * 10;
+          const i3 = 3 * i;
+          phis[i] = phi;
+          randoms[i] = Math.random();
+          randoms1[i] = Math.random();
+          scales[i] = Math.random() * 0.35;
+          const colorIndex = Math.floor(Math.random() * colorChoices.length);
+          const color = new THREE.Color(colorChoices[colorIndex]);
+          colors[i3 + 0] = color.r;
+          colors[i3 + 1] = color.g;
+          colors[i3 + 2] = color.b;
+        }
+        this.instancedGeometry.setAttribute("phi",    new THREE.InstancedBufferAttribute(phis, 1, false));
+        this.instancedGeometry.setAttribute("random", new THREE.InstancedBufferAttribute(randoms, 1, false));
+        this.instancedGeometry.setAttribute("random1",new THREE.InstancedBufferAttribute(randoms1,1, false));
+        this.instancedGeometry.setAttribute("aScale", new THREE.InstancedBufferAttribute(scales, 1, false));
+        this.instancedGeometry.setAttribute("aColor", new THREE.InstancedBufferAttribute(colors, 3, false));
+
+        this.snow = new THREE.Mesh(this.instancedGeometry, this.snowMaterial);
+        this.snow.position.set(0,0,0);
+        this.scene.add(this.snow);
+      }
+    }
+
+    const world = new World({
+      canvas: document.querySelector("canvas.webgl"),
+      cameraPosition: { x: 0, y: 0, z: 4.5 }
+    });
+    world.loop();
+
+    // ---- Interacciones Sí / No ----
+    const modal      = document.getElementById('modal-novia');
+    const btnSi      = document.getElementById('btn-si');
+    const btnNo      = document.getElementById('btn-no');
+    const respuesta  = document.getElementById('respuesta-novia');
+    let audioNo = null; // referencia al audio del "no"
+
+    // Frases para NO y SÍ
+    const frasesNo = [
+      "Cuando dices que no… mi corazón se hace chiquitito 💔🥺",
+      "Un ‘no’ tuyo es como si el universo se apagara poquito a poquito:c",
+      "vamos di que si, prometo bañarme :D",
+      "Dime que si y vamos por un helado!",
+      "Tu serias mi sol en días nublados:c",
+      "Vamos te haré feliz",
+      "Bueno espero no obligarte, es tu decisión",
+    ];
+    const frasesSi = [
+      "¡Sabía que dirías que sí! 💖",
+      "Contigo empieza mi capítulo más feliz ✨",
+      "Eres la respuesta que siempre soñé ❤️",
+      "Prometo hacerte sonreír cada día 💕"
+    ];
+    let fadeLevel = 0;
+    let noIndex = 0;
+    let siIndex = 0;
+    let noBtnGone = false;
+    let siPrimeraVez = true;
+
+    function applyFadeLevel() {
+      // objetivos según nivel (alineado con tu descripción de “horizonte”)
+      const targetZ   = -10 * fadeLevel;        // se alejan
+      const targetOp  = 1 - 0.8 * fadeLevel;    // se desvanecen (mín ~0.2)
+      const sizeHeart = 0.2 * (1 - 0.7 * fadeLevel);
+      const sizeSnow  = 0.3 * (1 - 0.7 * fadeLevel);
+
+      if (world.heart) {
+        gsap.to(world.heart.position, { z: targetZ, duration: 1.4, ease: "power2.inOut" });
+      }
+      if (world.snow) {
+        gsap.to(world.snow.position,  { z: targetZ, duration: 1.6, ease: "power2.inOut" });
+      }
+      if (world.model) {
+        gsap.to(world.model.position, { z: targetZ * 0.35, duration: 1.2, ease: "power2.inOut" });
+        gsap.to(world.model.material, { opacity: Math.max(0.25, targetOp), duration: 1.2, ease: "power2.out" });
+      }
+      if (world.heartMaterial) {
+        world.heartMaterial.transparent = true;
+        gsap.to(world.heartMaterial, { opacity: targetOp, duration: 1.1, ease: "power2.out" });
+        gsap.to(world.heartMaterial.uniforms.uSize, { value: sizeHeart, duration: 1.1, ease: "power2.out" });
+      }
+      if (world.snowMaterial) {
+        world.snowMaterial.transparent = true;
+        gsap.to(world.snowMaterial, { opacity: targetOp, duration: 1.1, ease: "power2.out" });
+        gsap.to(world.snowMaterial.uniforms.uSize, { value: sizeSnow, duration: 1.1, ease: "power2.out" });
+      }
+    }
+
+    // Crear modal flotante sobre el botón NO
+    function showNoFlyModal() {
+      let btnNo = document.getElementById('btn-no');
+      if (!btnNo) return;
+      let modalMsg = document.createElement('div');
+      modalMsg.textContent = "Yo mejor me voy, para que no te sientas presionada";
+      modalMsg.className = "modal-msg-neutra";
+      modalMsg.style.position = "absolute";
+      modalMsg.style.left = "50%";
+      modalMsg.style.top = "0";
+      modalMsg.style.transform = "translate(-50%, -120%)";
+      modalMsg.style.background = "rgba(255,255,255,0.85)";
+      modalMsg.style.color = "#d6007a";
+      modalMsg.style.fontWeight = "bold";
+      modalMsg.style.fontSize = "1.2em";
+      modalMsg.style.padding = "10px 22px";
+      modalMsg.style.borderRadius = "14px";
+      modalMsg.style.boxShadow = "0 2px 12px #ff99cc55";
+      modalMsg.style.zIndex = "99999";
+      modalMsg.style.pointerEvents = "none";
+      modalMsg.style.opacity = "0";
+      btnNo.parentElement.appendChild(modalMsg);
+
+      setTimeout(() => { modalMsg.style.transition = "opacity 0.5s"; modalMsg.style.opacity = "1"; }, 80);
+
+      // Animación de saltos hacia la derecha (mucho más lenta)
+      let salto = 0;
+      let totalSaltos = 32;      // más saltos
+      let saltoDistancia = 18;   // menos distancia por salto
+      let saltoAltura = 38;      // altura igual
+      let duracionSalto = 220;   // ms por salto (más lento)
+
+      function animarSalto() {
+        if (salto < totalSaltos) {
+          let x = salto * saltoDistancia;
+          let saltoY = (salto % 2 === 0) ? -saltoAltura : 0;
+          btnNo.style.transition = `transform ${duracionSalto/1000}s cubic-bezier(.42,1.7,.58,.9)`;
+          btnNo.style.transform = `translate(${x}px, ${saltoY-120}px) scale(1.1) rotate(-22deg)`;
+          modalMsg.style.transition = `transform ${duracionSalto/1000}s cubic-bezier(.42,1.7,.58,.9)`;
+          modalMsg.style.transform = `translate(calc(-50% + ${x}px), ${saltoY-120}px)`;
+          salto++;
+          setTimeout(animarSalto, duracionSalto);
+        } else {
+          btnNo.style.transition = "opacity 1.2s";
+          btnNo.style.opacity = "0";
+          modalMsg.style.transition = "opacity 1.2s";
+          modalMsg.style.opacity = "0";
+          setTimeout(() => {
+            btnNo.style.display = "none";
+            modalMsg.remove();
+          }, 1200);
+        }
+      }
+      animarSalto();
+
+      // Reproducir música al dar "no"
+      if (!audioNo) {
+        audioNo = new Audio("https://github.com/Ronald1234-2/musica/raw/refs/heads/main/Manu%20Chao%20-%20Me%20Gustas%20Tu%20-%20LatinHype.mp3");
+        audioNo.volume = 0.18;
+        audioNo.loop = false;
+        audioNo.play();
+      }
+    }
+
+    // Botón NO: muestra todas las frases seguidas, luego vuela el botón
+    btnNo.addEventListener('click', () => {
+      if (noBtnGone) return;
+      respuesta.textContent = frasesNo[noIndex];
+      fadeLevel = Math.min(1, fadeLevel + 0.25);
+      applyFadeLevel();
+      gsap.fromTo(btnNo, { x: 0 }, { x: 8, yoyo: true, repeat: 5, duration: 0.05, ease: "power1.inOut" });
+
+      noIndex++;
+      if (noIndex < frasesNo.length) {
+        // Espera y muestra la siguiente frase SOLO si el usuario vuelve a hacer click
+        // El avance automático se elimina para evitar que se apriete solo
+      } else {
+        // Cuando se acaben las frases, vuela el botón y muestra el modal
+        noBtnGone = true;
+        setTimeout(showNoFlyModal, 1200);
+      }
+    });
+
+    // Botón SÍ: restaura todo y muestra mensaje flotante la primera vez
+    btnSi.addEventListener('click', () => {
+      if (siPrimeraVez) {
+        siPrimeraVez = false;
+        // Oculta el modal
+        gsap.to(modal, { opacity: 0, duration: .7, onComplete: ()=> {
+          modal.style.pointerEvents = 'none';
+          modal.style.display = 'none';
+          mostrarMensajeFlotanteSi();
+        }});
+      }
+      respuesta.textContent = frasesSi[siIndex % frasesSi.length];
+      siIndex++;
+      fadeLevel = 0;
+      applyFadeLevel();
+      gsap.fromTo(btnSi, { scale: 1 }, { scale: 1.08, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out" });
+    });
+
+    function mostrarMensajeFlotanteSi() {
+      const mensaje = document.createElement('div');
+      mensaje.className = 'mensaje-flotante-si';
+      mensaje.textContent = "sabía que dirías que sí!! \n Te amo mucho ❤️";
+      // El estilo neutro ya está en la clase
+      document.body.appendChild(mensaje);
+    }
+
+    // Opcional: cerrar sólo si quieres ocultar el modal después de responder
+    // Descomenta si lo deseas:
+    /*
+    function hideModal() {
+      gsap.to(modal, { opacity: 0, duration: .5, onComplete: ()=> {
+        modal.style.pointerEvents = 'none';
+      }});
+    }
+    */
+
+  </script>
+</body>
+</html>
+</body>
+</html>
