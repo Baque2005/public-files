@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Declaración de Amor</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Comic Sans MS';
+    background-color: #fefefe;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #paginaInterior {
+    display: flex;
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh; background-color: #fff;
+    z-index: 10; justify-content: center; align-items: center;
+    overflow: auto;
+  }
+  .cuaderno-abierto { display: flex; width: 90%; max-width: 800px; min-height: 400px;
+    box-shadow: 0px 20px 30px rgba(0,0,0,0.2);
+    border-radius: 10px; overflow: hidden;
+    flex-wrap: wrap;
+  }
+  .hoja { flex: 1; min-width: 300px;
+    background: repeating-linear-gradient(to bottom,#fff,#fff 25px,#ffc0cb4d 25px,#ffc0cb4d 26px);
+    border-left: 8px solid #C7B8EA; border-right: 8px solid #C7B8EA;
+    padding: 30px; font-size: 1em; color: #555; overflow-y: auto; position: relative;
+  }
+  .hoja h2 { color: #800080; text-align: center; margin-bottom: 10px; }
+  .lapiz { width: 48px; position: absolute; z-index: 100; display: none; transform: rotate(-20deg); }
+  .final { margin-top: 20px; text-align: center; }
+  .btn { padding: 10px 20px; margin: 10px; font-size: 1em; border-radius: 8px; border: none; cursor: pointer; }
+  .btn-si { background-color: #ff69b4; color: white; }
+  .btn-no { background-color: #ccc; color: #333; }
+  @media (max-width: 850px) {
+    .cuaderno-abierto { flex-direction: column; height: auto; }
+    .hoja { width: 100%; min-height: 300px; }
+  }
+  .gif-final { display: block; margin: 20px auto; max-width: 100%; border-radius: 10px; }
+
+  /* Modal */
+  #modal {
+    display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:1000;
+  }
+  #modal .contenido {
+    background:#fff; padding:30px; border-radius:15px; text-align:center;
+    max-width:400px; width:80%; font-size:1.2em; color:#800080;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  }
+  #modal .cerrarModal {
+    margin-top:20px; padding:8px 16px; border:none; border-radius:8px;
+    background:#ff69b4; color:#fff; cursor:pointer;
+  }
+</style>
+</head>
+<body>
+
+<div id="paginaInterior">
+  <div class="cuaderno-abierto">
+    <div class="hoja">
+      <img id="lapiz1" class="lapiz" src="https://github.com/Baque2005/public-files/blob/main/2025/7639e05bbee28e357ca924e6379b1476.png?raw=true">
+      <h2 id="titulo1"></h2>
+      <p id="texto1"></p>
+      <h2 id="titulo1b"></h2>
+      <img src="https://i.pinimg.com/originals/0f/e9/7c/0fe97c31ef0c0b294a14e7f14880bc44.gif" class="gif-final" alt="GIF romántico">
+    </div>
+    <div class="hoja">
+      <img id="lapiz2" class="lapiz" src="https://github.com/Baque2005/public-files/blob/main/2025/7639e05bbee28e357ca924e6379b1476.png?raw=true">
+      <h2 id="titulo2"></h2>
+      <p id="texto2"></p>
+      <div class="final" id="final" style="display:none;">
+        <p>¿Pasarías más tiempo a mi lado?</p>
+        <button class="btn btn-si" id="btnSi">Sí</button>
+        <button class="btn btn-no" id="btnNo">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="modal">
+  <div class="contenido">
+    Te haré siempre muy feliz 😍
+    <button class="cerrarModal" onclick="cerrarModal()">Cerrar</button>
+  </div>
+</div>
+
+<script>
+const titulo1 = "✧ Mis sentimientos... ✧";
+const texto1 = "Cada momento contigo me llena de alegría y calidez. Cada sonrisa tuya ilumina mi día, y cada pensamiento en ti hace que mi corazón se acelere. No hay palabras suficientes para expresar lo que siento, pero cada línea de esta libreta lleva mi amor y cariño por ti.";
+const titulo1b = "Eres mi inspiración y mi alegría diaria";
+
+const titulo2 = "✧ Mis sueños contigo ✧";
+const texto2 = "Imagino todos los días compartiendo risas, aventuras y momentos que nunca olvidaré. Contigo todo parece más brillante, más divertido y más especial. Cada instante a tu lado es un regalo que quiero atesorar siempre. Sueño con abrazarte en los días fríos, caminar juntos bajo la lluvia, y reír hasta que nos duela el estómago. Quiero que cada día contigo sea una historia única e inolvidable.";
+
+// Función de escritura más rápida
+function escribirTexto(idElemento, texto, idLapiz, velocidad = 50, callback) {
+  const elem = document.getElementById(idElemento);
+  const lapiz = document.getElementById(idLapiz);
+  elem.innerHTML = '';
+  lapiz.style.display = 'block';
+  let i = 0;
+  function escribir() {
+    if (i < texto.length) {
+      elem.innerHTML = texto.slice(0,i+1).replace(/\n/g,'<br>');
+      const range = document.createRange();
+      const textNode = elem.firstChild;
+      if(textNode){
+        range.setStart(textNode, i);
+        range.setEnd(textNode, i+1);
+        const rect = range.getBoundingClientRect();
+        const hojaRect = elem.closest('.hoja').getBoundingClientRect();
+        lapiz.style.top = (rect.top - hojaRect.top - 20 + Math.sin(i/2)*3) + 'px';
+        lapiz.style.left = (rect.left - hojaRect.left + rect.width + Math.sin(i/2)*2) + 'px';
+      }
+      i++;
+      setTimeout(escribir, velocidad);
+    } else { lapiz.style.display = 'none'; if(callback) callback(); }
+  }
+  escribir();
+}
+
+// Iniciar escritura al cargar
+window.onload = () => { iniciarEscritura(); }
+
+function iniciarEscritura(){
+  escribirTexto('titulo1', titulo1, 'lapiz1', 50, ()=>{
+    escribirTexto('texto1', texto1, 'lapiz1', 60, ()=>{
+      escribirTexto('titulo1b', titulo1b, 'lapiz1', 50, ()=>{
+        escribirTexto('titulo2', titulo2, 'lapiz2', 50, ()=>{
+          escribirTexto('texto2', texto2, 'lapiz2', 60, ()=>{
+            document.getElementById('final').style.display = 'block';
+          });
+        });
+      });
+    });
+  });
+}
+
+// Botón "Sí" abre modal
+document.getElementById('btnSi').addEventListener('click', ()=>{
+  document.getElementById('modal').style.display = 'flex';
+});
+function cerrarModal(){ document.getElementById('modal').style.display = 'none'; }
+
+// Botón "No" se mueve al pasar el ratón
+const btnNo = document.getElementById('btnNo');
+btnNo.addEventListener('mouseenter', ()=>{
+  const parent = btnNo.parentElement;
+  const maxX = parent.offsetWidth - btnNo.offsetWidth;
+  const maxY = parent.offsetHeight - btnNo.offsetHeight;
+  btnNo.style.position = 'absolute';
+  btnNo.style.left = Math.random()*maxX + 'px';
+  btnNo.style.top = Math.random()*maxY + 'px';
+});
+
+// Bloquear retroceso del navegador
+history.pushState(null, null, location.href);
+window.onpopstate = function () { history.go(1); };
+</script>
+</body>
+</html>
