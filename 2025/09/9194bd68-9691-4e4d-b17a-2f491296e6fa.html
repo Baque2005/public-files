@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galería Espacial 3D</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: url('https://i.pinimg.com/originals/78/1a/75/781a75a112e6c689dd1030f4ad495512.gif') no-repeat center center fixed;
+    background-size: cover;
+  }
+
+  .carousel {
+    position: relative;
+    width: 80vw;
+    max-width: 500px;
+    height: 80vw;
+    max-height: 500px;
+    perspective: 1200px;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+  }
+
+  .carousel-inner {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    animation: rotate 25s linear infinite;
+    transition: transform 0.5s ease;
+  }
+
+  .carousel-item {
+    position: absolute;
+    width: 30%;
+    max-width: 160px;
+    height: 30%;
+    max-height: 160px;
+    left: 50%;
+    top: 50%;
+    transform-style: preserve-3d;
+    transform-origin: center center -40%;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.7), 0 0 20px rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    border: 4px solid #000;
+  }
+
+  .carousel-item:hover {
+    transform: scale(1.1) translateZ(40%);
+    box-shadow: 0 0 15px #fff, 0 12px 40px rgba(255,255,255,0.8);
+    border-color: #fff;
+  }
+
+  .carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 12px;
+  }
+
+  @keyframes rotate {
+    from { transform: rotateY(0deg); }
+    to   { transform: rotateY(360deg); }
+  }
+
+  #modal {
+    display: none;
+    position: fixed;
+    top:0; left:0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  #modal.show {
+    display: flex;
+    opacity: 1;
+  }
+
+  #modal-content {
+    background: #111;
+    padding: 25px;
+    border-radius: 20px;
+    color: #fff;
+    text-align: center;
+    max-width: 90%;
+    max-height: 90%;
+    transform: scale(0.7) translateY(-50px);
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+  }
+
+  #modal.show #modal-content {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+
+  #modal-content img {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 30px rgba(255,255,255,0.3);
+    border: 4px solid #000;
+  }
+
+  #close-modal {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border:none;
+    border-radius: 10px;
+    background:#ff4d4d;
+    color:#fff;
+    cursor:pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+  }
+
+  #close-modal:hover {
+    background: #ff1a1a;
+  }
+
+  @media (max-width: 600px) {
+    .carousel-item {
+      width: 40%;
+      height: 40%;
+      max-width: 120px;
+      max-height: 120px;
+      transform-origin: center center -50%;
+    }
+    .carousel-inner {
+      animation-duration: 40s;
+    }
+  }
+
+  #snow-canvas {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3; /* sobre todo */
+  }
+
+</style>
+</head>
+<body>
+  <div style="position:fixed;top:24px;left:50%;transform:translateX(-50%);font-size:2.2rem;color:#fff;font-family:'Pacifico',cursive,Arial,sans-serif;z-index:10;text-shadow:0 2px 12px #0008;letter-spacing:2px;">TE AMO</div>
+
+<canvas id="snow-canvas"></canvas>
+
+<div class="carousel">
+  <div class="carousel-inner" id="carousel-inner">
+    <div class="carousel-item" style="transform: rotateY(0deg) translateZ(220px);"><img src="https://i.pinimg.com/736x/3e/db/14/3edb141fa8ffa0f1dbe54d53a1b3bfbc.jpg" alt="1"></div>
+    <div class="carousel-item" style="transform: rotateY(60deg) translateZ(220px);"><img src="https://i.pinimg.com/736x/b2/ef/0f/b2ef0f0a5efe46f70f44574adbc76f02.jpg" alt="2"></div>
+    <div class="carousel-item" style="transform: rotateY(120deg) translateZ(220px);"><img src="https://i.pinimg.com/736x/48/d7/ee/48d7eecc5a0b289a56861a34afb06ee0.jpg" alt="3"></div>
+    <div class="carousel-item" style="transform: rotateY(180deg) translateZ(220px);"><img src="https://i.pinimg.com/736x/b6/dd/1b/b6dd1b0511ff1ffafdffe0e4d2748c97.jpg" alt="4"></div>
+    <div class="carousel-item" style="transform: rotateY(240deg) translateZ(220px);"><img src="https://i.pinimg.com/736x/1a/c5/5d/1ac55dc82a6e8beb5402eb159bb5f4a9.jpg" alt="5"></div>
+    <div class="carousel-item" style="transform: rotateY(300deg) translateZ(220px);"><img src="https://i.pinimg.com/736x/76/4d/c1/764dc11ed9355a9222dc48a65ceed13f.jpg" alt="6"></div>
+  </div>
+</div>
+
+<div id="modal">
+  <div id="modal-content">
+    <img id="modal-img" src="" alt="Imagen">
+    <p id="modal-msg">Te quiero mucho, mi vida 💖✨</p>
+    <button id="close-modal">Cerrar</button>
+  </div>
+</div>
+
+<script>
+const mensajes = [
+  "Eres mi universo favorito 🌌",
+  "Tu sonrisa ilumina mi mundo ☀️",
+  "Siempre juntos, pase lo que pase 💞",
+  "Eres mi mayor inspiración ✨",
+  "Gracias por existir en mi vida 🥰",
+  "Te amo más que a las estrellas ⭐"
+];
+
+const modal = document.getElementById('modal');
+const modalImg = document.getElementById('modal-img');
+const closeBtn = document.getElementById('close-modal');
+const carouselInner = document.getElementById('carousel-inner');
+
+document.querySelectorAll('.carousel-item img').forEach((img, idx)=>{
+  img.addEventListener('click', ()=>{
+    modalImg.src = img.src;
+    document.getElementById('modal-msg').textContent = mensajes[idx] || '';
+    modal.classList.add('show');
+  });
+  img.addEventListener('mouseenter', ()=>{
+    carouselInner.style.animationPlayState = 'paused';
+    img.style.transform += ' scale(1.15)';
+  });
+  img.addEventListener('mouseleave', ()=>{
+    carouselInner.style.animationPlayState = 'running';
+    img.style.transform = img.style.transform.replace(' scale(1.15)','');
+  });
+});
+
+closeBtn.addEventListener('click', ()=>{ modal.classList.remove('show'); });
+
+// Nieve sobre todo el fondo
+const canvas = document.getElementById('snow-canvas');
+const ctx = canvas.getContext('2d');
+function resizeCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function createFlakes(count){
+  const flakes = [];
+  for(let i=0;i<count;i++){
+    flakes.push({
+      x: window.innerWidth/2 + (Math.random()-0.5)*window.innerWidth*0.6, // dispersión horizontal
+      y: Math.random()*-window.innerHeight, // empieza arriba
+      r: 2 + Math.random()*3,
+      speed: 1 + Math.random()*2
+    });
+  }
+  return flakes;
+}
+
+let flakes = createFlakes(window.innerWidth>600?70:40);
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  flakes.forEach(f=>{
+    ctx.beginPath();
+    ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    ctx.fill();
+    f.y += f.speed;
+    if(f.y>canvas.height+f.r){ f.y = Math.random()*-50; f.x = window.innerWidth/2 + (Math.random()-0.5)*window.innerWidth*0.6; }
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+// Ajuste velocidad carousel
+carouselInner.style.animationDuration = window.innerWidth<=600?"40s":"25s";
+</script>
+</body>
+</html>
