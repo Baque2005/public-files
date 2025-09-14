@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Flores para Emcon</title>
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(circle at center, #2c003e, #000);
+      overflow: hidden;
+      font-family: 'Comic Sans MS', cursive;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 35px;
+      font-weight: bold;
+      z-index: 2;
+    }
+
+    .flores {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      animation: pulse 3s infinite;
+    }
+
+    .flores img {
+      width: 200px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+    }
+
+    .corazon {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Heart_corazón.svg/1024px-Heart_corazón.svg.png') no-repeat center;
+      background-size: contain;
+      animation: flotar 6s linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes flotar {
+      0% { transform: translateY(100vh) scale(0.5); }
+      100% { transform: translateY(-10vh) scale(1.2); }
+    }
+  </style>
+</head>
+<body>
+  <h1>🌼 Estas flores son un pequeño gesto para una gran persona 🌼</h1>
+  <div class="flores">
+    <img src="https://i.imgur.com/8QfQvZK.png" alt="Flores amarillas">
+  </div>
+
+  <!-- Corazones flotantes -->
+  <script>
+    for (let i = 0; i < 20; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'corazon';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDelay = Math.random() * 5 + 's';
+      document.body.appendChild(heart);
+    }
+  </script>
+</body>
+</html>
