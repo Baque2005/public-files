@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dedicatoria Animada</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Arial', sans-serif;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body {
+      background: url('https://i.pinimg.com/originals/08/47/0c/08470cf67e9ec8bc65115df81707a734.gif') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .content {
+      text-align: center;
+      color: #fff;
+      padding: 2rem;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 1rem;
+      max-width: 90%;
+      font-size: 1.5rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      z-index: 1;
+      position: relative;
+      display: none;
+    }
+
+    /* Overlay para oscurecer */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 3s ease-in-out;
+      z-index: 5;
+    }
+
+    @media (max-width: 600px) {
+      .content {
+        font-size: 1.1rem;
+        padding: 1rem;
+      }
+    }
+
+    button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      padding: 1rem 2.5rem;
+      border-radius: 2rem;
+      border: none;
+      background: #222;
+      color: #fff;
+      box-shadow: 0 2px 12px #0008;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.3s;
+      outline: none;
+    }
+    button:hover, button:focus {
+      background: #444;
+    }
+    button:active {
+      /* Sin escala */
+    }
+  </style>
+</head>
+<body>
+  <button id="start-btn">Presiona</button>
+  <div class="content" id="animated-text"></div>
+  <div class="overlay" id="overlay"></div>
+
+  <script>
+    // Frase melancólica y motivacional
+const text = `Si algún día me extrañas, recuerda  
+que cada lágrima que derramé fue por ti,  
+y cada sonrisa fue para no mostrarte lo que realmente siento.  
+Pasé noches pensando en lo que pudo ser,  
+imaginando momentos que nunca viviremos,  
+y aun así aprendí a seguir adelante,  
+porque aunque duela, la vida sigue,  
+y cada herida nos hace más fuertes y conscientes  
+de que merecemos amor, incluso si no es de ti.`; 
+
+    const startBtn = document.getElementById("start-btn");
+    const animatedText = document.getElementById("animated-text");
+    const overlay = document.getElementById("overlay");
+    let index = 0;
+
+    function typeWriter() {
+      if (index < text.length) {
+        animatedText.innerHTML += text.charAt(index);
+        index++;
+        setTimeout(typeWriter, 50); // velocidad de escritura
+      } else {
+        // Cuando termina, oscurecer progresivamente
+        overlay.style.opacity = 1;
+      }
+    }
+
+    startBtn.onclick = function() {
+      startBtn.style.display = "none";
+      animatedText.style.display = "block";
+      typeWriter();
+    };
+  </script>
+</body>
+</html>
+</html>
