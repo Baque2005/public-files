@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hello Kitty Animado</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="stage" role="main">
+    <section class="scene" aria-label="Escena Hello Kitty animada">
+      <div class="stars" aria-hidden="true">
+        <span class="star"></span>
+        <span class="star"></span>
+        <span class="star"></span>
+        <span class="star"></span>
+        <span class="star"></span>
+        <span class="star"></span>
+      </div>
+
+      <figure class="kitty" aria-hidden="false">
+        <div class="head">
+          <div class="ear left"></div>
+          <div class="ear right"></div>
+          <div class="bow" style="left:62%;">
+            <div class="lobe"></div>
+            <div class="knot"></div>
+            <div class="r lobe"></div>
+          </div>
+
+          <div class="eye"></div>
+          <div class="eye right"></div>
+          <div class="nose"></div>
+          <div class="cheek"></div>
+          <div class="cheek right"></div>
+          <div class="whiskers">
+            <span class="w1"></span>
+            <span class="w2"></span>
+            <span class="w3"></span>
+            <span class="w4"></span>
+          </div>
+        </div>
+
+        <div class="body"></div>
+        <div class="heart" aria-hidden="true"><span class="tail"></span></div>
+      </figure>
+    </section>
+
+    <aside class="panel" aria-label="Controles">
+      <h1>Hello Kitty animada</h1>
+      <p class="lead">Página demo creada con HTML y CSS puro. Animaciones suaves: flotación, parpadeo y elementos decorativos.</p>
+
+      <div class="controls" aria-hidden="true">
+        <button class="btn small" id="toggleFloat">Pausar flotación</button>
+        <button class="btn small" id="faster">+ Velocidad</button>
+        <button class="btn small" id="slower">- Velocidad</button>
+      </div>
+
+      <p style="margin-top:1rem;line-height:1.45">
+        Puedes usar este archivo tal cual: guarda como <code>index.html</code> y ábrelo en tu navegador.  
+        Los estilos están en <code>style.css</code>.
+      </p>
+    </aside>
+
+    <div class="foot">Creado con ❤️ — personalizado bajo petición</div>
+  </main>
+
+  <script>
+    const kitty = document.querySelector('.kitty');
+    const btnToggle = document.getElementById('toggleFloat');
+    const btnFaster = document.getElementById('faster');
+    const btnSlower = document.getElementById('slower');
+    let playing = true;
+    let duration = 6;
+
+    btnToggle.addEventListener('click', ()=>{
+      playing = !playing;
+      kitty.style.animationPlayState = playing ? 'running' : 'paused';
+      btnToggle.textContent = playing ? 'Pausar flotación' : 'Reanudar flotación';
+    });
+
+    function setSpeed(sec){
+      duration = Math.max(1.5, Math.min(12, sec));
+      kitty.style.animationDuration = duration + 's';
+    }
+    btnFaster.addEventListener('click', ()=> setSpeed(duration - 0.6));
+    btnSlower.addEventListener('click', ()=> setSpeed(duration + 0.6));
+  </script>
+</body>
+</html>
