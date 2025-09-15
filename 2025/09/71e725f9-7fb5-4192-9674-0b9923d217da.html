@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>🎂 Torta de Cumpleaños</title>
+<style>
+  body {
+    background: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    color: white;
+    font-family: sans-serif;
+  }
+
+  h1 { margin-bottom: 20px; }
+
+  /* TORTA */
+  .torta {
+    position: relative;
+    width: 220px;
+    height: 180px;
+    transition: all 2s ease-in-out;
+  }
+  .capa {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 0 0 20px 20px;
+    background: linear-gradient(#5a2d0c, #3e1d07);
+    border: 3px solid #2a1505;
+    box-shadow: inset 0 -8px 10px rgba(0,0,0,0.5);
+  }
+  .capa1 { bottom: 0; width: 220px; height: 70px; }
+  .capa2 { bottom: 60px; width: 180px; height: 60px; }
+  .capa3 { bottom: 110px; width: 140px; height: 50px; }
+
+  /* TORTA DERRETIDA */
+  .derretida {
+    transform: scaleY(0.3);
+    opacity: 0.5;
+  }
+
+  /* VELA */
+  .vela {
+    position: absolute;
+    top: -70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 70px;
+    background: repeating-linear-gradient(
+      45deg, pink 0 10px, #ff5fa2 10px 20px
+    );
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    display: none;
+  }
+
+  /* FUEGO */
+  .fuego {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    width: 20px;
+    height: 30px;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, gold 0%, orange 70%, transparent 80%);
+    border-radius: 50%;
+    animation: flame 0.3s infinite alternate;
+  }
+  @keyframes flame {
+    from { transform: translateX(-50%) scale(1); opacity: 0.8; }
+    to { transform: translateX(-50%) scale(1.2); opacity: 1; }
+  }
+
+  /* HUMO CORAZÓN */
+  .humo {
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    transform: translateX(-50%) scale(0);
+    opacity: 0;
+  }
+  .humo::before,
+  .humo::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 30px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 50%;
+    top: 0;
+    left: 10px;
+  }
+  .humo::before { transform: rotate(-45deg); left: 0; }
+  .humo::after { transform: rotate(45deg); left: 20px; }
+  .humo.activo {
+    animation: humo 4s ease-in-out forwards;
+  }
+  @keyframes humo {
+    0%   { transform: translateX(-50%) scale(0); opacity: 0; }
+    30%  { transform: translateX(-50%) scale(1); opacity: 1; }
+    100% { transform: translateX(-50%) translateY(-150px) scale(1.5); opacity: 0; }
+  }
+
+  /* BOTONES */
+  .opciones button, #btnSoplar {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #ff5fa2;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+  }
+  #btnSoplar { display: none; }
+
+  /* CARTA */
+  .carta {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    background: #fff;
+    color: black;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+    min-height: 40px;
+    white-space: pre-wrap;
+  }
+</style>
+</head>
+<body>
+
+<h1>🎉 Feliz Cumpleaños Lorena 🎉</h1>
+
+<div class="torta" id="torta">
+  <div class="capa capa1"></div>
+  <div class="capa capa2"></div>
+  <div class="capa capa3"></div>
+  <div class="vela" id="vela">
+    <div class="fuego" id="fuego"></div>
+    <div class="humo" id="humo"></div>
+  </div>
+</div>
+
+<p id="pregunta">¿Quieres soplar la vela? 🧐</p>
+<div class="opciones" id="opciones">
+  <button onclick="noSoplar()">❌ No soplar</button>
+  <button onclick="siSoplar()">✅ Soplar</button>
+</div>
+
+<button id="btnSoplar" onclick="soplar()">💨 Soplar vela</button>
+
+<div class="carta" id="carta"></div>
+
+<script>
+function noSoplar() {
+  document.getElementById("torta").classList.add("derretida");
+  document.getElementById("pregunta").style.display = "none";
+  document.getElementById("opciones").style.display = "none";
+}
+
+function siSoplar() {
+  document.getElementById("pregunta").style.display = "none";
+  document.getElementById("opciones").style.display = "none";
+
+  const vela = document.getElementById("vela");
+  vela.style.display = "block";
+
+  setTimeout(() => {
+    document.getElementById("btnSoplar").style.display = "inline-block";
+  }, 3000);
+}
+
+function soplar() {
+  const fuego = document.getElementById("fuego");
+  const humo = document.getElementById("humo");
+  fuego.style.display = "none"; 
+  humo.classList.add("activo");
+
+  setTimeout(() => {
+    escribirCarta("Vamos a cerezo?? 🤔", "Olvídalo… me da vergüenza 🙈");
+  }, 2000);
+}
+
+/* EFECTO DE ESCRIBIR Y BORRAR */
+function escribirCarta(texto1, texto2) {
+  const carta = document.getElementById("carta");
+  carta.style.display = "block";
+  carta.textContent = "";
+
+  let i = 0;
+  function escribir() {
+    if (i < texto1.length) {
+      carta.textContent += texto1.charAt(i);
+      i++;
+      setTimeout(escribir, 100);
+    } else {
+      setTimeout(borrar, 1500);
+    }
+  }
+
+  function borrar() {
+    if (i > 0) {
+      carta.textContent = texto1.substring(0, i-1);
+      i--;
+      setTimeout(borrar, 60);
+    } else {
+      setTimeout(() => escribir2(), 500);
+    }
+  }
+
+  let j = 0;
+  function escribir2() {
+    if (j < texto2.length) {
+      carta.textContent += texto2.charAt(j);
+      j++;
+      setTimeout(escribir2, 100);
+    }
+  }
+
+  escribir();
+}
+</script>
+
+</body>
+</html>
