@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jardín de Rosas y Tulipanes</title>
+<style>
+  body {
+    margin: 0;
+    background: linear-gradient(to top, #87ceeb, #ffffff);
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  .flower {
+    position: absolute;
+    bottom: 0;
+    width: 30px;
+    height: 30px;
+    opacity: 0.8;
+    animation: float 10s linear infinite;
+  }
+
+  .rose {
+    background: radial-gradient(circle, red 0%, darkred 70%);
+    border-radius: 50%;
+  }
+
+  .tulip {
+    background: radial-gradient(circle, pink 0%, purple 70%);
+    border-radius: 50% 50% 0 0;
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0) translateX(0) rotate(0deg);
+      opacity: 0.8;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-100vh) translateX(50px) rotate(360deg);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<script>
+const flowerTypes = ["rose", "tulip"];
+const numberOfFlowers = 20;
+
+for (let i = 0; i < numberOfFlowers; i++) {
+  const flower = document.createElement("div");
+  const type = flowerTypes[Math.floor(Math.random() * flowerTypes.length)];
+  flower.classList.add("flower", type);
+  
+  flower.style.left = Math.random() * window.innerWidth + "px";
+  flower.style.animationDuration = 5 + Math.random() * 5 + "s";
+  flower.style.width = 20 + Math.random() * 20 + "px";
+  flower.style.height = flower.style.width;
+  
+  document.body.appendChild(flower);
+}
+</script>
+
+</body>
+</html>
