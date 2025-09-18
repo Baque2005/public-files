@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: radial-gradient(circle at 20% 20%, #e0f7fa 0%, #b2ebf2 60%, #80deea 100%);
+    font-family: 'Quicksand', Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    background: linear-gradient(135deg, #fffde4 0%, #f9f6ff 100%);
+    padding: 2.5rem 2rem;
+    border-radius: 30px;
+    box-shadow: 0 8px 32px 0 rgba(44, 62, 80, 0.15);
+    text-align: center;
+    max-width: 370px;
+    border: 2px solid #b2ebf2;
+    animation: popIn 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+}
+
+@keyframes popIn {
+    0% { opacity: 0; transform: scale(0.8);}
+    80% { opacity: 1; transform: scale(1.05);}
+    100% { opacity: 1; transform: scale(1);}
+}
+
+h1 {
+    font-family: 'Montserrat', Arial, sans-serif;
+    color: #0097a7;
+    margin-bottom: 0.7rem;
+    font-size: 2rem;
+    letter-spacing: 1px;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+button {
+    background: linear-gradient(90deg, #00bcd4 0%, #8bc34a 100%);
+    border: none;
+    padding: 0.9rem 2rem;
+    border-radius: 100px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    font-family: 'Montserrat', Arial, sans-serif;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.10);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    outline: none;
+}
+
+button:hover {
+    background: linear-gradient(90deg, #8bc34a 0%, #00bcd4 100%);
+    transform: scale(1.08);
+}
+
+.mensaje {
+    margin-top: 18px;
+    color: #388e3c;
+    font-size: 1.15rem;
+    font-family: 'Quicksand', Arial, sans-serif;
+    min-height: 1.2em;
+}
+
+.ticket {
+    background: linear-gradient(120deg, #e1bee7 0%, #fffde4 100%);
+    padding: 2.5rem 2rem;
+    border-radius: 30px;
+    text-align: center;
+    box-shadow: 0 8px 32px 0 rgba(44, 62, 80, 0.12);
+    border: 2px solid #ce93d8;
+    display: none;
+    animation: popIn 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+}
+
+.ticket h1 {
+    color: #8e24aa;
+    font-size: 1.7rem;
+    margin-bottom: 1rem;
+}
+
+.ticket p {
+    margin: 0.7rem 0;
+    color: #6d4c41;
+    font-size: 1.1rem;
+    font-family: 'Quicksand', Arial, sans-serif;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    background: #e0f7fa;
+}
+::-webkit-scrollbar-thumb {
+    background: #b2ebf2;
+    border-radius: 8px;
+}
+    </style>
+</head>
+<body>
+<div class="container" id="declaracion">
+    <h1>¡Hola hermosa!</h1>
+    <h1>¿Quieres salir conmigo? 💗</h1>
+    <div class="button">
+        <button onclick="Si()">¡Sí! 💖</button>
+        <button id="noBtn" onclick="No()">No 😢</button>
+    </div>
+    <div class="mensaje" id="mensaje"></div>
+</div>
+
+<div class="ticket" id="ticket">
+    <h1>Cita Confirmada</h1>
+    <p>Prepárate para nuestra cita especial 🎁</p>
+    <p><strong>Hora:</strong> 8:00 p.m</p>
+    <p><strong>Lugar:</strong> Mi Casa 🏠</p>
+    <p><strong>¡No faltes! 💗</strong></p>
+</div>
+
+<script>
+let contador = 0;
+const declaracion = document.getElementById("declaracion");
+const ticket = document.getElementById("ticket");
+const mensaje = document.getElementById("mensaje");
+const noBtn = document.getElementById("noBtn");
+
+function Si(){
+    declaracion.style.display = 'none';
+    ticket.style.display = 'block';
+    ticket.style.opacity = 0;
+    ticket.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+        ticket.style.opacity = 1;
+        ticket.style.transform = 'scale(1)';
+    }, 10);
+}
+
+function No(){
+    contador++;
+    const respuestas = [
+        "Yo sé que quieres 😉",
+        "Ya dime que sí 🙂",
+        "Hermosa, di que sí 😚",
+        "Tú quieres 😘",
+        "Dale, sí 🤗"
+    ];
+    mensaje.textContent = respuestas[Math.min(contador, respuestas.length - 1)];
+
+    // Si llega al último texto, desaparece el botón NO
+    if (contador >= respuestas.length - 1) {
+        noBtn.style.display = 'none';
+    }
+}
+
+// Animación evasiva del botón NO solo cuando el mouse está cerca
+noBtn.addEventListener('mousemove', function(e) {
+    if (noBtn.classList.contains('evade')) {
+        // Movimiento aleatorio pequeño en cualquier dirección desde la posición actual
+        let deltaX = (Math.random() - 0.5) * 40; // entre -20 y +20 px
+        let deltaY = (Math.random() - 0.5) * 40; // entre -20 y +20 px
+
+        // Nueva posición tentativa
+        let newX = noBtnPos.x + deltaX;
+        let newY = noBtnPos.y + deltaY;
+
+        // Limita dentro de la ventana
+        newX = Math.max(0, Math.min(window.innerWidth - noBtn.offsetWidth, newX));
+        newY = Math.max(0, Math.min(window.innerHeight - noBtn.offsetHeight, newY));
+
+        noBtn.style.position = 'absolute';
+        noBtn.style.left = newX + 'px';
+        noBtn.style.top = newY + 'px';
+
+        // Guarda la nueva posición
+        noBtnPos.x = newX;
+        noBtnPos.y = newY;
+    }
+});
+
+// Restablece posición si no está evasivo
+function resetNoBtnPosition() {
+    if (!noBtn.classList.contains('evade')) {
+        noBtn.style.position = '';
+        noBtn.style.left = '';
+        noBtn.style.top = '';
+        noBtnPos.x = null;
+        noBtnPos.y = null;
+    }
+}
+document.addEventListener('mousemove', resetNoBtnPosition);
+
+</script>
+</body>
+</html>
