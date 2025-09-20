@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dedicatoria Animada</title>
+  <style>
+    .particle {
+      position: fixed;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #ff2a4d 70%, #a3001e 100%);
+      opacity: 0.85;
+      pointer-events: none;
+      z-index: 9999;
+      animation: particle-explode 1s forwards;
+    }
+    @keyframes particle-explode {
+      0% { transform: scale(0.5) translate(0,0); opacity: 1; }
+      80% { opacity: 1; }
+      100% { transform: scale(0.7) translate(var(--tx,0px),var(--ty,0px)); opacity: 0; }
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Arial', sans-serif;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body {
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    body.fondo-activo {
+      background: url('https://i.pinimg.com/originals/35/21/56/352156b5f968a043c346e7225eeec35d.gif') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .content {
+      text-align: center;
+      color: #fff;
+      padding: 2rem;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 1rem;
+      max-width: 90%;
+      font-size: 1.5rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      z-index: 1;
+      position: relative;
+      display: none;
+    }
+
+    /* Overlay para oscurecer */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 3s ease-in-out;
+      z-index: 5;
+    }
+
+    @media (max-width: 600px) {
+      .content {
+        font-size: 1.1rem;
+        padding: 1rem;
+      }
+    }
+
+    button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      padding: 1rem 2.5rem;
+      border-radius: 2rem;
+      border: none;
+      background: #222;
+      color: #fff;
+      box-shadow: 0 2px 12px #0008;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.3s;
+      outline: none;
+    }
+    button:hover, button:focus {
+      background: #444;
+    }
+    button:active {
+      /* Sin escala */
+    }
+  </style>
+</head>
+<body>
+  <button id="start-btn">Presiona</button>
+  <div class="content" id="animated-text"></div>
+  <div class="overlay" id="overlay"></div>
+  <img id="final-gif" src="https://i.pinimg.com/originals/93/fb/bf/93fbbf5bce149512cbc6009e08c17a19.gif" style="display:none;position:fixed;bottom:2vh;left:50%;transform:translateX(-50%);max-width:320px;width:80vw;z-index:20;" alt="Gift final" />
+
+  <script>
+// Partículas rojas al presionar el botón
+function explodeParticles(x, y) {
+  for (let i = 0; i < 18; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    const angle = (Math.PI * 2 * i) / 18;
+    const dist = 60 + Math.random() * 40;
+    particle.style.left = x + 'px';
+    particle.style.top = y + 'px';
+    particle.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+    particle.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+    document.body.appendChild(particle);
+    setTimeout(() => particle.remove(), 1000);
+  }
+}
+  // Frase de amor dedicada
+const text = `No existen palabras suficientes para describir lo que siento por ti.  
+Desde que llegaste a mi vida, todo tiene más color, más sentido, más magia.  
+Tu mirada me da paz, tu voz me da fuerza y tu sonrisa me da esperanza.  
+Eres el sueño que nunca quiero despertar, el abrazo que siempre busco y el amor que siempre esperé.  
+Gracias por ser mi refugio, mi alegría y mi razón de ser.  
+Te amo con cada parte de mi alma, y cada día que pasa, mi amor por ti solo crece.  
+Eres mi todo, mi siempre, mi infinito.`;
+
+    const startBtn = document.getElementById("start-btn");
+    const animatedText = document.getElementById("animated-text");
+    const overlay = document.getElementById("overlay");
+    let index = 0;
+
+    function typeWriter() {
+      if (index < text.length) {
+        animatedText.innerHTML += text.charAt(index);
+        index++;
+        setTimeout(typeWriter, 50); // velocidad de escritura
+      } else {
+        // Cuando termina, mostrar el gif final
+        const gif = document.getElementById('final-gif');
+        gif.style.display = 'block';
+        gif.style.opacity = '0';
+        setTimeout(() => { gif.style.transition = 'opacity 1.5s'; gif.style.opacity = '1'; }, 1000);
+      }
+    }
+
+    startBtn.onclick = function() {
+  // Efecto de partículas rojas
+  const rect = startBtn.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+  explodeParticles(x, y);
+  setTimeout(() => {
+    startBtn.style.display = "none";
+    animatedText.style.display = "block";
+    document.body.classList.add('fondo-activo');
+    typeWriter();
+  }, 400); // Espera breve para ver las partículas
+    };
+  </script>
+</body>
+</html>
+</html>
