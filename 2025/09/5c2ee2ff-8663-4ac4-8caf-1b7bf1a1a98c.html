@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Partículas 3D</title>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.152.2/build/three.module.js",
+        "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.152.2/examples/jsm/controls/OrbitControls.js"
+      }
+    }
+  </script>
+  <style>
+    html, body { width: 100vw; height: 100vh; margin: 0; padding: 0; overflow: hidden; background: #000; }
+    canvas { position: fixed; top: 0; left: 0; }
+    #start-overlay {
+      position: fixed;
+      z-index: 10;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 20, 40, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.7s;
+    }
+    #start-overlay.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #start-content {
+      background: rgba(30,40,60,0.8);
+      border-radius: 24px;
+      padding: 2.5rem 3.5rem;
+      box-shadow: 0 0 32px 8px #00eaff44, 0 0 0 2px #fff2 inset;
+      border: 1.5px solid #00eaff88;
+      text-align: center;
+    }
+    #start-content h1 {
+      color: #fff;
+      font-size: 2.2rem;
+      margin-bottom: 1.2rem;
+      font-family: 'Montserrat', Arial, sans-serif;
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px #00eaff99, 0 0 2px #fff;
+    }
+    #start-btn {
+      font-size: 1.5rem;
+      padding: 1rem 2.5rem;
+      border-radius: 2rem;
+      border: none;
+      background: linear-gradient(90deg, #ffb6e6, #a259c7, #00eaff);
+      color: #fff;
+      box-shadow: 0 0 24px #fff6, 0 0 8px #00eaff;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 1.2rem;
+    }
+    #start-btn:hover {
+      background: linear-gradient(90deg, #00eaff, #a259c7, #ffb6e6);
+    }
+  </style>
+</head>
+<body>
+  <div id="top-text" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    text-align: center;
+    z-index: 20;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 2.1rem;
+    color: #ffe600;
+    text-shadow: 0 2px 12px #000, 0 0 2px #fff;
+    padding: 1.2rem 0 0.5rem 0;
+    pointer-events: none;
+    letter-spacing: 2px;
+    font-weight: bold;
+    user-select: none;
+    display: none;
+    ">
+    Estas flores amarillas son para ti
+  </div>
+  <div id="container"></div>
+  <div id="start-overlay">
+    <div id="start-content">
+  <h1>Ten este regalo</h1>
+  <button id="start-btn">Apreta aquí</button>
+    </div>
+  </div>
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 120;
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('container').appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.autoRotate = false;
+    controls.enabled = false;
+
+    // Girasol y flores pequeñas con hojas más abajo en el tallo
+// Suelo con imagen PNG al final del tallo
+function addGroundSprite() {
+  const textureLoader = new THREE.TextureLoader();
+  textureLoader.load('https://i.postimg.cc/15tKPLyM/18de80dc4ea9220ec22f32aea710b0f3.png', function (texture) {
+    const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+    const sprite = new THREE.Sprite(material);
+  sprite.scale.set(160, 90, 1); // Imagen aún más grande
+  sprite.position.set(0, -centerRadius - stemLength + 25, 0); // Subida aún más
+    scene.add(sprite);
+  });
+}
+addGroundSprite();
+    const particleCount = 32000;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    const sizes = new Float32Array(particleCount);
+    const opacities = new Float32Array(particleCount);
+    const petalCount = 40;
+    const petalRadius = 28;
+    const petalThickness = 22;
+    const petalLength = 54;
+    const centerRadius = 20;
+    const stemLength = 210;
+    const stemRadius = 7;
+    const leafCount = 4;
+    const leafLength = 48;
+    const leafWidth = 22;
+    const leafYOffset = 120; // hojas más abajo
+    const leafAngle = [Math.PI/4, -Math.PI/4, Math.PI/3, -Math.PI/3];
+    const leafSide = [1, -1, 1, -1];
+    const smallFlowerCount = 10;
+    const smallFlowerParticles = 500;
+    const smallFlowerRadius = 8;
+    const smallPetalCount = 14;
+    const smallPetalRadius = 14;
+    const smallPetalLength = 10;
+    const smallCenterRadius = 4.5;
+    const smallPetalThickness = 6;
+    const smallFlowersPos = [
+      [80, -60], [-80, -60], [60, 40], [-60, 40], [100, 0], [-100, 0], [120, 60], [-120, 60], [140, -40], [-140, -40]
+    ];
+    for (let i = 0; i < particleCount; i++) {
+      let x, y, z;
+      if (i < particleCount * 0.13) {
+        // Centro marrón con anillos, brillo y motas
+        const r = centerRadius * Math.pow(Math.random(), 0.7);
+        const theta = Math.random() * Math.PI * 2;
+        x = r * Math.cos(theta) + Math.sin(theta * 8) * 1.2 * Math.random();
+        y = r * Math.sin(theta) + Math.cos(theta * 6) * 1.2 * Math.random();
+        z = (Math.random() - 0.5) * 8;
+        const edge = r / centerRadius;
+        colors[i * 3] = 0.35 + edge * 0.25 + Math.random() * 0.12;
+        colors[i * 3 + 1] = 0.22 + edge * 0.18 + Math.random() * 0.12;
+        colors[i * 3 + 2] = 0.08 + edge * 0.12 + Math.random() * 0.12;
+        sizes[i] = 4.2 + Math.random() * 3.2;
+        opacities[i] = 0.88 + Math.random() * 0.12;
+      } else if (i < particleCount * 0.90) {
+        // Pétalos amarillos con gradiente, borde claro y motas
+        const petal = Math.floor(Math.random() * petalCount);
+        const angle = (petal / petalCount) * Math.PI * 2;
+        const t = Math.pow(Math.random(), 1.2);
+        const r = petalRadius + t * petalLength + Math.sin(angle * 2) * 2.5;
+        const spread = (Math.random() - 0.5) * petalThickness;
+        x = (r + spread) * Math.cos(angle) + Math.sin(angle * 6) * 2.2 * Math.random();
+        y = (r + spread) * Math.sin(angle) + Math.cos(angle * 5) * 2.2 * Math.random();
+        z = (Math.random() - 0.5) * 10;
+        const border = t;
+        colors[i * 3] = 1.0;
+        colors[i * 3 + 1] = 0.88 + border * 0.12 + Math.random() * 0.08;
+        colors[i * 3 + 2] = 0.18 + border * 0.18 + Math.random() * 0.08;
+        sizes[i] = 7.2 + border * 2.8 + Math.random() * 2.2;
+        opacities[i] = 0.88 + Math.random() * 0.12;
+      } else if (i < particleCount * 0.96) {
+        // Tallo verde con gradiente y motas
+        const t = Math.random();
+        x = (Math.random() - 0.5) * stemRadius + Math.sin(t * 6) * 1.2 * Math.random();
+        y = -centerRadius - t * stemLength;
+        z = (Math.random() - 0.5) * 3;
+        colors[i * 3] = 0.22 + t * 0.18 + Math.random() * 0.12;
+        colors[i * 3 + 1] = 0.65 + t * 0.18 + Math.random() * 0.12;
+        colors[i * 3 + 2] = 0.22 + t * 0.18 + Math.random() * 0.12;
+        sizes[i] = 6.2 + Math.random() * 2.8;
+        opacities[i] = 0.92 + Math.random() * 0.08;
+      } else if (i < particleCount * 0.99) {
+        // Hojas verdes con curvatura y gradiente, más abajo
+        const leafIdx = Math.floor(Math.random() * leafCount);
+        const t = Math.pow(Math.random(), 1.2);
+        const angle = leafAngle[leafIdx];
+        const side = leafSide[leafIdx];
+        const r = leafLength * t + Math.sin(angle * 3) * 2.2;
+        const spread = (Math.random() - 0.5) * leafWidth;
+        x = side * (stemRadius + r * Math.cos(angle)) + spread + Math.sin(angle * 6) * 1.2 * Math.random();
+        y = -centerRadius - leafYOffset - r * Math.sin(angle) + Math.cos(angle * 5) * 1.2 * Math.random();
+        z = (Math.random() - 0.5) * 3;
+        colors[i * 3] = 0.18 + Math.random() * 0.18;
+        colors[i * 3 + 1] = 0.68 + Math.random() * 0.18;
+        colors[i * 3 + 2] = 0.22 + Math.random() * 0.18;
+        sizes[i] = 6.5 + Math.random() * 2.8;
+        opacities[i] = 0.92 + Math.random() * 0.08;
+      } else {
+        // Flores pequeñas en el fondo con más pétalos y detalle
+        const flowerIdx = Math.floor(Math.random() * smallFlowerCount);
+        const baseX = smallFlowersPos[flowerIdx][0];
+        const baseY = smallFlowersPos[flowerIdx][1];
+        const idxInFlower = i % smallFlowerParticles;
+        let fx, fy, fz;
+        if (idxInFlower < smallFlowerParticles * 0.15) {
+          // Centro marrón con motas
+          const r = smallCenterRadius * Math.pow(Math.random(), 0.7);
+          const theta = Math.random() * Math.PI * 2;
+          fx = r * Math.cos(theta) + Math.sin(theta * 8) * 0.6 * Math.random();
+          fy = r * Math.sin(theta) + Math.cos(theta * 6) * 0.6 * Math.random();
+          fz = (Math.random() - 0.5) * 2;
+          colors[i * 3] = 0.45 + Math.random() * 0.15;
+          colors[i * 3 + 1] = 0.32 + Math.random() * 0.12;
+          colors[i * 3 + 2] = 0.12 + Math.random() * 0.12;
+          sizes[i] = 3.2 + Math.random() * 1.2;
+          opacities[i] = 0.85 + Math.random() * 0.15;
+        } else {
+          // Pétalos amarillos con gradiente y borde
+          const petal = Math.floor(Math.random() * smallPetalCount);
+          const angle = (petal / smallPetalCount) * Math.PI * 2;
+          const t = Math.pow(Math.random(), 1.2);
+          const r = smallPetalRadius + t * smallPetalLength + Math.sin(angle * 2) * 1.2;
+          const spread = (Math.random() - 0.5) * smallPetalThickness;
+          fx = (r + spread) * Math.cos(angle) + Math.sin(angle * 6) * 0.8 * Math.random();
+          fy = (r + spread) * Math.sin(angle) + Math.cos(angle * 5) * 0.8 * Math.random();
+          fz = (Math.random() - 0.5) * 2;
+          colors[i * 3] = 1.0;
+          colors[i * 3 + 1] = 0.95 - t * 0.1 + Math.random() * 0.05;
+          colors[i * 3 + 2] = 0.18 + t * 0.12 + Math.random() * 0.05;
+          sizes[i] = 3.8 + Math.random() * 1.5;
+          opacities[i] = 0.85 + Math.random() * 0.15;
+        }
+        x = baseX + fx;
+        y = baseY + fy;
+        z = -60 + fz;
+      }
+      positions[i * 3] = x;
+      positions[i * 3 + 1] = y;
+      positions[i * 3 + 2] = z;
+    }
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+    geometry.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+
+    // Shader material para controlar tamaño y opacidad por partícula
+    const particleMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        globalOpacity: { value: 0.7 }
+      },
+      vertexShader: `
+        attribute float size;
+        attribute float opacity;
+        varying float vOpacity;
+        varying vec3 vColor;
+        void main() {
+          vColor = color;
+          vOpacity = opacity;
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          gl_PointSize = size * (300.0 / -mvPosition.z);
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `,
+      fragmentShader: `
+        uniform float globalOpacity;
+        varying float vOpacity;
+        varying vec3 vColor;
+        void main() {
+          float dist = distance(gl_PointCoord, vec2(0.5, 0.5));
+          float alpha = smoothstep(0.5, 0.2, dist);
+          gl_FragColor = vec4(vColor, globalOpacity * vOpacity * alpha);
+        }
+      `,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      vertexColors: true
+    });
+
+    let points = null;
+    function addParticles() {
+      points = new THREE.Points(geometry, particleMaterial);
+      scene.add(points);
+    }
+    addParticles();
+
+    // Campo de estrellas de fondo
+    const starCount = 20000; // más estrellas
+    const starGeometry = new THREE.BufferGeometry();
+    const starPositions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+      starPositions[i * 3] = (Math.random() - 0.5) * 2200;
+      starPositions[i * 3 + 1] = (Math.random() - 0.5) * 2200;
+      starPositions[i * 3 + 2] = (Math.random() - 0.5) * 2200;
+    }
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 1.1,
+      transparent: true,
+      opacity: 0.7,
+      depthWrite: false
+    });
+    const starField = new THREE.Points(starGeometry, starMaterial);
+    starField.renderOrder = -1;
+    scene.add(starField);
+
+    // Animación controlada
+    let animationPhase = 0; // 0: espera, 1: rotación, 2: acercar, 3: alejar, 4: normal
+    let phaseStartTime = 0;
+    let overlayVisible = true;
+    let rotationY = 0;
+
+    function startAnimation() {
+      animationPhase = 1;
+      phaseStartTime = performance.now();
+      particleMaterial.uniforms.globalOpacity.value = 0.85;
+      overlayVisible = false;
+      document.getElementById('start-overlay').classList.add('hide');
+    }
+
+    function animate(now) {
+      requestAnimationFrame(animate);
+
+      // Fase 0: fondo transparente, cúmulo visible pero opaco
+      if (animationPhase === 0) {
+        starField.rotation.y += 0.0005;
+        controls.update();
+        renderer.render(scene, camera);
+        return;
+      }
+
+      if (!points) {
+        starField.rotation.y += 0.0005;
+        renderer.render(scene, camera);
+        return;
+      }
+
+      // Fase 1: rotación 180° (más corta y más lenta)
+      if (animationPhase === 1) {
+        controls.enabled = false;
+        const duration = 4000;
+        const elapsed = now - phaseStartTime;
+        const t = Math.min(elapsed / duration, 1);
+        rotationY = t * Math.PI;
+        points.rotation.y = rotationY;
+        starField.rotation.y += 0.0005;
+        renderer.render(scene, camera);
+        if (t >= 1) {
+          animationPhase = 2;
+          phaseStartTime = now;
+        }
+        return;
+      }
+
+      // Fase 2: acercar cámara al centro
+      if (animationPhase === 2) {
+        const duration = 7000;
+        const elapsed = now - phaseStartTime;
+        const t = Math.min(elapsed / duration, 1);
+        camera.position.z = 120 - t * (120 - 20);
+        camera.lookAt(0, 0, 0);
+        points.rotation.y = Math.PI * 2;
+        starField.rotation.y += 0.0005;
+        renderer.render(scene, camera);
+        if (t >= 1) {
+          animationPhase = 3;
+          phaseStartTime = now;
+        }
+        return;
+      }
+
+      // Fase 3: alejar cámara
+      if (animationPhase === 3) {
+        const duration = 7000;
+        const elapsed = now - phaseStartTime;
+        const t = Math.min(elapsed / duration, 1);
+        camera.position.z = 20 + t * (420 - 20); // Aleja mucho más la cámara
+        camera.lookAt(0, 0, 0);
+        points.rotation.y = Math.PI * 2;
+        particleMaterial.uniforms.globalOpacity.value = 0.85;
+        starField.rotation.y += 0.0005;
+        renderer.render(scene, camera);
+        if (t >= 1) {
+          animationPhase = 4;
+          controls.enabled = true;
+          controls.autoRotate = true;
+        }
+        return;
+      }
+
+      // Fase 4: normal, cúmulo sigue rotando y controles activos
+      if (animationPhase === 4) {
+        points.rotation.y += 0.0015;
+        starField.rotation.y += 0.0005;
+        controls.update();
+        particleMaterial.uniforms.globalOpacity.value = 0.85;
+        // Mostrar el texto solo al finalizar la animación
+        const topText = document.getElementById('top-text');
+        if (topText.style.display !== 'block') topText.style.display = 'block';
+        renderer.render(scene, camera);
+        return;
+      }
+    }
+    animate();
+
+    // Botón de inicio
+    document.getElementById('start-btn').addEventListener('click', () => {
+      if (animationPhase === 0) startAnimation();
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
+
