@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flores Amarillas</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(to right, #fff7a5, #ffe259);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+    }
+
+    .card {
+      padding: 20px;
+      max-width: 350px;
+      text-align: center;
+      animation: fadeIn 2s ease;
+      border-radius: 12px;
+    }
+
+    .card h1 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      animation: glow 2s infinite alternate;
+    }
+
+    .card p, .card b {
+      font-size: 1em;
+      line-height: 1.5;
+      color: #333;
+      overflow: hidden;
+      white-space: pre-wrap;
+      border-right: 2px solid #ffd700;
+      animation: typing 6s steps(60, end), blink .8s infinite;
+    }
+
+    .card b {
+      display: block;
+      margin-top: 10px;
+      font-size: 1.1em;
+      animation: typing 8s steps(60, end), blink .8s infinite, glow 2s infinite alternate;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 5px #ffd700, 0 0 10px #ffae00, 0 0 15px #ff8800;
+      }
+      to {
+        text-shadow: 0 0 10px #ffd700, 0 0 20px #ffae00, 0 0 30px #ff8800;
+      }
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes blink {
+      0%, 100% { border-color: transparent; }
+      50% { border-color: #ffd700; }
+    }
+
+    /* Flores flotantes */
+    .flower {
+      position: absolute;
+      font-size: 2.5em;
+      opacity: 0.9;
+      animation: float linear infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      50% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🌻 Para Ti 🌻</h1>
+    <p>
+Eres como estas flores amarillas: llenas de luz, de vida y de alegría.  
+Cada instante contigo es un regalo, un motivo para sonreír y soñar.  
+Quiero que nunca olvides lo especial que eres para mí, porque en mi mundo, tú eres la más hermosa de todas las flores. 💛✨
+    </p>
+    <b>Te amo mucho 💜</b>
+  </div>
+
+  <!-- MUCHAS flores flotando -->
+  <script>
+    const flowers = ["🌻","🌼","🌹","🌷"];
+    for(let i=0; i<40; i++){   // cantidad de flores 🌸🌻
+      let flower = document.createElement("div");
+      flower.classList.add("flower");
+      flower.textContent = flowers[Math.floor(Math.random()*flowers.length)];
+      flower.style.left = Math.random() * 100 + "vw";
+      flower.style.animationDuration = (5 + Math.random()*10) + "s"; 
+      flower.style.animationDelay = (Math.random()*10) + "s"; 
+      document.body.appendChild(flower);
+    }
+  </script>
+</body>
+</html>
