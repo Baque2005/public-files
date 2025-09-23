@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Flores Mágicas</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
+    canvas {
+      display: block;
+    }
+    #mensaje {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 30px;
+      font-family: "Georgia", serif;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(255,255,255,0.8);
+      pointer-events: none;
+    }
+    #limpiar {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      color: gray;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: sans-serif;
+      transition: 0.3s;
+    }
+    #limpiar:hover {
+      color: white;
+      text-shadow: 0 0 5px limegreen;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="mensaje">Click Donde Quieras. .-.</div>
+  <div id="limpiar">Limpiar</div>
+  <audio id="sonidoFlor" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_6f41f3b252.mp3?filename=magic-1-6843.mp3"></audio>
+  <audio id="musicaFondo" src="https://cdn.pixabay.com/download/audio/2021/10/18/audio_0a1a4fa2d5.mp3?filename=relaxing-meditation-ambient-10962.mp3" loop></audio>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    resizeCanvas();
+
+    window.addEventListener('resize', resizeCanvas);
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+
+    class Particula {
+      constructor(x, y) {
+        this.x = x + (Math.random() * 40 - 20);
+        this.y = y + (Math.random() * 40 - 20);
+        this.size = Math.random() * 3 + 1;
+        this.alpha = 1;
+        this.velY = -0.3 - Math.random() * 0.5;
+        this.velX = Math.random() * 0.6 - 0.3;
+        this.color = `hsla(${Math.random() * 360}, 100%, 70%,`;
+      }
+
+      dibujar(ctx) {
+        this.x += this.velX;
+        this.y += this.velY;
+        this.alpha -= 0.01;
+        if (this.alpha > 0) {
+          ctx.beginPath();
+          ctx.fillStyle = this.color + this.alpha + ")";
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    class Flor {
+      constructor(x, y) {
+        this.x = x;
+        this.yObjetivo = y;
+        this.yBase = canvas.height;
+        this.altura = 0;
+        this.maxAltura = this.yBase - this.yObjetivo;
+        this.creciendo = true;
+        this.petalos = 5 + Math.floor(Math.random() * 3);
+        this.radio = 15 + Math.random() * 25;
+        this.color1 = `hsl(${Math.random() * 360}, 100%, 65%)`;
+        this.color2 = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        this.t = 0;
+        this.particulas = [];
+      }
+
+      dibujar(ctx) {
+        ctx.save();
+
+        if (this.creciendo) {
+          this.altura += 3;
+          if (this.altura >= this.maxAltura) {
+            this.altura = this.maxAltura;
+            this.creciendo = false;
+          }
+        }
+
+        const ondas = Math.sin(this.t * 0.03 + this.x * 0.01) * 30;
+
+        ctx.strokeStyle = "limegreen";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.yBase);
+        ctx.quadraticCurveTo(
+          this.x + ondas,
+          this.yBase - this.altura / 2,
+          this.x,
+          this.yBase - this.altura
+        );
+        ctx.stroke();
+
+        ctx.translate(this.x, this.yBase - this.altura);
+        ctx.rotate(Math.sin(this.t * 0.02) * 0.15);
+
+        for (let i = 0; i < this.petalos; i++) {
+          ctx.rotate((Math.PI * 2) / this.petalos);
+          let grad = ctx.createRadialGradient(0, 0, this.radio * 0.2, 0, 0, this.radio);
+          grad.addColorStop(0, "#fff");
+          grad.addColorStop(0.2, this.color1);
+          grad.addColorStop(1, this.color2);
+          ctx.fillStyle = grad;
+
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.quadraticCurveTo(this.radio, -this.radio, 0, -this.radio * 1.5);
+          ctx.quadraticCurveTo(-this.radio, -this.radio, 0, 0);
+          ctx.fill();
+        }
+
+        ctx.beginPath();
+        ctx.arc(0, 0, this.radio * 1.2, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(255,255,255,0.3)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.restore();
+
+        if (Math.random() < 0.2) {
+          this.particulas.push(new Particula(this.x, this.yBase - this.altura));
+        }
+
+        this.particulas.forEach(p => p.dibujar(ctx));
+        this.particulas = this.particulas.filter(p => p.alpha > 0);
+
+        this.t++;
+      }
+    }
+
+    const flores = [];
+    const sonidoFlor = document.getElementById("sonidoFlor");
+    const musicaFondo = document.getElementById("musicaFondo");
+
+    canvas.addEventListener('click', (e) => {
+      flores.push(new Flor(e.clientX, e.clientY));
+      sonidoFlor.currentTime = 0;
+      sonidoFlor.play();
+      if (musicaFondo.paused) {
+        musicaFondo.volume = 0.4;
+        musicaFondo.play();
+      }
+    });
+
+    document.getElementById('limpiar').addEventListener('click', () => {
+      flores.length = 0;
+    });
+
+    function loop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let flor of flores) {
+        flor.dibujar(ctx);
+      }
+      requestAnimationFrame(loop);
+    }
+
+    loop();
+  </script>
+</body>
+</html>
