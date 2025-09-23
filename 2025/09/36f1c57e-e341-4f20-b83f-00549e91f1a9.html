@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Te amo más</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #0a0026;
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+    }
+    #stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+    }
+    #ground-gif {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 400px;
+      max-width: 90vw;
+      z-index: 2;
+      pointer-events: none;
+    }
+    #love-panel {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.45);
+      border-radius: 1.5rem;
+      padding: 2.5rem 2rem;
+      color: #fff;
+      font-size: 2.2vw;
+      font-family: 'Montserrat', Arial, sans-serif;
+      text-align: center;
+      z-index: 10;
+      max-width: 80vw;
+      box-shadow: 0 2px 24px #0008;
+      letter-spacing: 0.04em;
+      margin-bottom: 110px; /* margen para no tocar el gif */
+    }
+    #love-text {
+      font-weight: 400;
+      line-height: 1.4;
+      white-space: pre-line;
+      display: inline-block;
+    }
+    @media (max-width: 600px) {
+      #love-panel {
+        font-size: 4vw;
+        padding: 1.2rem 0.7rem;
+        margin-bottom: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Pantalla inicial con botón y audio -->
+  <div id="pantalla-inicial" style="position:fixed;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;z-index:300;background:rgba(10,0,38,0.98);">
+    <button id="btn-inicio" style="padding:1.2em 2.7em;font-size:2em;border-radius:22px;background:#ffd700;color:#800080;border:none;box-shadow:0 0 24px #ffd70088;cursor:pointer;font-family:'Arial',sans-serif;letter-spacing:2px;">Presiona aquí</button>
+    <audio id="audio-inicio" src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/ElevenLabs_2025-09-22T17_37_53_Brian_pre_sp100_s50_sb75_se0_b_m2.mp3"></audio>
+  </div>
+  <div id="contenido-principal" style="display:none;">
+    <canvas id="stars"></canvas>
+    <img id="ground-gif" src="https://i.pinimg.com/originals/b7/c6/4a/b7c64aca651271c52087f58276bd1de1.gif" alt="Animales caminando" />
+    <div id="love-panel">
+      <span id="love-text"></span>
+    </div>
+  </div>
+  <script>
+    // Pantalla inicial: al hacer clic, reproduce audio y muestra el resto
+    document.getElementById('btn-inicio').onclick = function() {
+      var audio = document.getElementById('audio-inicio');
+      audio.currentTime = 0;
+      audio.play();
+      document.getElementById('pantalla-inicial').style.display = 'none';
+      document.getElementById('contenido-principal').style.display = '';
+      // Inicializar fondo estrellado y animación
+      setTimeout(iniciarAnimacion, 100);
+    };
+
+    function iniciarAnimacion() {
+      // Fondo estrellado animado
+      const canvas = document.getElementById('stars');
+      const ctx = canvas.getContext('2d');
+      let w = window.innerWidth;
+      let h = window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+
+      // Generar estrellas
+      const numStars = 120;
+      const stars = [];
+      for (let i = 0; i < numStars; i++) {
+        stars.push({
+          x: Math.random() * w,
+          y: Math.random() * h * 0.85,
+          r: Math.random() * 1.5 + 0.5,
+          speed: Math.random() * 5 + 3
+        });
+      }
+
+      // Generar planetas
+      const numPlanets = 6;
+      function planetSpeed() {
+        return Math.random() * 5 + 3;
+      }
+      const planets = [
+        { r: 40, color: '#ffb347', x: Math.random() * w, y: h * 0.2, speed: planetSpeed() },
+        { r: 30, color: '#7ec0ee', x: Math.random() * w, y: h * 0.5, speed: planetSpeed() },
+        { r: 22, color: '#e066ff', x: Math.random() * w, y: h * 0.7, speed: planetSpeed() },
+        { r: 18, color: '#fff', x: Math.random() * w, y: h * 0.35, speed: planetSpeed() },
+        { r: 26, color: '#ff6666', x: Math.random() * w, y: h * 0.6, speed: planetSpeed() },
+        { r: 15, color: '#b0e57c', x: Math.random() * w, y: h * 0.8, speed: planetSpeed() }
+      ];
+
+      function animateStars() {
+        ctx.clearRect(0, 0, w, h);
+        // Dibujar planetas
+        for (let planet of planets) {
+          ctx.beginPath();
+          ctx.arc(planet.x, planet.y, planet.r, 0, Math.PI * 2);
+          ctx.fillStyle = planet.color;
+          ctx.globalAlpha = 0.7;
+          ctx.shadowColor = planet.color;
+          ctx.shadowBlur = 16;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+          ctx.shadowBlur = 0;
+          planet.x -= planet.speed;
+          if (planet.x < -planet.r) planet.x = w + planet.r;
+        }
+        // Dibujar estrellas
+        for (let star of stars) {
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+          ctx.fillStyle = '#fff';
+          ctx.globalAlpha = 0.8;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+          star.x -= star.speed;
+          if (star.x < 0) star.x = w;
+        }
+        requestAnimationFrame(animateStars);
+      }
+      animateStars();
+
+      // Ajustar tamaño al cambiar ventana
+      window.addEventListener('resize', () => {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = w;
+        canvas.height = h;
+        for (let star of stars) {
+          star.x = Math.random() * w;
+          star.y = Math.random() * h * 0.85;
+        }
+        planets[0].y = h * 0.2;
+        planets[1].y = h * 0.5;
+        planets[2].y = h * 0.7;
+        planets[3].y = h * 0.35;
+        planets[4].y = h * 0.6;
+        planets[5].y = h * 0.8;
+        for (let i = 0; i < planets.length; i++) {
+          planets[i].speed = planetSpeed();
+        }
+      });
+
+      // Mensaje romántico con efecto máquina de escribir
+      const loveMessage = `Desde que llegaste a mi vida, todo cambió para mejor.
+      \nTu sonrisa ilumina mis días, tu voz calma mi alma y tu presencia me hace sentir completo.
+      \nNo hay distancia ni tiempo que apague lo que siento por ti.
+      \nEres mi sueño, mi alegría, y mi toda razón de ser.`;
+      const loveText = document.getElementById('love-text');
+      let loveIndex = 0;
+      function typeLove() {
+        if (loveIndex < loveMessage.length) {
+          loveText.innerHTML += loveMessage.charAt(loveIndex);
+          loveIndex++;
+          setTimeout(typeLove, 55);
+        }
+      }
+      typeLove();
+    }
+  </script>
+</body>
+</html>
