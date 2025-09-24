@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Cuánto realmente me conoces?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Quicksand', 'Poppins', sans-serif;
+      background: linear-gradient(120deg, #ffb6c1 0%, #ffe0f7 100%);
+      color: #a23a5a;
+      text-align: center;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Corazones flotantes de fondo */
+    .bg-heart {
+      position: fixed;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.13;
+      font-size: 7rem;
+      animation: floatHeart 12s linear infinite;
+    }
+    .bg-heart2 {
+      left: 10vw; top: 10vh; color: #ffb6c1; animation-delay: 0s;
+    }
+    .bg-heart3 {
+      right: 8vw; top: 30vh; color: #ff69b4; animation-delay: 2s;
+    }
+    .bg-heart4 {
+      left: 20vw; bottom: 8vh; color: #ffb6c1; animation-delay: 4s;
+    }
+    .bg-heart5 {
+      right: 15vw; bottom: 12vh; color: #ff69b4; animation-delay: 6s;
+    }
+    @keyframes floatHeart {
+      0% { transform: scale(1) translateY(0); }
+      50% { transform: scale(1.1) translateY(-30px); }
+      100% { transform: scale(1) translateY(0); }
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+      padding: 28px 20px 20px 20px;
+      background: rgba(255, 245, 250, 0.95);
+      border-radius: 32px 32px 40px 40px/40px 40px 32px 32px;
+      box-shadow: 0 8px 32px 0 rgba(255, 105, 180, 0.13), 0 2px 8px #ffb6c1;
+      backdrop-filter: blur(7px);
+      position: relative;
+      z-index: 10;
+      border: 2.5px solid #ffb6c1;
+    }
+
+    h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      color: #ff69b4;
+      text-shadow: 0 2px 12px #fff, 0 0 8px #ffb6c1;
+      animation: fadeInDown 1s ease-out;
+      font-weight: 400;
+      letter-spacing: 1.5px;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 25px;
+      animation: fadeIn 1.5s ease-out;
+      font-weight: 400;
+      color: #a23a5a;
+    }
+
+    .hidden { 
+      display: none; 
+    }
+
+    .question {
+      margin: 25px auto;
+      padding: 28px 22px 22px 22px;
+      background: linear-gradient(120deg, #fff0f6 60%, #ffe0f7 100%);
+      border-radius: 22px 22px 30px 30px/30px 30px 22px 22px;
+      width: 92%;
+      box-shadow: 0 4px 18px rgba(255, 182, 193, 0.13);
+      animation: fadeInUp 0.8s ease-out;
+      text-align: left;
+      border: 1.5px solid #ffb6c1;
+      position: relative;
+    }
+    .question:before {
+      content: '❤';
+      position: absolute;
+      top: -18px; left: 18px;
+      font-size: 1.5rem;
+      color: #ff69b4;
+      opacity: 0.7;
+    }
+
+    .question p {
+      font-weight: 500;
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      padding: 13px 18px;
+      margin: 10px 0;
+      background: rgba(255, 182, 193, 0.13);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(.22,1.2,.36,1);
+      font-size: 1.13rem;
+      border: 1.2px solid #ffe0f7;
+      position: relative;
+    }
+    label:hover {
+      background: #ffe0f7;
+      transform: scale(1.04) translateX(7px);
+      border-color: #ffb6c1;
+      box-shadow: 0 2px 12px #ffb6c1aa;
+    }
+
+    label:hover {
+      background: #f2e0ff;
+      transform: translateX(5px);
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+      accent-color: #ff69b4;
+    }
+
+    button {
+      padding: 15px 38px;
+      font-size: 1.18rem;
+      margin: 22px 10px 10px 10px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.7);
+      border: 2.5px solid #ffb6c1;
+      border-radius: 50px;
+      color: #ff69b4;
+      transition: all 0.3s cubic-bezier(.22,1.2,.36,1);
+      box-shadow: 0 5px 15px #ffb6c1aa;
+      font-family: 'Quicksand', 'Poppins', sans-serif;
+      font-weight: 600;
+      letter-spacing: 1px;
+      backdrop-filter: blur(2px);
+    }
+    button:hover {
+      background: #ffe0f7;
+      color: #a23a5a;
+      transform: scale(1.06) translateY(-2px);
+      box-shadow: 0 8px 20px #ffb6c1cc;
+      border-color: #ff69b4;
+    }
+    button:active {
+      transform: scale(1) translateY(0);
+    }
+
+    .result {
+      font-size: 1.7rem;
+      margin: 28px 0 18px 0;
+      padding: 22px 18px;
+      background: linear-gradient(120deg, #fff0f6 60%, #ffe0f7 100%);
+      border-radius: 22px 22px 30px 30px/30px 30px 22px 22px;
+      animation: fadeInUp 1s ease-out;
+      font-weight: 500;
+      color: #a23a5a;
+      border: 1.5px solid #ffb6c1;
+      box-shadow: 0 2px 12px #ffb6c1aa;
+      position: relative;
+    }
+    .result:before {
+      content: '💌';
+      position: absolute;
+      top: -18px; left: 18px;
+      font-size: 1.5rem;
+      color: #ff69b4;
+      opacity: 0.7;
+    }
+
+    .buttons-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 18px;
+      margin-bottom: 10px;
+    }
+
+
+
+    /* Animaciones */
+    @keyframes fadeInDown {
+      from { 
+        opacity: 0; 
+        transform: translateY(-30px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    @keyframes fadeInUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(30px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    @keyframes fadeIn {
+      from { 
+        opacity: 0; 
+      }
+      to { 
+        opacity: 1; 
+      }
+    }
+
+    /* Emojis flotantes */
+    .emoji {
+      position: fixed;
+      bottom: -50px;
+      font-size: 28px;
+      pointer-events: none;
+      opacity: 0.8;
+      z-index: 2;
+      animation: floatUp linear forwards;
+      filter: drop-shadow(0 2px 8px #ffb6c1cc);
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(1) rotate(0deg);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-120vh) scale(1.5) rotate(20deg);
+        opacity: 0;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      
+      p {
+        font-size: 1.1rem;
+      }
+      
+      .question {
+        width: 95%;
+        padding: 20px 15px;
+      }
+      
+      label {
+        font-size: 1rem;
+      }
+      
+      button {
+        font-size: 1rem;
+        padding: 12px 25px;
+      }
+      
+      .result {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .container {
+        padding: 15px;
+      }
+      
+      .buttons-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      button {
+        width: 100%;
+        margin: 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-heart bg-heart2">❤</div>
+  <div class="bg-heart bg-heart3">❤</div>
+  <div class="bg-heart bg-heart4">❤</div>
+  <div class="bg-heart bg-heart5">❤</div>
+  <div class="container">
+    <!-- Portada -->
+    <div id="start">
+      <h1>¿Cuánto realmente me conoces?</h1>
+      <p>A ver si logras más de 2/5... 😏</p>
+      <button onclick="startQuiz()">Comenzar el reto</button>
+    </div>
+
+    <!-- Cuestionario -->
+    <div id="quiz" class="hidden">
+      <form id="quizForm">
+        <div class="question">
+          <p>1. ¿Cuál es mi comida rápida favorita?</p>
+          <label><input type="radio" name="q1" value="0"> Pizza 🍕</label>
+          <label><input type="radio" name="q1" value="1"> Hamburguesas 🍔</label>
+          <label><input type="radio" name="q1" value="0"> Sushi 🍣</label>
+          <label><input type="radio" name="q1" value="0"> ¡No como eso! 🥗</label>
+        </div>
+
+        <div class="question">
+          <p>2. ¿Qué me da más pereza hacer?</p>
+          <label><input type="radio" name="q2" value="0"> Lavar platos 🍽️</label>
+          <label><input type="radio" name="q2" value="1"> Hacer tarea 📖</label>
+          <label><input type="radio" name="q2" value="0"> Madrugar ☀️</label>
+          <label><input type="radio" name="q2" value="0"> Responder mensajes 📵</label>
+        </div>
+
+        <div class="question">
+          <p>3. ¿Dónde fue nuestro primer plan?</p>
+          <label><input type="radio" name="q3" value="0"> Cine 🎬</label>
+          <label><input type="radio" name="q3" value="1"> Parque 🌳</label>
+          <label><input type="radio" name="q3" value="0"> Café ☕</label>
+          <label><input type="radio" name="q3" value="0"> ¡Ni me acuerdo! 😅</label>
+        </div>
+
+        <div class="question">
+          <p>4. ¿Qué emoji uso más seguido?</p>
+          <label><input type="radio" name="q4" value="0"> 😂</label>
+          <label><input type="radio" name="q4" value="0"> 🥺</label>
+          <label><input type="radio" name="q4" value="1"> 😉</label>
+          <label><input type="radio" name="q4" value="0"> 🤔</label>
+        </div>
+
+        <div class="question">
+          <p>5. ¿Qué me relaja cuando estoy estresado/a?</p>
+          <label><input type="radio" name="q5" value="0"> Escuchar música 🎧</label>
+          <label><input type="radio" name="q5" value="0"> Dormir 😴</label>
+          <label><input type="radio" name="q5" value="0"> Comer chocolate 🍫</label>
+          <label><input type="radio" name="q5" value="1"> Jugar Minecraft 🔥</label>
+        </div>
+
+        <button type="button" onclick="submitQuiz()">Ver resultado</button>
+      </form>
+    </div>
+
+    <!-- Resultado -->
+    <div id="result" class="hidden">
+      <div class="result" id="scoreMessage"></div>
+      <div class="buttons-container">
+        <button onclick="location.reload()">¿Quieres revancha?</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function startQuiz() {
+      document.getElementById('start').classList.add('hidden');
+      document.getElementById('quiz').classList.remove('hidden');
+    }
+
+    function submitQuiz() {
+      const form = document.getElementById('quizForm');
+      let score = 0;
+      
+      for (let i = 1; i <= 5; i++) {
+        const answer = form[`q${i}`];
+        if (answer) {
+          for (const option of answer) {
+            if (option.checked && option.value === "1") {
+              score++;
+            }
+          }
+        }
+      }
+
+      let message = "";
+      if (score <= 2) {
+        message = `¡Uy! Solo ${score}/5... Deberíamos hablar más 💬`;
+      } else if (score <= 4) {
+        message = `${score}/5. No está mal, pero aún me debes una cita ☕`;
+      } else if (score === 5) {
+        message = `¡Wow! ${score}/5. Casi me conoces tan bien como yo a ti 🫰`;
+      }
+
+      document.getElementById('quiz').classList.add('hidden');
+      document.getElementById('result').classList.remove('hidden');
+      document.getElementById('scoreMessage').innerText = message;
+    }
+
+    // Emojis flotantes
+    const emojis = ["🤍", "💖", "💝", "🫰", "💘", "💓", "💞", "💕"];
+    
+    setInterval(() => {
+      const emoji = document.createElement("div");
+      emoji.className = "emoji";
+      emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+      emoji.style.left = Math.random() * 100 + "vw";
+      emoji.style.animationDuration = (4 + Math.random() * 4) + "s";
+      document.body.appendChild(emoji);
+      
+      setTimeout(() => {
+        emoji.remove();
+      }, 8000);
+    }, 500);
+  </script>
+
+</body>
+</html>
