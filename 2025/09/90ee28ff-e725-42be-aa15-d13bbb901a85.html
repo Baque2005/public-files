@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Cubo 3D Rebotante</title>
+  <style>
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+
+    html, body {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  min-width: 100vw;
+  overflow: hidden;
+  touch-action: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #000 url('https://i.pinimg.com/1200x/14/ae/a0/14aea077a5cd3b39bcc7361c21bb21a1.jpg') no-repeat center center fixed;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s, background-position 0.3s;
+  position: relative;
+    }
+
+    .scene {
+      position: absolute;
+      perspective: 2000px;
+      width: 60vw;
+      height: 60vw;
+      max-width: 80vmin;
+      max-height: 80vmin;
+      min-width: 32vw;
+      min-height: 32vw;
+      aspect-ratio: 1/1;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      transition: all 0.5s ease-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cube {
+      width: 100%;
+      height: 100%;
+      max-width: 100vw;
+      max-height: 100vw;
+      min-width: 20vw;
+      min-height: 20vw;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(.4,1.4,.6,1);
+      transform: scale(0.6) rotateX(-15deg) rotateY(15deg);
+      will-change: transform;
+      aspect-ratio: 1/1;
+      cursor: pointer;
+    }
+
+    .face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border: 3px solid;
+      box-shadow: 0 0 15px rgba(255, 105, 180, 0.8),
+                  0 0 30px rgba(255, 105, 180, 0.6),
+                  0 0 45px rgba(255, 105, 180, 0.4);
+      animation: borderPulse 0s infinite alternate, 
+                 colorChange 0s infinite alternate;
+      backface-visibility: visible;
+      filter: brightness(1);
+    }
+
+    @keyframes colorChange {
+      0%, 100% {
+        border-color: rgba(255, 105, 180, 0.9); /* Rosa */
+        box-shadow: 0 0 15px rgba(255, 105, 180, 0.9),
+                    0 0 30px rgba(255, 105, 180, 0.7),
+                    0 0 45px rgba(255, 105, 180, 0.5);
+      }
+      50% {
+        border-color: rgba(0, 0, 0, 0.9); /* Negro */
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.9),
+                    0 0 30px rgba(0, 0, 0, 0.7),
+                    0 0 45px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    @keyframes borderPulse {
+      0%, 100% {
+        border-color: rgba(255, 105, 180, 0.9); /* Rosa */
+        box-shadow: 0 0 20px rgba(255, 105, 180, 0.9),
+                    0 0 40px rgba(255, 105, 180, 0.7),
+                    0 0 60px rgba(255, 105, 180, 0.5);
+      }
+      50% {
+        border-color: rgba(0, 0, 0, 0.9); /* Negro */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.9),
+                    0 0 40px rgba(0, 0, 0, 0.7),
+                    0 0 60px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+  .front  { transform: translateZ(27.5vmin); }
+  .back   { transform: rotateY(180deg) translateZ(27.5vmin); }
+  .right  { transform: rotateY(90deg) translateZ(27.5vmin); }
+  .left   { transform: rotateY(-90deg) translateZ(27.5vmin); }
+  .top    { transform: rotateX(90deg) translateZ(27.5vmin); background: none !important; }
+  .top-half {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    top: 0;
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    border-top: 3px solid;
+    border-bottom: none;
+    box-shadow: 0 0 15px rgba(255, 105, 180, 0.8),
+                0 0 30px rgba(255, 105, 180, 0.6),
+                0 0 45px rgba(255, 105, 180, 0.4);
+    z-index: 1;
+    transition: transform 0.35s cubic-bezier(.4,1.4,.6,1);
+    will-change: transform;
+    backface-visibility: hidden;
+    perspective: 600px;
+    transform-style: preserve-3d;
+  }
+  .left-half {
+    left: 0;
+    background-position: left center;
+    border-left: 3px solid;
+    border-right: 1.5px solid;
+    border-radius: 12px 0 0 0;
+  }
+  .right-half {
+    right: 0;
+    left: 50%;
+    background-position: right center;
+    border-left: 1.5px solid;
+    border-right: 3px solid;
+    border-radius: 0 12px 0 0;
+  }
+  .bottom { transform: rotateX(-90deg) translateZ(27.5vmin); }
+
+    .rain-symbol {
+      position: absolute;
+      top: -50px;
+      left: 0;
+      font-size: 6vmin;
+      color: #fff;
+      text-shadow:
+        0 0 8px #000,
+        0 0 16px #000,
+        0 0 24px #000,
+        0 0 32px #000,
+        0 0 40px #000;
+      z-index: 99999;
+      animation: fall linear forwards;
+      pointer-events: none;
+      will-change: transform;
+      user-select: none;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(120vh);
+        opacity: 0;
+      }
+    }
+
+    #audioPlayer {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      max-width: 320px;
+      z-index: 10;
+      background-color: rgba(20, 20, 20, 0.8);
+      border-radius: 12px;
+      padding: 8px;
+      border: 1px solid rgba(255, 105, 180, 0.5); /* Rosa */
+      box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+    }
+
+    /* Ajustes para pantallas muy pequeñas */
+    @media (max-width: 600px), (max-height: 600px) {
+      .scene {
+        width: 60vw;
+        height: 60vw;
+        max-width: 70vmin;
+        max-height: 70vmin;
+        min-width: 14vw;
+        min-height: 14vw;
+      }
+      .cube {
+        min-width: 10vw;
+        min-height: 10vw;
+        max-width: 40vw;
+        max-height: 40vw;
+        transform: scale(0.32) rotateX(-15deg) rotateY(15deg);
+      }
+      #audioPlayer {
+        bottom: 5px;
+        padding: 6px;
+        max-width: 280px;
+      }
+    }
+
+    /* Estilos específicos para móviles */
+    .mobile-controls {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+      background-color: rgba(20, 20, 20, 0.8);
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid rgba(255, 105, 180, 0.5); /* Rosa */
+      box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+    }
+
+    @media (min-width: 1024px) {
+      .mobile-controls {
+        display: none;
+      }
+    }
+
+    .mobile-controls button {
+      padding: 10px 15px;
+      background: rgba(255, 105, 180, 0.3); /* Rosa */
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+
+    .mobile-controls button:active {
+      background: rgba(255, 105, 180, 0.5); /* Rosa más intenso */
+    }
+
+    /* Estilos específicos para PC */
+    @media (min-width: 1024px) {
+      .scene {
+        width: 40vmin;
+        height: 40vmin;
+        max-width: 50vw;
+        max-height: 50vw;
+        min-width: 20vmin;
+        min-height: 20vmin;
+        perspective: 2500px;
+      }
+      .cube {
+        min-width: 20vmin;
+        min-height: 20vmin;
+        max-width: 40vmin;
+        max-height: 40vmin;
+        transform: scale(0.4) rotateX(-15deg) rotateY(15deg);
+      }
+      .front, .back, .right, .left, .top, .bottom {
+        transform: translateZ(15vmin);
+      }
+      .front  { transform: translateZ(15vmin); }
+      .back   { transform: rotateY(180deg) translateZ(15vmin); }
+      .right  { transform: rotateY(90deg) translateZ(15vmin); }
+      .left   { transform: rotateY(-90deg) translateZ(15vmin); }
+      .top    { transform: rotateX(90deg) translateZ(15vmin); }
+      .bottom { transform: rotateX(-90deg) translateZ(15vmin); }
+      #audioPlayer {
+        max-width: 400px;
+        bottom: 30px;
+      }
+      .rain-symbol {
+        font-size: 24px;
+      }
+    }
+
+    /* Controles para PC */
+    .controls-panel {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(20, 20, 20, 0.8);
+      border-radius: 12px;
+      padding: 15px;
+      border: 1px solid rgba(255, 105, 180, 0.5); /* Rosa */
+      box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+      z-index: 10;
+      display: none;
+    }
+
+    @media (min-width: 1024px) {
+      .controls-panel {
+        display: block;
+      }
+    }
+
+    .controls-panel h3 {
+      color: white;
+      margin-bottom: 10px;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .controls-panel button {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      margin: 5px 0;
+      background: rgba(255, 105, 180, 0.3); /* Rosa */
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .controls-panel button:hover {
+      background: rgba(255, 105, 180, 0.5); /* Rosa más intenso */
+    }
+  </style>
+</head>
+
+  <body>
+
+  <!-- Imagen animada arriba -->
+  <div id="img-runner-container" style="position:fixed;top:120px;left:0;width:100vw;height:120px;z-index:1000;pointer-events:none;overflow:visible;">
+    <img id="img-runner" src="https://github.com/Baque2005/Organizador/blob/master/0a8405eae34fca3e28cfa6a3cbbbfe36.png?raw=true" alt="runner1" style="position:absolute;top:0;left:0;width:80px;height:auto;transition:transform 0.3s;will-change:transform;transform:scaleX(-1);" />
+    <img id="img-runner2" src="https://github.com/Baque2005/Organizador/blob/master/0aff128c7f76eaca5897548e19d17d2a.png?raw=true" alt="runner2" style="position:absolute;top:40px;left:0;width:80px;height:auto;transition:transform 0.3s;will-change:transform;transform:scaleX(-1);" />
+  </div>
+
+  <div id="bg-header" style="position:fixed;top:0;left:0;width:100vw;height:100px;z-index:1;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+    <h1 style="font-family:'Segoe UI',Arial,sans-serif;font-size:2.8rem;font-weight:bold;color:#111;text-shadow:0 2px 16px #0050ff,0 1px 0 #000,0 0 32px #0050ff;letter-spacing:2px;">Feliz 30 de septiembre</h1>
+  </div>
+
+
+  <div class="scene">
+    <div class="cube" id="cube">
+      <div class="face front"  style="background-image: url('https://i.pinimg.com/1200x/0d/82/86/0d82860301688dec05bc373c5fff8d5f.jpg'); background-size: cover; background-position: center;"></div>
+      <div class="face back"   style="background-image: url('https://i.pinimg.com/1200x/0d/82/86/0d82860301688dec05bc373c5fff8d5f.jpg'); background-size: cover; background-position: center;"></div>
+      <div class="face right"  style="background-image: url('https://i.pinimg.com/1200x/0d/82/86/0d82860301688dec05bc373c5fff8d5f.jpg'); background-size: cover; background-position: center;"></div>
+      <div class="face left"   style="background-image: url('https://i.pinimg.com/1200x/0d/82/86/0d82860301688dec05bc373c5fff8d5f.jpg'); background-size: cover; background-position: center;"></div>
+      <div class="face top" style="background: none;">
+        <div class="top-half left-half" style="background-image: url('https://i.pinimg.com/1200x/0d/82/86/0d82860301688dec05bc373c5fff8d5f.jpg');"></div>
+        <div class="top-half right-half" style="background-image: url('https://i.pinimg.com/1200x/0d/82/86/0d82860301688dec05bc373c5fff8d5f.jpg');"></div>
+      </div>
+      <div class="face bottom" style="background-image: url('https://i.pinimg.com/1200x/0d/82/86/0d82860301688dec05bc373c5fff8d5f.jpg'); background-size: cover; background-position: center;"></div>
+    </div>
+  </div>
+  <!-- Contenedor para partículas blancas -->
+  <canvas id="particlesCanvas" style="position:fixed; left:0; top:0; width:100vw; height:100vh; pointer-events:none; z-index:100;"></canvas>
+  <!-- Modal para mostrar imágenes y frases -->
+  <div id="floresModal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.06); z-index:200; align-items:center; justify-content:center;">
+    <div id="modalContent" style="background:rgba(255,255,255,0.38); border-radius:22px; box-shadow:0 4px 32px 0 rgba(0,80,255,0.13),0 1.5px 8px 0 rgba(0,0,0,0.12); padding:32px 28px 24px 28px; display:flex; flex-direction:column; align-items:center; max-width:99vw; min-width:220px; width:480px; position:relative;">
+      <div style="width:100%; display:flex; justify-content:center; align-items:center;">
+  <img id="modalImg" src="" alt="Flor" style="width:100%; max-width:320px; max-height:320px; object-fit:contain; border-radius:16px; border:2.5px solid #0050ff; box-shadow:0 2px 12px 0 rgba(0,80,255,0.13); background:#fff; margin-bottom:18px; margin-top:2px; display:block;" />
+      </div>
+  <div id="modalMsg" style="color:#0050ff; font-size:1.18rem; text-align:center; font-weight:500; text-shadow:0 1px 0 #fff, 0 2px 8px #b6d6ff; margin-bottom:18px; line-height:1.35;"></div>
+      <div style="display:flex; gap:18px; margin-top:8px; align-items:center;">
+  <button id="prevFlor" style="padding:8px 18px; border-radius:8px; border:none; background:#0050ff; color:#fff; font-weight:bold; font-size:1.1rem; cursor:pointer; opacity:0.85;">⟨</button>
+  <span id="modalPag" style="color:#0050ff; font-size:1.1rem; font-weight:500;"></span>
+  <button id="nextFlor" style="padding:8px 18px; border-radius:8px; border:none; background:#0050ff; color:#fff; font-weight:bold; font-size:1.1rem; cursor:pointer; opacity:0.85;">⟩</button>
+      </div>
+  <button id="closeFlorModal" style="position:absolute; top:10px; right:18px; background:none; border:none; color:#0050ff; font-size:2rem; font-weight:bold; cursor:pointer; opacity:0.7;">×</button>
+    </div>
+  </div>
+
+  <!-- Controles para móviles eliminados -->
+
+  <!-- Panel de controles eliminado -->
+
+  <audio id="audioPlayer" controls loop>
+  <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Monsieur%20Perin%C3%A9%20-%20Nuestra%20Canci%C3%B3n%20(LetraLyrics)%20ft.%20Vicente%20Garc%C3%ADa.mp3" type="audio/mpeg">
+    Tu navegador no soporta el elemento de audio.
+  </audio>
+
+  <script>
+    // Animación de la imagen que recorre la parte superior
+    (function(){
+      // Primer runner
+      const runner1 = document.getElementById('img-runner');
+      let dir1 = -1;
+      let speed1 = 2.2;
+      let pos1 = window.innerWidth - runner1.offsetWidth - 10;
+      runner1.style.transform = 'scaleX(-1)';
+      // Segundo runner
+      const runner2 = document.getElementById('img-runner2');
+      let dir2 = -1;
+      let speed2 = 2.2;
+      let pos2 = window.innerWidth - runner2.offsetWidth - 120; // inicia más atrás
+      runner2.style.transform = 'scaleX(-1)';
+      function animateRunners() {
+        const maxW1 = window.innerWidth - runner1.offsetWidth - 10;
+        pos1 += dir1 * speed1;
+        if (pos1 <= 0) {
+          pos1 = 0;
+          dir1 = 1;
+          runner1.style.transform = 'scaleX(1)';
+        } else if (pos1 >= maxW1) {
+          pos1 = maxW1;
+          dir1 = -1;
+          runner1.style.transform = 'scaleX(-1)';
+        }
+        runner1.style.left = pos1 + 'px';
+
+        const maxW2 = window.innerWidth - runner2.offsetWidth - 10;
+        pos2 += dir2 * speed2;
+        if (pos2 <= 0) {
+          pos2 = 0;
+          dir2 = 1;
+          runner2.style.transform = 'scaleX(1)';
+        } else if (pos2 >= maxW2) {
+          pos2 = maxW2;
+          dir2 = -1;
+          runner2.style.transform = 'scaleX(-1)';
+        }
+        runner2.style.left = pos2 + 'px';
+
+        requestAnimationFrame(animateRunners);
+      }
+      // Ajustar posición si cambia el tamaño de la ventana
+      window.addEventListener('resize', () => {
+        const maxW1 = window.innerWidth - runner1.offsetWidth - 10;
+        if (pos1 > maxW1) pos1 = maxW1;
+        runner1.style.left = pos1 + 'px';
+        const maxW2 = window.innerWidth - runner2.offsetWidth - 10;
+        if (pos2 > maxW2) pos2 = maxW2;
+        runner2.style.left = pos2 + 'px';
+      });
+      animateRunners();
+    })();
+    // Datos de las flores y mensajes
+    const floresData = [
+      {
+        img: "https://i.pinimg.com/736x/48/73/32/4873329538169dc4a690e0325b1c87a0.jpg",
+        msg: "Me encanta cómo logras hacerme sonreír incluso en los días difíciles. Gracias por existir en mi vida."
+      },
+      {
+        img: "https://i.pinimg.com/736x/79/ec/ac/79ecac74713a50d35d39a1d94245ed99.jpg",
+        msg: "Tu abrazo es mi lugar favorito, donde todo se siente seguro y perfecto."
+      },
+      {
+        img: "https://i.pinimg.com/736x/7b/d2/0c/7bd20c24c575ecfa621727b59c50881d.jpg",
+        msg: "Admiro tu forma de ver la vida y cómo haces que cada momento juntos sea especial."
+      },
+      {
+        img: "https://i.pinimg.com/736x/2f/a2/40/2fa24003df141ce44c1faebed7657b51.jpg",
+        msg: "Eres ese pensamiento bonito que me acompaña todo el día."
+      },
+      {
+        img: "https://i.pinimg.com/736x/52/0e/a0/520ea07326484c50977b05b4442712f5.jpg",
+        msg: "A tu lado aprendí que el amor se demuestra en los pequeños detalles."
+      },
+      {
+        img: "https://i.pinimg.com/736x/82/86/98/8286980b7ca92cd3d8f9cd2738525b2a.jpg",
+        msg: "Gracias por ser mi apoyo, mi alegría y mi mejor compañía."
+      },
+      {
+        img: "https://i.pinimg.com/736x/5b/28/b1/5b28b1b0387d59879ab0b05362464191.jpg",
+        msg: "Contigo, cada día es una oportunidad para ser feliz."
+      },
+      {
+        img: "https://i.pinimg.com/736x/15/76/be/1576be07ee594d50adc162d149a78e2b.jpg",
+        msg: "Eres la razón por la que creo en el amor verdadero."
+      },
+      {
+        img: "https://i.pinimg.com/736x/60/05/60/600560f3e38976209ce7c4f862393c70.jpg",
+        msg: "No necesito nada más cuando estoy contigo."
+      },
+      {
+        img: "https://i.pinimg.com/736x/cc/c6/9b/ccc69b6660a0e462f0d79590582573fd.jpg",
+        msg: "Te quiero más de lo que las palabras pueden expresar."
+      }
+    ];
+    // Detección de dispositivo
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isPC = !isMobile;
+    const cube = document.getElementById('cube');
+    const scene = document.querySelector('.scene');
+    const audio = document.getElementById('audioPlayer');
+    const bounceBtn = document.getElementById('bounceBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const rotateBtn = document.getElementById('rotateBtn');
+  // Botones móviles eliminados
+    // Lluvia de ruedas, carros y elementos de autos
+    const symbols = [
+  "❤️", // corazón rojo
+  "🤍", // corazón blanco
+  "💖", // corazón brillante
+  "💕", // corazones juntos
+  "Te amo",
+  "Eres mi todo",
+  "Gracias por existir",
+  "Me haces feliz",
+  "Eres especial",
+  "Te admiro",
+  "Siempre contigo",
+  "Eres mi paz",
+  "Te pienso",
+  "Mi vida",
+  "Mi amor",
+  "Te extraño"
+    ];
+
+    // Configuración inicial
+    let rotateX = -15;
+    let rotateY = 15;
+    let startX, startY, isDragging = false;
+    let lluviaInterval = null;
+    let lastTapTime = 0;
+    let isBouncing = false;
+    let bounceAnimationId = null;
+    let autoRotateId = null;
+    let isAutoRotating = true;
+
+    // Ajusta el escalado del cubo según el tamaño de la pantalla
+    function getResponsiveScale() {
+      const vw = Math.min(window.innerWidth, window.innerHeight);
+      if (vw < 500) return 0.32;
+      if (vw < 900) return 0.5;
+      if (vw < 1200) return 0.5;
+      return 0.4;
+    }
+
+    function updateRotation() {
+      const scale = getResponsiveScale();
+      cube.style.transform = `scale(${scale}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    }
+
+    // Control para dispositivos táctiles
+    function handleStart(x, y) {
+      if (isBouncing || isAutoRotating) return;
+      
+      isDragging = true;
+      startX = x;
+      startY = y;
+      cube.style.transition = 'none';
+      scene.style.transition = 'none';
+    }
+
+    function handleMove(x, y) {
+      if (!isDragging || isBouncing || isAutoRotating) return;
+      
+      const sensitivity = isPC ? 0.5 : 0.8;
+      rotateY += (x - startX) * sensitivity;
+      rotateX -= (y - startY) * sensitivity;
+      
+      startX = x;
+      startY = y;
+      updateRotation();
+    }
+
+    function handleEnd() {
+      isDragging = false;
+      if (!isBouncing && !isAutoRotating) {
+        cube.style.transition = 'transform 0.1s linear';
+        scene.style.transition = 'all 0.1s linear';
+      }
+    }
+
+    // Eventos táctiles para móviles
+    document.addEventListener('touchstart', e => {
+      if (e.target.closest('.mobile-controls')) return;
+      e.preventDefault();
+      handleStart(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+    
+    document.addEventListener('touchmove', e => {
+      if (e.target.closest('.mobile-controls')) return;
+      e.preventDefault();
+      handleMove(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+    
+    document.addEventListener('touchend', e => {
+      if (e.target.closest('.mobile-controls')) return;
+      e.preventDefault();
+      handleEnd();
+    });
+
+    // Eventos de ratón para PC
+    if (isPC) {
+      document.addEventListener('mousedown', e => {
+        if (e.target.closest('.controls-panel')) return;
+        handleStart(e.clientX, e.clientY);
+      });
+      
+      document.addEventListener('mousemove', e => {
+        handleMove(e.clientX, e.clientY);
+      });
+      
+      document.addEventListener('mouseup', e => {
+        handleEnd();
+      });
+
+      // Rueda del ratón para zoom (mantiene responsividad)
+        document.addEventListener('wheel', e => {
+          e.preventDefault();
+          // No permite zoom manual, el cubo es siempre responsivo
+        }, { passive: false });
+    }
+
+    // Efecto de lluvia optimizado
+    function crearSimbolo() {
+      const el = document.createElement('div');
+      el.className = 'rain-symbol';
+      el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+      // Limitar a 95vw para que siempre caiga visible
+      el.style.left = (Math.random() * 95) + 'vw';
+      // Aumentar tamaño para mejor visibilidad
+      el.style.fontSize = '6vmin';
+      el.style.animationDuration = (3 + Math.random() * 4) + 's';
+      document.body.appendChild(el);
+      // Debug: mostrar en consola cada vez que se crea un símbolo
+      console.log('Lluvia:', el.innerText, el.style.left);
+      // Limpieza de elementos
+      setTimeout(() => {
+        if (el.parentNode) {
+          el.parentNode.removeChild(el);
+        }
+      }, 7000);
+    }
+
+    function iniciarLluvia() {
+      clearInterval(lluviaInterval);
+      lluviaInterval = setInterval(crearSimbolo, isPC ? 300 : 400);
+    }
+
+    function detenerLluvia() {
+      clearInterval(lluviaInterval);
+      lluviaInterval = null;
+    }
+
+    // Rebote progresivo y animación final
+    let bounceClickCount = 0;
+    let lastBounceScale = 1;
+    let isFinal = false;
+
+    function animateTopFaceOpen() {
+      const topFace = cube.querySelector('.top');
+      if (!topFace) return;
+      const leftHalf = topFace.querySelector('.left-half');
+      const rightHalf = topFace.querySelector('.right-half');
+      if (!leftHalf || !rightHalf) return;
+      // Si ya es el tercer click, dejar las tapas abiertas permanentemente
+      if (bounceClickCount >= 3) {
+        leftHalf.style.transformOrigin = 'left bottom';
+        rightHalf.style.transformOrigin = 'right bottom';
+        leftHalf.style.transform = 'translateY(-60%) rotateY(-150deg) rotateX(45deg)';
+        rightHalf.style.transform = 'translateY(-60%) rotateY(150deg) rotateX(45deg)';
+        return;
+      }
+      // Animación normal de apertura temporal
+      leftHalf.style.transformOrigin = 'left bottom';
+      rightHalf.style.transformOrigin = 'right bottom';
+      leftHalf.style.transform = 'translateY(-60%) rotateY(-150deg) rotateX(45deg)';
+      rightHalf.style.transform = 'translateY(-60%) rotateY(150deg) rotateX(45deg)';
+      setTimeout(() => {
+        leftHalf.style.transform = '';
+        rightHalf.style.transform = '';
+        leftHalf.style.transformOrigin = '';
+        rightHalf.style.transformOrigin = '';
+      }, 500);
+    }
+
+    function progressiveBounce() {
+      if (isBouncing || isFinal) return;
+      isBouncing = true;
+      bounceClickCount = Math.min(bounceClickCount + 1, 3);
+      const scale = getResponsiveScale();
+      let bounceScales = [1.15, 1.32, 1.5];
+      let shrinkScales = [0.88, 0.78, 0.65];
+      let overshootScales = [1.08, 1.15, 1.22];
+      let durations = [130, 150, 180];
+      let idx = bounceClickCount - 1;
+      lastBounceScale = bounceScales[idx];
+      cube.style.transition = `transform 0.22s cubic-bezier(.4,1.4,.6,1)`;
+      cube.style.transform = `scale(${scale * bounceScales[idx]}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      animateTopFaceOpen();
+      setTimeout(() => {
+        cube.style.transform = `scale(${scale * shrinkScales[idx]}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        setTimeout(() => {
+          cube.style.transform = `scale(${scale * overshootScales[idx]}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+          setTimeout(() => {
+            cube.style.transform = `scale(${scale}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            isBouncing = false;
+          }, durations[idx]);
+        }, durations[idx]);
+      }, durations[idx]);
+    }
+
+
+    // Partículas blancas infinitas y frases flotantes al abrir la caja
+    let particlesActive = false;
+    const frasesCarino = [
+      "Te amo mucho ❤️",
+      "Eres mi alegría",
+      "Gracias por existir",
+      "Siempre contigo",
+      "Eres mi paz",
+      "Me haces feliz",
+      "Te admiro",
+      "Eres especial",
+      "Mi vida",
+      "Mi amor",
+      "Eres mi sol",
+      "Mi razón de sonreír",
+      "Te pienso",
+      "Eres mi todo"
+    ];
+    function startParticles() {
+      if (particlesActive) return;
+      particlesActive = true;
+      const canvas = document.getElementById('particlesCanvas');
+      const ctx = canvas.getContext('2d');
+      let W = window.innerWidth, H = window.innerHeight;
+      canvas.width = W;
+      canvas.height = H;
+      let particles = [];
+  let frases = [];
+  let fraseIndex = 0;
+  let fraseActivo = null;
+      // Imágenes flotantes (no desaparecen)
+      const imgParticles = [];
+      const imgUrls = [
+        'https://github.com/Baque2005/Organizador/blob/master/cff257d47136f457a24c8a2272fc21c5.png?raw=true',
+        'https://github.com/Baque2005/Organizador/blob/master/53de7ebe5d2a1dc9b5d5d1c6f1cd68d7.png?raw=true'
+      ];
+      const imgObjs = imgUrls.map(url => { let img = new window.Image(); img.src = url; return img; });
+      // 5 imágenes de la primera, 5 de la segunda
+      for (let i = 0; i < 5; i++) {
+        imgParticles.push({
+          img: imgObjs[0],
+          x: W/2 + (Math.random()-0.5)*180,
+          y: H/2 + 120 + (Math.random()-0.5)*80,
+          vx: (Math.random()-0.5)*0.4,
+          vy: (Math.random()-0.5)*0.4,
+          size: 64 + Math.random()*32,
+          angle: Math.random()*Math.PI*2,
+          vangle: (Math.random()-0.5)*0.01
+        });
+      }
+      for (let i = 0; i < 5; i++) {
+        imgParticles.push({
+          img: imgObjs[1],
+          x: W/2 + (Math.random()-0.5)*180,
+          y: H/2 + 120 + (Math.random()-0.5)*80,
+          vx: (Math.random()-0.5)*0.4,
+          vy: (Math.random()-0.5)*0.4,
+          size: 64 + Math.random()*32,
+          angle: Math.random()*Math.PI*2,
+          vangle: (Math.random()-0.5)*0.01
+        });
+      }
+      // Partículas más abajo (ajustar Y)
+      const baseY = H/2 + 160;
+      // Más partículas
+      for (let i = 0; i < 120; i++) {
+          particles.push({
+            x: W/2 + (Math.random()-0.5)*80,
+            y: baseY + (Math.random()-0.5)*40,
+            r: 8 + Math.random()*7,
+            vx: (Math.random()-0.5)*0.7,
+            vy: (Math.random()-0.5)*1.2,
+            alpha: 0.7 + Math.random()*0.3
+          });
+      }
+      // Frases flotantes: solo una visible a la vez
+      function mostrarSiguienteFrase() {
+        if (fraseIndex >= frasesCarino.length) fraseIndex = 0;
+        const frase = frasesCarino[fraseIndex];
+        fraseActivo = {
+          text: frase,
+          x: W/2 + (Math.random()-0.5)*120,
+          y: baseY + (Math.random()-0.5)*60,
+          vx: (Math.random()-0.5)*0.5,
+          vy: -1.2 - Math.random()*0.7,
+          alpha: 0.95,
+          size: 22 + Math.random()*12,
+          color: `rgba(${180+Math.floor(Math.random()*60)},${200+Math.floor(Math.random()*40)},255,0.85)`
+        };
+        fraseIndex++;
+      }
+      mostrarSiguienteFrase();
+      function drawParticles() {
+        ctx.clearRect(0,0,W,H);
+        // Dibujar imágenes flotantes
+        for (let imgP of imgParticles) {
+          ctx.save();
+          ctx.globalAlpha = 0.92;
+          ctx.translate(imgP.x, imgP.y);
+          ctx.rotate(imgP.angle);
+          ctx.drawImage(imgP.img, -imgP.size/2, -imgP.size/2, imgP.size, imgP.size);
+          ctx.restore();
+        }
+        // Partículas blancas
+        for (let p of particles) {
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, 2*Math.PI);
+          ctx.fillStyle = '#fff';
+          ctx.shadowColor = '#fff';
+          ctx.shadowBlur = 8;
+          ctx.fill();
+          ctx.restore();
+        }
+        // Frase flotante única
+        if (fraseActivo) {
+          ctx.save();
+          ctx.globalAlpha = fraseActivo.alpha;
+          ctx.font = `bold ${fraseActivo.size}px 'Segoe UI', Arial, sans-serif`;
+          ctx.fillStyle = fraseActivo.color;
+          ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+          ctx.lineWidth = 2.5;
+          ctx.strokeText(fraseActivo.text, fraseActivo.x, fraseActivo.y);
+          ctx.fillText(fraseActivo.text, fraseActivo.x, fraseActivo.y);
+          ctx.restore();
+        }
+      }
+      function updateParticles() {
+        // Actualizar imágenes flotantes
+        for (let imgP of imgParticles) {
+          imgP.x += imgP.vx;
+          imgP.y += imgP.vy;
+          imgP.angle += imgP.vangle;
+          // Rebote en bordes
+          if (imgP.x < imgP.size/2 || imgP.x > W-imgP.size/2) imgP.vx *= -1;
+          if (imgP.y < imgP.size/2 || imgP.y > H-imgP.size/2) imgP.vy *= -1;
+        }
+        // Partículas blancas
+        for (let p of particles) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= 0.003 + Math.random()*0.002;
+          if (p.alpha <= 0.1 || p.y < 0 || p.y > H || p.x < 0 || p.x > W) {
+            p.x = W/2 + (Math.random()-0.5)*80;
+            p.y = baseY + (Math.random()-0.5)*40;
+            p.r = 8 + Math.random()*7;
+            p.vx = (Math.random()-0.5)*0.7;
+            p.vy = (Math.random()-0.5)*1.2;
+            p.alpha = 0.7 + Math.random()*0.3;
+          }
+        }
+        // Frase flotante única
+        if (fraseActivo) {
+          fraseActivo.x += fraseActivo.vx;
+          fraseActivo.y += fraseActivo.vy;
+          fraseActivo.alpha -= 0.004 + Math.random()*0.003;
+          if (fraseActivo.alpha <= 0.1 || fraseActivo.y < 0) {
+            setTimeout(mostrarSiguienteFrase, 400);
+            fraseActivo = null;
+          }
+        }
+      }
+      function animate() {
+        if (!particlesActive) return;
+        drawParticles();
+        updateParticles();
+        requestAnimationFrame(animate);
+      }
+      animate();
+      window.addEventListener('resize', () => {
+        W = window.innerWidth; H = window.innerHeight;
+        canvas.width = W; canvas.height = H;
+      });
+    }
+
+    // Burbujas que salen de la tapa al abrir el cubo
+    function spawnBubblesFromTop() {
+      const canvas = document.getElementById('particlesCanvas');
+      const ctx = canvas.getContext('2d');
+      let W = window.innerWidth, H = window.innerHeight;
+      // Calcular la posición real de la tapa del cubo en pantalla
+      const scene = document.querySelector('.scene');
+      const cube = document.getElementById('cube');
+      const sceneRect = scene.getBoundingClientRect();
+      const cubeRect = cube.getBoundingClientRect();
+      // La tapa está en la parte superior del cubo
+      const topX = cubeRect.left + cubeRect.width/2;
+      const topY = cubeRect.top + cubeRect.height*0.13; // 0.13 es aproximado para la tapa
+      let bubbles = [];
+      for (let i = 0; i < 22; i++) {
+        const angle = Math.random() * 2 * Math.PI;
+        const speed = 2.2 + Math.random()*1.8;
+        bubbles.push({
+          x: topX,
+          y: topY,
+          r: 28 + Math.random()*22, // burbujas mucho más grandes
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          alpha: 0.95,
+          color: `rgba(${180+Math.floor(Math.random()*60)},${200+Math.floor(Math.random()*40)},255,0.7)`
+        });
+      }
+      let frame = 0;
+      function drawBubbles() {
+        for (let b of bubbles) {
+          ctx.save();
+          ctx.globalAlpha = b.alpha;
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, b.r, 0, 2*Math.PI);
+          ctx.fillStyle = b.color;
+          ctx.shadowColor = '#b6d6ff';
+          ctx.shadowBlur = 12;
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+      function updateBubbles() {
+        for (let b of bubbles) {
+          b.x += b.vx;
+          b.y += b.vy;
+          b.vx *= 0.98;
+          b.vy *= 0.98;
+          b.alpha -= 0.012 + Math.random()*0.008;
+        }
+        bubbles = bubbles.filter(b => b.alpha > 0.05);
+      }
+      function animateBubbles() {
+        if (bubbles.length === 0) return;
+        drawBubbles();
+        updateBubbles();
+        frame++;
+        if (frame < 80) requestAnimationFrame(animateBubbles);
+      }
+      animateBubbles();
+    }
+
+    // Modal de flores con paginador
+    let florIndex = 0;
+    // Controla si el modal de flores está activo
+    let florModalActivo = false;
+    function showFlorModal(idx = 0) {
+      florIndex = idx;
+      const modal = document.getElementById('floresModal');
+      const img = document.getElementById('modalImg');
+      const msg = document.getElementById('modalMsg');
+      const pag = document.getElementById('modalPag');
+      img.src = floresData[florIndex].img;
+      msg.textContent = floresData[florIndex].msg;
+      pag.textContent = `${florIndex+1} / ${floresData.length}`;
+      modal.style.display = 'flex';
+      // Reiniciar animación 3D
+      modal.style.animation = 'none';
+      void modal.offsetWidth;
+      modal.style.animation = 'modal3dIn 0.7s cubic-bezier(.4,1.4,.6,1)';
+      florModalActivo = true;
+    }
+    function hideFlorModal() {
+      const modal = document.getElementById('floresModal');
+      modal.style.display = 'none';
+      florModalActivo = false;
+    }
+    function nextFlor() {
+      if (florIndex < floresData.length-1) {
+        florIndex++;
+        showFlorModal(florIndex);
+      }
+    }
+    function prevFlor() {
+      if (florIndex > 0) {
+        florIndex--;
+        showFlorModal(florIndex);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('closeFlorModal').onclick = hideFlorModal;
+      document.getElementById('nextFlor').onclick = nextFlor;
+      document.getElementById('prevFlor').onclick = prevFlor;
+    });
+
+    function finalDrop() {
+      if (isBouncing || isFinal) return;
+      isFinal = true;
+      isBouncing = true;
+      // Detener rotación automática
+      isAutoRotating = false;
+      if (autoRotateId) cancelAnimationFrame(autoRotateId);
+      // Animación de caída
+      const scale = getResponsiveScale();
+      const dropY = window.innerHeight * 0.25; // baja 25% de la pantalla
+      scene.style.transition = 'top 0.7s cubic-bezier(.4,1.4,.6,1)';
+      scene.style.top = `calc(50% + ${dropY}px)`;
+      // Cubo se queda sin rotar
+      cube.style.transition = 'transform 0.7s cubic-bezier(.4,1.4,.6,1)';
+      cube.style.transform = `scale(${scale}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      // Dejar la tapa abierta permanentemente
+      setTimeout(() => {
+        animateTopFaceOpen();
+        // Lanzar burbujas desde la tapa
+        spawnBubblesFromTop();
+        isBouncing = false;
+        // Lanzar partículas blancas infinitas
+        startParticles();
+        // Mostrar modal de flores con paginador
+        showFlorModal(0);
+      }, 700);
+    }
+
+    function bounceCube() {
+      if (isFinal) return;
+      if (bounceClickCount < 2) {
+        progressiveBounce();
+      } else if (bounceClickCount === 2) {
+        progressiveBounce();
+      } else if (bounceClickCount === 3) {
+        finalDrop();
+      }
+    }
+
+    function resetPosition() {
+      // Cancelar animación de rebote si está activa
+      if (bounceAnimationId) {
+        cancelAnimationFrame(bounceAnimationId);
+        bounceAnimationId = null;
+      }
+      
+      isBouncing = false;
+      
+      // Restaurar posición y rotación original
+      scene.style.transition = 'all 0.5s ease-out';
+      scene.style.left = '50%';
+      scene.style.top = '50%';
+      scene.style.transform = 'translate(-50%, -50%)';
+      
+      cube.style.transition = 'transform 0.5s ease-out';
+      rotateX = -15;
+      rotateY = 15;
+      updateRotation();
+    }
+
+    // Rotación automática siempre activa
+    function autoRotate() {
+      if (!isAutoRotating) return;
+      rotateY += 0.5;
+      updateRotation();
+      autoRotateId = requestAnimationFrame(autoRotate);
+    }
+    autoRotateId = requestAnimationFrame(autoRotate);
+
+    // Detección de doble tap/clic
+    function handleDoubleTap() {
+      const now = Date.now();
+      const doubleTapDelay = isPC ? 500 : 300;
+      if (now - lastTapTime < doubleTapDelay) {
+        // Doble tap/clic detectado
+      } else {
+        // Si el modal de flores está activo, no hacer nada (evita doble apertura)
+        if (florModalActivo) return;
+        // Si el modal no está activo y ya se abrió la caja, mostrarlo
+        if (isFinal) {
+          showFlorModal(florIndex);
+        } else {
+          // Un solo clic: rebote progresivo
+          bounceCube();
+        }
+      }
+      lastTapTime = now;
+    }
+
+    // Event listeners para el cubo
+    let musicaYaIniciada = false;
+    cube.addEventListener('click', function(e) {
+      if (!musicaYaIniciada) {
+        audio.currentTime = 0;
+        audio.play().catch(()=>{});
+        musicaYaIniciada = true;
+      }
+      handleDoubleTap();
+    });
+
+    cube.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      if (!musicaYaIniciada) {
+        audio.currentTime = 0;
+        audio.play().catch(()=>{});
+        musicaYaIniciada = true;
+      }
+      handleDoubleTap();
+    });
+
+    // Botones de control para PC
+    if (isPC) {
+      bounceBtn.addEventListener('click', bounceCube);
+      resetBtn.addEventListener('click', resetPosition);
+      rotateBtn.addEventListener('click', toggleAutoRotate);
+    }
+
+  // Botones de control para móviles eliminados
+
+    // Reproducir música de fondo automáticamente
+    audio.addEventListener('play', iniciarLluvia);
+    audio.addEventListener('pause', detenerLluvia);
+    audio.addEventListener('ended', iniciarLluvia);
+
+    // Solución para autoplay
+    document.addEventListener('click', function initAudio() {
+      // Intenta reproducir la música
+      audio.play().catch(e => console.log("Autoplay no permitido hasta interacción del usuario"));
+      document.removeEventListener('click', initAudio);
+    }, { once: true });
+
+    // Ajustar al cambiar tamaño
+    window.addEventListener('resize', () => {
+      if (!isBouncing) {
+        scene.style.left = '50%';
+        scene.style.top = '50%';
+        scene.style.transform = 'translate(-50%, -50%)';
+      }
+      updateRotation();
+    });
+
+    // Inicializar
+  updateRotation();
+  // Iniciar la lluvia automáticamente al cargar la página
+  iniciarLluvia();
+  // Estilos para el modal y animación
+  const styleFlor = document.createElement('style');
+  styleFlor.innerHTML = `
+    #floresModal { display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.06)!important; }
+    #floresModal[style*='display: flex'] { animation: modal3dIn 0.7s cubic-bezier(.4,1.4,.6,1); }
+    @keyframes modal3dIn {
+      0% { opacity: 0; transform: perspective(800px) translateY(-180px) scale(0.7) rotateX(60deg); }
+      60% { opacity: 1; transform: perspective(800px) translateY(10px) scale(1.05) rotateX(-8deg); }
+      100% { opacity: 1; transform: perspective(800px) translateY(0) scale(1) rotateX(0deg); }
+    }
+    #modalContent { box-shadow: 0 4px 32px 0 rgba(0,80,255,0.13), 0 1.5px 8px 0 rgba(0,0,0,0.12); background: rgba(255,255,255,0.38)!important; border-radius: 22px; max-width: 99vw; width: 480px; min-width: 220px; padding: 32px 28px 24px 28px; }
+    #modalImg { width: 100%; max-width: 320px; max-height: 320px; object-fit: contain; border-radius: 16px; border: 2.5px solid #0050ff; margin-bottom: 18px; margin-top: 2px; display: block; background: #fff; box-shadow: 0 2px 12px 0 rgba(0,80,255,0.13); transition: box-shadow 0.3s; }
+    #modalImg:hover { box-shadow: 0 0 24px #0050ff; }
+  #modalMsg { color: #111; font-size: 1.18rem; text-align: center; font-weight: 500; text-shadow: 0 1px 0 #fff, 0 2px 8px #b6d6ff; margin-bottom: 18px; line-height: 1.35; }
+  #prevFlor, #nextFlor { color: #111; }
+  #modalPag { color: #111; }
+  #closeFlorModal:hover { opacity: 1; color: #111; }
+    #prevFlor:disabled, #nextFlor:disabled { opacity: 0.3; cursor: default; }
+    @media (max-width: 600px) {
+      #modalContent { min-width: 120px; max-width: 99vw; padding: 10px 4px 8px 4px; }
+      #modalImg { max-width: 98vw; max-height: 180px; }
+    }
+  `;
+  document.head.appendChild(styleFlor);
+  </script>
+</body>
+</html>
