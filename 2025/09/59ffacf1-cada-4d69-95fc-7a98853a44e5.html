@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Te amo, Briyidth - Galaxia de Amor</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      overflow: hidden;
+      background: #000;
+      font-family: 'Georgia', serif;
+      color: white;
+    }
+    #galaxyCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    .menu-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      cursor: pointer;
+      padding: 8px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 6px;
+    }
+    .menu-btn div {
+      width: 25px;
+      height: 3px;
+      background: #fff;
+      margin: 4px 0;
+      border-radius: 2px;
+    }
+    .config-panel {
+      position: fixed;
+      top: 70px;
+      left: 20px;
+      background: rgba(10, 5, 20, 0.85);
+      padding: 15px;
+      border-radius: 10px;
+      color: #ffd9b3;
+      z-index: 99;
+      display: none;
+      width: 220px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 165, 0, 0.4);
+    }
+    .config-panel h3 {
+      margin-bottom: 10px;
+      color: #ffcc99;
+    }
+    .config-panel label {
+      display: block;
+      margin: 6px 0;
+      font-size: 13px;
+    }
+    .config-panel input[type="range"] {
+      width: 100%;
+    }
+    .credits {
+      position: fixed;
+      bottom: 15px;
+      width: 100%;
+      text-align: center;
+      font-size: 14px;
+      color: #ffd9b3;
+      font-style: italic;
+      text-shadow: 0 0 8px rgba(255, 217, 179, 0.8);
+      z-index: 200;
+      font-family: Georgia, serif;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Menú ☰ -->
+  <div class="menu-btn" id="menuBtn">
+    <div></div><div></div><div></div>
+  </div>
+
+  <div class="config-panel" id="configPanel">
+    <h3>✨ Configuración Cósmica</h3>
+    <label>Velocidad de rotación: <input type="range" id="rotSpeed" min="0" max="2" step="0.1" value="0.5"></label>
+    <label>Brillo del texto: <input type="range" id="textGlow" min="10" max="50" value="30"></label>
+    <label>Escala del texto: <input type="range" id="textScale" min="0.5" max="2" step="0.1" value="1"></label>
+    <button onclick="resetConfig()" style="margin-top:10px; padding:4px 8px; background:#ff6600; color:white; border:none; border-radius:4px; font-size:12px;">
+      Restablecer
+    </button>
+  </div>
+
+  <canvas id="galaxyCanvas"></canvas>
+
+  <div class="credits">By AnthZz Berrocal BerMatMods</div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+  <script>
+    // === Cargar el texto original ===
+    const originalText = `Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+ Te amo Mi amor Briyidth 
+  Te amo Mi amor Briyidth 
+   Te amo Mi amor Briyidth 
+    Te amo Mi amor Briyidth 
+     Te amo Mi amor Briyidth 
+      Te amo Mi amor Briyidth 
+       Te amo Mi amor Briyidth 
+        Te amo Mi amor Briyidth 
+         Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+           Te amo Mi amor Briyidth 
+            Te amo Mi amor Briyidth 
+             Te amo Mi amor Briyidth 
+              Te amo Mi amor Briyidth 
+               Te amo Mi amor Briyidth 
+                Te amo Mi amor Briyidth 
+                 Te amo Mi amor Briyidth 
+                  Te amo Mi amor Briyidth 
+                   Te amo Mi amor Briyidth 
+                    Te amo Mi amor Briyidth 
+                    Te amo Mi amor Briyidth 
+                   Te amo Mi amor Briyidth 
+                  Te amo Mi amor Briyidth 
+                 Te amo Mi amor Briyidth 
+                Te amo Mi amor Briyidth 
+               Te amo Mi amor Briyidth 
+              Te amo Mi amor Briyidth 
+             Te amo Mi amor Briyidth 
+            Te amo Mi amor Briyidth 
+           Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+         Te amo Mi amor Briyidth 
+        Te amo Mi amor Briyidth 
+       Te amo Mi amor Briyidth 
+      Te amo Mi amor Briyidth 
+     Te amo Mi amor Briyidth 
+    Te amo Mi amor Briyidth 
+   Te amo Mi amor Briyidth 
+  Te amo Mi amor Briyidth 
+ Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+ Te amo Mi amor Briyidth 
+  Te amo Mi amor Briyidth 
+   Te amo Mi amor Briyidth 
+    Te amo Mi amor Briyidth 
+     Te amo Mi amor Briyidth 
+      Te amo Mi amor Briyidth 
+       Te amo Mi amor Briyidth 
+        Te amo Mi amor Briyidth 
+         Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+           Te amo Mi amor Briyidth 
+            Te amo Mi amor Briyidth 
+             Te amo Mi amor Briyidth 
+              Te amo Mi amor Briyidth 
+               Te amo Mi amor Briyidth 
+                Te amo Mi amor Briyidth 
+                 Te amo Mi amor Briyidth 
+                  Te amo Mi amor Briyidth 
+                   Te amo Mi amor Briyidth 
+                    Te amo Mi amor Briyidth 
+                    Te amo Mi amor Briyidth 
+                   Te amo Mi amor Briyidth 
+                  Te amo Mi amor Briyidth 
+                 Te amo Mi amor Briyidth 
+                Te amo Mi amor Briyidth 
+               Te amo Mi amor Briyidth 
+              Te amo Mi amor Briyidth 
+             Te amo Mi amor Briyidth 
+            Te amo Mi amor Briyidth 
+           Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+         Te amo Mi amor Briyidth 
+        Te amo Mi amor Briyidth 
+       Te amo Mi amor Briyidth 
+      Te amo Mi amor Briyidth 
+     Te amo Mi amor Briyidth 
+    Te amo Mi amor Briyidth 
+   Te amo Mi amor Briyidth 
+  Te amo Mi amor Briyidth 
+ Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth  
+Te amo Mi amor Briyidth   
+Te amo Mi amor Briyidth    
+Te amo Mi amor Briyidth     
+Te amo Mi amor Briyidt h     
+Te amo Mi amor Briyidt  h     
+Te amo Mi amor Briyidt   h     
+Te amo Mi amor Briyidt    h     
+Te amo Mi amor Briyid t    h     
+Te amo Mi amor Briyid  t    h     
+Te amo Mi amor Briyid   t    h     
+Te amo Mi amor Briyid    t    h     
+Te amo Mi amor Briyi d    t    h     
+Te amo Mi amor Briyi  d    t    h     
+Te amo Mi amor Briyi   d    t    h     
+Te amo Mi amor Briyi    d    t    h     
+Te amo Mi amor Briy i    d    t    h     
+Te amo Mi amor Briy  i    d    t    h     
+Te amo Mi amor Briy   i    d    t    h     
+Te amo Mi amor Briy    i    d    t    h     
+Te amo Mi amor Bri y    i    d    t    h     
+Te amo Mi amor Bri  y    i    d    t    h     
+Te amo Mi amor Bri   y    i    d    t    h     
+Te amo Mi amor Bri    y    i    d    t    h     
+Te amo Mi amor Br i    y    i    d    t    h     
+Te amo Mi amor Br  i    y    i    d    t    h     
+Te amo Mi amor Br   i    y    i    d    t    h     
+Te amo Mi amor Br    i    y    i    d    t    h     
+Te amo Mi amor B r    i    y    i    d    t    h     
+Te amo Mi amor B  r    i    y    i    d    t    h     
+Te amo Mi amor B   r    i    y    i    d    t    h     
+Te amo Mi amor B    r    i    y    i    d    t    h     
+Te amo Mi amor  B    r    i    y    i    d    t    h     
+Te amo Mi amor   B    r    i    y    i    d    t    h     
+Te amo Mi amor    B    r    i    y    i    d    t    h     
+Te amo Mi amor     B    r    i    y    i    d    t    h     
+Te amo Mi amor      B    r    i    y    i    d    t    h     
+Te amo Mi amor       B    r    i    y    i    d    t    h     
+Te amo Mi amor        B    r    i    y    i    d    t    h     
+Te amo Mi amor         B    r    i    y    i    d    t    h     
+Te amo Mi amo r         B    r    i    y    i    d    t    h     
+Te amo Mi amo  r         B    r    i    y    i    d    t    h     
+Te amo Mi amo   r         B    r    i    y    i    d    t    h     
+Te amo Mi amo    r         B    r    i    y    i    d    t    h     
+Te amo Mi am o    r         B    r    i    y    i    d    t    h     
+Te amo Mi am  o    r         B    r    i    y    i    d    t    h     
+Te amo Mi am   o    r         B    r    i    y    i    d    t    h     
+Te amo Mi am    o    r         B    r    i    y    i    d    t    h     
+Te amo Mi a m    o    r         B    r    i    y    i    d    t    h     
+Te amo Mi a  m    o    r         B    r    i    y    i    d    t    h     
+Te amo Mi a   m    o    r         B    r    i    y    i    d    t    h     
+Te amo Mi a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo Mi  a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo Mi   a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo Mi    a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo Mi     a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo Mi      a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo Mi       a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo Mi        a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo Mi         a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo M i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo M  i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo M   i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo  M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo   M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo    M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo     M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo      M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo       M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo        M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te amo         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te am o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te am  o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te am   o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te am    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te a m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te a  m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te a   m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te  a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te   a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te    a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te     a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te      a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te       a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te        a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+Te         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+T e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+T  e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+T   e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+ T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+  T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+   T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+    T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h     
+     T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h    
+      T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h   
+       T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h  
+        T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h 
+         T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t    h
+          T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t   h
+           T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t  h
+            T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    t h
+             T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d    th
+              T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d   th
+               T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d  th
+                T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    d th
+                 T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i    dth
+                  T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i   dth
+                   T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i  dth
+                    T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    i dth
+                     T    e         a    m    o         M    i         a    m    o    r         B    r    i    y    idth
+                      T    e         a    m    o         M    i         a    m    o    r         B    r    i    y   idth
+                       T    e         a    m    o         M    i         a    m    o    r         B    r    i    y  idth
+                        T    e         a    m    o         M    i         a    m    o    r         B    r    i    y idth
+                         T    e         a    m    o         M    i         a    m    o    r         B    r    i    yidth
+                          T    e         a    m    o         M    i         a    m    o    r         B    r    i   yidth
+                           T    e         a    m    o         M    i         a    m    o    r         B    r    i  yidth
+                            T    e         a    m    o         M    i         a    m    o    r         B    r    i yidth
+                             T    e         a    m    o         M    i         a    m    o    r         B    r    iyidth
+                              T    e         a    m    o         M    i         a    m    o    r         B    r   iyidth
+                               T    e         a    m    o         M    i         a    m    o    r         B    r  iyidth
+                                T    e         a    m    o         M    i         a    m    o    r         B    r iyidth
+                                 T    e         a    m    o         M    i         a    m    o    r         B    riyidth
+                                  T    e         a    m    o         M    i         a    m    o    r         B   riyidth
+                                   T    e         a    m    o         M    i         a    m    o    r         B  riyidth
+                                    T    e         a    m    o         M    i         a    m    o    r         B riyidth
+                                     T    e         a    m    o         M    i         a    m    o    r         Briyidth
+                                      T    e         a    m    o         M    i         a    m    o    r        Briyidth
+                                       T    e         a    m    o         M    i         a    m    o    r       Briyidth
+                                        T    e         a    m    o         M    i         a    m    o    r      Briyidth
+                                         T    e         a    m    o         M    i         a    m    o    r     Briyidth
+                                          T    e         a    m    o         M    i         a    m    o    r    Briyidth
+                                           T    e         a    m    o         M    i         a    m    o    r   Briyidth
+                                            T    e         a    m    o         M    i         a    m    o    r  Briyidth
+                                             T    e         a    m    o         M    i         a    m    o    r Briyidth
+                                              T    e         a    m    o         M    i         a    m    o    rBriyidth
+                                               T    e         a    m    o         M    i         a    m    o   rBriyidth
+                                                T    e         a    m    o         M    i         a    m    o  rBriyidth
+                                                 T    e         a    m    o         M    i         a    m    o rBriyidth
+                                                  T    e         a    m    o         M    i         a    m    orBriyidth
+                                                   T    e         a    m    o         M    i         a    m   orBriyidth
+                                                    T    e         a    m    o         M    i         a    m  orBriyidth
+                                                     T    e         a    m    o         M    i         a    m orBriyidth
+                                                      T    e         a    m    o         M    i         a    morBriyidth
+                                                       T    e         a    m    o         M    i         a   morBriyidth
+                                                        T    e         a    m    o         M    i         a  morBriyidth
+                                                         T    e         a    m    o         M    i         a morBriyidth
+                                                          T    e         a    m    o         M    i         amorBriyidth
+                                                           T    e         a    m    o         M    i        amorBriyidth
+                                                            T    e         a    m    o         M    i       amorBriyidth
+                                                             T    e         a    m    o         M    i      amorBriyidth
+                                                              T    e         a    m    o         M    i     amorBriyidth
+                                                               T    e         a    m    o         M    i    amorBriyidth
+                                                                T    e         a    m    o         M    i   amorBriyidth
+                                                                 T    e         a    m    o         M    i  amorBriyidth
+                                                                  T    e         a    m    o         M    i amorBriyidth
+                                                                   T    e         a    m    o         M    iamorBriyidth
+                                                                    T    e         a    m    o         M   iamorBriyidth
+                                                                     T    e         a    m    o         M  iamorBriyidth
+                                                                      T    e         a    m    o         M iamorBriyidth
+                                                                       T    e         a    m    o         MiamorBriyidth
+                                                                        T    e         a    m    o        MiamorBriyidth
+                                                                         T    e         a    m    o       MiamorBriyidth
+                                                                          T    e         a    m    o      MiamorBriyidth
+                                                                           T    e         a    m    o     MiamorBriyidth
+                                                                            T    e         a    m    o    MiamorBriyidth
+                                                                             T    e         a    m    o   MiamorBriyidth
+                                                                              T    e         a    m    o  MiamorBriyidth
+                                                                               T    e         a    m    o MiamorBriyidth
+                                                                                T    e         a    m    oMiamorBriyidth
+                                                                                 T    e         a    m   oMiamorBriyidth
+                                                                                  T    e         a    m  oMiamorBriyidth
+                                                                                   T    e         a    m oMiamorBriyidth
+                                                                                    T    e         a    moMiamorBriyidth
+                                                                                     T    e         a   moMiamorBriyidth
+                                                                                      T    e         a  moMiamorBriyidth
+                                                                                       T    e         a moMiamorBriyidth
+                                                                                        T    e         amoMiamorBriyidth
+                                                                                         T    e        amoMiamorBriyidth
+                                                                                          T    e       amoMiamorBriyidth
+                                                                                           T    e      amoMiamorBriyidth
+                                                                                            T    e     amoMiamorBriyidth
+                                                                                             T    e    amoMiamorBriyidth
+                                                                                              T    e   amoMiamorBriyidth
+                                                                                               T    e  amoMiamorBriyidth
+                                                                                                T    e amoMiamorBriyidth
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                               Te amo Mi a m or Briyidth 
+                                                                                              Te amo Mi a  m  or Briyidth 
+                                                                                             Te amo Mi a   m   or Briyidth 
+                                                                                            Te amo Mi a    m    or Briyidth 
+                                                                                           Te amo Mi a     m     or Briyidth 
+                                                                                          Te amo Mi a      m      or Briyidth 
+                                                                                         Te amo Mi a       m       or Briyidth 
+                                                                                        Te amo Mi a        m        or Briyidth 
+                                                                                       Te amo Mi a         m         or Briyidth 
+                                                                                      Te amo Mi a          m          or Briyidth 
+                                                                                      Te amo Mi a         m           or Briyidth 
+                                                                                      Te amo Mi a        m            or Briyidth 
+                                                                                      Te amo Mi a       m             or Briyidth 
+                                                                                      Te amo Mi a        m            or Briyidth 
+                                                                                      Te amo Mi a         m           or Briyidth 
+                                                                                      Te amo Mi a          m          or Briyidth 
+                                                                                      Te amo Mi a           m         or Briyidth 
+                                                                                      Te amo Mi a            m        or Briyidth 
+                                                                                      Te amo Mi a             m       or Briyidth 
+                                                                                      Te amo Mi a            m        or Briyidth 
+                                                                                      Te amo Mi a           m         or Briyidth 
+                                                                                      Te amo Mi a          m          or Briyidth 
+                                                                                      Te amo Mi a         m           or Briyidth 
+                                                                                      Te amo Mi a        m            or Briyidth 
+                                                                                      Te amo Mi a       m             or Briyidth 
+                                                                                      Te amo Mi a        m            or Briyidth 
+                                                                                      Te amo Mi a         m           or Briyidth 
+                                                                                      Te amo Mi a          m          or Briyidth 
+                                                                                      Te amo Mi a           m         or Briyidth 
+                                                                                      Te amo Mi a            m        or Briyidth 
+                                                                                      Te amo Mi a             m       or Briyidth 
+                                                                                      Te amo Mi a            m        or Briyidth 
+                                                                                      Te amo Mi a           m         or Briyidth 
+                                                                                      Te amo Mi a          m          or Briyidth 
+                                                                                       Te amo Mi a         m         or Briyidth 
+                                                                                        Te amo Mi a        m        or Briyidth 
+                                                                                         Te amo Mi a       m       or Briyidth 
+                                                                                          Te amo Mi a      m      or Briyidth 
+                                                                                           Te amo Mi a     m     or Briyidth 
+                                                                                            Te amo Mi a    m    or Briyidth 
+                                                                                             Te amo Mi a   m   or Briyidth 
+                                                                                              Te amo Mi a  m  or Briyidth 
+                                                                                               Te amo Mi a m or Briyidth 
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                                Te amo Mi amor Briyidth 
+                                                                                               Te amo Mi amor Briyidth 
+                                                                                              Te amo Mi amor Briyidth 
+                                                                                             Te amo Mi amor Briyidth 
+                                                                                            Te amo Mi amor Briyidth 
+                                                                                           Te amo Mi amor Briyidth 
+                                                                                          Te amo Mi amor Briyidth 
+                                                                                         Te amo Mi amor Briyidth 
+                                                                                        Te amo Mi amor Briyidth 
+                                                                                       Te amo Mi amor Briyidth 
+                                                                                      Te amo Mi amor Briyidth 
+                                                                                     Te amo Mi amor Briyidth 
+                                                                                    Te amo Mi amor Briyidth 
+                                                                                   Te amo Mi amor Briyidth 
+                                                                                  Te amo Mi amor Briyidth 
+                                                                                 Te amo Mi amor Briyidth 
+                                                                                Te amo Mi amor Briyidth 
+                                                                               Te amo Mi amor Briyidth 
+                                                                              Te amo Mi amor Briyidth 
+                                                                             Te amo Mi amor Briyidth 
+                                                                            Te amo Mi amor Briyidth 
+                                                                           Te amo Mi amor Briyidth 
+                                                                          Te amo Mi amor Briyidth 
+                                                                         Te amo Mi amor Briyidth 
+                                                                        Te amo Mi amor Briyidth 
+                                                                       Te amo Mi amor Briyidth 
+                                                                      Te amo Mi amor Briyidth 
+                                                                     Te amo Mi amor Briyidth 
+                                                                    Te amo Mi amor Briyidth 
+                                                                   Te amo Mi amor Briyidth 
+                                                                  Te amo Mi amor Briyidth 
+                                                                 Te amo Mi amor Briyidth 
+                                                                Te amo Mi amor Briyidth 
+                                                               Te amo Mi amor Briyidth 
+                                                              Te amo Mi amor Briyidth 
+                                                             Te amo Mi amor Briyidth 
+                                                            Te amo Mi amor Briyidth 
+                                                           Te amo Mi amor Briyidth 
+                                                          Te amo Mi amor Briyidth 
+                                                         Te amo Mi amor Briyidth 
+                                                        Te amo Mi amor Briyidth 
+                                                       Te amo Mi amor Briyidth 
+                                                      Te amo Mi amor Briyidth 
+                                                     Te amo Mi amor Briyidth 
+                                                    Te amo Mi amor Briyidth 
+                                                   Te amo Mi amor Briyidth 
+                                                  Te amo Mi amor Briyidth 
+                                                 Te amo Mi amor Briyidth 
+                                                Te amo Mi amor Briyidth 
+                                               Te amo Mi amor Briyidth 
+                                              Te amo Mi amor Briyidth 
+                                             Te amo Mi amor Briyidth 
+                                            Te amo Mi amor Briyidth 
+                                           Te amo Mi amor Briyidth 
+                                          Te amo Mi amor Briyidth 
+                                         Te amo Mi amor Briyidth 
+                                        Te amo Mi amor Briyidth 
+                                       Te amo Mi amor Briyidth 
+                                      Te amo Mi amor Briyidth 
+                                     Te amo Mi amor Briyidth 
+                                    Te amo Mi amor Briyidth 
+                                   Te amo Mi amor Briyidth 
+                                  Te amo Mi amor Briyidth 
+                                 Te amo Mi amor Briyidth 
+                                Te amo Mi amor Briyidth 
+                               Te amo Mi amor Briyidth 
+                              Te amo Mi amor Briyidth 
+                             Te amo Mi amor Briyidth 
+                            Te amo Mi amor Briyidth 
+                           Te amo Mi amor Briyidth 
+                          Te amo Mi amor Briyidth 
+                         Te amo Mi amor Briyidth 
+                        Te amo Mi amor Briyidth 
+                       Te amo Mi amor Briyidth 
+                      Te amo Mi amor Briyidth 
+                     Te amo Mi amor Briyidth 
+                    Te amo Mi amor Briyidth 
+                   Te amo Mi amor Briyidth 
+                  Te amo Mi amor Briyidth 
+                 Te amo Mi amor Briyidth 
+                Te amo Mi amor Briyidth 
+               Te amo Mi amor Briyidth 
+              Te amo Mi amor Briyidth 
+             Te amo Mi amor Briyidth 
+            Te amo Mi amor Briyidth 
+           Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+         Te amo Mi amor Briyidth 
+        Te amo Mi amor Briyidth 
+       Te amo Mi amor Briyidth 
+      Te amo Mi amor Briyidth 
+     Te amo Mi amor Briyidth 
+    Te amo Mi amor Briyidth 
+   Te amo Mi amor Briyidth 
+  Te amo Mi amor Briyidth 
+ Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+ Te amo Mi amor Briyidth 
+  Te amo Mi amor Briyidth 
+   Te amo Mi amor Briyidth 
+    Te amo Mi amor Briyidth 
+     Te amo Mi amor Briyidth 
+    T e amo Mi amor Briyidth 
+   T  e amo Mi amor Briyidth 
+  T   e amo Mi amor Briyidth 
+ T    e amo Mi amor Briyidth 
+T     e amo Mi amor Briyidth 
+T    e  amo Mi amor Briyidth 
+T   e   amo Mi amor Briyidth 
+T  e    amo Mi amor Briyidth 
+T e     amo Mi amor Briyidth 
+Te      amo Mi amor Briyidth 
+Te      amo Mi amor Briyidth 
+Te      amo Mi amor Briyidth 
+Te      amo Mi amor Briyidth 
+Te      amo Mi amor Briyidth 
+Te      amo Mi amor Briyidth 
+Te     a mo Mi amor Briyidth 
+Te    a  mo Mi amor Briyidth 
+Te   a   mo Mi amor Briyidth 
+Te  a    mo Mi amor Briyidth 
+Te a     mo Mi amor Briyidth 
+Te a    m o Mi amor Briyidth 
+Te a   m  o Mi amor Briyidth 
+Te a  m   o Mi amor Briyidth 
+Te a m    o Mi amor Briyidth 
+Te am     o Mi amor Briyidth 
+Te am    o  Mi amor Briyidth 
+Te am   o   Mi amor Briyidth 
+Te am  o    Mi amor Briyidth 
+Te am o     Mi amor Briyidth 
+Te amo      Mi amor Briyidth 
+Te amo      Mi amor Briyidth 
+Te amo      Mi amor Briyidth 
+Te amo      Mi amor Briyidth 
+Te amo      Mi amor Briyidth 
+Te amo      Mi amor Briyidth 
+Te amo     M i amor Briyidth 
+Te amo    M  i amor Briyidth 
+Te amo   M   i amor Briyidth 
+Te amo  M    i amor Briyidth 
+Te amo M     i amor Briyidth 
+Te amo M    i  amor Briyidth 
+Te amo M   i   amor Briyidth 
+Te amo M  i    amor Briyidth 
+Te amo M i     amor Briyidth 
+Te amo Mi      amor Briyidth 
+Te amo Mi      amor Briyidth 
+Te amo Mi      amor Briyidth 
+Te amo Mi      amor Briyidth 
+Te amo Mi      amor Briyidth 
+Te amo Mi      amor Briyidth 
+Te amo Mi     a mor Briyidth 
+Te amo Mi    a  mor Briyidth 
+Te amo Mi   a   mor Briyidth 
+Te amo Mi  a    mor Briyidth 
+Te amo Mi a     mor Briyidth 
+Te amo Mi a    m or Briyidth 
+Te amo Mi a   m  or Briyidth 
+Te amo Mi a  m   or Briyidth 
+Te amo Mi a m    or Briyidth 
+Te amo Mi am     or Briyidth 
+Te amo Mi am    o r Briyidth 
+Te amo Mi am   o  r Briyidth 
+Te amo Mi am  o   r Briyidth 
+Te amo Mi am o    r Briyidth 
+Te amo Mi amo     r Briyidth 
+Te amo Mi amo    r  Briyidth 
+Te amo Mi amo   r   Briyidth 
+Te amo Mi amo  r    Briyidth 
+Te amo Mi amo r     Briyidth 
+Te amo Mi amor      Briyidth 
+Te amo Mi amor      Briyidth 
+Te amo Mi amor      Briyidth 
+Te amo Mi amor      Briyidth 
+Te amo Mi amor      Briyidth 
+Te amo Mi amor      Briyidth 
+Te amo Mi amor     B riyidth 
+Te amo Mi amor    B  riyidth 
+Te amo Mi amor   B   riyidth 
+Te amo Mi amor  B    riyidth 
+Te amo Mi amor B     riyidth 
+Te amo Mi amor B    r iyidth 
+Te amo Mi amor B   r  iyidth 
+Te amo Mi amor B  r   iyidth 
+Te amo Mi amor B r    iyidth 
+Te amo Mi amor Br     iyidth 
+Te amo Mi amor Br    i yidth 
+Te amo Mi amor Br   i  yidth 
+Te amo Mi amor Br  i   yidth 
+Te amo Mi amor Br i    yidth 
+Te amo Mi amor Bri     yidth 
+Te amo Mi amor Bri    y idth 
+Te amo Mi amor Bri   y  idth 
+Te amo Mi amor Bri  y   idth 
+Te amo Mi amor Bri y    idth 
+Te amo Mi amor Briy     idth 
+Te amo Mi amor Briy    i dth 
+Te amo Mi amor Briy   i  dth 
+Te amo Mi amor Briy  i   dth 
+Te amo Mi amor Briy i    dth 
+Te amo Mi amor Briyi     dth 
+Te amo Mi amor Briyi    d th 
+Te amo Mi amor Briyi   d  th 
+Te amo Mi amor Briyi  d   th 
+Te amo Mi amor Briyi d    th 
+Te amo Mi amor Briyid     th 
+Te amo Mi amor Briyid    t h 
+Te amo Mi amor Briyid   t  h 
+Te amo Mi amor Briyid  t   h 
+Te amo Mi amor Briyid t    h 
+Te amo Mi amor Briyidt     h 
+Te amo Mi amor Briyidt    h  
+Te amo Mi amor Briyidt   h   
+Te amo Mi amor Briyidt  h    
+Te amo Mi amor Briyidt h     
+Te amo Mi amor Briyidth      
+Te amo Mi amor Briyidth      
+Te amo Mi amor Briyidth      
+Te amo Mi amor Briyidth      
+Te amo Mi amor Briyidth      
+Te amo Mi amor Briyidth      
+Te amo Mi amor Briyidth 
+ Te amo Mi amor Briyidth
+h Te amo Mi amor Briyidt
+th Te amo Mi amor Briyid
+dth Te amo Mi amor Briyi
+idth Te amo Mi amor Briy
+yidth Te amo Mi amor Bri
+iyidth Te amo Mi amor Br
+riyidth Te amo Mi amor B
+Briyidth Te amo Mi amor 
+ Briyidth Te amo Mi amor
+r Briyidth Te amo Mi amo
+or Briyidth Te amo Mi am
+mor Briyidth Te amo Mi a
+amor Briyidth Te amo Mi 
+ amor Briyidth Te amo Mi
+i amor Briyidth Te amo M
+Mi amor Briyidth Te amo 
+ Mi amor Briyidth Te amo
+o Mi amor Briyidth Te am
+mo Mi amor Briyidth Te a
+amo Mi amor Briyidth Te 
+ amo Mi amor Briyidth Te
+e amo Mi amor Briyidth T
+Te amo Mi amor Briyidth 
+ Te amo Mi amor Briyidth
+h Te amo Mi amor Briyidt
+th Te amo Mi amor Briyid
+dth Te amo Mi amor Briyi
+idth Te amo Mi amor Briy
+yidth Te amo Mi amor Bri
+iyidth Te amo Mi amor Br
+riyidth Te amo Mi amor B
+Briyidth Te amo Mi amor 
+ Briyidth Te amo Mi amor
+r Briyidth Te amo Mi amo
+or Briyidth Te amo Mi am
+mor Briyidth Te amo Mi a
+amor Briyidth Te amo Mi 
+ amor Briyidth Te amo Mi
+i amor Briyidth Te amo M
+Mi amor Briyidth Te amo 
+ Mi amor Briyidth Te amo
+o Mi amor Briyidth Te am
+mo Mi amor Briyidth Te a
+amo Mi amor Briyidth Te 
+ amo Mi amor Briyidth Te
+e amo Mi amor Briyidth T
+Te amo Mi amor Briyidth 
+ Te amo Mi amor Briyidth
+h Te amo Mi amor Briyidt
+th Te amo Mi amor Briyid
+dth Te amo Mi amor Briyi
+idth Te amo Mi amor Briy
+yidth Te amo Mi amor Bri
+iyidth Te amo Mi amor Br
+riyidth Te amo Mi amor B
+Briyidth Te amo Mi amor 
+ Briyidth Te amo Mi amor
+r Briyidth Te amo Mi amo
+or Briyidth Te amo Mi am
+mor Briyidth Te amo Mi a
+amor Briyidth Te amo Mi 
+ amor Briyidth Te amo Mi
+i amor Briyidth Te amo M
+Mi amor Briyidth Te amo 
+ Mi amor Briyidth Te amo
+o Mi amor Briyidth Te am
+mo Mi amor Briyidth Te a
+amo Mi amor Briyidth Te 
+ amo Mi amor Briyidth Te
+e amo Mi amor Briyidth T
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+ Te amo Mi amor Briyidth 
+  Te amo Mi amor Briyidth 
+   Te amo Mi amor Briyidth 
+    Te amo Mi amor Briyidth 
+     Te amo Mi amor Briyidth 
+      Te amo Mi amor Briyidth 
+       Te amo Mi amor Briyidth 
+        Te amo Mi amor Briyidth 
+         Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+         Te amo Mi am  or Briyidth 
+        Te amo Mi am    or Briyidth 
+       Te amo Mi am      or Briyidth 
+      Te amo Mi am        or Briyidth 
+     Te amo Mi am          or Briyidth 
+    Te amo Mi am            or Briyidth 
+   Te amo Mi am              or Briyidth 
+  Te amo Mi am                or Briyidth 
+ Te amo Mi am                  or Briyidth 
+Te amo Mi am                    or Briyidth 
+ Te amo Mi am                  or Briyidth 
+  Te amo Mi am                or Briyidth 
+   Te amo Mi am              or Briyidth 
+    Te amo Mi am            or Briyidth 
+     Te amo Mi am          or Briyidth 
+      Te amo Mi am        or Briyidth 
+       Te amo Mi am      or Briyidth 
+        Te amo Mi am    or Briyidth 
+         Te amo Mi am  or Briyidth 
+          Te amo Mi amor Briyidth 
+           Te amo Mi aor Briyidth 
+            Te amo Mi or Briyidth 
+             Te amo Mior Briyidth 
+              Te amo Mor Briyidth 
+               Te amo or Briyidth 
+                Te amoor Briyidth 
+                 Te amor Briyidth 
+                  Te aor Briyidth 
+                   Te or Briyidth 
+                    Teor Briyidth 
+                     Tor Briyidth 
+                      or Briyidth 
+                     or Briyidth m
+                    or Briyidth am
+                   or Briyidth  am
+                  or Briyidth i am
+                 or Briyidth Mi am
+                or Briyidth  Mi am
+               or Briyidth o Mi am
+              or Briyidth mo Mi am
+             or Briyidth amo Mi am
+            or Briyidth  amo Mi am
+           or Briyidth e amo Mi am
+          or Briyidth Te amo Mi am
+         or Briyidth   Te amo Mi am
+        or Briyidth     Te amo Mi am
+       or Briyidth       Te amo Mi am
+      or Briyidth         Te amo Mi am
+     or Briyidth           Te amo Mi am
+    or Briyidth             Te amo Mi am
+   or Briyidth               Te amo Mi am
+  or Briyidth                 Te amo Mi am
+ or Briyidth                   Te amo Mi am
+or Briyidth                     Te amo Mi am
+ or Briyidth                   Te amo Mi am
+  or Briyidth                 Te amo Mi am
+   or Briyidth               Te amo Mi am
+    or Briyidth             Te amo Mi am
+     or Briyidth           Te amo Mi am
+      or Briyidth         Te amo Mi am
+       or Briyidth       Te amo Mi am
+        or Briyidth     Te amo Mi am
+         or Briyidth   Te amo Mi am
+          or Briyidth Te amo Mi am
+           or BriyidthTe amo Mi am
+            or BriyidtTe amo Mi am
+             or BriyidTe amo Mi am
+              or BriyiTe amo Mi am
+               or BriyTe amo Mi am
+                or BriTe amo Mi am
+                 or BrTe amo Mi am
+                  or BTe amo Mi am
+                   or Te amo Mi am
+                    orTe amo Mi am
+                     oTe amo Mi am
+                      Te amo Mi am
+                     Te amo Mi am 
+                    Te amo Mi amh 
+                   Te amo Mi amth 
+                  Te amo Mi amdth 
+                 Te amo Mi amidth 
+                Te amo Mi amyidth 
+               Te amo Mi amiyidth 
+              Te amo Mi amriyidth 
+             Te amo Mi amBriyidth 
+            Te amo Mi am Briyidth 
+           Te amo Mi amr Briyidth 
+          Te amo Mi amor Briyidth 
+         Te amo Mi am  or Briyidth 
+        Te amo Mi am    or Briyidth 
+       Te amo Mi am      or Briyidth 
+      Te amo Mi am        or Briyidth 
+     Te amo Mi am          or Briyidth 
+    Te amo Mi am            or Briyidth 
+   Te amo Mi am              or Briyidth 
+  Te amo Mi am                or Briyidth 
+ Te amo Mi am                  or Briyidth 
+Te amo Mi am                    or Briyidth 
+ Te amo Mi am                  or Briyidth 
+  Te amo Mi am                or Briyidth 
+   Te amo Mi am              or Briyidth 
+    Te amo Mi am            or Briyidth 
+     Te amo Mi am          or Briyidth 
+      Te amo Mi am        or Briyidth 
+       Te amo Mi am      or Briyidth 
+        Te amo Mi am    or Briyidth 
+         Te amo Mi am  or Briyidth 
+          Te amo Mi amor Briyidth 
+           Te amo Mi aor Briyidth 
+            Te amo Mi or Briyidth 
+             Te amo Mior Briyidth 
+              Te amo Mor Briyidth 
+               Te amo or Briyidth 
+                Te amoor Briyidth 
+                 Te amor Briyidth 
+                  Te aor Briyidth 
+                   Te or Briyidth 
+                    Teor Briyidth 
+                     Tor Briyidth 
+                      or Briyidth 
+                     or Briyidth m
+                    or Briyidth am
+                   or Briyidth  am
+                  or Briyidth i am
+                 or Briyidth Mi am
+                or Briyidth  Mi am
+               or Briyidth o Mi am
+              or Briyidth mo Mi am
+             or Briyidth amo Mi am
+            or Briyidth  amo Mi am
+           or Briyidth e amo Mi am
+          or Briyidth Te amo Mi am
+         or Briyidth   Te amo Mi am
+        or Briyidth     Te amo Mi am
+       or Briyidth       Te amo Mi am
+      or Briyidth         Te amo Mi am
+     or Briyidth           Te amo Mi am
+    or Briyidth             Te amo Mi am
+   or Briyidth               Te amo Mi am
+  or Briyidth                 Te amo Mi am
+ or Briyidth                   Te amo Mi am
+or Briyidth                     Te amo Mi am
+ or Briyidth                   Te amo Mi am
+  or Briyidth                 Te amo Mi am
+   or Briyidth               Te amo Mi am
+    or Briyidth             Te amo Mi am
+     or Briyidth           Te amo Mi am
+      or Briyidth         Te amo Mi am
+       or Briyidth       Te amo Mi am
+        or Briyidth     Te amo Mi am
+         or Briyidth   Te amo Mi am
+          or Briyidth Te amo Mi am
+           or BriyidthTe amo Mi am
+            or BriyidtTe amo Mi am
+             or BriyidTe amo Mi am
+              or BriyiTe amo Mi am
+               or BriyTe amo Mi am
+                or BriTe amo Mi am
+                 or BrTe amo Mi am
+                  or BTe amo Mi am
+                   or Te amo Mi am
+                    orTe amo Mi am
+                     oTe amo Mi am
+                      Te amo Mi am
+                     Te amo Mi am 
+                    Te amo Mi amh 
+                   Te amo Mi amth 
+                  Te amo Mi amdth 
+                 Te amo Mi amidth 
+                Te amo Mi amyidth 
+               Te amo Mi amiyidth 
+              Te amo Mi amriyidth 
+             Te amo Mi amBriyidth 
+            Te amo Mi am Briyidth 
+           Te amo Mi amr Briyidth 
+          Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+          Te amo Mi amor Briyidth 
+         Te amo Mi amor Briyidth 
+        Te amo Mi amor Briyidth 
+       Te amo Mi amor Briyidth 
+      Te amo Mi amor Briyidth 
+     Te amo Mi amor Briyidth 
+    Te amo Mi amor Briyidth 
+   Te amo Mi amor Briyidth 
+  Te amo Mi amor Briyidth 
+ Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+Te amo Mi amor Briyidth 
+`.trim().split('\n').filter(line => line.trim() !== '');
+
+    // === Escena 3D ===
+    let scene, camera, renderer, controls, galaxyGroup;
+    let rotSpeed = 0.5;
+    let textGlow = 30;
+    let textScale = 1;
+
+    function init() {
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x000000);
+
+      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+      camera.position.set(0, 0, 300);
+
+      renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('galaxyCanvas'), antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.screenSpacePanning = false;
+      controls.minDistance = 50;
+      controls.maxDistance = 800;
+
+      // Grupo para la galaxia
+      galaxyGroup = new THREE.Group();
+      scene.add(galaxyGroup);
+
+      createGalaxy();
+
+      window.addEventListener('resize', onWindowResize);
+      document.getElementById('menuBtn').addEventListener('click', () => {
+        document.getElementById('configPanel').style.display =
+          document.getElementById('configPanel').style.display === 'block' ? 'none' : 'block';
+      });
+
+      setupConfig();
+      animate();
+    }
+
+    function createGalaxy() {
+      galaxyGroup.clear();
+
+      const lines = originalText;
+      const total = lines.length;
+
+      // Núcleo brillante
+      const coreGeometry = new THREE.SphereGeometry(15, 32, 32);
+      const coreMaterial = new THREE.MeshBasicMaterial({
+        color: 0xff6600,
+        transparent: true,
+        opacity: 0.9
+      });
+      const core = new THREE.Mesh(coreGeometry, coreMaterial);
+      galaxyGroup.add(core);
+
+      // Texto en espiral
+      for (let i = 0; i < total; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+
+        const angle = (i / 5) * 0.3; // espiral
+        const radius = 30 + (i / total) * 200;
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        const y = (Math.random() - 0.5) * 40;
+
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = 512;
+        canvas.height = 128;
+
+        context.fillStyle = 'white';
+        context.font = 'bold 24px Georgia';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(line, 256, 64);
+
+        // Brillo naranja
+        context.shadowColor = '#ff6600';
+        context.shadowBlur = textGlow;
+        context.fillText(line, 256, 64);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+        const sprite = new THREE.Sprite(material);
+        sprite.position.set(x, y, z);
+        sprite.scale.set(60 * textScale, 15 * textScale, 1);
+        galaxyGroup.add(sprite);
+      }
+    }
+
+    function setupConfig() {
+      const rotSpeedEl = document.getElementById('rotSpeed');
+      const textGlowEl = document.getElementById('textGlow');
+      const textScaleEl = document.getElementById('textScale');
+
+      rotSpeedEl.addEventListener('input', (e) => {
+        rotSpeed = parseFloat(e.target.value);
+      });
+
+      textGlowEl.addEventListener('input', (e) => {
+        textGlow = parseInt(e.target.value);
+        createGalaxy(); // regenerar con nuevo brillo
+      });
+
+      textScaleEl.addEventListener('input', (e) => {
+        textScale = parseFloat(e.target.value);
+        createGalaxy(); // regenerar con nueva escala
+      });
+    }
+
+    function resetConfig() {
+      document.getElementById('rotSpeed').value = 0.5;
+      document.getElementById('textGlow').value = 30;
+      document.getElementById('textScale').value = 1;
+      rotSpeed = 0.5;
+      textGlow = 30;
+      textScale = 1;
+      createGalaxy();
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      galaxyGroup.rotation.y += 0.001 * rotSpeed;
+      renderer.render(scene, camera);
+    }
+
+    init();
+  </script>
+</body>
+</html>
