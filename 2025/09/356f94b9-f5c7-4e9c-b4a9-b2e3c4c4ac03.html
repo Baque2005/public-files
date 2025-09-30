@@ -1,0 +1,429 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta name="robots" content="noindex, nofollow">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garaje de Recuerdos sobre Ruedas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <style>
+:root {
+    --box-scale: 1;
+    --photo-translate-y: -210px;
+    --photo-flyout-y: -300px;
+}
+
+html, body {
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+
+    background-color: #212121;
+    background-image: radial-gradient(ellipse at bottom, #424242, #212121);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.font-serif {
+    font-family: 'Playfair Display', serif;
+}
+
+h1 {
+    text-shadow: 0 0 8px rgba(255, 165, 0, 0.7), 0 0 15px rgba(255, 69, 0, 0.5);
+}
+
+.scene {
+    perspective: 1200px;
+    transform-style: preserve-3d;
+}
+
+.box {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    transform-style: preserve-3d;
+
+    transform: rotateX(-30deg) rotateY(-30deg) scale(var(--box-scale));
+    transition: transform 1s ease-in-out;
+    cursor: pointer;
+}
+
+.box:hover {
+
+    transform: rotateX(-20deg) rotateY(-30deg) scale(calc(var(--box-scale) + 0.05));
+}
+
+.box-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-color: #616161;
+    background-image: linear-gradient(to bottom, #757575, #424242);
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+    border: 1px solid #212121;
+}
+
+.bottom { transform: rotateX(-90deg) translateZ(100px); }
+.back { transform: translateZ(-100px) rotateY(180deg); }
+.left { transform: rotateY(-90deg) translateZ(100px); width: 200px; }
+.right { transform: rotateY(90deg) translateZ(200px); width: 200px; }
+
+.front {
+    transform: translateZ(100px);
+    background-image: url('https://res.cloudinary.com/doqnrqqkr/image/upload/f_auto,q_auto:low,c_fill,w_400,h_192,g_auto/v1759169306/Hot-Wheels-logo_xctjtf.png');
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, center;
+    background-size: 85%, cover;
+}
+
+.lid {
+    position: absolute;
+    width: 300px;
+    height: 200px;
+    transform-style: preserve-3d;
+    transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transform: translateY(-100px);
+    transform-origin: 50% 50% -100px;
+}
+
+.box.opened .lid {
+    transform: translateY(-100px) rotateX(180deg);
+}
+
+.lid-top {
+    width: 300px;
+    height: 200px;
+    transform: rotateX(90deg);
+    background-image: linear-gradient(to bottom, #757575, #424242),
+    repeating-linear-gradient(90deg,
+            transparent, transparent 130px,
+            #FF6D00 130px, #FF6D00 170px,
+            transparent 170px);
+}
+.lid-front, .lid-back { width: 300px; height: 20px; }
+.lid-left, .lid-right { width: 200px; height: 20px; }
+
+.lid-front { transform: translateZ(100px) translateY(90px); }
+.lid-back { transform: translateZ(-100px) translateY(90px) rotateY(180deg); }
+.lid-left { transform: rotateY(-90deg) translateZ(100px) translateY(90px); }
+.lid-right { transform: rotateY(90deg) translateZ(200px) translateY(90px); }
+
+.photo-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    pointer-events: none;
+}
+.photo {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    top: 5%;
+    left: 5%;
+    background-size: cover;
+    background-position: center;
+    border: 5px solid white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    opacity: 0;
+    transform: translateY(50px) rotateZ(0deg) scale(0.9);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.photo-description {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 8px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    text-align: center;
+    padding: 8px 5px;
+    font-size: 0.9rem;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out 0.4s, transform 0.5s ease-out 0.4s;
+}
+
+.photo[style*="opacity: 1"] .photo-description {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+.particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+.spark-particle {
+    position: absolute;
+    bottom: -10vh;
+    border-radius: 50%;
+    background: radial-gradient(circle, #FFD700 0%, rgba(255,215,0,0) 70%);
+    animation: floatUpSpark 10s infinite ease-in;
+    opacity: 0.9;
+}
+
+@keyframes floatUpSpark {
+    0% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.9;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(var(--drift-x)) scale(0.5);
+        opacity: 0;
+    }
+}
+
+.click-message {
+    position: absolute;
+    bottom: -90px;
+    width: 100%;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+    transition: opacity 0.5s;
+    text-shadow: 0 0 10px rgba(255, 165, 0, 0.4);
+}
+
+.box.opened + .click-message {
+    opacity: 0;
+}
+
+@keyframes flyOut {
+    0% {
+        transform: translateY(var(--photo-translate-y)) rotateZ(0deg) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(var(--photo-flyout-y)) translateX(200px) rotateZ(30deg) scale(0.5);
+        opacity: 0;
+    }
+}
+
+.photo.exiting {
+    animation: flyOut 1s ease-out forwards;
+}
+
+@media (max-width: 767px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    :root {
+        --box-scale: 0.65;
+        --photo-translate-y: -140px;
+        --photo-flyout-y: -200px;
+    }
+
+    .photo-description {
+        font-size: 0.75rem;
+    }
+    .photo-container{
+top: -85px;
+    }
+}</style>
+</head>
+
+<body class="w-screen h-screen flex flex-col text-gray-200 p-4">
+
+<header class="text-center w-full flex-shrink-0">
+    <h1 class="text-4xl lg:text-5xl font-serif text-orange-400 mb-2">Garaje de Recuerdos</h1>
+</header>
+
+<main class="w-full flex-grow flex items-center justify-center">
+    <div class="scene">
+        <div id="memory-box" class="box">
+
+            <div class="box-face bottom"></div>
+            <div class="box-face back"></div>
+            <div class="box-face front"></div>
+            <div class="box-face left"></div>
+            <div class="box-face right"></div>
+
+            <div class="lid">
+                <div class="box-face lid-top"></div>
+                <div class="box-face lid-front"></div>
+                <div class="box-face lid-back"></div>
+                <div class="box-face lid-left"></div>
+                <div class="box-face lid-right"></div>
+            </div>
+
+            <div id="photo-container" class="photo-container">
+
+            </div>
+        </div>
+        <div class="click-message">
+            <p>Haz clic en la caja para abrirla</p>
+        </div>
+    </div>
+</main>
+
+<div class="particles" id="particle-container"></div>
+<div id="burst-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<script type="module">document.addEventListener('DOMContentLoaded', () => {
+
+    const box = document.getElementById('memory-box');
+
+    const photoContainer = document.getElementById('photo-container');
+    const particleContainer = document.getElementById('particle-container');
+    const clickMessage = document.querySelector('.click-message');
+
+    const recuerdos = [
+        {url: 'https://res.cloudinary.com/doqnrqqkr/image/upload/f_auto,q_auto:low,c_fill,w_400,h_192,g_auto/v1759169306/77372106-supercar-amarillo-del-sol-con-aletas-y-alas-aerodin%C3%A1micas-azules_qmct4a.jpg', mensaje: 'Tú y yo, un clásico que nunca pasa de moda.'},
+        {url: 'https://res.cloudinary.com/doqnrqqkr/image/upload/f_auto,q_auto:low,c_fill,w_400,h_192,g_auto/v1759169306/e63e45a3dc9afdb3ddfb59040e82e3d3_kgxk3m.jpg', mensaje: 'Contigo, la vida es una aventura a toda velocidad.'},
+        {url: 'https://res.cloudinary.com/doqnrqqkr/image/upload/f_auto,q_auto:low,c_fill,w_400,h_192,g_auto/v1759169305/61HLk4Pac5L_uvl9ls.jpg', mensaje: 'Haces que mi corazón corra a mil por hora.'},
+        {url: 'https://res.cloudinary.com/doqnrqqkr/image/upload/f_auto,q_auto:low,c_fill,w_400,h_192,g_auto/v1759169305/360_F_595257389_vMN9B0Lkq5Zrxz2OwgXe7mpTL8HRT0IY_ztvtbh.jpg', mensaje: 'Eres el motor que me impulsa cada día.'},
+        {url: 'https://res.cloudinary.com/doqnrqqkr/image/upload/f_auto,q_auto:low,c_fill,w_400,h_192,g_auto/v1759169305/c3e63f4ec2dc7b3820ccd18d3f03dcf4_yjykc4.jpg', mensaje: 'Juntos, listos para cualquier curva que nos ponga el camino.'},
+        {url: 'https://res.cloudinary.com/doqnrqqkr/image/upload/f_auto,q_auto:low,c_fill,w_400,h_192,g_auto/v1759169305/depositphotos_722998944-stock-photo-muscle-car-isolated-white-background_ftcqh2.webp', mensaje: 'Eres el combustible que necesito para seguir adelante.'},
+        {url: 'https://res.cloudinary.com/doqnrqqkr/image/upload/f_auto,q_auto:low,c_fill,w_400,h_192,g_auto/v1759169305/61clRGzezDL._UF894_1000_QL80__hnlddw.jpg', mensaje: 'Un viaje se mide mejor en compañia que en kilómetros.'}
+    ];
+
+    function lanzarConfetiEspectacular() {
+        const duration = 7 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+        const particleColors = ['#FF6D00', '#FFD600', '#0091EA', '#BDBDBD', '#FFFFFF'];
+
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        const interval = setInterval(function() {
+            const timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
+            }
+
+            const particleCount = 50 * (timeLeft / duration);
+
+            confetti(Object.assign({}, defaults, {
+                particleCount,
+                origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                colors: particleColors
+            }));
+            confetti(Object.assign({}, defaults, {
+                particleCount,
+                origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                colors: particleColors
+            }));
+        }, 250);
+    }
+
+    function generarFotosDesdeArray() {
+        photoContainer.innerHTML = '';
+        recuerdos.forEach(recuerdo => {
+            const photoDiv = document.createElement('div');
+            photoDiv.className = 'photo';
+            photoDiv.style.backgroundImage = `url('${recuerdo.url}')`;
+            const descriptionP = document.createElement('p');
+            descriptionP.className = 'photo-description';
+            descriptionP.textContent = recuerdo.mensaje;
+            photoDiv.appendChild(descriptionP);
+            photoContainer.appendChild(photoDiv);
+        });
+    }
+
+    generarFotosDesdeArray();
+
+    box.addEventListener('click', () => {
+        if (box.classList.contains('animating') || box.classList.contains('opened')) return;
+
+        lanzarConfetiEspectacular();
+
+        box.classList.add('opened', 'animating');
+        clickMessage.style.opacity = 0;
+        setTimeout(revealPhotos, 1000);
+    });
+
+    function revealPhotos() {
+        const photos = Array.from(photoContainer.children);
+        let currentIndex = 0;
+
+        const photoTranslateY = getComputedStyle(document.documentElement).getPropertyValue('--photo-translate-y').trim();
+
+        function showNextPhoto() {
+            if (currentIndex > 0) {
+                photos[currentIndex - 1].classList.add('exiting');
+                photos[currentIndex - 1].style.transform = 'translateY(50px) scale(0.9)';
+            }
+            if (currentIndex >= photos.length) {
+                setTimeout(closeBox, 2000);
+                return;
+            }
+            const photo = photos[currentIndex];
+            photo.style.zIndex = currentIndex + 1;
+            photo.style.opacity = 1;
+
+            photo.style.transform = `translateY(${photoTranslateY}) rotateZ(${(Math.random() - 0.5) * 10}deg) scale(1)`;
+            currentIndex++;
+            setTimeout(showNextPhoto, 3500);
+        }
+        showNextPhoto();
+    }
+
+    function closeBox() {
+        box.classList.remove('opened');
+        const photos = Array.from(photoContainer.children);
+        photos.forEach(photo => {
+            photo.style.transition = 'none';
+            photo.style.opacity = 0;
+            photo.style.transform = 'translateY(50px) scale(0.9)';
+            photo.style.zIndex = 0;
+
+            photo.classList.remove('exiting');
+        });
+        setTimeout(() => {
+            photos.forEach(p => p.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out');
+            box.classList.remove('animating');
+            clickMessage.style.opacity = 1;
+        }, 50);
+    }
+
+    const createSparks = () => {
+        const particleCount = 40;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'spark-particle';
+            const size = Math.random() * 5 + 2;
+            const xPos = Math.random() * 100;
+            const duration = Math.random() * 5 + 3;
+            const delay = Math.random() * 5;
+            const drift = (Math.random() - 0.5) * 150;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${xPos}%`;
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.animationDelay = `${delay}s`;
+            particle.style.setProperty('--drift-x', `${drift}px`);
+            particleContainer.appendChild(particle);
+        }
+    };
+
+    createSparks();
+});</script>
+</body>
+</html>
