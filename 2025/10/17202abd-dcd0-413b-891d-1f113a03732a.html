@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta name="robots" content="noindex, nofollow">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Día del Novio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <style>
+:root {
+    --box-scale: 1;
+    --photo-translate-y: -210px;
+    --photo-flyout-y: -300px;
+}
+
+html, body {
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+
+    background-color: #000;
+    background-image: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.font-serif {
+    font-family: 'Playfair Display', serif;
+}
+
+h1 {
+    text-shadow: 0 0 8px rgba(255, 165, 0, 0.7), 0 0 15px rgba(255, 69, 0, 0.5);
+}
+
+.scene {
+    perspective: 1200px;
+    transform-style: preserve-3d;
+}
+
+.box {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    transform-style: preserve-3d;
+
+    transform: rotateX(-30deg) rotateY(-30deg) scale(var(--box-scale));
+    transition: transform 1s ease-in-out;
+    cursor: pointer;
+
+    /* Giro continuo de la caja */
+    animation: box-spin 18s linear infinite;
+}
+
+.box:hover {
+    /* ...existing code... */
+}
+
+.box.opened {
+    animation: box-bounce 0.7s cubic-bezier(.77,0,.18,1) 1, box-spin 18s linear infinite;
+}
+
+.box-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-color: #1565c0;
+    background-image: linear-gradient(135deg, #1976d2 60%, #0d47a1 100%);
+    box-shadow: 0 0 24px 2px #1976d2, 0 0 0 2px #0d47a1, inset 0 0 20px rgba(0,0,0,0.3);
+    border: 1.5px solid #0d47a1;
+}
+
+.bottom { transform: rotateX(-90deg) translateZ(100px); }
+.back { transform: translateZ(-100px) rotateY(180deg); }
+.left { transform: rotateY(-90deg) translateZ(100px); width: 200px; }
+.right { transform: rotateY(90deg) translateZ(200px); width: 200px; }
+
+.front {
+    transform: translateZ(100px);
+    background-image: url('https://i.pinimg.com/736x/41/23/73/412373d914296589b60c87bdaaf7ee27.jpg'), linear-gradient(135deg, #1976d2 60%, #0d47a1 100%);
+    background-repeat: no-repeat, no-repeat;
+    background-position: center, center;
+    background-size: 85%, cover;
+}
+
+.lid {
+    position: absolute;
+    width: 300px;
+    height: 200px;
+    transform-style: preserve-3d;
+    transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), box-shadow 0.7s;
+    transform: translateY(-100px);
+    transform-origin: 50% 50% -100px;
+}
+
+.box.opened .lid {
+    transform: translateY(-100px) rotateX(180deg);
+    box-shadow: 0 12px 40px 0 #FF6D00;
+}
+
+.lid-top {
+    width: 300px;
+    height: 200px;
+    transform: rotateX(90deg);
+    background-image: linear-gradient(to bottom, #757575, #424242),
+    repeating-linear-gradient(90deg,
+            transparent, transparent 130px,
+            #FF6D00 130px, #FF6D00 170px,
+            transparent 170px);
+}
+.lid-front, .lid-back { width: 300px; height: 20px; }
+.lid-left, .lid-right { width: 200px; height: 20px; }
+
+.lid-front { transform: translateZ(100px) translateY(90px); }
+.lid-back { transform: translateZ(-100px) translateY(90px) rotateY(180deg); }
+.lid-left { transform: rotateY(-90deg) translateZ(100px) translateY(90px); }
+.lid-right { transform: rotateY(90deg) translateZ(200px) translateY(90px); }
+
+.photo-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    pointer-events: none;
+}
+.photo {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    top: 5%;
+    left: 5%;
+    background-size: cover;
+    background-position: center;
+    border: 5px solid white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    opacity: 0;
+    transform: translateY(50px) rotateZ(0deg) scale(0.9);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.photo-description {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 8px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    text-align: center;
+    padding: 8px 5px;
+    font-size: 0.9rem;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out 0.4s, transform 0.5s ease-out 0.4s;
+}
+
+.photo[style*="opacity: 1"] .photo-description {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+.particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+.spark-particle {
+    position: absolute;
+    bottom: -10vh;
+    border-radius: 50%;
+    background: radial-gradient(circle, #FFD700 0%, rgba(255,215,0,0) 70%);
+    animation: floatUpSpark 10s infinite ease-in;
+    opacity: 0.9;
+}
+
+@keyframes floatUpSpark {
+    0% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.9;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(var(--drift-x)) scale(0.5);
+        opacity: 0;
+    }
+}
+
+.click-message {
+    position: absolute;
+    bottom: -90px;
+    width: 100%;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+    transition: opacity 0.5s;
+    text-shadow: 0 0 10px rgba(255, 165, 0, 0.4);
+}
+
+.box.opened + .click-message {
+    opacity: 0;
+}
+
+@keyframes flyOut {
+    0% {
+        transform: translateY(var(--photo-translate-y)) rotateZ(0deg) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(var(--photo-flyout-y)) translateX(200px) rotateZ(30deg) scale(0.5);
+        opacity: 0;
+    }
+}
+
+.photo.exiting {
+    animation: flyOut 1s ease-out forwards;
+}
+
+/* Giro continuo de la caja */
+@keyframes box-spin {
+    0% { transform: rotateX(-30deg) rotateY(-30deg) scale(var(--box-scale)); }
+    100% { transform: rotateX(-30deg) rotateY(330deg) scale(var(--box-scale)); }
+}
+
+/* Vibración al pasar el mouse */
+@keyframes box-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-2px); }
+    80% { transform: translateX(2px); }
+}
+
+/* Rebote al abrir */
+@keyframes box-bounce {
+    0% { transform: scale(1.1) rotateX(-20deg) rotateY(-30deg);}
+    40% { transform: scale(0.97) rotateX(-20deg) rotateY(-30deg);}
+    70% { transform: scale(1.03) rotateX(-20deg) rotateY(-30deg);}
+    100% { transform: scale(1) rotateX(-20deg) rotateY(-30deg);}
+}
+
+@media (max-width: 767px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    :root {
+        --box-scale: 0.65;
+        --photo-translate-y: -140px;
+        --photo-flyout-y: -200px;
+    }
+
+    .photo-description {
+        font-size: 0.75rem;
+    }
+    .photo-container{
+top: -85px;
+    }
+}</style>
+</head>
+
+<body class="w-screen h-screen flex flex-col text-gray-200 p-4">
+
+<header class="text-center w-full flex-shrink-0">
+    <h1 class="text-4xl lg:text-5xl font-serif text-orange-400 mb-2">Feliz Día del Novio</h1>
+</header>
+
+<main class="w-full flex-grow flex items-center justify-center">
+    <div class="scene">
+        <div id="memory-box" class="box">
+
+            <div class="box-face bottom"></div>
+            <div class="box-face back"></div>
+            <div class="box-face front"></div>
+            <div class="box-face left"></div>
+            <div class="box-face right"></div>
+
+            <div class="lid">
+                <div class="box-face lid-top"></div>
+                <div class="box-face lid-front"></div>
+                <div class="box-face lid-back"></div>
+                <div class="box-face lid-left"></div>
+                <div class="box-face lid-right"></div>
+            </div>
+
+            <div id="photo-container" class="photo-container">
+
+            </div>
+                <!-- Audio oculto para la música -->
+                <audio id="audio-musica" src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/PUBLIC%20-%20Make%20You%20Mine%20%20Sub%20espa%C3%B1ol%20(lyrics).mp3" preload="auto"></audio>
+        </div>
+        <div class="click-message">
+            <p>Haz clic en la caja para abrirla</p>
+        </div>
+    </div>
+</main>
+
+<div class="particles" id="particle-container"></div>
+<canvas id="star-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;"></canvas>
+<div id="burst-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<script type="module">document.addEventListener('DOMContentLoaded', () => {
+    // Referencia al audio
+    const audioMusica = document.getElementById('audio-musica');
+    // Estrellas animadas fondo
+    function crearEstrellasFondo() {
+        const canvas = document.getElementById('star-canvas');
+        const ctx = canvas.getContext('2d');
+        let w = window.innerWidth;
+        let h = window.innerHeight;
+        canvas.width = w;
+        canvas.height = h;
+        let estrellas = [];
+        // MÁS ESTRELLAS
+        const numEstrellas = 220;
+        for (let i = 0; i < numEstrellas; i++) {
+            estrellas.push({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                r: Math.random() * 1.2 + 0.3,
+                v: Math.random() * 0.15 + 0.05,
+                alpha: Math.random() * 0.5 + 0.5
+            });
+        }
+        // NUEVAS PARTICULAS SUAVES
+        let particulas = [];
+        const numParticulas = 40;
+        for (let i = 0; i < numParticulas; i++) {
+            particulas.push({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                r: Math.random() * 18 + 8,
+                v: Math.random() * 0.08 + 0.02,
+                alpha: Math.random() * 0.18 + 0.07,
+                color: `rgba(${180+Math.floor(Math.random()*60)},${180+Math.floor(Math.random()*60)},255,1)`
+            });
+        }
+        function dibujar() {
+            ctx.clearRect(0, 0, w, h);
+            // Dibuja partículas suaves
+            for (let p of particulas) {
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+                ctx.fillStyle = p.color;
+                ctx.shadowColor = p.color;
+                ctx.shadowBlur = 16;
+                ctx.fill();
+                ctx.restore();
+                p.y += p.v;
+                if (p.y > h) {
+                    p.y = -p.r;
+                    p.x = Math.random() * w;
+                }
+            }
+            // Dibuja estrellas
+            for (let estrella of estrellas) {
+                ctx.save();
+                ctx.globalAlpha = estrella.alpha;
+                ctx.beginPath();
+                ctx.arc(estrella.x, estrella.y, estrella.r, 0, 2 * Math.PI);
+                ctx.fillStyle = '#fff';
+                ctx.shadowColor = '#fff';
+                ctx.shadowBlur = 8;
+                ctx.fill();
+                ctx.restore();
+                estrella.y += estrella.v;
+                if (estrella.y > h) {
+                    estrella.y = 0;
+                    estrella.x = Math.random() * w;
+                }
+            }
+            requestAnimationFrame(dibujar);
+        }
+        dibujar();
+        window.addEventListener('resize', () => {
+            w = window.innerWidth;
+            h = window.innerHeight;
+            canvas.width = w;
+            canvas.height = h;
+        });
+    }
+    crearEstrellasFondo();
+    const box = document.getElementById('memory-box');
+    const photoContainer = document.getElementById('photo-container');
+    const particleContainer = document.getElementById('particle-container');
+    const clickMessage = document.querySelector('.click-message');
+    // --- NUEVO: Estado para saber si el modal está abierto o cerrado ---
+    let modalAbierto = false;
+    // Lanzar confeti de forma continua
+    function lanzarConfetiEspectacularSiempre() {
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+        const particleColors = ['#FF6D00', '#FFD600', '#0091EA', '#BDBDBD', '#FFFFFF'];
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+        setInterval(function() {
+            const particleCount = 20;
+            confetti(Object.assign({}, defaults, {
+                particleCount,
+                origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                colors: particleColors
+            }));
+            confetti(Object.assign({}, defaults, {
+                particleCount,
+                origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                colors: particleColors
+            }));
+        }, 1200);
+    }
+    lanzarConfetiEspectacularSiempre();
+
+    const recuerdos = [
+        {url: 'https://i.pinimg.com/1200x/96/3c/26/963c260adce5a645a5a5bdb52ed1b91e.jpg', mensaje: ''},
+        {url: 'https://i.pinimg.com/736x/ad/40/3a/ad403aa2df4e7f8d0016accbb2283251.jpg', mensaje: ''},
+        {url: 'https://i.pinimg.com/736x/b6/67/f8/b667f89e19f13d9330326569cd8d3f73.jpg', mensaje: ''},
+        {url: 'https://i.pinimg.com/1200x/43/0f/8d/430f8d7d9a53ce677adf0bfa2c0d65fb.jpg', mensaje: ''},
+        {url: 'https://i.pinimg.com/1200x/9f/10/74/9f107478639ff80f7055f2c837cab0db.jpg', mensaje: ''},
+        {url: 'https://i.pinimg.com/736x/d0/8a/0c/d08a0c61f732e159a31b127c06f5028a.jpg', mensaje: ''},
+        {url: 'https://i.pinimg.com/1200x/29/10/9e/29109e13f84d9088dad0e1bca30e3112.jpg', mensaje: ''},
+        {url: 'https://i.pinimg.com/736x/b9/41/43/b941432716fcdf77babeb0d0f4512944.jpg', mensaje: ''},
+
+        {url: 'https://i.pinimg.com/1200x/02/4c/ed/024ced934e3e8389a214899f3470faf4.jpg', mensaje: ''}
+    ];
+
+    let modalActualIdx = 0; // Declaración al inicio
+
+    function lanzarConfetiEspectacular() {
+    // Esta función ya no se usa, el confeti es ahora continuo
+    }
+
+
+        // Modal para mostrar el recuerdo en grande
+        function crearModal() {
+                let modal = document.getElementById('recuerdo-modal');
+                if (modal) return modal;
+                modal = document.createElement('div');
+                modal.id = 'recuerdo-modal';
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100vw';
+                modal.style.height = '100vh';
+                modal.style.background = 'rgba(0,0,0,0.85)';
+                modal.style.display = 'flex';
+                modal.style.alignItems = 'center';
+                modal.style.justifyContent = 'center';
+                modal.style.zIndex = '9999';
+                modal.style.opacity = '0';
+                modal.style.transition = 'opacity 0.4s';
+                modal.innerHTML = `
+                    <div id="modal-content" style="position:relative;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;align-items:center;">
+                        <p id="modal-desc" style="color:#fff;font-size:1.2rem;margin:0 0 18px 0;text-align:center;max-width:90vw;font-weight:bold;"></p>
+                        <img id="modal-img" src="" style="max-width:90vw;max-height:60vh;border-radius:12px;box-shadow:0 8px 32px #000;transition:transform 0.7s cubic-bezier(.77,0,.18,1);transform:scale(0.7) translateY(80px);opacity:0;"/>
+                        <div style="margin-top:18px;display:flex;gap:18px;">
+                            <button id="modal-prev" style="padding:10px 18px;font-size:1.1rem;background:#FF6D00;color:#111;border:none;border-radius:6px;cursor:pointer;font-weight:bold;">Anterior</button>
+                            <button id="modal-next" style="padding:10px 18px;font-size:1.1rem;background:#0091EA;color:#111;border:none;border-radius:6px;cursor:pointer;font-weight:bold;">Siguiente</button>
+                            <button id="modal-close" style="padding:10px 18px;font-size:1.1rem;background:#BDBDBD;color:#111;border:none;border-radius:6px;cursor:pointer;font-weight:bold;">Cerrar</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                return modal;
+        }
+
+        function generarFotosDesdeArray() {
+            photoContainer.innerHTML = '';
+            recuerdos.forEach((recuerdo, idx) => {
+                const photoDiv = document.createElement('div');
+                photoDiv.className = 'photo';
+                photoDiv.style.backgroundImage = `url('${recuerdo.url}')`;
+                photoDiv.dataset.idx = idx;
+                // Solo agregar descripción si hay mensaje
+                if (recuerdo.mensaje && recuerdo.mensaje.trim() !== '') {
+                    const descriptionP = document.createElement('p');
+                    descriptionP.className = 'photo-description';
+                    descriptionP.textContent = recuerdo.mensaje;
+                    photoDiv.appendChild(descriptionP);
+                }
+                photoContainer.appendChild(photoDiv);
+            });
+        }
+
+    generarFotosDesdeArray();
+
+    // --- NUEVO: Vibración JS relativa a la posición actual ---
+    let shakeTimeout = null;
+    let originalTransform = box.style.transform || '';
+    box.addEventListener('mouseenter', () => {
+        // Guardar la transformación actual
+        originalTransform = box.style.transform || window.getComputedStyle(box).transform;
+        let frame = 0;
+        const shakes = [
+            {x: -4, t: 40}, {x: 4, t: 40}, {x: -2, t: 30}, {x: 2, t: 30}, {x: 0, t: 60}
+        ];
+        function doShake() {
+            if (frame < shakes.length) {
+                box.style.transform = `${originalTransform} translateX(${shakes[frame].x}px)`;
+                shakeTimeout = setTimeout(doShake, shakes[frame].t);
+                frame++;
+            } else {
+                box.style.transform = originalTransform;
+            }
+        }
+        doShake();
+    });
+    box.addEventListener('mouseleave', () => {
+        if (shakeTimeout) clearTimeout(shakeTimeout);
+        box.style.transform = originalTransform;
+    });
+
+    // Al abrir la caja, fuerza el rebote y detiene la animación de vibración
+    box.addEventListener('click', () => {
+        // Si la caja está animando, no hacer nada
+        if (box.classList.contains('animating')) return;
+        // Si la caja ya está abierta y el modal está cerrado, volver a mostrar el modal
+        if (box.classList.contains('opened')) {
+            if (!modalAbierto) {
+                revealPhotos(modalActualIdx);
+            }
+            return;
+        }
+        box.classList.add('opened', 'animating');
+        box.style.animation = 'box-bounce 0.7s cubic-bezier(.77,0,.18,1) 1, box-spin 18s linear infinite';
+        setTimeout(() => {
+            box.style.animation = 'box-spin 18s linear infinite';
+        }, 700);
+        clickMessage.style.opacity = 0;
+        // Reproducir la música
+        if (audioMusica) {
+            audioMusica.currentTime = 0;
+            // Para asegurar reproducción en móviles, usar play() tras interacción
+            audioMusica.play().catch((e)=>{
+                // Si hay error, intentar reproducir tras un pequeño delay
+                setTimeout(()=>audioMusica.play().catch(()=>{}), 200);
+            });
+        }
+        setTimeout(() => revealPhotos(modalActualIdx), 1000);
+    });
+
+    // Cinemática: animar acercamiento y mostrar modal
+    function revealPhotos(idx) {
+        const photos = Array.from(photoContainer.children);
+        let currentIndex = idx;
+        function cinematicShow(idx) {
+            // 1. Animar la foto saliendo de la caja y acercándose
+            const photo = photos[idx];
+            photo.style.opacity = 1;
+            photo.style.zIndex = 10;
+            photo.style.transition = 'transform 0.8s cubic-bezier(.77,0,.18,1), opacity 0.5s';
+            photo.style.transform = 'scale(1.2) translateY(-40vh) rotateZ(0deg)';
+            setTimeout(() => {
+                // 2. Mostrar modal con la imagen y descripción
+                mostrarModal(idx);
+                // 3. Ocultar la foto de la caja
+                setTimeout(() => {
+                    photo.style.opacity = 0;
+                    photo.style.transform = 'translateY(50px) scale(0.9)';
+                }, 400);
+            }, 800);
+        }
+        cinematicShow(currentIndex);
+    }
+
+    // Modal y navegación
+    function mostrarModal(idx) {
+        modalAbierto = true; // --- NUEVO: marcar modal abierto ---
+        modalActualIdx = idx; // Asegurarse de actualizar el índice al inicio
+        const modal = crearModal();
+        const recuerdo = recuerdos[idx];
+        const img = modal.querySelector('#modal-img');
+        const desc = modal.querySelector('#modal-desc');
+        img.src = recuerdo.url;
+        desc.textContent = recuerdo.mensaje;
+        modal.style.display = 'flex';
+        // Fondo completamente transparente
+        setTimeout(() => { 
+            modal.style.opacity = '1';
+            modal.style.background = 'rgba(0,0,0,0.85)';
+        }, 10);
+        // Cinemática: animar imagen modal
+        setTimeout(() => {
+            img.style.transform = 'scale(1) translateY(0)';
+            img.style.opacity = '1';
+        }, 80);
+        // Botones
+        modal.querySelector('#modal-prev').onclick = () => cambiarRecuerdo(-1);
+        modal.querySelector('#modal-next').onclick = () => cambiarRecuerdo(1);
+        modal.querySelector('#modal-close').onclick = cerrarModal;
+        // Navegación con flechas
+        modal.onkeydown = (e) => {
+            if (e.key === 'ArrowLeft') cambiarRecuerdo(-1);
+            if (e.key === 'ArrowRight') cambiarRecuerdo(1);
+            if (e.key === 'Escape') cerrarModal();
+        };
+        modal.tabIndex = 0;
+        modal.focus();
+    }
+
+    function cambiarRecuerdo(dir) {
+        let nuevoIdx = modalActualIdx + dir;
+        if (nuevoIdx < 0) nuevoIdx = recuerdos.length - 1;
+        if (nuevoIdx >= recuerdos.length) nuevoIdx = 0;
+        // Cinemática de salida
+        const modal = document.getElementById('recuerdo-modal');
+        const img = modal.querySelector('#modal-img');
+        img.style.transform = 'scale(0.7) translateY(80px)';
+        img.style.opacity = '0';
+        setTimeout(() => {
+            mostrarModal(nuevoIdx);
+        }, 400);
+    }
+
+    function cerrarModal() {
+        modalAbierto = false; // --- NUEVO: marcar modal cerrado ---
+        const modal = document.getElementById('recuerdo-modal');
+        if (!modal) return;
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 400);
+    }
+
+    function closeBox() {
+        box.classList.remove('opened');
+        const photos = Array.from(photoContainer.children);
+        photos.forEach(photo => {
+            photo.style.transition = 'none';
+            photo.style.opacity = 0;
+            photo.style.transform = 'translateY(50px) scale(0.9)';
+            photo.style.zIndex = 0;
+
+            photo.classList.remove('exiting');
+        });
+        setTimeout(() => {
+            photos.forEach(p => p.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out');
+            box.classList.remove('animating');
+            clickMessage.style.opacity = 1;
+        }, 50);
+    }
+
+    // Sparks infinitos
+    function createInfiniteSparks() {
+        const particleCount = 40;
+        function spawnSpark() {
+            const particle = document.createElement('div');
+            particle.className = 'spark-particle';
+            const size = Math.random() * 5 + 2;
+            const xPos = Math.random() * 100;
+            const duration = Math.random() * 5 + 3;
+            const drift = (Math.random() - 0.5) * 150;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${xPos}%`;
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.animationDelay = `0s`;
+            particle.style.setProperty('--drift-x', `${drift}px`);
+            particleContainer.appendChild(particle);
+            particle.addEventListener('animationend', () => {
+                particle.remove();
+                spawnSpark();
+            });
+        }
+        for (let i = 0; i < particleCount; i++) {
+            setTimeout(spawnSpark, Math.random() * 3000);
+        }
+    }
+
+    createInfiniteSparks();
+});
+</script>
+</body>
+</html>
