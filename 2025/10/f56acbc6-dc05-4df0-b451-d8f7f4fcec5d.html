@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>I LOVE YOU CANTIKU</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      font-family: Arial, sans-serif;
+      touch-action: none; /* evita zoom accidental al tocar */
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="modal-inicio" style="
+    position:fixed;left:0;top:0;width:100vw;height:100vh;
+    background:rgba(0,0,0,0.92);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+    <button id="btn-iniciar" style="
+      font-size:2rem;padding:1em 2em;border-radius:16px;border:none;
+      background:#ff1744;color:#fff;box-shadow:0 2px 16px #000a;cursor:pointer;">apreta aquí</button>
+  </div>
+  <canvas id="canvas" style="z-index:1;"></canvas>
+  <audio id="bg-music" preload="auto">
+    <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/PUBLIC%20-%20Make%20You%20Mine%20%20Sub%20espa%C3%B1ol%20(lyrics).mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    let w, h;
+    // Animación y música solo después de apretar el botón
+    let animacionIniciada = false;
+    document.getElementById('btn-iniciar').onclick = iniciarAnimacionYMusica;
+
+    function iniciarAnimacionYMusica() {
+      if (animacionIniciada) return;
+      animacionIniciada = true;
+      document.getElementById('modal-inicio').style.display = 'none';
+      document.getElementById('bg-music').currentTime = 0;
+      document.getElementById('bg-music').play();
+
+      // Variables y arrays
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      window.addEventListener("resize", resize);
+      resize();
+
+      // frases románticas
+      const PHRASES = [
+        "Te amo", "Te quiero", "Eres mi vida", "Mi cielo",
+        "Eres mi todo", "Eres único", "Contigo siempre",
+        "Mi príncipe", "Mi amor", "Eres especial",
+        "Solo tú", "Me encantas", "Te adoro ❤"
+      ];
+
+      const texts = [];
+      const stars = [];
+      const hearts = [];
+      const explosions = [];
+      // Imágenes flotantes
+      const imgUrls = [
+        "https://i.pinimg.com/1200x/d1/47/50/d147501c6d7854bae28fe00770c5b2d6.jpg",
+        "https://i.pinimg.com/736x/bd/cd/ef/bdcdefac5e4e9aaddca703abb52b74ff.jpg"
+      ];
+      const imgObjs = imgUrls.map(url => {
+        const img = new window.Image();
+        img.src = url;
+        return img;
+      });
+      const imgDrops = [];
+
+      // parámetros ajustados para CELULAR
+      const MAX_ACTIVE_TEXTS = 7;
+      const SPAWN_INTERVAL = 1500; // más rápido que antes (1.5 seg)
+      let phraseIndex = 0;
+      let offsetX = 0, offsetY = 0, zoom = 1;
+
+      // función crear estrellas
+      function createStar() {
+        return {
+          x: Math.random() * w,
+          y: Math.random() * h,
+          z: Math.random() * 2000,
+          speed: 1 + Math.random()
+        };
+      }
+
+      // corazones
+      function createHeart() {
+        return {
+          x: Math.random() * w,
+          y: Math.random() * h,
+          z: Math.random() * 1600 + 400,
+          speed: 1.5 + Math.random()
+        };
+      }
+
+      // textos en orden
+      function spawnTextInOrder(){
+        if (texts.length >= MAX_ACTIVE_TEXTS) return;
+        const phrase = PHRASES[phraseIndex % PHRASES.length];
+        phraseIndex++;
+        texts.push({
+          text: phrase,
+          x: Math.random() * w,
+          y: Math.random() * h,
+          z: Math.random() * 1600 + 300,
+          speed: 1.8 + Math.random() * 1.2, // más rápido
+          baseFont: (w < 600 ? 40 : 60),   // fuente clara en móvil
+          glow: 25
+        });
+      }
+
+      // imágenes flotantes
+      function createImgDrop() {
+        return {
+          img: imgObjs[Math.floor(Math.random()*imgObjs.length)],
+          x: Math.random() * w,
+          y: Math.random() * h,
+          z: Math.random() * 1600 + 400,
+          speed: 1.2 + Math.random()*0.8,
+          width: (w < 600 ? 130 : 200),
+          height: (w < 600 ? 170 : 260)
+        };
+      }
+
+      // explosiones azules
+      function createExplosion() {
+        const particles = [];
+        const centerX = Math.random() * w;
+        const centerY = Math.random() * h;
+        const particleCount = 30;
+        
+        for (let i = 0; i < particleCount; i++) {
+          particles.push({
+            x: centerX,
+            y: centerY,
+            vx: (Math.random() - 0.5) * 10,
+            vy: (Math.random() - 0.5) * 10,
+            life: 1,
+            decay: 0.02 + Math.random() * 0.01,
+            size: 2 + Math.random() * 4
+          });
+        }
+        
+        return {
+          particles: particles,
+          age: 0,
+          maxAge: 50
+        };
+      }
+
+      // inicializar
+      for (let i = 0; i < 400; i++) stars.push(createStar());
+      for (let i = 0; i < 30; i++) hearts.push(createHeart());
+      for (let i = 0; i < 6; i++) imgDrops.push(createImgDrop());
+
+      // animación
+      function animate() {
+        ctx.clearRect(0, 0, w, h);
+
+        // Crear array de todos los elementos con su profundidad z
+        const allElements = [];
+
+        // Agregar estrellas
+        stars.forEach(s => {
+          s.z -= s.speed;
+          if (s.z <= 0) {
+            s.x = Math.random() * w;
+            s.y = Math.random() * h;
+            s.z = 2000;
+          }
+          allElements.push({type: 'star', obj: s});
+        });
+
+        // Agregar textos
+        texts.forEach((t, i) => {
+          t.z -= t.speed;
+          if (t.z <= 0) {
+            texts.splice(i,1);
+            return;
+          }
+          allElements.push({type: 'text', obj: t});
+        });
+
+        // Agregar corazones
+        hearts.forEach(c => {
+          c.z -= c.speed;
+          if (c.z <= 0) {
+            c.x = Math.random() * w;
+            c.y = Math.random() * h;
+            c.z = 2000;
+          }
+          allElements.push({type: 'heart', obj: c});
+        });
+
+        // Agregar imágenes
+        imgDrops.forEach(imgDrop => {
+          imgDrop.z -= imgDrop.speed;
+          if (imgDrop.z <= 0) {
+            imgDrop.x = Math.random() * w;
+            imgDrop.y = Math.random() * h;
+            imgDrop.z = 2000;
+            imgDrop.img = imgObjs[Math.floor(Math.random()*imgObjs.length)];
+          }
+          allElements.push({type: 'image', obj: imgDrop});
+        });
+
+        // Actualizar explosiones
+        explosions.forEach((explosion, i) => {
+          explosion.age++;
+          if (explosion.age > explosion.maxAge) {
+            explosions.splice(i, 1);
+            return;
+          }
+          
+          explosion.particles.forEach(particle => {
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+            particle.life -= particle.decay;
+            particle.vx *= 0.98;
+            particle.vy *= 0.98;
+          });
+          
+          allElements.push({type: 'explosion', obj: explosion});
+        });
+
+        // Ordenar por profundidad z (mayor z = más atrás, menor z = más adelante)
+        allElements.sort((a, b) => b.obj.z - a.obj.z);
+
+        // Renderizar todos los elementos en orden de profundidad
+        allElements.forEach(element => {
+          const obj = element.obj;
+          
+          if (element.type === 'star') {
+            const scale = 300 / obj.z * zoom;
+            const x = (obj.x - w/2 + offsetX) * scale + w/2;
+            const y = (obj.y - h/2 + offsetY) * scale + h/2;
+            ctx.fillStyle = "white";
+            ctx.fillRect(x, y, scale*1.5, scale*1.5);
+          }
+          
+          else if (element.type === 'text') {
+            const scale = 250 / obj.z * zoom;
+            const x = (obj.x - w/2 + offsetX) * scale + w/2;
+            const y = (obj.y - h/2 + offsetY) * scale + h/2;
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            ctx.font = `bold ${obj.baseFont}px Arial`;
+            ctx.fillStyle = "white";
+            ctx.shadowColor = "white";
+            ctx.shadowBlur = obj.glow;
+            ctx.textAlign = "center";
+            ctx.fillText(obj.text, 0, 0);
+            ctx.restore();
+          }
+          
+          else if (element.type === 'heart') {
+            const scale = 220 / obj.z * zoom;
+            const x = (obj.x - w/2 + offsetX) * scale + w/2;
+            const y = (obj.y - h/2 + offsetY) * scale + h/2;
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(scale*2, scale*2);
+            ctx.font = "bold 28px Arial";
+            ctx.fillStyle = "blue";
+            ctx.shadowColor = "blue";
+            ctx.shadowBlur = 20;
+            ctx.textAlign = "center";
+            ctx.fillText("❤", 0, 0);
+            ctx.restore();
+          }
+          
+          else if (element.type === 'image') {
+            const scale = 120 / obj.z * zoom;
+            const x = (obj.x - w/2 + offsetX) * scale + w/2;
+            const y = (obj.y - h/2 + offsetY) * scale + h/2;
+            ctx.save();
+            ctx.globalAlpha = 0.97;
+            ctx.shadowColor = "#fff";
+            ctx.shadowBlur = 18;
+            ctx.drawImage(
+              obj.img,
+              x - obj.width*scale/2,
+              y - obj.height*scale/2,
+              obj.width*scale,
+              obj.height*scale
+            );
+            ctx.restore();
+          }
+          
+          else if (element.type === 'explosion') {
+            ctx.save();
+            obj.particles.forEach(particle => {
+              if (particle.life > 0) {
+                ctx.globalAlpha = particle.life;
+                ctx.fillStyle = "blue";
+                ctx.shadowColor = "blue";
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                ctx.fill();
+              }
+            });
+            ctx.restore();
+          }
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+      setInterval(spawnTextInOrder, SPAWN_INTERVAL);
+      // Crear explosiones cada 5 segundos
+      setInterval(() => {
+        explosions.push(createExplosion());
+      }, 5000);
+
+      // controles táctiles para mover
+      let startX=0,startY=0;
+      canvas.addEventListener("touchstart", e=>{
+        const t=e.touches[0];
+        startX=t.clientX;
+        startY=t.clientY;
+      });
+      canvas.addEventListener("touchmove", e=>{
+        const t=e.touches[0];
+        offsetX += (t.clientX-startX)/3;
+        offsetY += (t.clientY-startY)/3;
+        startX=t.clientX;
+        startY=t.clientY;
+      });
+
+      // zoom con dos dedos
+      let lastDist=0;
+      canvas.addEventListener("touchmove", e=>{
+        if(e.touches.length===2){
+          const dx=e.touches[0].clientX-e.touches[1].clientX;
+          const dy=e.touches[0].clientY-e.touches[1].clientY;
+          const dist=Math.sqrt(dx*dx+dy*dy);
+          if(lastDist){
+            zoom *= dist/lastDist;
+            zoom=Math.min(Math.max(0.5,zoom),3);
+          }
+          lastDist=dist;
+        }
+      });
+      canvas.addEventListener("touchend", ()=> lastDist=0);
+    }
+  </script>
+</body>
+</html>
