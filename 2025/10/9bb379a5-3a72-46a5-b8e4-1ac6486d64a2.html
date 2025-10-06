@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viaje 4D de Amor 💕🌀</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&display=swap" rel="stylesheet">
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: 'Fredoka One', sans-serif;
+            background: #000;
+            color: #fff;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100vw;
+            height: 100vh;
+            perspective: 3000px;
+            transform-style: preserve-3d;
+            user-select: none;
+        }
+        canvas { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            z-index: 1; 
+            transform: translateZ(0); 
+            width: 100%; 
+            height: 100%; 
+        }
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            width: 100vw;
+            height: 100vh;
+            transform-style: preserve-3d;
+            overflow: hidden;
+        }
+        .teamo {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateZ(200px);
+            font-size: 3em;
+            color: #00f0ff;
+            text-shadow: 0 0 20px #00f0ff, 0 0 40px #00f0ff;
+            animation: glow 2s ease-in-out infinite alternate;
+            z-index: 15;
+            font-family: 'Fredoka One', sans-serif;
+            width: 100%;
+            text-align: center;
+            padding: 0 10px;
+        }
+        @media (max-width: 768px) { 
+            .teamo { 
+                font-size: 2em; 
+                top: 10px; 
+            } 
+        }
+        @keyframes glow { 
+            from { 
+                text-shadow: 0 0 10px #00f0ff; 
+            } 
+            to { 
+                text-shadow: 0 0 30px #00f0ff; 
+            } 
+        }
+        .particle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.05) translateZ(-3000px);
+            width: 100px;
+            height: 100px;
+            opacity: 0;
+            transition: all 2.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            cursor: pointer;
+            z-index: 5;
+            border-radius: 20px;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            box-shadow: 0 0 0 rgba(255, 20, 147, 0);
+            transition: box-shadow 0.5s ease;
+        }
+        .particle.approaching {
+            transform: translate(-50%, -50%) scale(0.8) translateZ(0);
+            opacity: 1;
+            box-shadow: 0 0 50px rgba(255, 20, 147, 0.5);
+        }
+        .particle.fullscreen {
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            transform: translateZ(0) scale(1) rotateX(0deg);
+            border-radius: 0;
+            z-index: 20;
+            animation: impactShake 0.5s ease-out, pulse4D 1.5s ease-in-out infinite;
+            box-shadow: inset 0 0 100px rgba(255, 20, 147, 0.3);
+        }
+        @media (max-width: 768px) { 
+            .particle.fullscreen { 
+                animation: none; 
+            } 
+        }
+        @keyframes impactShake { 
+            0%, 100% { 
+                transform: translateZ(0) scale(1); 
+            } 
+            10%, 30%, 50% { 
+                transform: translateZ(20px) scale(1.05); 
+            } 
+            20%, 40% { 
+                transform: translateZ(-10px) scale(0.98); 
+            } 
+        }
+        @keyframes pulse4D { 
+            0%, 100% { 
+                transform: translateZ(0) scale(1) rotateY(0deg); 
+            } 
+            50% { 
+                transform: translateZ(100px) scale(1.03) rotateY(5deg); 
+            } 
+        }
+        .particle img, .particle video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: transparent;
+        }
+        .love-text {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%) translateZ(100px);
+            width: 80%;
+            max-width: 400px;
+            background: rgba(255, 20, 147, 0.1);
+            border: 2px solid #ff69b4;
+            border-radius: 20px;
+            padding: 15px;
+            font-size: 2.5em;
+            color: #ff69b4;
+            text-shadow: 0 0 10px #ff69b4, 2px 2px 4px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 25;
+            animation: textGlow 2s ease-in-out infinite alternate, heartBeat 1s ease-in-out infinite;
+            pointer-events: none;
+            font-family: 'Fredoka One', sans-serif;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.1;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+        }
+        @media (max-width: 768px) { 
+            .love-text { 
+                font-size: 1.5em; 
+                width: 90%; 
+                padding: 10px; 
+                bottom: 5%; 
+            } 
+        }
+        .fullscreen .love-text { 
+            opacity: 1; 
+        }
+        @keyframes textGlow { 
+            from { 
+                text-shadow: 0 0 5px #ff69b4; 
+            } 
+            to { 
+                text-shadow: 0 0 15px #ff69b4; 
+            } 
+        }
+        @keyframes heartBeat { 
+            0%, 100% { 
+                transform: translateX(-50%) translateZ(100px) scale(1); 
+            } 
+            50% { 
+                transform: translateX(-50%) translateZ(100px) scale(1.05); 
+            } 
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 30;
+            justify-content: center;
+            align-items: center;
+            perspective: 1500px;
+        }
+        .modal img, .modal video { 
+            max-width: 80%; 
+            max-height: 80%; 
+            transform: translateZ(300px) rotateY(15deg);
+        }
+        .close { 
+            position: absolute; 
+            top: 20px; 
+            right: 30px; 
+            font-size: 3em; 
+            cursor: pointer; 
+            color: #fff; 
+            z-index: 31;
+        }
+        /* Pantalla inicial para seleccionar imágenes/videos */
+        .setup-screen {
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .setup-screen h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #00f0ff;
+            text-align: center;
+        }
+        .setup-screen .input-group {
+            margin: 10px 0;
+            width: 100%;
+            max-width: 400px;
+        }
+        .setup-screen label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff69b4;
+        }
+        .setup-screen input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            cursor: pointer;
+        }
+        .setup-screen input[type="file"]::-webkit-file-upload-button {
+            background: #ff69b4;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .setup-screen input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            text-align: center;
+        }
+        .setup-screen button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background: #ff69b4;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        .setup-screen button:hover {
+            background: #ff1493;
+        }
+        .fullscreen-btn {
+            background: #00f0ff;
+            color: #000;
+            margin-top: 10px;
+        }
+        .fullscreen-btn:hover {
+            background: #00bfff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de setup -->
+    <div class="setup-screen" id="setup">
+        <h2>Selecciona 5 imágenes/videos románticos:</h2>
+        <p style="text-align: center; margin-bottom: 20px; opacity: 0.8;">(Click en "Elegir archivos" para abrir galería/Fotos app con preview – soporta imágenes, GIFs y videos cortos)</p>
+        <div class="input-group">
+            <label for="file1">Galería/Fotos 1:</label>
+            <input type="file" id="file1" accept="image/*,video/mp4,video/webm,video/ogg,.gif" capture="environment">
+            <input type="url" id="url1" placeholder="O URL: https://media.giphy.com/..." style="display: block;">
+        </div>
+        <div class="input-group">
+            <label for="file2">Galería/Fotos 2:</label>
+            <input type="file" id="file2" accept="image/*,video/mp4,video/webm,video/ogg,.gif" capture="environment">
+            <input type="url" id="url2" placeholder="O URL: https://media.giphy.com/..." style="display: block;">
+        </div>
+        <div class="input-group">
+            <label for="file3">Galería/Fotos 3:</label>
+            <input type="file" id="file3" accept="image/*,video/mp4,video/webm,video/ogg,.gif" capture="environment">
+            <input type="url" id="url3" placeholder="O URL: https://media.giphy.com/..." style="display: block;">
+        </div>
+        <div class="input-group">
+            <label for="file4">Galería/Fotos 4:</label>
+            <input type="file" id="file4" accept="image/*,video/mp4,video/webm,video/ogg,.gif" capture="environment">
+            <input type="url" id="url4" placeholder="O URL: https://media.giphy.com/..." style="display: block;">
+        </div>
+        <div class="input-group">
+            <label for="file5">Galería/Fotos 5:</label>
+            <input type="file" id="file5" accept="image/*,video/mp4,video/webm,video/ogg,.gif" capture="environment">
+            <input type="url" id="url5" placeholder="O URL: https://media.giphy.com/..." style="display: block;">
+        </div>
+        <button onclick="startAnimation()">¡Iniciar Viaje!</button>
+        <button class="fullscreen-btn" onclick="toggleFullscreen()">Pantalla Completa (Opcional)</button>
+    </div>
+
+    <canvas id="warp"></canvas>
+    <div class="container" id="container" style="display: none;">
+        <h1 class="teamo">Te amo</h1>
+        <div class="particle" id="particle1">
+            <img src="https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif" alt="Oso tímido">
+            <span class="love-text">Te amo 💕</span>
+        </div>
+        <div class="particle" id="particle2">
+            <img src="https://media.giphy.com/media/26ufnwz3wDUllqQbO/giphy.gif" alt="Oso abrazando">
+            <span class="love-text">Eres mi todo 💖</span>
+        </div>
+        <div class="particle" id="particle3">
+            <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" alt="Oso con corazón">
+            <span class="love-text">Mi luz eterna ✨</span>
+        </div>
+        <div class="particle" id="particle4">
+            <img src="https://media.giphy.com/media/5bc4i2O2zq7zq/giphy.gif" alt="Oso sonrojado">
+            <span class="love-text">Por siempre tuyo 🌹</span>
+        </div>
+        <div class="particle" id="particle5">
+            <img src="https://media.giphy.com/media/l0HlRnAWXxn0MhKLK/giphy.gif" alt="Oso enamorado">
+            <span class="love-text">Mi universo 💫</span>
+        </div>
+    </div>
+    <div class="modal" id="modal">
+        <span class="close" id="close">&times;</span>
+        <div id="modalContent"></div> <!-- Contenedor para img o video -->
+    </div>
+
+    <script>
+        // Función para leer archivos locales (imágenes/videos)
+        function readFile(file, callback) {
+            const reader = new FileReader();
+            reader.onload = (e) => callback(e.target.result);
+            reader.readAsDataURL(file);
+        }
+
+        // Fullscreen opcional
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log('Fullscreen no disponible:', err));
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Función para iniciar después de seleccionar
+        function startAnimation() {
+            const files = ['file1', 'file2', 'file3', 'file4', 'file5'];
+            const urls = ['url1', 'url2', 'url3', 'url4', 'url5'];
+            const particles = ['particle1', 'particle2', 'particle3', 'particle4', 'particle5'];
+            let loaded = 0;
+
+            files.forEach((fileId, i) => {
+                const fileInput = document.getElementById(fileId);
+                const urlInput = document.getElementById(urls[i]);
+                const particle = document.getElementById(particles[i]);
+                let mediaElement;
+
+                if (fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    if (file.type.startsWith('video/')) {
+                        mediaElement = document.createElement('video');
+                        mediaElement.src = URL.createObjectURL(file);
+                        mediaElement.autoplay = true;
+                        mediaElement.loop = true;
+                        mediaElement.muted = true;
+                        mediaElement.playsInline = true; // Importante para móviles
+                        particle.innerHTML = ''; // Limpiar
+                        particle.appendChild(mediaElement);
+                    } else {
+                        mediaElement = particle.querySelector('img') || document.createElement('img');
+                        readFile(file, (dataUrl) => {
+                            mediaElement.src = dataUrl;
+                            if (!particle.querySelector('img')) particle.appendChild(mediaElement);
+                            loaded++;
+                            if (loaded === 5) initApp();
+                        });
+                    }
+                } else if (urlInput.value.trim()) {
+                    mediaElement = particle.querySelector('img');
+                    mediaElement.src = urlInput.value;
+                    loaded++;
+                    if (loaded === 5) initApp();
+                } else {
+                    // Default ositos lindos
+                    const defaults = [
+                        'https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif',
+                        'https://media.giphy.com/media/26ufnwz3wDUllqQbO/giphy.gif',
+                        'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
+                        'https://media.giphy.com/media/5bc4i2O2zq7zq/giphy.gif',
+                        'https://media.giphy.com/media/l0HlRnAWXxn0MhKLK/giphy.gif'
+                    ];
+                    mediaElement = particle.querySelector('img');
+                    mediaElement.src = defaults[i];
+                    loaded++;
+                    if (loaded === 5) initApp();
+                }
+            });
+
+            function initApp() {
+                document.getElementById('setup').style.display = 'none';
+                document.getElementById('container').style.display = 'block';
+                resizeCanvas();
+                animateWarp();
+                showParticle(0); // Iniciar bucle
+            }
+        }
+
+        // Warp radial 4D
+        const canvas = document.getElementById('warp');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        const particlesWarp = [];
+        for (let i = 0; i < 200; i++) {
+            particlesWarp.push({
+                x: 0,
+                y: 0,
+                z: Math.random() * 2000 + 500,
+                speed: Math.random() * 10 + 5,
+                size: Math.random() * 3 + 1
+            });
+        }
+        function animateWarp() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 1;
+            particlesWarp.forEach(p => {
+                const scale = 1000 / p.z;
+                const px = cx + (p.x * scale);
+                const py = cy + (p.y * scale);
+                ctx.globalAlpha = 1 - (p.z / 2000);
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(px, py);
+                ctx.stroke();
+                p.z -= p.speed;
+                if (p.z <= 0) {
+                    p.z = 2000;
+                    p.x = (Math.random() - 0.5) * 200;
+                    p.y = (Math.random() - 0.5) * 200;
+                }
+            });
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(animateWarp);
+        }
+
+        // Secuencia de impactos 4D en bucle infinito
+        const particles = document.querySelectorAll('.particle');
+        let current = 0;
+        function showParticle(index) {
+            const p = particles[index];
+            p.style.transition = 'all 2.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+            p.classList.add('approaching');
+            setTimeout(() => {
+                p.style.transition = 'all 0.5s ease-out';
+                p.classList.add('fullscreen');
+            }, 2500);
+            setTimeout(() => {
+                p.classList.remove('fullscreen');
+                setTimeout(() => {
+                    p.classList.remove('approaching');
+                    p.style.transform = 'translate(-50%, -50%) scale(0.05) translateZ(-3000px)';
+                    p.style.opacity = 0;
+                    p.style.boxShadow = '0 0 0 rgba(255, 20, 147, 0)';
+                    current = (current + 1) % particles.length; // Bucle infinito: reinicia a 0 después de 5
+                    setTimeout(() => showParticle(current), 1000);
+                }, 500);
+            }, 4500);
+        }
+
+        // Modal (soporta img/video)
+        particles.forEach(p => {
+            p.addEventListener('click', () => {
+                const media = p.querySelector('img') || p.querySelector('video');
+                const modalContent = document.getElementById('modalContent');
+                modalContent.innerHTML = '';
+                if (media.tagName === 'VIDEO') {
+                    const clone = media.cloneNode(true);
+                    clone.style.maxWidth = '80%';
+                    clone.style.maxHeight = '80%';
+                    clone.play();
+                    modalContent.appendChild(clone);
+                } else {
+                    const clone = media.cloneNode();
+                    clone.style.maxWidth = '80%';
+                    clone.style.maxHeight = '80%';
+                    modalContent.appendChild(clone);
+                }
+                document.getElementById('modal').style.display = 'flex';
+            });
+        });
+        document.getElementById('close').onclick = () => {
+            document.getElementById('modal').style.display = 'none';
+            const modalContent = document.getElementById('modalContent');
+            const video = modalContent.querySelector('video');
+            if (video) video.pause();
+        };
+        window.onclick = (e) => { 
+            if (e.target.id === 'modal') {
+                document.getElementById('modal').style.display = 'none';
+                const modalContent = document.getElementById('modalContent');
+                const video = modalContent.querySelector('video');
+                if (video) video.pause();
+            } 
+        };
+    </script>
+</body>
+</html>
