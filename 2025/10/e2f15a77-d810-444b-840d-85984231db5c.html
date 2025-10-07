@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feliz Cumpleaños, Amor</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      text-align: center;
+    }
+    .card {
+      background: rgba(0,0,0,0.3);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      max-width: 400px;
+      animation: fadeIn 2s ease forwards;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+    button {
+      background-color: #fff;
+      color: #ff6f91;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background-color: #ff6f91;
+      color: #fff;
+      transform: scale(1.05);
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: scale(0.9);}
+      to {opacity: 1; transform: scale(1);}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Feliz Cumpleaños, Mi Amor 💖</h1>
+    <p>Hoy celebro tu vida y agradezco al universo por regalarme tu sonrisa, tu abrazo y tu amor. ¡Eres mi todo!</p>
+    <button onclick="mostrarSorpresa()">Ver Sorpresa 🎁</button>
+  </div>
+
+  <script>
+    function mostrarSorpresa() {
+      const mensajes = [
+        "Eres la razón por la que sonrío cada día.",
+        "Gracias por existir y por dejarme amarte.",
+        "Hoy y siempre, mi corazón es tuyo.",
+        "¡Feliz cumpleaños, vida mía! ❤️"
+      ];
+      const randomMsg = mensajes[Math.floor(Math.random() * mensajes.length)];
+      alert(randomMsg);
+    }
+  </script>
+
+</body>
+</html>
