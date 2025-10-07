@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miamor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Mali&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #ffb6c1, #ff7f9f, #ff9ebd);
+      overflow: hidden;
+      transition: background-color 1.2s ease, background 1.2s ease;
+    }
+
+    /* Cuadro central */
+    #start-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 240, 245, 0.85);
+      border: 3px solid #ff4b8b;
+      box-shadow: 0 0 20px #ff80b0, 0 0 40px #ffb3d9;
+      border-radius: 30px;
+      padding: 60px 80px;
+      animation: glowBox 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glowBox {
+      0% {
+        box-shadow: 0 0 15px #ff6fa0, 0 0 30px #ff99c2;
+      }
+
+      100% {
+        box-shadow: 0 0 25px #ff80b3, 0 0 60px #ffcce0;
+      }
+    }
+
+    #start-text {
+      font-size: 55px;
+      color: #ff2b6d;
+      font-weight: bold;
+      margin-bottom: 25px;
+      text-shadow:
+        0 0 10px #ff0066,
+        0 0 20px #ff33aa,
+        0 0 40px #ff66cc;
+      animation: pulse 2s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% {
+        text-shadow:
+          0 0 10px #ff0066,
+          0 0 20px #ff33aa,
+          0 0 40px #ff66cc;
+      }
+
+      100% {
+        text-shadow:
+          0 0 20px #ff0099,
+          0 0 40px #ff33ff,
+          0 0 80px #ffccff;
+      }
+    }
+
+    #start-btn {
+      background: linear-gradient(45deg, #ff5c8a, #ff8fa3);
+      border: none;
+      color: white;
+      padding: 15px 35px;
+      font-size: 22px;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.6);
+      transition: all 0.3s ease;
+    }
+
+    #start-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(255, 107, 150, 0.9);
+    }
+
+    /* Corazones flotantes */
+    .floating-heart {
+      position: fixed;
+      font-size: 24px;
+      color: #ff2b6d;
+      opacity: 0.8;
+      animation: floatHeart 8s ease-in-out infinite;
+      pointer-events: none;
+      text-shadow:
+        0 0 10px #ff66aa,
+        0 0 20px #ff99cc,
+        0 0 40px #ffccdd;
+    }
+
+    @keyframes floatHeart {
+      0% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      50% {
+        transform: translateY(-30px);
+        opacity: 0.9;
+      }
+
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Letras cayendo */
+    .falling-text {
+      position: fixed;
+      top: -10vh;
+      font-family: 'Mali', cursive;
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+      color: #ff99cc;
+      text-shadow:
+        0 0 10px #ff0099,
+        0 0 20px #ff33cc,
+        0 0 40px #ff99ff,
+        0 0 80px #ffffff;
+      animation: fall linear forwards, neonGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes neonGlow {
+      0% {
+        text-shadow:
+          0 0 10px #ff00aa,
+          0 0 20px #ff33cc,
+          0 0 40px #ff66ff;
+      }
+
+      100% {
+        text-shadow:
+          0 0 20px #ff0099,
+          0 0 40px #ff66ff,
+          0 0 80px #ffffff;
+      }
+    }
+
+    @keyframes fall {
+      0% {
+        top: -10vh;
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      100% {
+        top: 100vh;
+        opacity: 0.8;
+      }
+    }
+
+    @keyframes starBlink {
+      0%, 100% {
+        opacity: 0;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="start-screen">
+    <div id="start-text">Toque aqui amor ❤</div>
+    <button id="start-btn">Toca aquí</button>
+  </div>
+
+  <script>
+    const startBtn = document.getElementById('start-btn');
+    const startScreen = document.getElementById('start-screen');
+
+    // Corazones flotando
+    for (let i = 0; i < 25; i++) {
+      const heart = document.createElement("div");
+      heart.className = "floating-heart";
+      heart.textContent = "❤";
+      document.body.appendChild(heart);
+
+      const left = Math.random() * 100;
+      const delay = Math.random() * 6;
+      const size = Math.random() * 24 + 16;
+
+      heart.style.left = left + "vw";
+      heart.style.top = Math.random() * 90 + "vh";
+      heart.style.fontSize = size + "px";
+      heart.style.animationDelay = delay + "s";
+    }
+
+    startBtn.addEventListener('click', () => {
+      // Fondo estrellado oscuro
+      startScreen.style.display = 'none';
+      document.body.style.background = "radial-gradient(circle at top, #120019, #200030, #000010)";
+
+      // Fondo estrellado
+      let starBackground = document.createElement("div");
+      document.body.appendChild(starBackground);
+      Object.assign(starBackground.style, {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        zIndex: "-1",
+        overflow: "hidden"
+      });
+
+      const starCount = 90;
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement("div");
+        const size = Math.random() * 2 + 1 + "px";
+        const left = Math.random() * 100 + "vw";
+        const top = Math.random() * 100 + "vh";
+        const delay = Math.random() * 3 + "s";
+        const duration = (Math.random() * 2 + 1) + "s";
+        star.style.cssText = `
+          position: absolute;
+          width: ${size};
+          height: ${size};
+          background: white;
+          border-radius: 50%;
+          left: ${left};
+          top: ${top};
+          opacity: 0;
+          animation: starBlink ${duration} ease-in-out infinite;
+          animation-delay: ${delay};
+          box-shadow: 0 0 10px white, 0 0 20px #99f;
+        `;
+        starBackground.appendChild(star);
+      }
+
+      // Letras cayendo
+      const fallingWords = [" Te amo ", "Siempre contigo", "Eres mi vida", "Mi amor eterno", "❤", "Eres mi todo 💞"];
+
+      const layers = [
+        { fontSize: 34, opacity: 1, duration: 8, positions: [] },
+        { fontSize: 26, opacity: 0.8, duration: 9, positions: [] },
+        { fontSize: 22, opacity: 0.7, duration: 10, positions: [] },
+        { fontSize: 18, opacity: 0.6, duration: 11, positions: [] }
+      ];
+
+      function isPositionValid(positions, left) {
+        return positions.every(pos => Math.abs(pos - left) > 8);
+      }
+
+      setInterval(() => {
+        const span = document.createElement("span");
+        span.className = "falling-text";
+        span.textContent = fallingWords[Math.floor(Math.random() * fallingWords.length)];
+
+        const layerIndex = Math.floor(Math.random() * layers.length);
+        const layer = layers[layerIndex];
+
+        let left;
+        let attempts = 0;
+        do {
+          left = Math.random() * 100;
+          attempts++;
+          if (attempts > 30) break;
+        } while (!isPositionValid(layer.positions, left));
+
+        layer.positions.push(left);
+        span.style.left = left + "vw";
+        span.style.fontSize = layer.fontSize + "px";
+        span.style.opacity = layer.opacity;
+        span.style.animationDuration = layer.duration + "s";
+        document.body.appendChild(span);
+
+        setTimeout(() => {
+          span.remove();
+          const index = layer.positions.indexOf(left);
+          if (index > -1) layer.positions.splice(index, 1);
+        }, layer.duration * 1000 + 500);
+      }, 300);
+    });
+  </script>
+
+</body>
+</html>
