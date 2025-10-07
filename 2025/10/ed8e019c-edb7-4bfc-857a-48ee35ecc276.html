@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Me perdonas?</title>
+    <style>
+        #buttonsContainer {
+            position: relative;
+            min-height: 80px;
+            min-width: 350px;
+        }
+        #yesBtn, #noBtn {
+            position: absolute;
+        }
+        #yesBtn {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+        }
+        #noBtn {
+            z-index: 1;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #f7f7f7;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .cat-img {
+            width: 300px;
+            height: 300px;
+            background: #e0e0e0;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 1.2em;
+            color: #888;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .question {
+            font-size: 2em;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        .btn {
+            padding: 16px 32px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .btn-green {
+            background: #4caf50;
+            color: #fff;
+        }
+        .btn-green:hover {
+            background: #388e3c;
+        }
+        .btn-red {
+            background: #f44336;
+            color: #fff;
+        }
+        .btn-red:hover {
+            background: #b71c1c;
+        }
+    </style>
+</head>
+<body>
+    <div class="cat-img" id="catImg">
+        <img id="sadCatImg" src="a81697c7-c726-4307-82b0-438af483c32f-013.png" alt="Gato triste" style="max-width:100%; max-height:100%; border-radius:12px; display:block;">
+    </div>
+    <div class="question" id="questionText">¿Me perdonas?</div>
+    <div id="buttonsContainer">
+    <!-- Los botones serán generados por JavaScript -->
+    </div>
+    <script>
+    // Imágenes de gatos tristes
+    const catImages = [
+        'a81697c7-c726-4307-82b0-438af483c32f-013.png',
+        'descarga (1).jpg',
+        'descarga (2).jpg',
+        'descarga.jpg',
+        'images (1).jpg',
+        'images (2).jpg',
+        'images (3).jpg',
+        'images (4).jpg',
+        'images (5).jpg',
+        'rAO9Rm0N_400x400.jpg',
+        'sad-cat-thumbs-up-meme-template-often-used-as-a-response-v0-vgrf7ouh8gac1.webp'
+    ];
+
+    // Secuencia de textos para el botón rojo
+    const noMessages = [
+        '¿Por qué no?',
+        'Por favorrr',
+        'Prometo mejoraaar',
+        'Porfaaaa Aly',
+        '¿Seguraa?',
+        'Porfaaaaa',
+        'Tengo una explicación, lo prometo',
+        'Te prestaré el peak',
+        'Si me das sí, Diego se pondrá feliz',
+        'Mira que me costó aprender a programar'
+    ];
+
+    // Elementos base
+    const buttonsContainer = document.getElementById('buttonsContainer');
+    const questionText = document.getElementById('questionText');
+    const sadCatImg = document.getElementById('sadCatImg');
+
+    // Crear botones
+    const yesBtn = document.createElement('button');
+    yesBtn.className = 'btn btn-green';
+    yesBtn.textContent = 'Sí';
+    const noBtn = document.createElement('button');
+    noBtn.className = 'btn btn-red';
+    noBtn.textContent = 'No';
+
+    // Añadir botones al contenedor
+    buttonsContainer.appendChild(yesBtn);
+    buttonsContainer.appendChild(noBtn);
+
+    // Estado
+    let noIndex = 0;
+    let catIndex = 0;
+    let yesBtnScale = 1;
+
+    // Posicionar botones con position: absolute
+    buttonsContainer.style.position = 'relative';
+    yesBtn.style.position = 'absolute';
+    noBtn.style.position = 'absolute';
+    yesBtn.style.left = '0px';
+    yesBtn.style.top = '0px';
+    noBtn.style.left = '140px';
+    noBtn.style.top = '0px';
+
+    // Lógica botón Sí
+    yesBtn.addEventListener('click', () => {
+        questionText.textContent = '¡Gracias Aly! Prometo dar una explicación';
+        sadCatImg.src = 'Dance Dance Wait GIF.gif';
+        buttonsContainer.style.display = 'none';
+    });
+
+    // Función para mover el botón No a la izquierda con menor desplazamiento
+    function moveNoBtn() {
+        const baseDistance = 140;
+        // Ahora el botón Sí crece en ambos ejes
+        const extraW = (yesBtn.offsetWidth * yesBtnScale - yesBtn.offsetWidth) * 0.5;
+        const extraH = (yesBtn.offsetHeight * yesBtnScale - yesBtn.offsetHeight) * 0.5;
+        const newLeft = baseDistance + extraW;
+        // Ambos botones se mueven hacia abajo proporcional al crecimiento
+        const baseTop = 0;
+        yesBtn.style.top = `${baseTop + extraH}px`;
+        noBtn.style.top = `${baseTop + extraH}px`;
+        noBtn.style.left = `${newLeft}px`;
+    }
+
+    // Lógica botón No
+    noBtn.addEventListener('click', () => {
+        // Agrandar el botón Sí un 30% en ambos ejes
+        yesBtnScale *= 1.3;
+        yesBtn.style.transform = `scale(${yesBtnScale})`;
+        // Mover el botón No y el botón Sí hacia abajo y a la derecha
+        moveNoBtn();
+        noIndex++;
+        catIndex++;
+        if (noIndex <= noMessages.length) {
+            noBtn.textContent = noMessages[noIndex - 1];
+            // Ya no mostrar 'peak.jpg' en la secuencia de 'No', solo usar imágenes de gatos
+            sadCatImg.src = catImages[catIndex % catImages.length];
+        } else {
+            // Reiniciar
+            noIndex = 0;
+            catIndex = 0;
+            yesBtnScale = 1;
+            yesBtn.style.transform = 'scale(1)';
+            yesBtn.style.left = '0px';
+            yesBtn.style.top = '0px';
+            noBtn.style.left = '140px';
+            noBtn.style.top = '0px';
+            noBtn.textContent = 'No';
+            sadCatImg.src = catImages[0];
+        }
+    });
+    </script>
