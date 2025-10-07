@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pide ser mi novia</title>
+  <style>
+    :root {
+/* Fondo blanco-rosado degradado para la pantalla inicial */
+body {
+  background: linear-gradient(135deg, #fff6fa 0%, #ffb6d5 40%, #ff69b4 100%);
+}
+
+/* Fondo negro para la lluvia */
+#love-section {
+  background: #000 !important;
+}
+      --bg-color-document: #ff92ad;
+      --bg-color-container: #fdd3e8;
+      --border-color: #b0436e;
+      --bg-color-btn-si: #e93d82;
+      --bg-color-btn-si-hover: #ff92ad;
+      --bg-color-btn-no: #37172f;
+      --bg-color-btn-no-hover: #4b143d;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", "Open Sans", "Helvetica Neue", sans-serif;
+      height: 100dvh;
+      width: 100%;
+      overflow: hidden;
+    }
+    /* Pantalla inicial */
+    .box {
+      width: 80vw;
+      background: var(--bg-color-container);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      margin: auto;
+      margin-top: 10vh;
+      text-align: center;
+      padding: 20px;
+    }
+    .box h1 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .btn-container {
+      margin: 10px 0;
+    }
+    .btn-si, .btn-no {
+      width: 80px;
+      height: 40px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      cursor: pointer;
+      color: #fff;
+    }
+    .btn-si { background: var(--bg-color-btn-si); }
+    .btn-si:hover { background: var(--bg-color-btn-si-hover); }
+    .btn-no { background: var(--bg-color-btn-no); }
+    .btn-no:hover { background: var(--bg-color-btn-no-hover); }
+    .box img { width: 90%; margin: 12px 0; }
+    .hidden { display: none !important; }
+
+    /* Galaxia */
+    #galaxy-section, #love-section {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: none;
+    }
+    #galaxy-canvas { width: 100%; height: 100%; display: block; }
+    #btnToqueAqui {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background: #ff4081;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    #btnToqueAqui:hover { background: #ff92ad; }
+
+    /* Lluvia de Te Amo */
+    .love-word {
+      position: absolute;
+      color: #ff0000;
+      font-size: 24px;
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.93;
+      animation: fall linear infinite;
+      font-weight: bold;
+      /* Brillo animado para texto e imágenes */
+      filter: drop-shadow(0 0 8px #fff) drop-shadow(0 0 16px #ffb6c1);
+      transition: filter 0.2s;
+      /* Animación de brillo */
+      animation-name: fall, love-glow;
+      animation-duration: var(--fall-duration, 4s), 1.2s;
+      animation-iteration-count: infinite, infinite;
+      animation-timing-function: linear, alternate;
+    }
+    @keyframes love-glow {
+      0% { filter: drop-shadow(0 0 8px #fff) drop-shadow(0 0 16px #ffb6c1); }
+      100% { filter: drop-shadow(0 0 18px #fff) drop-shadow(0 0 32px #ffb6c1); }
+    }
+  @keyframes fall { to { transform: translateY(100vh); } }
+    .explosion {
+      position: absolute;
+      font-size: 20px;
+      animation: explode 1.8s ease-out forwards;
+      opacity: 0;
+      font-weight: bold;
+      text-shadow: 0 0 5px rgba(255,255,255,0.7);
+    }
+    @keyframes explode {
+      0% { transform: translate(0,0) scale(1); opacity:1; }
+      100% { transform: translate(var(--tx),var(--ty)) scale(0); opacity:0; }
+    }
+    #btnVolver {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 12px 20px;
+      background: #222;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    #btnVolver:hover { background: #444; }
+  </style>
+</head>
+<body>
+  <!-- Pregunta -->
+  <div class="box" id="questionBox">
+    <h1 id="title">¿Quieres ser mi novia? 🥺 Queria decirte esto desde hace tiempo. Me lo estaba guardando, cada día te quiero mucho más </h1>
+    <div class="btn-container">
+      <button class="btn-si" id="btnSi">Sí</button>
+      <button class="btn-no" id="btnNo">No</button>
+    </div>
+    <img src="https://st2.depositphotos.com/1031481/9719/i/450/depositphotos_97193380-stock-photo-cat-brought-roses-as-a.jpg" id="img" />
+  </div>
+
+  <!-- Galaxia -->
+  <div id="galaxy-section">
+    <canvas id="galaxy-canvas"></canvas>
+    <button id="btnToqueAqui">✨ Toque aquí ✨</button>
+    <audio id="musica" preload="auto">
+      <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Boza%20-%20Hecha%20Pa'%20Mi%20(Official%20Video).mp3" type="audio/mpeg" />
+    </audio>
+  </div>
+
+  <!-- Lluvia de Te Amo -->
+  <div id="love-section">
+    <button id="btnVolver">⬅ Volver</button>
+    <audio id="bg-music" preload="auto">
+      <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Carlos%20Vives%20-%20Volv%C3%AD%20a%20Nacer%20(LETRA)%20quiero%20casarme%20contigo.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <!-- THREE.js -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from "three";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+  import { FontLoader } from "three/addons/loaders/FontLoader.js";
+  import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+
+    const FRASES = ["Andale 🤕","Dí que sii 😖","Porfa 🥺","Cuchurrumin 😩","No seas asi 💔"];
+    const TIMAGENES = [
+      "https://i.pinimg.com/236x/8e/b2/b9/8eb2b9b7770d83abc480596af2f48d20.jpg",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIoL2oztE91lPQYpt85X2paDV6uemyee-Lrg&s",
+      "https://i.pinimg.com/originals/ff/53/93/ff53935e6607a7fa92c7dce5e8748c88.png",
+      "https://www.radioacktiva.com/wp-content/uploads/2020/10/1-14-436x291.jpg",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzKL3Vr7nvWQAvuhdI_oSyCYY0LktNWABTFShtrXpRk76GpLxVKoZMPQeIj0rfGg4I3F8&usqp=CAU"
+    ];
+    const $ = (id)=>document.getElementById(id);
+    let contador=0;
+
+    $("btnSi").onclick=()=>{
+      $("questionBox").classList.add("hidden");
+      $("galaxy-section").style.display="block";
+      // Control de música: solo galaxia
+      const musica = $("musica");
+      const bgMusic = $("bg-music");
+      try { bgMusic.pause(); bgMusic.currentTime = 0; } catch(e){}
+      musica.currentTime = 0;
+      musica.loop = true;
+      musica.play();
+      iniciarGalaxia();
+    };
+    $("btnNo").onclick=()=>{
+      $("title").textContent=FRASES[contador%FRASES.length];
+      $("img").src=TIMAGENES[contador%TIMAGENES.length];
+      contador++;
+    };
+    $("btnToqueAqui").onclick=()=>{
+      $("galaxy-section").style.display="none";
+      $("love-section").style.display="block";
+      // Control de música: solo lluvia
+      const musica = $("musica");
+      const bgMusic = $("bg-music");
+      try { musica.pause(); musica.currentTime = 0; } catch(e){}
+      bgMusic.currentTime = 0;
+      bgMusic.loop = true;
+      bgMusic.play();
+      iniciarLluvia();
+    };
+    $("btnVolver").onclick=()=>{
+      $("love-section").style.display="none";
+      $("galaxy-section").style.display="block";
+      // Al volver, pausa la música de lluvia y reanuda la de galaxia
+      const musica = $("musica");
+      const bgMusic = $("bg-music");
+      try { bgMusic.pause(); bgMusic.currentTime = 0; } catch(e){}
+      musica.currentTime = 0;
+      musica.loop = true;
+      musica.play();
+    };
+
+    // ====== Galaxia ======
+    function iniciarGalaxia(){
+      const scene=new THREE.Scene();
+      const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,3000);
+      const renderer=new THREE.WebGLRenderer({canvas:$("galaxy-canvas"),antialias:true});
+      renderer.setSize(window.innerWidth,window.innerHeight);
+      const controls=new OrbitControls(camera,renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.18;
+      controls.enableZoom = true;
+      controls.zoomSpeed = 0.25;
+  // Zoom infinito: sin límites
+  controls.minDistance = 0.01;
+  controls.maxDistance = Infinity;
+
+      // Zoom siempre centrado en el planeta (0,0,0) para mouse y móviles
+      controls.target.set(0, 0, 0);
+      controls.addEventListener('change', () => {
+        controls.target.set(0, 0, 0);
+      });
+      // Suavizar el zoom con la rueda del mouse y mantener el centro
+      renderer.domElement.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY * 0.0015;
+        // Vector desde el centro (planeta) hacia la cámara
+        const camDir = controls.object.position.clone().normalize();
+        let newLen = controls.object.position.length() + delta * 300;
+        // Sin límites de zoom
+        if (newLen < 0.01) newLen = 0.01;
+        controls.object.position.copy(camDir.multiplyScalar(newLen));
+        controls.target.set(0, 0, 0);
+      }, { passive: false });
+
+      // Soporte de zoom táctil para móviles, siempre centrado
+      let lastTouchDist = null;
+      renderer.domElement.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          lastTouchDist = Math.sqrt(dx*dx + dy*dy);
+        }
+      });
+      renderer.domElement.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2 && lastTouchDist !== null) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const newDist = Math.sqrt(dx*dx + dy*dy);
+          const delta = (lastTouchDist - newDist) * 0.01;
+          // Vector desde el centro (planeta) hacia la cámara
+          const camDir = controls.object.position.clone().normalize();
+          let newLen = controls.object.position.length() + delta * 100;
+          // Sin límites de zoom
+          if (newLen < 0.01) newLen = 0.01;
+          controls.object.position.copy(camDir.multiplyScalar(newLen));
+          controls.target.set(0, 0, 0);
+          lastTouchDist = newDist;
+        }
+      });
+      renderer.domElement.addEventListener('touchend', (e) => {
+        if (e.touches.length < 2) lastTouchDist = null;
+      });
+
+      // Planeta (agujero negro)
+      const blackHole=new THREE.Mesh(new THREE.SphereGeometry(30,64,64),new THREE.MeshStandardMaterial({color:0x000000,metalness:1,roughness:1}));
+      scene.add(blackHole);
+
+      // Texto 3D "te amo" encima del planeta
+      const fontLoader = new FontLoader();
+      fontLoader.load('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/fonts/helvetiker_regular.typeface.json', function(font) {
+        const textGeo = new TextGeometry('te amo', {
+          font: font,
+          size: 22,
+          height: 6,
+          curveSegments: 8,
+          bevelEnabled: true,
+          bevelThickness: 2,
+          bevelSize: 1.5,
+          bevelOffset: 0,
+          bevelSegments: 3
+        });
+        textGeo.center();
+        // Material blanco puro, siempre visible (no depende de la luz)
+        const textMat = new THREE.MeshBasicMaterial({
+          color: 0xffffff // blanco puro
+        });
+        const textMesh = new THREE.Mesh(textGeo, textMat);
+        textMesh.position.set(0, 180, 0);
+        textMesh.castShadow = false;
+        textMesh.receiveShadow = false;
+        scene.add(textMesh);
+      });
+      const diskGeometry=new THREE.RingGeometry(40,120,256);
+      const diskCanvas=document.createElement("canvas");
+      diskCanvas.width=1024;diskCanvas.height=1024;
+      const ctx=diskCanvas.getContext("2d");
+      const grad=ctx.createRadialGradient(512,512,100,512,512,500);
+      grad.addColorStop(0,"rgba(255,255,255,0.9)");
+      grad.addColorStop(0.3,"rgba(255,200,0,0.95)");
+      grad.addColorStop(0.6,"rgba(255,100,0,0.9)");
+      grad.addColorStop(1,"rgba(0,0,0,0)");
+      ctx.fillStyle=grad;ctx.fillRect(0,0,1024,1024);
+      const diskTexture=new THREE.CanvasTexture(diskCanvas);
+      const accretionDisk=new THREE.Mesh(diskGeometry,new THREE.MeshBasicMaterial({map:diskTexture,side:THREE.DoubleSide,transparent:true}));
+      accretionDisk.rotation.x=Math.PI/2;scene.add(accretionDisk);
+      const galaxyGroup=new THREE.Group();scene.add(galaxyGroup);
+      const phrases=["tu ternura🥰","tú color","Princesa","Mi amor❤️","tú estilo","Te amo ❤️","Me gustas 💕","Te quiero 🌹","tús ojos","Bonita😍","tús labios💋","Hermosa","AMOR❤️"];
+      for(let i=0;i<120;i++){
+        const textCanvas=document.createElement("canvas");
+        textCanvas.width=512;textCanvas.height=128;
+        const ctx=textCanvas.getContext("2d");
+        ctx.clearRect(0,0,512,128);
+        // Sombra de brillo exterior más intensa
+        ctx.save();
+        ctx.shadowColor = "#fff";
+        ctx.shadowBlur = 70;
+        ctx.font = "bold 64px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#ff6ec7";
+        ctx.globalAlpha = 0.85;
+        ctx.fillText(phrases[i%phrases.length],256,64);
+        ctx.restore();
+        // Letras rosas principales
+        ctx.save();
+        ctx.font = "bold 64px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#ff6ec7";
+        ctx.shadowColor = "#ffb6ff";
+        ctx.shadowBlur = 24;
+        ctx.globalAlpha = 1;
+        ctx.fillText(phrases[i%phrases.length],256,64);
+        ctx.restore();
+        // Halo extra
+        ctx.save();
+        ctx.globalAlpha = 0.18;
+        ctx.shadowColor = "#fff";
+        ctx.shadowBlur = 40;
+        ctx.font = "bold 64px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#fff";
+        ctx.fillText(phrases[i%phrases.length],256,64);
+        ctx.restore();
+        const texture=new THREE.CanvasTexture(textCanvas);
+        const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true}));
+        const angle=(i/120)*Math.PI*2;const dist=200+Math.random()*300;
+        sprite.position.set(Math.cos(angle)*dist,(Math.random()-0.5)*50,Math.sin(angle)*dist);
+        sprite.scale.set(60,16,1);
+        galaxyGroup.add(sprite);
+      }
+
+      // Agregar todas las imágenes como sprites al anillo
+      const imgUrls = [
+               "https://i.postimg.cc/J0Xzmgh5/IMG-20251003-WA0012.jpg",
+"https://i.postimg.cc/PJD5hcq0/IMG-20251003-WA0013.jpg",
+"https://i.postimg.cc/MHBpx4GF/IMG-20251003-WA0014.jpg",
+"https://i.postimg.cc/8cvzD3CX/IMG-20251003-WA0015.jpg",
+"https://i.postimg.cc/QC7dsPM4/IMG-20251003-WA0016.jpg",
+"https://i.postimg.cc/qqKv0Y71/IMG-20251003-WA0017.jpg",
+"https://i.postimg.cc/NFXjYV0p/IMG-20251003-WA0018.jpg",
+"https://i.postimg.cc/RhtZ980d/IMG-20251003-WA0019.jpg",
+"https://i.postimg.cc/1XF3PTzW/IMG-20251003-WA0020.jpg"
+      ];
+      imgUrls.forEach((url, idx) => {
+        const loader = new THREE.ImageLoader();
+        loader.load(url, (image) => {
+          // Crear canvas con marco rectangular vertical
+          const width = 140, height = 210; // Proporción vertical
+          const canvas = document.createElement('canvas');
+          canvas.width = width + 24; // margen para borde y sombra
+          canvas.height = height + 24;
+          const ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          // Sombra
+          ctx.save();
+          ctx.shadowColor = 'rgba(0,0,0,0.5)';
+          ctx.shadowBlur = 18;
+          // Borde blanco (rectángulo vertical)
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(12, 12, width, height);
+          ctx.restore();
+          // Imagen centrada y escalada dentro del rectángulo
+          ctx.save();
+          let iw = image.width, ih = image.height;
+          let scale = Math.min(width / iw, height / ih);
+          let w = iw * scale, h = ih * scale;
+          ctx.drawImage(image, 12 + (width - w) / 2, 12 + (height - h) / 2, w, h);
+          ctx.restore();
+          // Crear textura y sprite
+          const texture = new THREE.CanvasTexture(canvas);
+          const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true }));
+          const angle = (idx / imgUrls.length) * Math.PI * 2;
+          const dist = 350;
+          sprite.position.set(Math.cos(angle) * dist, 0, Math.sin(angle) * dist);
+          sprite.scale.set(50, 75, 1); // Proporción vertical
+          sprite.name = 'galaxy-img-sprite';
+          galaxyGroup.add(sprite);
+        });
+      });
+      // Partículas de estrellas animadas en la galaxia (más cantidad y movimiento más notorio)
+  const starCount = 4000;
+      const starGeometry = new THREE.BufferGeometry();
+      const starPositions = new Float32Array(starCount * 3);
+      const starColors = new Float32Array(starCount * 3);
+      const starSpeeds = new Float32Array(starCount * 3);
+      for(let i=0;i<starCount;i++){
+        const radius = 1200 * Math.pow(Math.random(), 0.7);
+        const theta = Math.random() * 2 * Math.PI;
+        const phi = Math.acos(2 * Math.random() - 1);
+        const x = radius * Math.sin(phi) * Math.cos(theta);
+        const y = radius * Math.sin(phi) * Math.sin(theta);
+        const z = radius * Math.cos(phi);
+        starPositions[i*3] = x;
+        starPositions[i*3+1] = y;
+        starPositions[i*3+2] = z;
+        // Predomina el rojo, solo una fracción será anaranjado
+        let r = 1.0, g = 0.07, b = 0.07;
+        const t = Math.random();
+        if (t > 0.78) { // Solo ~22% serán anaranjadas
+          g = 0.07 + (t-0.78)/(1-0.78) * (0.45 - 0.07); // g entre 0.07 y 0.45
+        }
+        starColors[i*3] = r;
+        starColors[i*3+1] = g;
+        starColors[i*3+2] = b;
+        // Velocidades más notorias
+        starSpeeds[i*3] = (Math.random()-0.5)*0.38;
+        starSpeeds[i*3+1] = (Math.random()-0.5)*0.38;
+        starSpeeds[i*3+2] = (Math.random()-0.5)*0.38;
+      }
+      starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+      starGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+      const starMaterial = new THREE.PointsMaterial({ vertexColors: true, size: 2.2, sizeAttenuation: true, transparent: true, opacity: 0.85 });
+      const stars = new THREE.Points(starGeometry, starMaterial);
+      scene.add(stars);
+      // Animación de parpadeo y movimiento de estrellas
+      function animateStars() {
+        const time = Date.now() * 0.002;
+        starMaterial.opacity = 0.7 + 0.3 * Math.abs(Math.sin(time * 0.7));
+        // Movimiento sutil
+        const pos = starGeometry.attributes.position.array;
+        for(let i=0;i<starCount;i++){
+          pos[i*3] += starSpeeds[i*3];
+          pos[i*3+1] += starSpeeds[i*3+1];
+          pos[i*3+2] += starSpeeds[i*3+2];
+          // Rebote suave para que no se vayan lejos
+          if(pos[i*3] > 1300 || pos[i*3] < -1300) starSpeeds[i*3] *= -1;
+          if(pos[i*3+1] > 1300 || pos[i*3+1] < -1300) starSpeeds[i*3+1] *= -1;
+          if(pos[i*3+2] > 1300 || pos[i*3+2] < -1300) starSpeeds[i*3+2] *= -1;
+        }
+        starGeometry.attributes.position.needsUpdate = true;
+      }
+      scene.add(new THREE.AmbientLight(0x8888aa,1));
+      camera.position.set(0,180,700);
+      const animate=()=>{
+        galaxyGroup.rotation.y+=0.001;
+        accretionDisk.rotation.z+=0.002;
+        animateStars();
+        controls.update();
+        renderer.render(scene,camera);
+        requestAnimationFrame(animate);
+      };
+      animate();
+    }
+
+    // ====== Lluvia CANVAS animada con frases, corazones y estrellas ======
+    function iniciarLluvia(){
+      // Frases románticas
+      const PHRASES = [
+        "Te amo", "Te quiero", "Eres mi vida", "Mi cielo",
+        "Eres mi todo", "Eres única", "Contigo siempre",
+        "Mi princesa", "Mi amor", "Eres especial",
+        "Solo tú", "Me encantas", "Te adoro ❤"
+      ];
+      // Imágenes para la lluvia
+      const lluviaImgs = [
+        "https://i.postimg.cc/J0Xzmgh5/IMG-20251003-WA0012.jpg",
+"https://i.postimg.cc/PJD5hcq0/IMG-20251003-WA0013.jpg",
+"https://i.postimg.cc/MHBpx4GF/IMG-20251003-WA0014.jpg",
+"https://i.postimg.cc/8cvzD3CX/IMG-20251003-WA0015.jpg",
+"https://i.postimg.cc/QC7dsPM4/IMG-20251003-WA0016.jpg",
+"https://i.postimg.cc/qqKv0Y71/IMG-20251003-WA0017.jpg",
+"https://i.postimg.cc/NFXjYV0p/IMG-20251003-WA0018.jpg",
+"https://i.postimg.cc/RhtZ980d/IMG-20251003-WA0019.jpg",
+"https://i.postimg.cc/1XF3PTzW/IMG-20251003-WA0020.jpg"
+      ];
+      // Cargar imágenes
+      const imgObjs = lluviaImgs.map(url => {
+        const img = new window.Image();
+        img.src = url;
+        return img;
+      });
+      // Crear canvas
+      let canvas = document.getElementById('lluvia-canvas');
+      if (!canvas) {
+        canvas = document.createElement('canvas');
+        canvas.id = 'lluvia-canvas';
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100vw';
+        canvas.style.height = '100vh';
+        canvas.style.zIndex = '1';
+        document.getElementById('love-section').appendChild(canvas);
+      }
+      const ctx = canvas.getContext('2d');
+      let w, h;
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      const texts = [];
+      const stars = [];
+      const hearts = [];
+      const imgDrops = [];
+      const MAX_ACTIVE_TEXTS = 7;
+      const SPAWN_INTERVAL = 1500;
+      let phraseIndex = 0;
+      let offsetX = 0, offsetY = 0, zoom = 1;
+
+      // Estrellas
+      function createStar() {
+        return {
+          x: Math.random() * w,
+          y: Math.random() * h,
+          z: Math.random() * 2000,
+          speed: 1 + Math.random()
+        };
+      }
+      // Corazones
+      function createHeart() {
+        return {
+          x: Math.random() * w,
+          y: Math.random() * h,
+          z: Math.random() * 1600 + 400,
+          speed: 1.5 + Math.random()
+        };
+      }
+      // Imágenes flotantes
+      function createImgDrop() {
+        // Tamaño rectangular más pequeño
+        return {
+          img: imgObjs[Math.floor(Math.random()*imgObjs.length)],
+          x: Math.random() * w,
+          y: Math.random() * h,
+          z: Math.random() * 1600 + 400,
+          speed: 1.2 + Math.random()*0.8,
+          width: (w < 600 ? 70 : 110),
+          height: (w < 600 ? 100 : 150)
+        };
+      }
+      // Textos en orden
+      function spawnTextInOrder(){
+        if (texts.length >= MAX_ACTIVE_TEXTS) return;
+        const phrase = PHRASES[phraseIndex % PHRASES.length];
+        phraseIndex++;
+        texts.push({
+          text: phrase,
+          x: Math.random() * w,
+          y: Math.random() * h,
+          z: Math.random() * 1600 + 300,
+          speed: 1.8 + Math.random() * 1.2,
+          baseFont: (w < 600 ? 40 : 60),
+          glow: 25
+        });
+      }
+      // Inicializar
+      for (let i = 0; i < 400; i++) stars.push(createStar());
+      for (let i = 0; i < 30; i++) hearts.push(createHeart());
+      for (let i = 0; i < 12; i++) imgDrops.push(createImgDrop());
+
+      // Animación
+      function animate() {
+        ctx.clearRect(0, 0, w, h);
+        // Estrellas
+        stars.forEach(s => {
+          s.z -= s.speed;
+          if (s.z <= 0) {
+            s.x = Math.random() * w;
+            s.y = Math.random() * h;
+            s.z = 2000;
+          }
+          const scale = 300 / s.z * zoom;
+          const x = (s.x - w/2 + offsetX) * scale + w/2;
+          const y = (s.y - h/2 + offsetY) * scale + h/2;
+          ctx.fillStyle = "#ff2222";
+          ctx.shadowColor = "#ff2222";
+          ctx.shadowBlur = 10;
+          ctx.fillRect(x, y, scale*1.7, scale*1.7);
+          ctx.shadowBlur = 0;
+        });
+        // Textos
+        texts.forEach((t, i) => {
+          t.z -= t.speed;
+          if (t.z <= 0) {
+            texts.splice(i,1);
+            return;
+          }
+          const scale = 250 / t.z * zoom;
+          const x = (t.x - w/2 + offsetX) * scale + w/2;
+          const y = (t.y - h/2 + offsetY) * scale + h/2;
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.scale(scale, scale);
+          ctx.font = `bold ${t.baseFont}px Arial`;
+          ctx.fillStyle = "#ff2222";
+          ctx.shadowColor = "#ff2222";
+          ctx.shadowBlur = t.glow + 10;
+          ctx.textAlign = "center";
+          ctx.fillText(t.text, 0, 0);
+          ctx.restore();
+        });
+        // Corazones
+        hearts.forEach(c => {
+          c.z -= c.speed;
+          if (c.z <= 0) {
+            c.x = Math.random() * w;
+            c.y = Math.random() * h;
+            c.z = 2000;
+          }
+          const scale = 220 / c.z * zoom;
+          const x = (c.x - w/2 + offsetX) * scale + w/2;
+          const y = (c.y - h/2 + offsetY) * scale + h/2;
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.scale(scale*2.2, scale*2.2);
+          ctx.font = "bold 32px Arial";
+          ctx.fillStyle = "#ff2222";
+          ctx.shadowColor = "#ff2222";
+          ctx.shadowBlur = 22;
+          ctx.textAlign = "center";
+          ctx.fillText("❤", 0, 0);
+          ctx.restore();
+        });
+        // Imágenes flotantes
+        imgDrops.forEach(imgDrop => {
+          imgDrop.z -= imgDrop.speed;
+          if (imgDrop.z <= 0) {
+            imgDrop.x = Math.random() * w;
+            imgDrop.y = Math.random() * h;
+            imgDrop.z = 2000;
+            imgDrop.img = imgObjs[Math.floor(Math.random()*imgObjs.length)];
+          }
+          const scale = 180 / imgDrop.z * zoom;
+          const x = (imgDrop.x - w/2 + offsetX) * scale + w/2;
+          const y = (imgDrop.y - h/2 + offsetY) * scale + h/2;
+          ctx.save();
+          ctx.globalAlpha = 0.97;
+          ctx.shadowColor = "#fff";
+          ctx.shadowBlur = 22;
+          // Dibuja la imagen rectangular más grande
+          ctx.drawImage(
+            imgDrop.img,
+            x - imgDrop.width*scale/2,
+            y - imgDrop.height*scale/2,
+            imgDrop.width*scale,
+            imgDrop.height*scale
+          );
+          ctx.restore();
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+      setInterval(spawnTextInOrder, SPAWN_INTERVAL);
+      // Controles de movimiento y zoom (touch y mouse)
+      let startX=0, startY=0, dragging=false, lastDist=0;
+      // Touch
+      canvas.addEventListener("touchstart", e=>{
+        if(e.touches.length===1){
+          const t=e.touches[0];
+          startX=t.clientX;
+          startY=t.clientY;
+          dragging=true;
+        }
+      });
+      canvas.addEventListener("touchmove", e=>{
+        if(e.touches.length===1 && dragging){
+          const t=e.touches[0];
+          offsetX += (t.clientX-startX)/zoom;
+          offsetY += (t.clientY-startY)/zoom;
+          startX=t.clientX;
+          startY=t.clientY;
+        } else if(e.touches.length===2){
+          const dx=e.touches[0].clientX-e.touches[1].clientX;
+          const dy=e.touches[0].clientY-e.touches[1].clientY;
+          const dist=Math.sqrt(dx*dx+dy*dy);
+          if(lastDist){
+            zoom *= dist/lastDist;
+            zoom=Math.min(Math.max(0.5,zoom),3);
+          }
+          lastDist=dist;
+        }
+      });
+      canvas.addEventListener("touchend", e=>{
+        dragging=false;
+        if(e.touches.length<2) lastDist=0;
+      });
+      // Mouse
+      let mouseDown=false, lastMouseX=0, lastMouseY=0;
+      canvas.addEventListener("mousedown", e=>{
+        mouseDown=true;
+        lastMouseX=e.clientX;
+        lastMouseY=e.clientY;
+      });
+      canvas.addEventListener("mousemove", e=>{
+        if(mouseDown){
+          offsetX += (e.clientX-lastMouseX)/zoom;
+          offsetY += (e.clientY-lastMouseY)/zoom;
+          lastMouseX=e.clientX;
+          lastMouseY=e.clientY;
+        }
+      });
+      window.addEventListener("mouseup", ()=>{mouseDown=false;});
+      // Zoom con rueda
+      canvas.addEventListener("wheel", e=>{
+        e.preventDefault();
+        const zoomAmount = e.deltaY > 0 ? 0.92 : 1.08;
+        // Zoom al punto del mouse
+        const mx = e.offsetX, my = e.offsetY;
+        const wx = (mx - w/2)/zoom - offsetX;
+        const wy = (my - h/2)/zoom - offsetY;
+        zoom *= zoomAmount;
+        zoom = Math.min(Math.max(0.5, zoom), 3);
+        // Mantener el punto bajo el mouse
+        offsetX = mx/zoom - w/2/zoom - wx;
+        offsetY = my/zoom - h/2/zoom - wy;
+      }, {passive:false});
+    }
+  </script>
+</body>
+</html>     
