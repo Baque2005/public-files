@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buenas noches mi señito 💙</title>
+<style>
+  body {
+    background-color: white;
+    text-align: center;
+    font-family: "Comic Sans MS", cursive;
+    color: #333;
+    overflow: hidden;
+  }
+
+  h1 {
+    font-size: 1.8em;
+    margin-top: 20px;
+    color: #4a4a4a;
+  }
+
+  img {
+    width: 250px;
+    margin-top: 15px;
+    border-radius: 20px;
+  }
+
+  .buttons {
+    margin-top: 25px;
+  }
+
+  button {
+    font-size: 1.1em;
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  #si {
+    background-color: #91d8f7;
+    color: white;
+  }
+
+  #si:hover {
+    background-color: #7ac4e8;
+  }
+
+  #no {
+    background-color: #f7a7a7;
+    color: white;
+  }
+
+  #no:hover {
+    background-color: #f28080;
+  }
+
+  #mensaje {
+    font-size: 1.2em;
+    color: #2b7bb9;
+    margin-top: 25px;
+    min-height: 60px;
+  }
+
+  .corazon {
+    position: absolute;
+    color: #87cefa;
+    font-size: 20px;
+    animation: subir 2s linear infinite;
+  }
+
+  @keyframes subir {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-150px); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+  <h1>Hola, buenas noches 🌛✨ señora mía, nos vemos en los sueños ksjsjs??</h1>
+  <img src="https://uploads.onecompiler.io/43yt5tbfe/43yvyc2ym/1000017748.gif" alt="Snoopy lindo">
+
+  <div class="buttons">
+    <button id="si">Si quiero</button>
+    <button id="no">No quiero</button>
+  </div>
+
+  <div id="mensaje"></div>
+
+  <script>
+    const siBtn = document.getElementById('si');
+    const noBtn = document.getElementById('no');
+    const mensajeDiv = document.getElementById('mensaje');
+
+    siBtn.addEventListener('click', () => {
+      mensajeDiv.innerHTML = "";
+      let texto = "Owww, mi señito, nos vemos en los sueños. Allí todo es más cute contigo🩵✨, te hago bullying y de paso nos besamos ¿verdad que sí? Kdjsks.";
+      let i = 0;
+
+      function escribir() {
+        if (i < texto.length) {
+          mensajeDiv.innerHTML += texto.charAt(i);
+          i++;
+          setTimeout(escribir, 40);
+        }
+      }
+      escribir();
+
+      for (let j = 0; j < 10; j++) {
+        crearCorazon();
+      }
+    });
+
+    noBtn.addEventListener('click', () => {
+      mensajeDiv.style.color = "#e74c3c";
+      mensajeDiv.innerHTML = "Viste por eso te dejan 😔🫵🏼 kdksks";
+    });
+
+    function crearCorazon() {
+      const corazon = document.createElement("div");
+      corazon.classList.add("corazon");
+      corazon.innerHTML = "🩵";
+      document.body.appendChild(corazon);
+
+      corazon.style.left = Math.random() * window.innerWidth + "px";
+      corazon.style.top = (window.innerHeight - 50) + "px";
+
+      setTimeout(() => {
+        corazon.remove();
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
