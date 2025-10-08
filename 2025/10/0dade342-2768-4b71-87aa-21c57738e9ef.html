@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Me caes mal...</title>
+<style>
+  body {
+    background-color: #000;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  h1 {
+    font-size: 30px;
+    margin-top: 25px;
+    color: #ffffff;
+    text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff;
+  }
+
+  img {
+    width: 250px;
+    height: auto;
+    margin: 15px 0 25px;
+    border-radius: 10px;
+  }
+
+  .buttons {
+    margin-top: 10px;
+  }
+
+  button {
+    font-size: 18px;
+    font-family: 'Poppins', sans-serif;
+    padding: 10px 25px;
+    margin: 10px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    color: white;
+  }
+
+  #yes {
+    background-color: #00bfff;
+    box-shadow: 0 0 10px #00bfff;
+  }
+
+  #yes:hover {
+    background-color: #33ccff;
+    box-shadow: 0 0 20px #33ccff;
+  }
+
+  #no {
+    background-color: #ff4d4d;
+    box-shadow: 0 0 10px #ff4d4d;
+  }
+
+  #no:hover {
+    background-color: #ff6666;
+    box-shadow: 0 0 20px #ff6666;
+  }
+
+  #response {
+    font-size: 22px;
+    margin-top: 35px;
+    font-weight: 500;
+    color: #fff;
+    transition: 0.5s;
+  }
+
+  .emoji {
+    font-size: 40px;
+    animation: float 1.3s ease-out;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(15px); opacity: 0; }
+    100% { transform: translateY(-25px); opacity: 1; }
+  }
+</style>
+</head>
+<body>
+  <h1>¿Sabías que me caes mal... muy, muy mal? 😤</h1>
+  <img src="https://uploads.onecompiler.io/43yt5tbfe/43yz9gdkp/624ee3dc22b4a0a19e2ac20f842171cc.gif" alt="gif cute">
+
+  <div class="buttons">
+    <button id="yes" onclick="responder('yes')">Sí</button>
+    <button id="no" onclick="responder('no')">No</button>
+  </div>
+
+  <div id="response"></div>
+
+  <script>
+    function responder(option) {
+      const response = document.getElementById("response");
+      response.innerHTML = "";
+      const emoji = document.createElement("div");
+      emoji.classList.add("emoji");
+
+      if (option === "yes") {
+        emoji.textContent = "🙈";
+        response.style.color = "#ffffff";
+        response.textContent = "Sí, me caes mal... ¿nos besamos!? 🙈";
+      } else {
+        emoji.textContent = "🫥💭";
+        response.style.color = "#ffffff";
+        response.textContent = "No? Entonces explícame por qué invades mi cabeza!? 🫥💭";
+      }
+
+      document.body.appendChild(emoji);
+      setTimeout(() => emoji.remove(), 1300);
+    }
+  </script>
+</body>
+</html>
