@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rompecabezas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: cursive, 'Comic Sans MS', sans-serif;
+            background: linear-gradient(135deg, #ea66ac 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 990px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .game-area {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .puzzle-container {
+            position: relative;
+            width: 400px;
+            height: 320px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+        }
+
+        .drop-zone {
+            position: absolute;
+            width: 100px;
+            height: 80px;
+            border: 2px dashed rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .drop-zone.highlight {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .puzzle-piece {
+            width: 100px;
+            height: 80px;
+            background-size: 400px 320px;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            cursor: grab;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            position: relative;
+            margin: 2px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            background-repeat: no-repeat;
+        }
+
+        .puzzle-piece:active {
+            cursor: grabbing;
+        }
+
+        .puzzle-piece:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            z-index: 10;
+        }
+
+        .puzzle-piece.dragging {
+            opacity: 0.7;
+            transform: scale(1.1);
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .puzzle-piece.placed {
+            cursor: default;
+            transform: none !important;
+            box-shadow: inset 0 0 15px rgba(76, 175, 80, 0.6);
+            border: 2px solid #4CAF50;
+            position: absolute;
+            margin: 0;
+        }
+
+        .pieces-container {
+            width: 480px;
+            min-height: 400px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            align-content: flex-start;
+            justify-content: center;
+        }
+
+        .shuffle-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #2a2a36, #2d2725);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .shuffle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .progress {
+            text-align: center;
+            color: white;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            width: 0%;
+            transition: width 0.6s ease;
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+
+        .love-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 1s ease;
+        }
+
+        .message-content {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: heartbeat 2s infinite;
+        }
+
+        .message-content h2 {
+            color: #c44569;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .message-content p {
+            color: #40407a;
+            font-size: 1.3em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .close-btn {
+            background: #c44569;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #40407a;
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes heartbeat {
+            0%, 50%, 100% { transform: scale(1); }
+            25%, 75% { transform: scale(1.02); }
+        }
+
+        .hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .heart {
+            position: absolute;
+            color: #ff6b9d;
+            font-size: 20px;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0% {
+                opacity: 1;
+                transform: translateY(0px);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px);
+            }
+        }
+
+        .instructions {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .puzzle-container {
+                width: 300px;
+                height: 240px;
+            }
+            
+            .pieces-container {
+                width: 300px;
+            }
+            
+            .puzzle-piece, .drop-zone {
+                width: 75px;
+                height: 60px;
+            }
+            
+            .puzzle-piece {
+                background-size: 300px 240px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .message-content {
+                padding: 30px;
+                margin: 20px;
+            }
+
+            .message-content h2 {
+                font-size: 2.2em;
+            }
+
+            .message-content p {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <audio id="bgmusic" src="https://raw.githubusercontent.com/badboy518/Musica/main/Manuel%20Medrano%20-%20Bajo%20El%20Agua%20(Letra%E2%A7%B8Lyrics).mp3" autoplay loop muted hidden></audio>
+<script>
+  window.addEventListener("click", () => {
+    const music = document.getElementById("bgmusic");
+    music.muted = false;
+    music.play();
+  });
+</script>
+    <div class="container">
+        <h1>?? T  y yo: el rompecabezas perfecto??</h1>
+        <div class="instructions">
+            ARMA EL ROMPECABESAS AMOR
+        </div>
+        <div class="progress">
+            <div>Vamos amor tu puedes: <span id="progress-text">0/16</span></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="puzzle-container" id="puzzle-container"></div>
+            <div class="pieces-container" id="pieces-container"></div>
+        </div>
+        
+        <button class="shuffle-btn" onclick="resetPuzzle()">?? Reinicia amor</button>
+    </div>
+
+    <div class="love-message" id="love-message">
+        <div class="message-content">
+            <div class="hearts" id="hearts"></div>
+            <h2>Lo Lograste Mi Amor 🩷</h2>
+            <p>
+                Pieza a pieza te voy descubriendo. 
+                cada rincón tuyo me hace sonreír.
+                Tus manos que buscan encajar las formas, 
+                tu mirada que me hace latir.
+                <br><br>
+                Y si falta una parte del rompecabezas,
+                cada fragmento tuyo ya está en mí.
+                Y mientras juntas colores y figuras,
+                yo voy armando mi amor por ti.
+                <br><br>
+                Te amo más de lo que las palabras pueden expresar!!.
+            </p>
+            <button class="close-btn" onclick="closeLoveMessage()">Cerrar ??</button>
+        </div>
+    </div>
+
+    <script>
+        let draggedPiece = null;
+        let correctPieces = 0;
+        const totalPieces = 16;
+        const puzzleImage = 'https://raw.githubusercontent.com/badboy518/Imagenes/main/imagen.jpg';
+
+        function initPuzzle() {
+            const puzzleContainer = document.getElementById('puzzle-container');
+            const piecesContainer = document.getElementById('pieces-container');
+            
+            puzzleContainer.innerHTML = '';
+            piecesContainer.innerHTML = '';
+            
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 4; col++) {
+                    const dropZone = document.createElement('div');
+                    dropZone.className = 'drop-zone';
+                    dropZone.style.left = (col * 100) + 'px';
+                    dropZone.style.top = (row * 80) + 'px';
+                    dropZone.dataset.row = row;
+                    dropZone.dataset.col = col;
+                    dropZone.textContent = `${row},${col}`;
+                    
+                    dropZone.addEventListener('dragover', handleDragOver);
+                    dropZone.addEventListener('drop', handleDrop);
+                    dropZone.addEventListener('dragenter', handleDragEnter);
+                    dropZone.addEventListener('dragleave', handleDragLeave);
+                    
+                    puzzleContainer.appendChild(dropZone);
+                }
+            }
+            
+            const pieces = [];
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 4; col++) {
+                    const piece = document.createElement('div');
+                    piece.className = 'puzzle-piece';
+                    piece.draggable = true;
+                    piece.dataset.row = row;
+                    piece.dataset.col = col;
+                    piece.style.backgroundImage = `url(${puzzleImage})`;
+                    piece.style.backgroundPosition = `-${col * 100}px -${row * 80}px`;
+                    
+                    piece.addEventListener('dragstart', handleDragStart);
+                    piece.addEventListener('dragend', handleDragEnd);
+                    
+                    pieces.push(piece);
+                }
+            }
+            
+            shuffleArray(pieces);
+            pieces.forEach(piece => piecesContainer.appendChild(piece));
+            
+            correctPieces = 0;
+            updateProgress();
+        }
+
+        function handleDragStart(e) {
+            draggedPiece = e.target;
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            draggedPiece = null;
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.classList.remove('highlight');
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            if (draggedPiece) {
+                e.target.classList.add('highlight');
+            }
+        }
+
+        function handleDragLeave(e) {
+            e.target.classList.remove('highlight');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.target.classList.remove('highlight');
+            
+            if (!draggedPiece) return;
+            
+            const dropZone = e.target;
+            const pieceRow = parseInt(draggedPiece.dataset.row);
+            const pieceCol = parseInt(draggedPiece.dataset.col);
+            const zoneRow = parseInt(dropZone.dataset.row);
+            const zoneCol = parseInt(dropZone.dataset.col);
+            
+            if (pieceRow === zoneRow && pieceCol === zoneCol) {
+                placePiece(draggedPiece, dropZone);
+            } else {
+                console.log('Posici n incorrecta');
+            }
+        }
+
+        function placePiece(piece, zone) {
+            const existingPiece = document.querySelector(`.puzzle-piece.placed[data-row="${zone.dataset.row}"][data-col="${zone.dataset.col}"]`);
+            if (existingPiece) {
+                returnToContainer(existingPiece);
+                correctPieces--;
+            }
+            
+            piece.classList.add('placed');
+            piece.style.position = 'absolute';
+            piece.style.left = zone.style.left;
+            piece.style.top = zone.style.top;
+            piece.style.margin = '0';
+            piece.draggable = false;
+            
+            document.getElementById('puzzle-container').appendChild(piece);
+            zone.style.display = 'none';
+            
+            correctPieces++;
+            updateProgress();
+            
+            if (correctPieces === totalPieces) {
+                setTimeout(() => {
+                    showLoveMessage();
+                }, 1000);
+            }
+        }
+
+        function returnToContainer(piece) {
+            piece.classList.remove('placed');
+            piece.style.position = 'relative';
+            piece.style.left = 'auto';
+            piece.style.top = 'auto';
+            piece.style.margin = '2px';
+            piece.draggable = true;
+            
+            const zone = document.querySelector(`[data-row="${piece.dataset.row}"][data-col="${piece.dataset.col}"].drop-zone`);
+            if (zone) {
+                zone.style.display = 'block';
+            }
+            
+            document.getElementById('pieces-container').appendChild(piece);
+        }
+
+        function updateProgress() {
+            const percentage = (correctPieces / totalPieces) * 100;
+            document.getElementById('progress-text').textContent = `${correctPieces}/${totalPieces}`;
+            document.getElementById('progress-fill').style.width = percentage + '%';
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function resetPuzzle() {
+            document.querySelectorAll('.puzzle-piece.placed').forEach(piece => {
+                returnToContainer(piece);
+            });
+            correctPieces = 0;
+            updateProgress();
+            
+            const pieces = Array.from(document.querySelectorAll('.puzzle-piece'));
+            shuffleArray(pieces);
+            const container = document.getElementById('pieces-container');
+            pieces.forEach(piece => container.appendChild(piece));
+        }
+
+        function showLoveMessage() {
+            document.getElementById('love-message').style.display = 'flex';
+            createHearts();
+        }
+
+
+        function closeLoveMessage() {
+            document.getElementById('love-message').style.display = 'none';
+            const heartsContainer = document.getElementById('hearts');
+            heartsContainer.innerHTML = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', initPuzzle);
+    </script>
+</body>
+</html>
