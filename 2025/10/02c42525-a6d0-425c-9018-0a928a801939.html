@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Album Animado de Fotos y Frases</title>
+    <style>
+        /* Creado por PixelHugs Personalizalo a tu gusto*/
+        body {
+            font-family: cursive , Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #100e0f;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ?? Fondo de nieve animada */
+        .snow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        .snow span {
+            position: absolute;
+            top: -10px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh);
+            }
+        }
+
+        h1, .collage-container, .frases-container {
+            position: relative;
+            z-index: 1; /* Encima de la nieve */
+        }
+
+        h1 {
+            color: #880c0c;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .collage-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .collage-item {
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            animation: moveCrazy 10s infinite alternate ease-in-out;
+        }
+
+        .collage-item:nth-child(2n) { animation-duration: 12s; }
+        .collage-item:nth-child(3n) { animation-duration: 15s; }
+        .collage-item:nth-child(4n) { animation-duration: 18s; }
+
+        .collage-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .collage-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        @keyframes moveCrazy {
+            0%   { transform: translate(0, 0) rotate(0deg); }
+            20%  { transform: translate(15px, -20px) rotate(3deg); }
+            40%  { transform: translate(-25px, 15px) rotate(-2deg); }
+            60%  { transform: translate(20px, 25px) rotate(4deg); }
+            80%  { transform: translate(-20px, -15px) rotate(-3deg); }
+            100% { transform: translate(10px, 10px) rotate(2deg); }
+        }
+
+        .frases-container {
+            margin-top: 50px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .frase {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #444;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 12px 25px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            animation: moveText 14s infinite alternate ease-in-out;
+        }
+
+        .frase:nth-child(2n) { animation-duration: 16s; color: #e63946; }
+        .frase:nth-child(3n) { animation-duration: 18s; color: #1d3557; }
+        .frase:nth-child(4n) { animation-duration: 20s; color: #2a9d8f; }
+
+        @keyframes moveText {
+            0%   { transform: translate(0,0) rotate(0deg); }
+            20%  { transform: translate(-80px, -150px) rotate(-5deg); }
+            40%  { transform: translate(100px, -250px) rotate(5deg); }
+            60%  { transform: translate(-120px, -200px) rotate(-8deg); }
+            80%  { transform: translate(90px, -220px) rotate(6deg); }
+            100% { transform: translate(-70px, -180px) rotate(4deg); }
+        }
+
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            padding-top: 60px; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <audio id="bgmusic" src="https://raw.githubusercontent.com/badboy518/Musica/main/Justin%20Bieber%20-%20Off%20My%20Face.mp3" autoplay loop muted hidden></audio>
+<script>
+  window.addEventListener("click", () => {
+    const music = document.getElementById("bgmusic");
+    music.muted = false;
+    music.play();
+  });
+</script>
+
+    <!-- ?? Fondo nieve -->
+    <div class="snow" id="snow"></div>
+
+    <h1>Mi  album de Recuerdos 💞</h1>
+
+    <div class="collage-container" id="collage-container"></div>
+    <!-- Cambia las frases a tu gusto personal-->
+
+    <div class="frases-container">
+        <div class="frase">?? Contigo todo es mejor</div>
+        <div class="frase">?? Eres mi raz n de sonre r</div>
+        <div class="frase">? Te amo m s cada d a</div>
+        <div class="frase">?? Nuestro amor es infinito</div>
+        <div class="frase">?? Eres mi sue o hecho realidad</div>
+        <div class="frase">?? Eres el cap tulo m s bonito de mi historia.</div>
+        <div class="frase">?? En tu abrazo encontr  mi hogar.</div>
+        <div class="frase">?? Eres mi casualidad m s bonita.</div>
+        <div class="frase">?? ?? Mi lugar favorito siempre ser  a tu lado.</div>
+        <div class="frase">?? Eres mi sue o hecho realidad</div>
+    </div>
+
+    <div id="modal" class="modal">
+        <span class="close-button">&times;</span>
+        <img class="modal-content" id="modal-image">
+    </div>
+    
+
+    <script>
+        // Generar copos de nieve din micamente
+        const snowContainer = document.getElementById("snow");
+
+        function createSnow() {
+            const snowflake = document.createElement("span");
+            let size = Math.random() * 14+ 8; // tama o entre 2px y 10px
+            let posX = Math.random() * window.innerWidth;
+            let duration = Math.random() * 5 + 5; 
+            let delay = Math.random() * 5;
+
+            snowflake.style.width = size + "px";
+            snowflake.style.height = size + "px";
+            snowflake.style.left = posX + "px";
+            snowflake.style.animationDuration = duration + "s";
+            snowflake.style.animationDelay = delay + "s";
+
+            snowContainer.appendChild(snowflake);
+
+            setTimeout(() => {
+                snowflake.remove();
+            }, (duration + delay) * 1000);
+        }
+
+        setInterval(createSnow, 200);
+
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const photoUrls = [
+                // Cambia las imagenes a tu gusto personal
+                 // Tus URLs de fotos aqu , las imagenes son de Pinterest 
+                'https://i.pinimg.com/736x/39/ca/f1/39caf105e4b7230c76edd8c66d86a8ed.jpg',
+                'https://i.pinimg.com/736x/60/77/f8/6077f8a9a2b80808be8181489c4c9a9e.jpg',
+                'https://i.pinimg.com/736x/fd/fc/57/fdfc57fdf12b8afa89a5abfc0d232115.jpg',
+                'https://i.pinimg.com/736x/2b/37/2c/2b372c55f71ff3cf9f78b0d95f697013.jpg',
+                'https://i.pinimg.com/1200x/00/e5/16/00e51643e142e887e86632183ec62cac.jpg',
+                'https://i.pinimg.com/736x/90/a9/7d/90a97dc0277013ddf19b6fe5867cc80a.jpg',
+                'https://i.pinimg.com/736x/5a/86/ec/5a86ec04da148ec52321f6e519d2a525.jpg',
+                'https://i.pinimg.com/736x/e9/3b/4b/e93b4b260a2b86a39c06e70e79499c5f.jpg',
+                'https://i.pinimg.com/736x/b4/53/0c/b4530c85bb0254bc57674b266c5a977c.jpg',
+                'https://i.pinimg.com/736x/dc/7f/ed/dc7fed7ff16f1c91166703ec437e95ae.jpg',
+                'https://i.pinimg.com/736x/07/1b/b2/071bb2d83ab37178d47456328845fc78.jpg',
+                'https://i.pinimg.com/1200x/7e/22/0f/7e220fc36b8d24ae05f4c1768b4103b2.jpg',
+                'https://i.pinimg.com/736x/76/f4/c0/76f4c0950fd35b48abead0b4522ff80f.jpg',
+                'https://i.pinimg.com/736x/02/4c/7d/024c7d08a0e325bdc4e31f7504efc073.jpg'
+            ];
+
+            const collageContainer = document.getElementById('collage-container');
+            const modal = document.getElementById('modal');
+            const modalImage = document.getElementById('modal-image');
+            const closeButton = document.querySelector('.close-button');
+
+            function createCollage() {
+                photoUrls.forEach(url => {
+                    const collageItem = document.createElement('div');
+                    collageItem.classList.add('collage-item');
+
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = 'Foto del collage';
+
+                    collageItem.appendChild(img);
+                    collageContainer.appendChild(collageItem);
+
+                    collageItem.addEventListener('click', () => {
+                        modal.style.display = 'block';
+                        modalImage.src = url;
+                    });
+                });
+            }
+
+            closeButton.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            createCollage();
+        });
+    </script>
+</body>
+</html>
