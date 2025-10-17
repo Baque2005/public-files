@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Hello Kathy 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@700&family=Roboto+Mono&family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Dancing Script', cursive;
+      background: url('https://i.postimg.cc/yY4MJzKg/1ed41955d579452f11a2e7f5a9267246.jpg') center/cover no-repeat fixed;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      color: white;
+      touch-action: manipulation;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: inherit;
+      filter: blur(4px) brightness(0.85);
+      z-index: -2;
+    }
+
+    /* Menú hamburguesa */
+    #menu-toggle {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      width: 36px;
+      height: 36px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 30;
+      backdrop-filter: blur(3px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    #menu-toggle span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: white;
+      margin: 2px 0;
+      border-radius: 1px;
+    }
+
+    /* Panel de configuración */
+    #config-panel {
+      position: absolute;
+      top: 60px;
+      left: 15px;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(6px);
+      border-radius: 12px;
+      padding: 14px;
+      width: 220px;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 29;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.85rem;
+      color: white;
+    }
+
+    .config-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .config-item label {
+      flex: 1;
+      margin-right: 8px;
+    }
+
+    .config-item select, .config-item input {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 4px 6px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.85rem;
+    }
+
+    /* WhatsApp en el menú */
+    .whatsapp-link {
+      text-align: center;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .whatsapp-link a {
+      display: block;
+      color: #4ade80;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.9rem;
+      text-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
+    }
+
+    .whatsapp-link a:hover {
+      text-shadow: 0 0 10px rgba(74, 222, 128, 0.9);
+    }
+
+    /* Botón de sonido */
+    #sound-toggle {
+      position: absolute;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.45);
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-family: 'Pacifico', cursive;
+      font-size: 0.95rem;
+      cursor: pointer;
+      z-index: 25;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 6px rgba(255, 105, 180, 0.5);
+    }
+
+    /* Créditos más pequeños */
+    .credits {
+      position: absolute;
+      bottom: 70px;
+      width: 100%;
+      text-align: center;
+      font-family: 'Pacifico', cursive;
+      font-size: 0.9rem;
+      color: white;
+      text-shadow:
+        0 0 3px #ff66ff,
+        0 0 6px #ff66ff;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    /* Resto del estilo original */
+    .message-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(4px);
+      border-radius: 16px;
+      padding: 18px 16px;
+      text-align: center;
+      box-shadow:
+        0 0 10px rgba(255, 105, 180, 0.6),
+        0 0 20px rgba(255, 105, 180, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      z-index: 10;
+      max-width: 85%;
+      width: 80vw;
+    }
+
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-shadow:
+        0 0 5px #ffffff,
+        0 0 10px #ffffff,
+        0 0 15px #ffffff;
+      color: #fff;
+      font-family: 'Pacifico', cursive;
+      letter-spacing: 0.5px;
+    }
+
+    .message {
+      font-size: 1.2rem;
+      line-height: 1.5;
+      color: #fff;
+      text-shadow: 0 0 4px rgba(255, 255, 255, 0.85);
+    }
+
+    .corner-deco {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 60px;
+      height: auto;
+      z-index: 11;
+      pointer-events: none;
+      animation: bounceCorner 2.2s ease-in-out infinite;
+    }
+
+    @keyframes bounceCorner {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    #follower-astronaut {
+      position: absolute;
+      width: 70px;
+      height: auto;
+      pointer-events: none;
+      z-index: 15;
+      animation: floatSpace 3s ease-in-out infinite;
+    }
+
+    @keyframes floatSpace {
+      0%, 100% { transform: translateY(0) rotate(0.2deg); }
+      50% { transform: translateY(-5px) rotate(-0.2deg); }
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 4;
+      opacity: 1;
+      background-color: white;
+      box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.8);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Menú hamburguesa -->
+  <div id="menu-toggle">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <!-- Panel de configuración + WhatsApp -->
+  <div id="config-panel">
+    <div class="config-item">
+      <label>Partículas:</label>
+      <select id="particle-mode">
+        <option value="normal">Normal</option>
+        <option value="more">Más</option>
+        <option value="max">Máximas</option>
+      </select>
+    </div>
+    <div class="config-item">
+      <label>Fuente:</label>
+      <select id="font-select">
+        <option value="'Dancing Script', cursive">Dancing Script</option>
+        <option value="'Pacifico', cursive">Pacifico</option>
+        <option value="'Orbitron', sans-serif">Orbitron</option>
+        <option value="'Roboto Mono', monospace">Roboto Mono</option>
+      </select>
+    </div>
+    <div class="config-item">
+      <label>Tamaño:</label>
+      <input type="range" id="font-size" min="1" max="2" step="0.1" value="1.2">
+    </div>
+    <div class="config-item">
+      <label>Velocidad:</label>
+      <input type="range" id="follow-speed" min="0.02" max="0.2" step="0.02" value="0.08">
+    </div>
+    <!-- WhatsApp directo -->
+    <div class="whatsapp-link">
+      <a href="https://wa.me/593930569195" target="_blank" rel="noopener">💬 Personalizar con AnthZz</a>
+    </div>
+  </div>
+
+  <!-- Botón de sonido -->
+  <button id="sound-toggle">Activar sonido</button>
+
+  <!-- Mensaje principal -->
+  <div class="message-box">
+    <div class="title">Te amo</div>
+    <div class="message">Te amo con el alma, mi reina. No hay distancia ni tiempo que cambie lo que siento por ti, porque tú eres mi destino y mi razón para seguir adelante 💕🌙</div>
+    <img src="https://i.postimg.cc/7P2vYZFL/1760657847691-removebg-preview.png" class="corner-deco" alt="Hello Kathy">
+  </div>
+
+  <!-- Créditos -->
+  <div class="credits">By AnthZz Berrocal BerMatMods</div>
+
+  <img id="follower-astronaut" src="https://i.postimg.cc/vHFJ1dyW/1760657793625-removebg-preview.png" alt="Hello Kathy Seguidora">
+
+  <!-- Audios -->
+  <audio id="bg-music" src="https://files.catbox.moe/012lzs.mp3" preload="auto"></audio>
+  <audio id="click-sound" src="https://files.catbox.moe/deprpa.mp3" preload="auto"></audio>
+
+  <script>
+    // --- Lógica principal (igual que antes, solo se añade el cierre del menú al hacer clic en WhatsApp) ---
+    const bgMusic = document.getElementById('bg-music');
+    const clickSound = document.getElementById('click-sound');
+    const soundToggle = document.getElementById('sound-toggle');
+    const menuToggle = document.getElementById('menu-toggle');
+    const configPanel = document.getElementById('config-panel');
+
+    let musicPlayed = false;
+    let isMuted = false;
+
+    function playSounds() {
+      if (!musicPlayed) {
+        setTimeout(() => {
+          bgMusic.volume = 0.6;
+          bgMusic.loop = true;
+          bgMusic.play().catch(e => console.log("Reproducción bloqueada:", e));
+        }, 100);
+        musicPlayed = true;
+        soundToggle.textContent = "Desactivar sonido";
+      }
+
+      if (!isMuted) {
+        clickSound.currentTime = 0;
+        clickSound.volume = 0.7;
+        clickSound.play().catch(e => console.log("Error clic:", e));
+      }
+    }
+
+    function toggleSound() {
+      isMuted = !isMuted;
+      soundToggle.textContent = isMuted ? "Activar sonido" : "Desactivar sonido";
+      bgMusic.muted = isMuted;
+    }
+
+    document.body.addEventListener('click', playSounds);
+    document.body.addEventListener('touchstart', playSounds, { passive: true });
+
+    soundToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleSound();
+    });
+
+    menuToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      configPanel.style.display = configPanel.style.display === 'flex' ? 'none' : 'flex';
+    });
+
+    document.body.addEventListener('click', () => {
+      if (configPanel.style.display === 'flex') {
+        configPanel.style.display = 'none';
+      }
+    });
+
+    // Configuraciones
+    let particleMode = 'normal';
+    let followSpeed = 0.08;
+    let currentFont = "'Dancing Script', cursive";
+    let currentFontSize = 1.2;
+
+    document.getElementById('particle-mode').addEventListener('change', (e) => {
+      particleMode = e.target.value;
+    });
+
+    document.getElementById('font-select').addEventListener('change', (e) => {
+      currentFont = e.target.value;
+      document.body.style.fontFamily = currentFont;
+      document.querySelector('.message').style.fontFamily = currentFont;
+    });
+
+    document.getElementById('font-size').addEventListener('input', (e) => {
+      currentFontSize = parseFloat(e.target.value);
+      document.querySelector('.message').style.fontSize = (currentFontSize + 0.8) + 'rem';
+    });
+
+    document.getElementById('follow-speed').addEventListener('input', (e) => {
+      followSpeed = parseFloat(e.target.value);
+    });
+
+    // === Astronauta y partículas (sin cambios) ===
+    let targetX = 50;
+    let targetY = 50;
+    let lastX = 40;
+    let lastY = 60;
+
+    const follower = document.getElementById('follower-astronaut');
+    follower.style.left = lastX + 'vw';
+    follower.style.top = lastY + 'vh';
+
+    function updateTarget(e, isTouch = false) {
+      const rect = document.body.getBoundingClientRect();
+      if (isTouch && e.touches && e.touches[0]) {
+        const touch = e.touches[0];
+        targetX = ((touch.clientX - rect.left) / rect.width) * 100;
+        targetY = ((touch.clientY - rect.top) / rect.height) * 100;
+      } else {
+        targetX = ((e.clientX - rect.left) / rect.width) * 100;
+        targetY = ((e.clientY - rect.top) / rect.height) * 100;
+      }
+    }
+
+    document.body.addEventListener('mousemove', (e) => updateTarget(e, false));
+    document.body.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      updateTarget(e, true);
+    }, { passive: false });
+
+    function createParticles(dx, dy) {
+      let count = 3;
+      if (particleMode === 'more') count = 6;
+      if (particleMode === 'max') count = 10;
+
+      for (let i = 0; i < count; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+
+        const rect = follower.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const size = 6 + Math.random() * 6;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+
+        document.body.appendChild(particle);
+
+        const angle = Math.atan2(dy, dx) + Math.PI;
+        const speed = 1 + Math.random() * 2;
+        const vx = Math.cos(angle) * speed;
+        const vy = Math.sin(angle) * speed;
+
+        let x = centerX;
+        let y = centerY;
+        let opacity = 1;
+        let life = 30 + Math.random() * 10;
+
+        function animateParticle() {
+          if (life <= 0 || opacity <= 0) {
+            particle.remove();
+            return;
+          }
+
+          x += vx + (Math.random() - 0.5) * 1.2;
+          y += vy + (Math.random() - 0.5) * 1.2;
+          opacity -= 0.03;
+          life--;
+
+          particle.style.left = x + 'px';
+          particle.style.top = y + 'px';
+          particle.style.opacity = opacity;
+
+          requestAnimationFrame(animateParticle);
+        }
+
+        animateParticle();
+      }
+    }
+
+    function animate() {
+      const dx = targetX - lastX;
+      const dy = targetY - lastY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist > 0.5) {
+        createParticles(dx, dy);
+      }
+
+      lastX += dx * followSpeed;
+      lastY += dy * followSpeed;
+
+      follower.style.left = lastX + 'vw';
+      follower.style.top = lastY + 'vh';
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
