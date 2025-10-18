@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Quieres ser?</title>
+    <style>
+    html {
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+    *, *:before, *:after {
+        box-sizing: inherit;
+    }
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        background-color: #ffffff;
+    }
+    .container {
+        text-align: center;
+        width: 100%;
+        max-width: 500px;
+        padding: 2vw;
+        margin: auto;
+    }
+    #gifContainerImg {
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+        border-radius: 12px;
+    }
+    #gifContainer img,
+    #happyGifContainer img,
+    #happyGifContainer2 img,
+    #happyGifContainer3 img,
+    #happyGifContainer4 img,
+    #sadGifContainer img,
+    #sadGifContainer1 img,
+    #sadGifContainer2 img {
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+        border-radius: 12px;
+    }
+    button {
+        padding: 0.7em 1.5em;
+        font-size: 1em;
+        margin: 0.5em;
+        cursor: pointer;
+        border-radius: 10px;
+        border: 2px solid #FFC0CB;
+        transition: all 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    #siBtn {
+        background-color: #009705;
+        color: white;
+    }
+    #noBtn {
+        background-color: #FF5733;
+        color: white;
+    }
+    #noBtn span {
+        font-size: 1.1em;
+        color: #fcf4f4;
+    }
+    #siBtn:hover {
+        background-color: #053a03;
+    }
+    #noBtn:hover {
+        background-color: #641e0d;
+    }
+    .bg-green {
+        background-color: #ffffff;
+    }
+    #messageContainer {
+        font-size: 2em;
+        color: #FF0000;
+        font-family: 'Segoe UI', 'Arial', sans-serif;
+        text-shadow: 2px 2px 4px #000;
+        animation: pulse 0.5s infinite alternate;
+        margin-top: 1em;
+        word-break: break-word;
+    }
+    #videoContainer video {
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+        border-radius: 12px;
+    }
+    h1#question {
+        font-size: 2em;
+        margin: 1em 0 0.5em 0;
+        word-break: break-word;
+    }
+    @keyframes pulse {
+        from {
+            transform: scale(1);
+        }
+        to {
+            transform: scale(1.15);
+        }
+    }
+    /* Media queries para responsividad */
+    @media (max-width: 600px) {
+        .container {
+            max-width: 98vw;
+            padding: 2vw;
+        }
+        #gifContainerImg,
+        #gifContainer img,
+        #happyGifContainer img,
+        #happyGifContainer2 img,
+        #happyGifContainer3 img,
+        #happyGifContainer4 img,
+        #sadGifContainer img,
+        #sadGifContainer1 img,
+        #sadGifContainer2 img,
+        #videoContainer video {
+            max-width: 98vw;
+            border-radius: 8px;
+        }
+        h1#question {
+            font-size: 1.3em;
+        }
+        #messageContainer {
+            font-size: 1.2em;
+        }
+        button {
+            font-size: 1em;
+            padding: 0.7em 1.2em;
+        }
+    }
+    @media (max-width: 400px) {
+        .container {
+            padding: 1vw;
+        }
+        h1#question {
+            font-size: 1em;
+        }
+        #messageContainer {
+            font-size: 1em;
+        }
+        button {
+            font-size: 0.9em;
+            padding: 0.5em 1em;
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div id="gifContainer">
+            <img id="gifContainerImg" src="https://i.pinimg.com/originals/e8/93/11/e8931117b8f5ed35702a32d18eca4fb1.gif" alt="Ositos Iniciales" ">
+        </div>
+        <div id="happyGifContainer" style="display: none;">
+            <img src="https://github.com/Ronald1234-2/musica/blob/main/mocha5final.gif?raw=true" alt="Ositos Felices" style="width: 100%; height: 100%;">
+        </div>
+        <div id="happyGifContainer2" style="display: none;">
+            <img src="https://github.com/Ronald1234-2/musica/blob/main/mocha6final.gif?raw=true" alt="Ositos Felices" style="width: 100%; height: 100%;">
+        </div>
+        <div id="happyGifContainer3" style="display: none;">
+            <img src="https://github.com/Ronald1234-2/musica/blob/main/mocha7final.gif?raw=true" alt="Ositos Felices" style="width: 100%; height: 100%;">
+        </div>
+        <div id="happyGifContainer4" style="display: none;">
+            <img src="https://github.com/Ronald1234-2/musica/blob/main/mocha9final.gif?raw=true" alt="Ositos Felices" style="width: 100%; height: 100%;">
+        </div>
+        <div id="sadGifContainer" style="display: none;">
+            <img src="https://i.pinimg.com/736x/a8/f6/27/a8f6275b8e2fa68c929aafd02c102d12.jpg" alt="Osito Triste" style="width: 80%; height: 80%;">
+        </div>
+        <div id="sadGifContainer1" style="display: none;">
+            <img src="https://i.pinimg.com/736x/f0/8b/3b/f08b3b065efd0a6cc0f660099f864e17.jpg" alt="Osito Triste" style="width: 80%; height: 80%;">
+        </div>
+        <div id="sadGifContainer2" style="display: none;">
+            <img src="https://i.pinimg.com/1200x/28/77/c0/2877c037ed4d678dc0b1fe703fb38062.jpg" alt="Osito Triste" style="width: 80%; height: 80%;">
+        </div>
+        
+        <h1 id="question">¿Me perdonas?</h1>
+        <div id="messageContainer" style="display: none;"></div>
+
+        <button id="siBtn">Sí</button>
+        <button id="noBtn">No</button>
+
+        <div id="videoContainer" style="display: none;">
+            <video id="forgiveVideo" src="https://v1.pinimg.com/videos/mc/720p/69/98/99/69989960ba58cfbbc715154047e35ad9.mp4" autoplay loop muted style="width: 100%; height: 100%;"></video>
+        </div>
+        
+    </div>
+    <script>
+    // Script solicitado
+    let noButtonClickCount = 0; // Contador para el botón "No"
+    let noButtonState = 0; // Estado actual del botón "No"
+
+    // Mostrar el gif inicial
+    document.getElementById('gifContainer').style.display = 'block';
+
+    document.getElementById('siBtn').addEventListener('click', function() {
+        // Ocultar todos los gifs
+        document.getElementById('sadGifContainer').style.display = 'none';
+        document.getElementById('sadGifContainer1').style.display = 'none';
+        document.getElementById('sadGifContainer2').style.display = 'none';
+        document.getElementById('gifContainer').style.display = 'none';
+        document.getElementById('happyGifContainer').style.display = 'none';
+        document.getElementById('happyGifContainer2').style.display = 'none';
+        document.getElementById('happyGifContainer3').style.display = 'none';
+        document.getElementById('happyGifContainer4').style.display = 'none';
+
+        // Mostrar solo el video
+        document.getElementById('videoContainer').style.display = 'block';
+
+        // Ocultar los botones y pregunta
+        document.getElementById('question').style.display = 'none';
+        document.getElementById('siBtn').style.display = 'none';
+        document.getElementById('noBtn').style.display = 'none';
+
+        // Mostrar el mensaje
+        document.getElementById('messageContainer').style.display = 'block';
+        document.getElementById('messageContainer').innerHTML = '¡Gracias por perdonarme! Prometo mejorar 💖';
+    });
+
+    document.getElementById('noBtn').addEventListener('click', function() {
+        switch (noButtonState) {
+            case 0:
+                // Primera vez haciendo clic en "No"
+                document.getElementById('happyGifContainer').style.display = 'none';
+                document.getElementById('gifContainer').style.display = 'none';
+                document.getElementById('sadGifContainer').style.display = 'block';
+
+                // Modificar el botón "No"
+                document.getElementById('noBtn').innerHTML = '¿Seguro que no me perdonas?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '40px';
+                document.getElementById('siBtn').style.padding = '20px 40px';
+                noButtonClickCount++;
+                noButtonState++;
+                break;
+
+            case 1:
+                // Segunda vez haciendo clic en "No"
+                document.getElementById('noBtn').innerHTML = '¿De verdad no puedes perdonarme?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('sadGifContainer').style.display = 'none';
+                document.getElementById('sadGifContainer2').style.display = 'block';
+                document.getElementById('siBtn').style.fontSize = '50px';
+                document.getElementById('siBtn').style.padding = '30px 50px';
+                noButtonState++;
+                break;
+
+            case 2:
+                document.getElementById('noBtn').innerHTML = '¿Tan grave fue?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('sadGifContainer').style.display = 'none';
+                document.getElementById('sadGifContainer2').style.display = 'none';
+                document.getElementById('sadGifContainer1').style.display = 'block';
+                document.getElementById('siBtn').style.fontSize = '60px';
+                document.getElementById('siBtn').style.padding = '40px 60px';
+                noButtonState++;
+                break;
+
+            case 3:
+                document.getElementById('noBtn').innerHTML = '¿No hay esperanza para mí?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '70px';
+                document.getElementById('siBtn').style.padding = '50px 70px';
+                noButtonState++;
+                break;
+            case 4:
+                document.getElementById('noBtn').innerHTML = 'Por favor, piénsalo otra vez';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '80px';
+                document.getElementById('siBtn').style.padding = '60px 80px';
+                noButtonState++;
+                break;
+            case 5:
+                document.getElementById('noBtn').innerHTML = 'Me haría muy feliz tu perdón';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '90px';
+                document.getElementById('siBtn').style.padding = '70px 90px';
+                noButtonState++;
+                break;
+            case 6:
+                document.getElementById('noBtn').innerHTML = 'Si no me perdonas estaré muy triste';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '100px';
+                document.getElementById('siBtn').style.padding = '80px 100px';
+                noButtonState++;
+                break;
+            case 7:
+                document.getElementById('noBtn').innerHTML = 'Mi corazón está dolido';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '120px';
+                document.getElementById('siBtn').style.padding = '90px 120px';
+                noButtonState++;
+                break;
+            case 8:
+                document.getElementById('noBtn').innerHTML = 'Por favor, dame otra oportunidad';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '140px';
+                document.getElementById('siBtn').style.padding = '100px 140px';
+                noButtonState++;
+                break;
+
+            case 9:
+                document.getElementById('noBtn').innerHTML = 'No quiero perderte';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '160px';
+                document.getElementById('siBtn').style.padding = '110px 160px';
+                noButtonState++;
+                break;
+
+            case 10:
+                document.getElementById('noBtn').innerHTML = 'Vale, dejaré de insistir...';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '180px';
+                document.getElementById('siBtn').style.padding = '120px 180px';
+                noButtonState++;
+                break;
+            case 11:
+                document.getElementById('noBtn').innerHTML = 'Es broma, ¡por favor perdóname!';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '200px';
+                document.getElementById('siBtn').style.padding = '130px 200px';
+                noButtonState++;
+                break;
+
+            case 12:
+                document.getElementById('noBtn').innerHTML = 'Me siento muy mal por lo que hice';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '220px';
+                document.getElementById('siBtn').style.padding = '140px 220px';
+                noButtonState++;
+                break;
+
+            case 13:
+                document.getElementById('noBtn').innerHTML = '¿No hay forma de arreglarlo?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '240px';
+                document.getElementById('siBtn').style.padding = '150px 240px';
+                noButtonState++;
+                break;
+
+            case 14:
+                document.getElementById('noBtn').innerHTML = 'Por favor';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '260px';
+                document.getElementById('siBtn').style.padding = '160px 260px';
+                noButtonState++;
+                break;
+
+            case 15:
+                document.getElementById('noBtn').innerHTML = '¡Anda, perdónameeeeeeeee!';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '280px';
+                document.getElementById('siBtn').style.padding = '170px 280px';
+                noButtonState++;
+                break;
+
+            case 16:
+                document.getElementById('noBtn').innerHTML = 'Por favooooooor, perdóname';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('sadGifContainer').style.display = 'none';
+                document.getElementById('sadGifContainer1').style.display = 'none';
+                document.getElementById('sadGifContainer2').style.display = 'none';
+                document.getElementById('gifContainer').style.display = 'block';
+                document.getElementById('happyGifContainer').style.display = 'none';
+                // Vuelve al estado 0
+                noButtonState = 0;
+                break;
+
+            default:
+                // Por si acaso, maneja cualquier otro caso aquí
+                break;
+        }
+    });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
+  
