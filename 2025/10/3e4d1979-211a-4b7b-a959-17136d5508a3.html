@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Quieres ser mi enamorada?</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Arial', sans-serif; }
+    body {
+      margin: 0; padding: 0;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      min-height: 100vh; overflow: hidden;
+      background: url('https://i.pinimg.com/originals/28/be/58/28be5838642abc57d75b2c57a756c14a.gif') no-repeat center center fixed;
+      background-size: cover;
+    }
+    /* Mensaje superior */
+    #topMessage {
+      margin-top: 20px;
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 8px rgba(0,0,0,0.6);
+      display: none;
+    }
+    .container {
+      background: rgba(255,255,255,0.85);
+      border: 3px solid #6a5acd;
+      border-radius: 24px;
+      padding: 38px 28px 32px 28px;
+      width: 95%; max-width: 420px;
+      text-align: center;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 128, 0.2);
+      backdrop-filter: blur(2px);
+      position: relative; z-index: 1;
+      margin-top: 20px;
+    }
+    h1 {
+      color: #483d8b; font-size: 2.2em; font-weight: 700; margin-bottom: 18px;
+      text-shadow: 0 2px 12px #fff8;
+    }
+    p { color: #333; font-size: 1.1em; margin-bottom: 28px; line-height: 1.6; }
+    .buttons {
+      display: flex; justify-content: center; gap: 24px; margin-top: 24px; position: relative;
+    }
+    #yesBtn, #noBtn {
+      padding: 12px 32px; font-size: 1.15em; border: none; border-radius: 18px;
+      cursor: pointer; font-weight: bold; width: 120px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    #yesBtn {
+      background: linear-gradient(90deg,#6a5acd 0%,#483d8b 100%); color: #fff;
+      box-shadow: 0 2px 12px rgba(72,61,139,0.4);
+    }
+    #yesBtn:hover {
+      background: linear-gradient(90deg,#483d8b 0%,#6a5acd 100%);
+      transform: scale(1.07);
+    }
+    #noBtn {
+      background: linear-gradient(90deg,#1e90ff 0%,#4169e1 100%);
+      color: white; box-shadow: 0 2px 12px rgba(30,144,255,0.4);
+      user-select: none; pointer-events: auto; position: relative;
+    }
+    #noBtn:hover {
+      background: linear-gradient(90deg,#4169e1 0%,#1e90ff 100%);
+    }
+    .bubble {
+      position: absolute; background: #fff; color: #333;
+      padding: 10px 16px; border-radius: 18px; font-size: 1.1em; font-weight: 500;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25); white-space: nowrap;
+      animation: floatUp 2.5s ease forwards; z-index: 1000; pointer-events: none;
+    }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translate(-50%, 0); }
+      80% { opacity: 1; transform: translate(-50%, -60px); }
+      100% { opacity: 0; transform: translate(-50%, -80px); }
+    }
+    #noMessage {
+      margin-top: 18px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: black; /* cambiado a negro */
+      text-shadow: none;
+      display: none; /* oculto al inicio */
+    }
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(106, 90, 205, 0.55); display: none; justify-content: center; align-items: center;
+      z-index: 1000; backdrop-filter: blur(6px); animation: fadeIn 0.4s;
+    }
+    .modal-content {
+      background: #fff; border: 3px solid #6a5acd; border-radius: 28px;
+      padding: 38px 32px 32px 32px; width: 95%; max-width: 420px;
+      text-align: center; box-shadow: 0 8px 32px 0 rgba(106,90,205,0.3);
+      font-family: 'Segoe UI', Arial, sans-serif; position: relative;
+    }
+    #backArrow {
+      position: absolute; top: 18px; left: 18px; font-size: 28px; color: #6a5acd;
+      cursor: pointer; text-decoration: none; background: #fff; border-radius: 50%;
+      border: 1px solid #6a5acd; padding: 5px;
+    }
+    #respuesta {
+      font-size: 1.5em; color: #483d8b; margin-bottom: 25px; font-weight: bold;
+    }
+    .rosa-final { width: 160px; margin: 0 auto; display: block; border-radius: 18px;
+      box-shadow: 0 2px 18px rgba(72,61,139,0.3);
+    }
+    /* Modal estilo Android */
+    .android-modal .modal-content {
+      border-radius: 12px;
+      background: #1a1a1a;
+      color: #fff;
+      font-family: 'Roboto', sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    .android-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 16px;
+      color: #ff5252;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+  </style>
+</head>
+<body>
+
+  <div id="topMessage"></div>
+
+  <div class="container" id="panel">
+    <h1>¿Quieres ser mi Novia?</h1>
+    <p>Solo quería decirte algo que me guardé por un tiempo. Me gustas, y cada día que te veo, me gustas un poquito más. ❤️</p>
+
+    <div class="buttons">
+      <button id="yesBtn">Sí</button>
+      <button id="noBtn">No</button>
+    </div>
+  </div>
+
+  <!-- Mensaje fijo debajo del panel -->
+  <div id="noMessage">¿Y el no?</div>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal-content">
+      <a href="#" id="backArrow">&larr;</a>
+      <div id="respuesta">Sabía que aceptarías 🥺🫶</div>
+      <img src="" class="rosa-final" alt="Rosa final">
+    </div>
+  </div>
+
+  <div class="modal-overlay android-modal" id="androidModal">
+    <div class="modal-content">
+      <div class="android-title">Tú te lo buscaste</div>
+      <div id="androidText">Eliminando fotos...</div>
+    </div>
+  </div>
+
+  <audio id="music" loop>
+    <source src="https://github.com/Baque2005/public-files/raw/refs/heads/main/2025/Si%20supieras%20lo%20que%20siento%20con%20mirarte%20-%20Gonzalo%20%C3%81vila%20(Lyrics)%20-%20Oldtimes.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const modal = document.getElementById("modal");
+    const androidModal = document.getElementById("androidModal");
+    const androidText = document.getElementById("androidText");
+    const music = document.getElementById("music");
+    const backArrow = document.getElementById("backArrow");
+    const topMessage = document.getElementById("topMessage");
+    const noMessage = document.getElementById("noMessage");
+
+    const mensajesNo = [
+      "Dale, sí por favor 😢",
+      "Te haré la persona más feliz ❤️",
+      "No digas que no 😭",
+      "Por favor, piénsalo bien 💌",
+      "Te necesito en mi vida 🫶"
+    ];
+
+    let noClickCount = 0;
+
+    noBtn.addEventListener("click", () => {
+      const rect = noBtn.getBoundingClientRect();
+      const mensaje = mensajesNo[Math.floor(Math.random() * mensajesNo.length)];
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = mensaje;
+      bubble.style.left = `${rect.left + rect.width / 2}px`;
+      bubble.style.top = `${rect.top - 10}px`;
+
+      document.body.appendChild(bubble);
+      setTimeout(() => bubble.remove(), 2500);
+
+      noClickCount++;
+      if(noClickCount === 5) mostrarAndroidModal();
+    });
+
+    function mostrarAndroidModal(){
+      androidModal.style.display = "flex";
+      const mensajesAndroid = [
+        "Eliminando fotos...",
+        "Eliminando videos...",
+        "Eliminando mensajes...",
+        "Eliminando contactos...",
+        "Eliminando apps...",
+        "Eliminando archivos..."
+      ];
+      let index = 0;
+      const interval = setInterval(()=>{
+        androidText.textContent = mensajesAndroid[index % mensajesAndroid.length];
+        index++;
+      }, 1000);
+
+      setTimeout(()=>{
+        clearInterval(interval);
+        androidModal.style.display = "none";
+
+        // Ocultar botón "No"
+        noBtn.style.display = "none";
+
+        // Mostrar el mensaje "¿Y el no?" en negro
+        noMessage.style.display = "block";
+
+        // Mensaje superior de broma
+        topMessage.textContent = "Es broma 😅💖";
+        topMessage.style.display = "block";
+      }, 8000);
+    }
+
+    function playMusicOnce(){
+      music.play().catch(()=>{});
+      document.removeEventListener("click", playMusicOnce);
+      document.removeEventListener("touchstart", playMusicOnce);
+    }
+    document.addEventListener("click", playMusicOnce);
+    document.addEventListener("touchstart", playMusicOnce);
+
+    yesBtn.addEventListener("click", ()=>{
+      modal.style.display = "flex";
+      document.querySelector('.rosa-final').src = "https://i.pinimg.com/originals/af/e0/00/afe00028751cb2455e55000156560fe9.gif";
+      document.getElementById('respuesta').textContent = "Sabía que aceptarías 🥺🫶";
+    });
+
+    backArrow.addEventListener("click", (e)=>{
+      e.preventDefault();
+      modal.style.display = "none";
+    });
+  </script>
+
+</body>
+</html>
