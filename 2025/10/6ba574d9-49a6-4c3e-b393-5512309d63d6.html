@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descubre</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+        }
+
+        .gift-box {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            margin: 0 auto 30px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gift-box:hover {
+            transform: scale(1.05);
+        }
+
+        .box-bottom {
+            width: 200px;
+            height: 140px;
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            position: absolute;
+            bottom: 0;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .box-lid {
+            width: 220px;
+            height: 60px;
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            position: absolute;
+            top: 0;
+            left: -10px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.6s ease;
+            transform-origin: bottom;
+        }
+
+        .box-lid.open {
+            transform: rotateX(-110deg) translateY(-50px);
+        }
+
+        .ribbon-v {
+            width: 30px;
+            height: 200px;
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .ribbon-h {
+            width: 220px;
+            height: 30px;
+            background: linear-gradient(180deg, #f39c12, #e67e22);
+            position: absolute;
+            top: 30px;
+            left: -10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .bow {
+            width: 60px;
+            height: 60px;
+            background: #f39c12;
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .bow::before,
+        .bow::after {
+            content: '';
+            width: 40px;
+            height: 50px;
+            background: #f39c12;
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .bow::before {
+            left: -35px;
+            top: 5px;
+        }
+
+        .bow::after {
+            right: -35px;
+            top: 5px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-transform: uppercase;
+        }
+
+        #openBtn {
+            background: linear-gradient(145deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        #openBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        #closeBtn {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            color: white;
+            display: none;
+        }
+
+        #closeBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .photo-gallery {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .photo-gallery.active {
+            display: flex;
+        }
+
+        .photo-container {
+            max-width: 90%;
+            max-height: 90%;
+            text-align: center;
+            animation: fadeInScale 0.5s ease;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .photo-container img {
+            max-width: 500px;
+            max-height: 500px;
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        .photo-text {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+
+        .tap-hint {
+            color: #f39c12;
+            font-size: 16px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .counter {
+            color: white;
+            font-size: 18px;
+            margin-top: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="gift-box" id="giftBox">
+            <div class="box-lid" id="boxLid">
+                <div class="bow"></div>
+            </div>
+            <div class="ribbon-h"></div>
+            <div class="ribbon-v"></div>
+            <div class="box-bottom"></div>
+        </div>
+        
+        <div class="buttons">
+            <button id="openBtn">🎁 Abrir </button>
+            <button id="closeBtn">📦 Cerrar </button>
+        </div>
+    </div>
+
+    <div class="photo-gallery" id="photoGallery">
+        <div class="photo-container">
+            <img id="currentPhoto" src="" alt="Foto">
+            <div class="photo-text" id="photoText"></div>
+            <div class="counter" id="photoCounter"></div>
+            <div class="tap-hint" id="tapHint">👆 Toca la pantalla para continuar</div>
+        </div>
+    </div>
+
+    <script>
+        // ======================================
+        // 📸 COLOCA AQUÍ TUS FOTOS Y FRASES
+        // ======================================
+        const photos = [
+            {
+                url: '1.jpg',
+                text: '💕 Tu sonrisa ilumina mi mundo entero 💕'
+            },
+            {
+                url: '2.jpg',
+                text: '✨ Cada momento contigo es pura felicidad ✨'
+            },
+            {
+                url: '3.jpg',
+                text: '🐾 Tu amor por la vida me llena el corazón 🐾'
+            },
+            {
+                url: '4.jpg',
+                text: '🌟 Eres mi mayor bendición y mi alegría 🌟'
+            },
+            {
+                url: '5.jpg',
+                text: '👶 Desde el primer día, fuiste nuestro milagro 👶'
+            },
+            {
+                url: '6.jpg',
+                text: '🚲 Verte crecer es mi mayor regalo 🚲'
+            },
+            {
+                url: '7.jpg',
+                text: '🏊 Tu risa es la música más bella que existe 🏊'
+            },
+            {
+                url: '8.jpg',
+                text: '🌊 Contigo, cada aventura es especial 🌊'
+            }
+        ];
+        // ======================================
+
+        let currentPhotoIndex = 0;
+        let isGalleryOpen = false;
+
+        const giftBox = document.getElementById('giftBox');
+        const boxLid = document.getElementById('boxLid');
+        const openBtn = document.getElementById('openBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const photoGallery = document.getElementById('photoGallery');
+        const currentPhoto = document.getElementById('currentPhoto');
+        const photoText = document.getElementById('photoText');
+        const photoCounter = document.getElementById('photoCounter');
+        const tapHint = document.getElementById('tapHint');
+
+        openBtn.addEventListener('click', openGift);
+        closeBtn.addEventListener('click', closeGift);
+        photoGallery.addEventListener('click', showNextPhoto);
+
+        function openGift() {
+            boxLid.classList.add('open');
+            openBtn.disabled = true;
+            
+            setTimeout(() => {
+                currentPhotoIndex = 0;
+                isGalleryOpen = true;
+                showPhoto(currentPhotoIndex);
+                photoGallery.classList.add('active');
+                openBtn.style.display = 'none';
+            }, 800);
+        }
+
+        function showPhoto(index) {
+            const photo = photos[index];
+            currentPhoto.src = photo.url;
+            photoText.textContent = photo.text;
+            photoCounter.textContent = `Foto ${index + 1} de ${photos.length}`;
+            
+            if (index === photos.length - 1) {
+                tapHint.textContent = '💝 A veces la vida nos sorprende con lo que no esperábamos, pero siempre con lo que más necesitábamos 💝';
+            } else {
+                tapHint.textContent = '';
+            }
+        }
+
+        function showNextPhoto() {
+            if (!isGalleryOpen) return;
+            
+            if (currentPhotoIndex < photos.length - 1) {
+                currentPhotoIndex++;
+                showPhoto(currentPhotoIndex);
+            } else {
+                photoGallery.classList.remove('active');
+                isGalleryOpen = false;
+                closeBtn.style.display = 'inline-block';
+            }
+        }
+
+        function closeGift() {
+            boxLid.classList.remove('open');
+            closeBtn.style.display = 'none';
+            openBtn.style.display = 'inline-block';
+            openBtn.disabled = false;
+        }
+    </script>
+</body>
+</html>
