@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>linterna para ti</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+.font-pacifico {
+    font-family: 'Pacifico', cursive;
+}
+
+body {
+    background-color: #000;
+}
+
+#scene-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+#love-text {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff00de, 0 0 40px #ff00de, 0 0 50px #ff00de, 0 0 60px #ff00de, 0 0 70px #ff00de;
+    animation: pulse 4s infinite ease-in-out;
+}
+
+#flashlight-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(
+            circle at var(--x, 50%) var(--y, 50%),
+            transparent 0,
+            rgba(0, 0, 0, 0.5) 100px,
+            rgba(0, 0, 0, 0.95) 200px,
+            black 300px
+    );
+    z-index: 2;
+    pointer-events: none;
+}
+
+@keyframes pulse {
+    0% {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff00de, 0 0 40px #ff00de, 0 0 50px #ff00de;
+    }
+    50% {
+        text-shadow: 0 0 15px #fff, 0 0 25px #fff, 0 0 40px #ff00de, 0 0 55px #ff00de, 0 0 70px #ff00de;
+    }
+    100% {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff00de, 0 0 40px #ff00de, 0 0 50px #ff00de;
+    }
+}
+
+#particle-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.secret-message {
+    position: absolute;
+    color: #ffd700;
+    font-family: 'Pacifico', cursive;
+    font-size: 2.5rem;
+    text-shadow: 0 0 5px #ffd700, 0 0 10px #ffc400;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+
+    #flashlight-overlay {
+        background: radial-gradient(
+                circle at var(--x, 50%) var(--y, 50%),
+                transparent 0,
+                rgba(0, 0, 0, 0.5) 50px,
+                rgba(0, 0, 0, 0.95) 100px,
+                black 150px
+        );
+    }
+
+    .secret-message {
+        font-size: 1.4rem;
+    }
+
+}</style>
+</head>
+<body class="h-screen m-0 overflow-hidden cursor-none">
+
+<div id="scene-wrapper">
+  <div class="text-center">
+    <h1 id="love-text" class="font-pacifico text-7xl md:text-9xl text-white select-none">
+La quiero
+    </h1>
+  </div>
+
+  <div id="secrets-container"></div>
+
+  <canvas id="particle-canvas"></canvas>
+</div>
+
+<div id="flashlight-overlay"></div>
+
+<script type="module">
+document.addEventListener('DOMContentLoaded', () => {
+
+    const secretsData = [
+        {text: 'Es bonita', top: '20%', left: '15%'},
+        {text: 'esos chocollos', top: '80%', left: '10%', transform: 'rotate(-20deg)'},
+        {text: 'bañese juca', top: '15%', left: '80%'},
+        {text: '✨', top: '20%', left: '50%', transform: 'translate(-50%, -50%) scale(2)', fontSize: '3rem'},
+        {text: 'es una niña bonita', top: '75%', left: '74%', transform: 'rotate(8deg)'},
+        {text: 'sonria', top: '55%', left: '20%', transform: 'rotate(5deg)'},
+
+        {text: 'tiene un pelo bello', top: '35%', left: '70%'},
+    ];
+
+    const secretsContainer = document.getElementById('secrets-container');
+
+    function createSecrets() {
+        secretsData.forEach(data => {
+            const secretEl = document.createElement('span');
+            secretEl.classList.add('secret-message');
+            secretEl.textContent = data.text;
+
+            secretEl.style.top = data.top;
+            secretEl.style.left = data.left;
+            if (data.transform) secretEl.style.transform = data.transform;
+
+            if (data.fontSize && window.innerWidth >= 768) {
+                secretEl.style.fontSize = data.fontSize;
+            }
+            if (data.text === 'la quiero' && window.innerWidth < 768) {
+                secretEl.style.fontSize = '1.1rem';
+            }
+
+
+            secretsContainer.appendChild(secretEl);
+        });
+    }
+
+    createSecrets();
+
+
+    const sceneWrapper = document.getElementById('scene-wrapper');
+    const imageUrl = 'https://res.cloudinary.com/dsgtnbq6l/image/upload/w_1920/q_auto/f_auto/v1755738406/general/nngabi6ev0dcsber9b3c.jpg';
+    sceneWrapper.style.backgroundImage = `url('${imageUrl}')`;
+
+    const overlay = document.getElementById('flashlight-overlay');
+    let mousePos = {x: 0, y: 0};
+    let isUpdatePending = false;
+
+    const secrets = document.querySelectorAll('.secret-message');
+
+    let flashlightRadius = window.innerWidth < 768 ? 70 : 120;
+
+    function checkSecrets() {
+        secrets.forEach(secret => {
+            const rect = secret.getBoundingClientRect();
+            const secretX = rect.left + rect.width / 2;
+            const secretY = rect.top + rect.height / 2;
+            const distance = Math.sqrt(
+                Math.pow(mousePos.x - secretX, 2) + Math.pow(mousePos.y - secretY, 2)
+            );
+            if (distance < flashlightRadius) {
+                secret.style.opacity = '1';
+            } else {
+                secret.style.opacity = '0';
+            }
+        });
+    }
+
+    function updateFlashlightPosition(e) {
+        const pos = e.touches ? e.touches[0] : e;
+        mousePos.x = pos.clientX;
+        mousePos.y = pos.clientY;
+
+        if (!isUpdatePending) {
+            isUpdatePending = true;
+            requestAnimationFrame(renderFlashlight);
+        }
+    }
+
+    function renderFlashlight() {
+        overlay.style.setProperty('--x', `${mousePos.x}px`);
+        overlay.style.setProperty('--y', `${mousePos.y}px`);
+        isUpdatePending = false;
+    }
+
+    document.addEventListener('mousemove', updateFlashlightPosition);
+    document.addEventListener('touchmove', updateFlashlightPosition, {passive: true});
+
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let particlesArray;
+    const particleCount = 150;
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    class Particle {
+        constructor() {
+            this.reset();
+            this.startX = Math.random() * canvas.width;
+            this.startY = Math.random() * canvas.height;
+            this.x = this.startX;
+            this.y = this.startY;
+        }
+
+        reset() {
+            this.radius = Math.random() * 2 + 1.5;
+            this.maxLife = Math.random() * 15 + 10;
+            this.life = this.maxLife;
+            this.startX = Math.random() * canvas.width;
+            this.startY = Math.random() * canvas.height;
+            this.x = this.startX;
+            this.y = this.startY;
+            this.opacity = 0;
+        }
+
+        update() {
+            this.life -= 1 / 60;
+            if (this.life <= 0) {
+                this.reset();
+            }
+            const progress = (this.maxLife - this.life) / this.maxLife;
+            this.x = this.startX + (progress * 40);
+            this.y = this.startY - (progress * 20);
+            this.opacity = Math.sin(progress * Math.PI) * 0.7;
+        }
+
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.opacity;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+            ctx.shadowColor = 'rgba(255, 105, 180, 0.9)';
+            ctx.shadowBlur = 15;
+            ctx.fillStyle = 'rgba(255, 200, 230, 0.9)';
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    function initParticles() {
+        particlesArray = [];
+        for (let i = 0; i < particleCount; i++) {
+            particlesArray.push(new Particle());
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particlesArray.length; i++) {
+            particlesArray[i].update();
+            particlesArray[i].draw();
+        }
+        checkSecrets();
+        requestAnimationFrame(animate);
+    }
+
+    initParticles();
+    animate();
+});</script>
+</body>
+</html>
