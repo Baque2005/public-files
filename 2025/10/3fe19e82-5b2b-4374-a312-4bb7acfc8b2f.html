@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>para mi programadora</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>body {
+    background-color: #0c0c0c;
+    color: #00ff41;
+    font-family: 'VT323', monospace;
+    font-size: 1.5rem;
+    line-height: 1.6;
+    margin: 0;
+    padding: 1rem;
+    overflow-x: hidden;
+    min-height: 100vh;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body::after {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(18, 16, 16, 0.1);
+    opacity: 0;
+    z-index: 2;
+    pointer-events: none;
+    animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+    0% { opacity: 0.1; }
+    20% { opacity: 1; }
+    100% { opacity: 0.1; }
+}
+
+#terminal {
+    width: 100%;
+    max-width: 800px;
+    height: 90vh;
+    max-height: 700px;
+    border: 2px solid #00ff41;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+
+}
+
+#terminal::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.2) 50%,
+            rgba(0, 0, 0, 0.5) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 3;
+    border-radius: 6px;
+}
+
+#title-bar {
+    background-color: #00ff41;
+    color: #0c0c0c;
+    padding: 4px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    font-size: 1rem;
+    flex-shrink: 0;
+    user-select: none;
+    cursor: grab;
+}
+
+#title-bar .title {
+    font-weight: bold;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#window-controls {
+    display: flex;
+}
+
+.button {
+    width: 25px;
+    height: 25px;
+    margin-left: 5px;
+    background-color: #c0c0c0;
+    border: 2px outset #dfdfdf;
+    color: black;
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.button:active {
+    border-style: inset;
+}
+
+#minimize-btn {
+    padding-bottom: 10px;
+}
+
+#maximize-btn {
+    font-size: 16px;
+}
+
+#close-btn:hover {
+    background-color: #ff4136;
+    color: white;
+}
+
+#terminal-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex-grow: 1;
+    height: 1px;
+}
+
+#prompt span {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.cursor {
+    display: inline-block;
+    width: 10px;
+    height: 1.5rem;
+    background-color: #00ff41;
+    animation: blink 1s steps(2, start) infinite;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+@keyframes blink {
+    to {
+        visibility: hidden;
+    }
+}
+
+.success-art {
+    color: #ff0055;
+    font-size: 1rem;
+    line-height: 1.2;
+    white-space: pre;
+    text-shadow: 0 0 10px #ff0055;
+    overflow-x: auto;
+}
+
+.error-message {
+    color: #ff4136;
+}
+
+.success-message {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+@media (max-width: 600px) {
+    body {
+        font-size: 1.2rem;
+        padding: 0.5rem;
+    }
+
+    #terminal {
+        height: 95vh;
+    }
+
+    #terminal-content {
+        padding: 0.75rem;
+    }
+
+    .success-art {
+        font-size: 0.8rem;
+    }
+
+    #title-bar {
+        cursor: default;
+    }
+}</style>
+</head>
+<body>
+
+<div id="terminal">
+
+  <div id="title-bar">
+    <span class="title">C:\WINDOWS\system32\propuesta.exe</span>
+    <div id="window-controls">
+      <div class="button" id="minimize-btn">_</div>
+      <div class="button" id="maximize-btn">□</div>
+      <div class="button" id="close-btn">X</div>
+    </div>
+  </div>
+
+  <div id="terminal-content">
+    <div id="output"></div>
+    <div id="prompt">
+      <span id="current-line"></span><span class="cursor"></span>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+const commands = [
+    { text: 'system.scan --user=MiReyna', delay: 100, pause: 1200 },
+    { text: 'Scan complete. Status: single', delay: 50, pause: 800 },
+    { text: 'love_protocol.exe --initiate', delay: 80, pause: 1500 },
+    { text: 'run --module="chistes_internos.dll"', delay: 100, pause: 1200 },
+    { text: 'Preparing question...', delay: 100, pause: 1800 },
+    { text: 'Awaiting response for: estaras conmigo para siempre (Y/N)?', delay: 120, isQuestion: true },
+
+];
+
+const successMessage = `
+> Access Granted. Iniciando protocolo "Juntos_Para_Siempre.exe"...
+
+╔══╗──────╔╗──────
+╚╗╔╬═╗╔═╦╦╬╬═╦╦╦═╗▄██▄██▄
+─║║║╩╣║╬║║║║╩╣╔╣╬║▀█████▀
+─╚╝╚═╝╚╗╠═╩╩═╩╝╚═╝──▀█▀
+⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⢻⣿⣿⣿⣿⣿⣿⣿
+ ⣿⣿⣿⣿⣿⣿⡿⠿⣛⢛⠟⠻⠿⣟⣫⢎⣶⢿⣿⣿⣿⣿⣿⣿
+ ⣿⣿⣿⡿⣫⣷⣿⣿⣿⣿⣿⣾⣷⣝⡿⣼⡿⢸⣿⣿⠿⣛⣛⢿
+ ⣿⡿⡋⢈⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆⠿⣣⣾⢋⣵⣿⣿⢟⣸
+ ⡟⣾⠷⡿⡫⠵⠶⢶⣮⢻⣿⣿⣿⣿⡷⢼⣫⢅⣾⣿⣿⣇⡛⣿
+ ⣷⣙⢀⠀⠀⠐⠃⢸⣿⣸⣿⣿⠟⣫⡾⠟⢡⣾⣿⣿⡿⢋⣾⣿
+ ⣿⣿⣦⣄⡐⢲⣚⣛⣵⣿⣿⣿⡘⠉⠀⣠⣾⣿⠿⣫⣴⣿⣿⣿
+ ⣿⣿⣿⣿⣿⠇⢲⡿⢩⣶⣿⣷⣿⣷⣆⠲⣶⣾⣿⣿⣿⣿⣿⣿
+ ⣿⣿⣿⣿⣿⡏⣶⠁⢟⣿⣿⢣⣿⣿⣿⣷⣜⢿⣿⣿⣿⣿⣿⣿
+ ⣿⡟⡍⠍⠲⢶⢏⣼⣿⠿⣛⣘⣛⢿⣿⣿⣿⡆⢿⣿⣿⣿⣿⣿
+ ⣿⣿⡀⠘⠇⡀⢸⣟⢁⡻⣾⢽⣿⣿⣿⣿⣿⣿⢺⣿⣿⣿⣿⣿
+ ⣿⣿⣿⣶⡤⠀⢑⣚⡸⡿⡨⠸⠿⠿⠿⠿⠛⠁⢘⣿⣿⣿⣿⣿
+ ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣤⣶⣿⣿⣿⣤⣴⣶⣾⣿⣿⣿⣿⣿⣿
+`;
+
+const successArt = `
+      .-.   .-.   .-.   .-.   .-.   .-.   .-.
+     (   \`-'   \`-'   \`-'   \`-'   \`-'   \`-'   )
+      \`-.   .-'   .-'   .-'   .-'   .-'   .-'
+         \`-'   \`-'   \`-'   \`-'   \`-'   \`-'
+`;
+const errorMessage = '> Secuencia rechazada. Recalibrando sentimientos... ¿Quizás un café primero? Reiniciando protocolo en 3... 2... 1...';
+
+
+const outputEl = document.getElementById('output');
+const currentLineEl = document.getElementById('current-line');
+const terminalEl = document.getElementById('terminal');
+let commandIndex = 0;
+
+function typeWriter(text, element, delay, callback) {
+    let i = 0;
+    function type() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+
+            const contentArea = terminalEl.querySelector('#terminal-content');
+            contentArea.scrollTop = contentArea.scrollHeight;
+            setTimeout(type, delay);
+        } else if (callback) {
+            callback();
+        }
+    }
+    type();
+}
+
+function processCommands() {
+
+    if (commandIndex >= commands.length) return;
+
+    const command = commands[commandIndex];
+
+    typeWriter(command.text, currentLineEl, command.delay, () => {
+
+        outputEl.innerHTML += '<div>' + currentLineEl.innerHTML + '</div>';
+        currentLineEl.innerHTML = '';
+
+        if (command.isQuestion) {
+
+            waitForInput();
+        } else {
+
+            commandIndex++;
+            setTimeout(processCommands, command.pause || 1000);
+        }
+    });
+}
+
+function waitForInput() {
+    document.addEventListener('keydown', handleKey);
+}
+
+function handleKey(e) {
+    const key = e.key.toUpperCase();
+
+    if (key !== 'Y' && key !== 'N') return;
+
+    document.removeEventListener('keydown', handleKey);
+
+    outputEl.innerHTML += '<div>' + currentLineEl.innerHTML + ' ' + key + '</div>';
+    currentLineEl.innerHTML = '';
+
+    if (key === 'Y') {
+        handleSuccess();
+    } else {
+        handleFailure();
+    }
+}
+
+function handleSuccess() {
+
+    const successContainer = document.createElement('pre');
+    successContainer.className = 'success-message';
+    typeWriter(successMessage, successContainer, 50, () => {
+        const artContainer = document.createElement('pre');
+        artContainer.className = 'success-art';
+        typeWriter(successArt, artContainer, 20, null);
+        outputEl.appendChild(artContainer);
+
+        const contentArea = terminalEl.querySelector('#terminal-content');
+        contentArea.scrollTop = contentArea.scrollHeight;
+    });
+    outputEl.appendChild(successContainer);
+}
+
+function handleFailure() {
+    const errorContainer = document.createElement('div');
+    errorContainer.className = 'error-message';
+    typeWriter(errorMessage, errorContainer, 75, () => {
+
+        setTimeout(() => {
+            outputEl.innerHTML = '';
+            currentLineEl.innerHTML = '';
+            commandIndex = 0;
+            processCommands();
+        }, 3000);
+    });
+    outputEl.appendChild(errorContainer);
+}
+function startLoading() {
+    const loadingText = 'Initializing LoveOS v2.0...';
+    const loadingBarContainer = document.createElement('div');
+    outputEl.appendChild(loadingBarContainer);
+
+    typeWriter(loadingText, loadingBarContainer, 50, () => {
+        let bar = '[';
+        let percent = 0;
+        const barElement = document.createElement('div');
+        outputEl.appendChild(barElement);
+
+        const interval = setInterval(() => {
+            bar += '#';
+            percent += 5;
+
+            barElement.innerText = bar + ' '.repeat(20 - percent/5) + '] ' + percent + '%';
+            if (percent >= 100) {
+                clearInterval(interval);
+
+                setTimeout(() => {
+                    outputEl.innerHTML = '';
+                    processCommands();
+                }, 500);
+            }
+        }, 100);
+    });
+}
+window.onload = () => {
+    const minimizeBtn = document.getElementById('minimize-btn');
+    const maximizeBtn = document.getElementById('maximize-btn');
+    const closeBtn = document.getElementById('close-btn');
+    const titleBar = document.getElementById('title-bar');
+
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    titleBar.addEventListener('mousedown', (e) => {
+
+        if (window.innerWidth < 600) return;
+        isDragging = true;
+
+        terminalEl.style.position = 'absolute';
+        offsetX = e.clientX - terminalEl.offsetLeft;
+        offsetY = e.clientY - terminalEl.offsetTop;
+        titleBar.style.cursor = 'grabbing';
+        document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+
+        terminalEl.style.left = (e.clientX - offsetX) + 'px';
+        terminalEl.style.top = (e.clientY - offsetY) + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+        titleBar.style.cursor = 'grab';
+        document.body.style.userSelect = '';
+    });
+
+    minimizeBtn.addEventListener('click', () => {
+        alert("¡Ouch! No me minimices, que me da complejo.");
+    });
+    maximizeBtn.addEventListener('click', () => {
+        alert("¡WOW! Me siento GRANDE. Aunque en realidad no cambio de tamaño.");
+    });
+    closeBtn.addEventListener('click', () => {
+        alert("No puedes cerrarme... el destino nos unió. <3");
+    });
+
+    startLoading();
+};</script>
+</body>
+</html>
