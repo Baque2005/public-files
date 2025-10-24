@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Genesis ♥</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@400;700&family=Crimson+Text:ital,wght@0,400;1,400&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #1a1410 0%, #0f0b08 100%);
+            color: #f4e5b8;
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 40px 20px;
+        }
+
+        .hearts-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            opacity: 0.08;
+            z-index: 0;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 2rem;
+            color: #d4af37;
+            animation: floatHeart 15s infinite;
+            opacity: 0;
+        }
+
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .romantic-frame {
+            border: 3px solid #d4af37;
+            padding: 60px 40px;
+            background: rgba(26, 20, 16, 0.9);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.4), inset 0 0 30px rgba(212, 175, 55, 0.1);
+            text-align: center;
+            max-width: 700px;
+            animation: fadeInScale 1.5s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            color: #d4af37;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+            letter-spacing: 3px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 30px rgba(212, 175, 55, 0.6), 0 0 50px rgba(212, 175, 55, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 40px rgba(212, 175, 55, 0.8), 0 0 60px rgba(212, 175, 55, 0.5);
+            }
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #f4e5b8;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        .heart-divider {
+            font-size: 2rem;
+            color: #d4af37;
+            margin: 30px 0;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        .content-section {
+            padding: 80px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .love-card {
+            background: rgba(26, 20, 16, 0.9);
+            border: 2px solid #d4af37;
+            border-radius: 15px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(212, 175, 55, 0.2);
+            animation: slideIn 1s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #d4af37;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .romantic-text {
+            font-size: 1.4rem;
+            line-height: 2.2;
+            color: #f4e5b8;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .romantic-text strong {
+            color: #d4af37;
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+        }
+
+        .quote-romantic {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05));
+            border-left: 5px solid #d4af37;
+            border-right: 5px solid #d4af37;
+            padding: 35px;
+            margin: 40px 0;
+            font-style: italic;
+            color: #f4e5b8;
+            font-size: 1.3rem;
+            text-align: center;
+            line-height: 2;
+            border-radius: 10px;
+        }
+
+        .love-message {
+            font-size: 1.5rem;
+            color: #f4e5b8;
+            text-align: center;
+            line-height: 2.3;
+            margin: 30px 0;
+        }
+
+        .wings-frame {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin: 50px 0;
+            font-size: 5rem;
+            color: #d4af37;
+            opacity: 0.3;
+        }
+
+        .wing-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #d4af37;
+        }
+
+        .final-dedication {
+            text-align: center;
+            margin-top: 80px;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+            border-radius: 20px;
+            border: 3px solid #d4af37;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+        }
+
+        .final-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: #d4af37;
+            margin-bottom: 30px;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+        }
+
+        .final-subtitle {
+            font-size: 1.6rem;
+            color: #f4e5b8;
+            font-style: italic;
+            line-height: 2;
+        }
+
+        .sparkle {
+            display: inline-block;
+            animation: sparkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 3rem;
+            }
+            
+            .subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .romantic-frame {
+                padding: 40px 25px;
+            }
+            
+            .love-card {
+                padding: 35px 25px;
+            }
+            
+            .card-title {
+                font-size: 2rem;
+            }
+            
+            .romantic-text {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts-bg" id="heartsContainer"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="romantic-frame">
+            <h1 class="main-title">Mi Reyna</h1>
+            <p class="subtitle">tú, como las estrellas en la noche, iluminas mi camino</p>
+            <div class="heart-divider">♥</div>
+            <p class="romantic-text">
+                En un mundo de murallas y titanes,<br>
+                encontré algo más valioso que la libertad...<br>
+                <strong>Te encontré a ti</strong>
+            </p>
+        </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section">
+        <div class="love-card">
+            <h2 class="card-title">Para Ti, Princesa ✨</h2>
+            <p class="love-message">
+                Así como Eren lucha por proteger lo que ama,<br>
+                yo lucharía contra mil titanes por verte sonreír.<br>
+                Eres mi razón para dedicar mi corazón.
+            </p>
+            
+            <div class="quote-romantic">
+                "Si tuviera que elegir entre las estrellas del cielo<br>
+                y tus ojos mirándome,<br>
+                elegiría perderte en tu mirada una y otra vez"
+            </div>
+
+            <p class="romantic-text">
+                Génesis, eres como la libertad que todos buscan más allá de las murallas:<br>
+                hermosa, esquiva, y absolutamente <strong>perfecta</strong>.
+            </p>
+        </div>
+
+        <div class="love-card">
+            <h2 class="card-title">Lo Que Significas Para Mí 💫</h2>
+            
+            <div class="wings-frame">
+                <span>⟨</span>
+                <span class="wing-text">Mi Libertad</span>
+                <span>⟩</span>
+            </div>
+
+            <p class="romantic-text">
+                Contigo, cada momento es una aventura más emocionante<br>
+                que cualquier misión del Cuerpo de Exploración.<br><br>
+                
+                Tu risa es mi himno favorito,<br>
+                tu presencia es mi refugio,<br>
+                y tu corazón es el tesoro que quiero proteger.
+            </p>
+
+            <div class="quote-romantic">
+                "Mikasa protege a Eren,<br>
+                Armin usa su mente para salvar a sus amigos,<br>
+                y yo... yo solo quiero estar a tu lado,<br>
+                hacerte feliz cada día de tu vida"
+            </div>
+        </div>
+
+        <div class="love-card">
+            <h2 class="card-title">Mi Promesa 🌙</h2>
+            
+            <p class="romantic-text">
+                Como las alas de la libertad que adornan las capas verdes,<br>
+                quiero ser quien te impulse a alcanzar tus sueños.<br><br>
+                
+                Quiero ser tu compañero en esta aventura llamada vida,<br>
+                tu apoyo cuando el mundo se sienta pesado,<br>
+                y la razón de tus sonrisas más sinceras.
+            </p>
+
+            <p class="love-message" style="color: #d4af37; font-size: 1.7rem; margin-top: 40px;">
+                Génesis, eres extraordinaria,<br>
+                y meeces todo el amor del mundo <span class="sparkle">✨</span>
+            </p>
+        </div>
+
+        <div class="final-dedication">
+            <p class="final-text">
+                ¡Shinzou wo Sasageyo!
+            </p>
+            <p class="final-subtitle">
+                Dedico mi corazón... a ti, mi reyna ♥<br><br>
+                Porque en este vasto mundo,<br>
+                entre millones de personas,<br>
+                tú eres la única que hace que todo tenga sentido.
+            </p>
+            <div style="font-size: 3rem; margin-top: 30px; color: #d4af37;">
+                💛 ⟨ ♥ ⟩ 💛
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Crear corazones flotantes
+        function createHearts() {
+            const container = document.getElementById('heartsContainer');
+            const heartSymbols = ['♥', '♡', '💛', '✨'];
+            
+            for (let i = 0; i < 25; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 15 + 's';
+                heart.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                heart.style.fontSize = (Math.random() * 2 + 1) + 'rem';
+                container.appendChild(heart);
+            }
+        }
+
+        // Inicializar
+        createHearts();
+
+        // Efecto parallax suave en el scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hearts = document.querySelectorAll('.heart');
+            hearts.forEach((heart, index) => {
+                const speed = (index % 3 + 1) * 0.1;
+                heart.style.transform += ` translateY(${scrolled * speed}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
