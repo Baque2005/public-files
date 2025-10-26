@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sol del Amor</title>
+  <style>
+    #modal-bienvenida {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: linear-gradient(135deg, #fff6fa 0%, #ffe0f7 60%, #f9c6d3 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.7s;
+    }
+    #modal-bienvenida.oculto {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #modal-bienvenida .contenido {
+      background: linear-gradient(120deg, #fffafd 0%, #ffe0f7 60%, #f9c6d3 100%);
+      border-radius: 22px;
+      box-shadow: 0 0 32px #f9c6d3cc, 0 0 0 4px #fff6fa inset;
+      padding: 2.5rem;
+      text-align: center;
+      color: #a02a4a;
+      font-family: 'Great Vibes', cursive, Arial, sans-serif;
+      font-size: 2.2rem;
+      max-width: 90vw;
+    }
+    #modal-bienvenida button {
+      margin-top: 2.2rem;
+      font-size: 1.5rem;
+      padding: 0.8rem 2.2rem;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #ffe0f7 0%, #f9c6d3 100%);
+      color: #a02a4a;
+      border: 1.5px solid #f9c6d3;
+      cursor: pointer;
+      box-shadow: 0 2px 12px #f9c6d355;
+      font-weight: bold;
+      letter-spacing: 1px;
+      transition: background 0.2s, color 0.2s, border 0.2s;
+    }
+    #modal-bienvenida button:hover {
+      background: linear-gradient(90deg, #fff6fa 0%, #ffe0f7 100%);
+      color: #c9204b;
+      border: 1.5px solid #ffe0f7;
+    }
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(ellipse at bottom, #050505, #000);
+    }
+    canvas {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100dvh;
+    }
+  </style>
+</head>
+<body>
+  <div id="modal-bienvenida">
+    <div class="contenido">
+      <img src="https://i.pinimg.com/736x/47/0a/aa/470aaac1e9e57a34a273ee8519c2069a.jpg" alt="flores amor" style="max-width:220px; width:80vw; border-radius:18px; box-shadow:0 4px 32px #f9c6d3aa; margin-bottom:1.5rem; display:block; margin-left:auto; margin-right:auto;" />
+      <div>Toca aquí amor ❤</div>
+      <button id="btn-ingresar">Presiona aquí</button>
+    </div>
+  </div>
+  <canvas id="galaxy-canvas"></canvas>
+  <audio id="musica" autoplay loop>
+    <source src="musica.mp3" type="audio/mpeg">
+  </audio>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // Modal
+    window.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('modal-bienvenida');
+      const btn = document.getElementById('btn-ingresar');
+      const audio = document.getElementById('musica');
+      btn.addEventListener('click', () => {
+        modal.classList.add('oculto');
+        setTimeout(() => { modal.style.display = 'none'; }, 700);
+        audio.pause();
+        audio.src = 'https://github.com/Baque2005/Organizador/raw/refs/heads/master/Cuco%20-%20Piel%20Canela%20(Official%20Animated%20Video).mp3';
+        audio.load();
+        audio.play();
+      });
+    });
+
+    // Escena
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5000);
+    const renderer = new THREE.WebGLRenderer({
+      canvas: document.getElementById('galaxy-canvas'),
+      antialias: true
+    });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+
+    // 🌞 SOL REALISTA (en lugar del agujero negro)
+  // Textura alternativa del sol
+  const sunTexture = new THREE.TextureLoader().load("https://i.ibb.co/VZs20Gm/2k-sun.jpg");
+  const sunMaterial = new THREE.MeshStandardMaterial({ map: sunTexture, emissive: 0xffff99, emissiveIntensity: 0.5 });
+  const sun = new THREE.Mesh(new THREE.SphereGeometry(80, 64, 64), sunMaterial);
+  sun.castShadow = false;
+  sun.receiveShadow = true;
+  scene.add(sun);
+
+    // Luz del Sol
+  const sunLight = new THREE.PointLight(0xfff2b0, 3, 3000);
+  sunLight.position.set(0, 0, 0);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.width = 2048;
+  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.bias = -0.001;
+  scene.add(sunLight);
+
+    // ✨ Frases románticas flotando
+    const galaxyGroup = new THREE.Group();
+    scene.add(galaxyGroup);
+
+    const frases = [
+      "Te amo ❤️", "Eres mi sol 🌞", "Mi vida 💫", "Mi amor 💖", "Solo tú 🌹",
+      "Mi universo 💋", "Contigo siempre ♾️", "Eres mi cielo ✨", "Mi reina 👑", "Por siempre 🔥",
+      "Mi alegría 🥰", "Mi destino 🚀", "Mi paz 🕊️", "Mi refugio 🏡", "Mi risa 😍",
+      "Mi inspiración 🎨", "Mi razón 🌠", "Mi fortuna 🍀", "Mi tesoro 💎", "Mi locura 🤪",
+      "Mi canción 🎶", "Mi sueño 🌙", "Mi estrella ⭐", "Mi todo 🌏", "Mi princesa 👸",
+      "Mi luz 💡", "Mi esperanza 🌈", "Mi magia ✨", "Mi compañera 🤝", "Mi pasión 🔥",
+      "Mi ternura 🧸", "Mi dulzura 🍭", "Mi aventura 🧭", "Mi verdad 🧩", "Mi fe 🙏"
+    ];
+
+    function crearTexto(texto) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 250;
+      const ctx = canvas.getContext('2d');
+      ctx.shadowColor = "rgba(255,150,50,1)";
+      ctx.shadowBlur = 50;
+      const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+      grad.addColorStop(0, "#ff6600");
+      grad.addColorStop(0.5, "#fff");
+      grad.addColorStop(1, "#ff6600");
+      ctx.font = "bold 120px Arial";
+      ctx.fillStyle = grad;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(texto, canvas.width / 2, canvas.height / 2);
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    // Ajuste: menos cantidad, radio más pequeño, mayor escala para mejor separación
+    const cantidad = 36;
+    const radio = 420;
+    for (let i = 0; i < cantidad; i++) {
+      const texto = frases[i % frases.length];
+      const textura = crearTexto(texto);
+      const material = new THREE.SpriteMaterial({ map: textura, transparent: true });
+      const sprite = new THREE.Sprite(material);
+      const angulo = i * (Math.PI * 2 / cantidad);
+      // Anillo más cerca del centro y mejor separación
+      sprite.position.set(Math.cos(angulo) * radio, 0, Math.sin(angulo) * radio);
+      sprite.scale.set(90, 18, 1);
+      galaxyGroup.add(sprite);
+    }
+    // Texto 3D encima del sol (más alto, fuente elegante, blanco brillante)
+    import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+    import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
+    const texto3D = "TU ERES Y SERAS MI UNIVERSO";
+    const fontLoader = new FontLoader();
+    // Fuente elegante: gentilis_bold
+    fontLoader.load('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/fonts/gentilis_bold.typeface.json', function(font) {
+      const geometry = new TextGeometry(texto3D, {
+        font: font,
+        size: 34,
+        height: 8,
+        curveSegments: 16,
+        bevelEnabled: true,
+        bevelThickness: 2.5,
+        bevelSize: 2,
+        bevelOffset: 0,
+        bevelSegments: 6
+      });
+      geometry.center();
+      const material = new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
+        metalness: 0.85,
+        roughness: 0.08,
+        clearcoat: 1,
+        clearcoatRoughness: 0.05,
+        emissive: 0xffffff,
+        emissiveIntensity: 1.2,
+        transparent: true,
+        opacity: 1
+      });
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(0, 180, 0); // Más alto
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      mesh.scale.set(1.18, 1.18, 1.18);
+      scene.add(mesh);
+    });
+
+    // 🌌 Estrellas (muchas más y con fugaces)
+    const estrellasGeo = new THREE.BufferGeometry();
+    const estrellasCant = 40000;
+    const posiciones = new Float32Array(estrellasCant * 3);
+    for (let i = 0; i < estrellasCant; i++) {
+      posiciones[i * 3] = (Math.random() - 0.5) * 12000;
+      posiciones[i * 3 + 1] = (Math.random() - 0.5) * 12000;
+      posiciones[i * 3 + 2] = (Math.random() - 0.5) * 12000;
+    }
+    estrellasGeo.setAttribute('position', new THREE.BufferAttribute(posiciones, 3));
+    const estrellasMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.1, transparent: true, opacity: 0.85 });
+    const estrellas = new THREE.Points(estrellasGeo, estrellasMat);
+    scene.add(estrellas);
+
+
+    // Estrellas fugaces mejoradas (línea detallada y gradiente)
+    const shootingStars = [];
+    function crearEstrellaFugaz() {
+      const trailLength = 32 + Math.floor(Math.random() * 16);
+      const positions = new Float32Array(trailLength * 3);
+      const colors = new Float32Array(trailLength * 3);
+      // Posición inicial y dirección aleatoria
+      const x0 = (Math.random() - 0.5) * 6000;
+      const y0 = 1200 + Math.random() * 1200;
+      const z0 = (Math.random() - 0.5) * 6000;
+      const dx = (Math.random() - 0.5) * 1.5;
+      const dy = -Math.random() * 1.5 - 0.8;
+      const dz = (Math.random() - 0.5) * 1.5;
+      for (let i = 0; i < trailLength; i++) {
+        positions[i * 3] = x0 + dx * i * 10;
+        positions[i * 3 + 1] = y0 + dy * i * 10;
+        positions[i * 3 + 2] = z0 + dz * i * 10;
+        // Gradiente: cabeza brillante, cola más tenue
+        const t = i / (trailLength - 1);
+        colors[i * 3] = 1.0;
+        colors[i * 3 + 1] = 0.95 + 0.05 * (1 - t); // blanco-amarillo
+        colors[i * 3 + 2] = 0.7 * (1 - t);
+      }
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      const material = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.95, linewidth: 2 });
+      const estrellaFugaz = new THREE.Line(geometry, material);
+      estrellaFugaz.userData = { dx, dy, dz, trailLength };
+      scene.add(estrellaFugaz);
+      shootingStars.push(estrellaFugaz);
+    }
+
+    // Animar estrellas fugaces
+    function animarEstrellasFugaces() {
+      for (let i = shootingStars.length - 1; i >= 0; i--) {
+        const estrella = shootingStars[i];
+        const pos = estrella.geometry.attributes.position;
+        // Movimiento fluido: la cabeza avanza más, la cola sigue
+        for (let j = estrella.userData.trailLength - 1; j > 0; j--) {
+          pos.setX(j, pos.getX(j - 1));
+          pos.setY(j, pos.getY(j - 1));
+          pos.setZ(j, pos.getZ(j - 1));
+        }
+        // Nueva cabeza
+        pos.setX(0, pos.getX(0) + estrella.userData.dx * 3.5);
+        pos.setY(0, pos.getY(0) + estrella.userData.dy * 3.5);
+        pos.setZ(0, pos.getZ(0) + estrella.userData.dz * 3.5);
+        pos.needsUpdate = true;
+        // Si la cabeza sale del campo de visión, eliminarla
+        if (pos.getY(0) < -2200) {
+          scene.remove(estrella);
+          shootingStars.splice(i, 1);
+        }
+      }
+      // Probabilidad de crear una nueva estrella fugaz
+      if (Math.random() < 0.025 && shootingStars.length < 5) {
+        crearEstrellaFugaz();
+      }
+    }
+
+    // 🔆 Planetas orbitando alrededor del Sol
+    function crearPlaneta(url, tamaño, distancia, velocidad) {
+      const textura = new THREE.TextureLoader().load(url);
+      const material = new THREE.MeshStandardMaterial({ map: textura, roughness: 0.7, metalness: 0.2 });
+      const planeta = new THREE.Mesh(new THREE.SphereGeometry(tamaño, 64, 64), material);
+      planeta.castShadow = true;
+      planeta.receiveShadow = true;
+      planeta.userData = { distancia, velocidad, angulo: Math.random() * Math.PI * 2 };
+      scene.add(planeta);
+      return planeta;
+    }
+
+    const planetas = [
+  crearPlaneta("https://i.ibb.co/B2TPmYkx/2k-mercury.jpg", 8, 60, 0.02),
+  crearPlaneta("https://i.ibb.co/zWqW2B2D/2k-venus-surface.jpg", 14, 90, 0.015),
+  crearPlaneta("https://i.ibb.co/cSsb6z7f/2k-earth-daymap.jpg", 16, 120, 0.012),
+  crearPlaneta("https://i.ibb.co/5XRcw4MZ/2k-mars.jpg", 12, 150, 0.01),
+  crearPlaneta("https://i.ibb.co/fzR46V84/2k-jupiter.jpg", 40, 190, 0.008),
+  crearPlaneta("https://i.ibb.co/k6yFdT3g/2k-saturn.jpg", 35, 230, 0.006),
+  crearPlaneta("https://i.ibb.co/SDCtkrZ4/2k-uranus.jpg", 25, 270, 0.004),
+  crearPlaneta("https://i.ibb.co/zVm94gJS/2k-neptune.jpg", 24, 310, 0.003)
+];
+// Anillo de Saturno (debe ir después de crear los planetas)
+const saturnRingTexture = new THREE.TextureLoader().load("https://i.ibb.co/MyhMj2tm/2k-saturn-ring-alpha.png");
+const saturnRingGeometry = new THREE.RingGeometry(38, 60, 128);
+const saturnRingMaterial = new THREE.MeshBasicMaterial({
+  map: saturnRingTexture,
+  side: THREE.DoubleSide,
+  transparent: true,
+  opacity: 0.85
+});
+const saturnRing = new THREE.Mesh(saturnRingGeometry, saturnRingMaterial);
+saturnRing.receiveShadow = true;
+// Saturno es el sexto planeta en el array (índice 5)
+saturnRing.position.copy(planetas[5].position);
+saturnRing.rotation.x = Math.PI / 2;
+scene.add(saturnRing);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 1.1));
+
+    // Animación
+    const reloj = new THREE.Clock();
+    function animar() {
+      const t = reloj.getElapsedTime();
+      galaxyGroup.rotation.y = t * 0.02;
+      planetas.forEach(p => {
+        p.userData.angulo += p.userData.velocidad;
+        p.position.set(
+          Math.cos(p.userData.angulo) * p.userData.distancia,
+          0,
+          Math.sin(p.userData.angulo) * p.userData.distancia
+        );
+      });
+      animarEstrellasFugaces();
+      renderer.render(scene, camera);
+      controls.update();
+      requestAnimationFrame(animar);
+    }
+
+    camera.position.set(0, 200, 900);
+    animar();
+  </script>
+</body>
+</html>
