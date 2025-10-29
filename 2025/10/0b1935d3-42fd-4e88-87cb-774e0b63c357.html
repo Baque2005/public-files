@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>para la princesa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: #87CEEB;
+        }
+
+        .background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(to bottom, #87CEEB 0%, #98D8E8 40%, #7CB342 100%);
+        }
+
+        .flowers-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .flower-item {
+            position: absolute;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Flores realistas en el suelo */
+        .flower-ground {
+            bottom: 0;
+            width: 100%;
+            height: 30%;
+            position: absolute;
+            background: linear-gradient(to top, #6B8E23 0%, rgba(107, 142, 35, 0) 100%);
+        }
+
+        .flower1 { bottom: 5%; left: 10%; font-size: 80px; }
+        .flower2 { bottom: 8%; left: 25%; font-size: 70px; }
+        .flower3 { bottom: 3%; right: 15%; font-size: 90px; }
+        .flower4 { bottom: 10%; right: 30%; font-size: 75px; }
+        .flower5 { bottom: 6%; left: 45%; font-size: 85px; }
+        .flower6 { bottom: 12%; right: 50%; font-size: 65px; }
+
+        /* Hojas de palmera en las esquinas */
+        .palm-left {
+            position: absolute;
+            top: -20px;
+            left: -50px;
+            font-size: 250px;
+            transform: rotate(-30deg);
+            opacity: 0.8;
+        }
+
+        .palm-right {
+            position: absolute;
+            top: -20px;
+            right: -50px;
+            font-size: 250px;
+            transform: rotate(30deg) scaleX(-1);
+            opacity: 0.8;
+        }
+
+        /* Hojas adicionales */
+        .leaf1 { top: 15%; left: 5%; font-size: 60px; transform: rotate(-20deg); opacity: 0.7; }
+        .leaf2 { top: 25%; right: 8%; font-size: 70px; transform: rotate(25deg); opacity: 0.7; }
+        .leaf3 { bottom: 35%; left: 3%; font-size: 55px; transform: rotate(15deg); opacity: 0.6; }
+        .leaf4 { bottom: 40%; right: 5%; font-size: 65px; transform: rotate(-15deg); opacity: 0.6; }
+
+        /* Mariposas */
+        .butterfly {
+            position: absolute;
+            font-size: 40px;
+            animation: butterfly-fly 8s infinite ease-in-out;
+        }
+
+        .butterfly1 { top: 20%; left: 30%; animation-delay: 0s; }
+        .butterfly2 { top: 35%; right: 25%; animation-delay: 2s; }
+
+        @keyframes butterfly-fly {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(30px, -20px) rotate(10deg); }
+            50% { transform: translate(60px, -10px) rotate(-5deg); }
+            75% { transform: translate(30px, 10px) rotate(5deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .instruction {
+            font-size: 36px;
+            color: white;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .letter-display {
+            display: none;
+            font-size: 220px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 
+                0 0 30px rgba(255, 215, 0, 0.9),
+                0 0 60px rgba(255, 165, 0, 0.7),
+                0 0 90px rgba(255, 140, 0, 0.5),
+                6px 6px 25px rgba(0, 0, 0, 0.8);
+            animation: letterGlow 0.3s ease-in-out;
+            font-family: 'Impact', sans-serif;
+            letter-spacing: 15px;
+        }
+
+        @keyframes letterGlow {
+            0% { transform: scale(0.7); opacity: 0; }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .poem-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.97);
+            padding: 50px 60px;
+            border-radius: 30px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.4);
+            max-width: 650px;
+            animation: fadeIn 1.2s ease-in;
+            border: 4px solid #FFD700;
+            position: relative;
+            overflow: visible;
+        }
+
+        .poem-decoration {
+            position: absolute;
+            animation: floatDecor 3s infinite ease-in-out;
+        }
+
+        .decor1 { top: -30px; left: -30px; font-size: 50px; animation-delay: 0s; }
+        .decor2 { top: -25px; right: -25px; font-size: 45px; animation-delay: 0.5s; }
+        .decor3 { bottom: -30px; left: -20px; font-size: 55px; animation-delay: 1s; }
+        .decor4 { bottom: -25px; right: -30px; font-size: 50px; animation-delay: 1.5s; }
+        .decor5 { top: 50%; left: -40px; font-size: 40px; animation-delay: 2s; }
+        .decor6 { top: 50%; right: -40px; font-size: 40px; animation-delay: 2.5s; }
+        .decor7 { top: 10%; left: 15%; font-size: 30px; animation-delay: 0.8s; opacity: 0.7; }
+        .decor8 { bottom: 15%; right: 10%; font-size: 35px; animation-delay: 1.8s; opacity: 0.7; }
+
+        @keyframes floatDecor {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(10deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .poem-letter {
+            font-size: 120px;
+            color: #FF6347;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+            font-family: 'Impact', sans-serif;
+        }
+
+        .poem-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 20px;
+            margin: 20px auto 25px;
+            display: block;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 3px solid #FFD700;
+        }
+
+        .poem-text {
+            font-size: 26px;
+            line-height: 1.9;
+            color: #2C3E50;
+            font-style: italic;
+            text-align: left;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .restart-btn {
+            margin-top: 35px;
+            padding: 18px 45px;
+            font-size: 22px;
+            background: linear-gradient(135deg, #FF6347 0%, #FF4500 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .restart-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    
+    <div class="flowers-layer">
+        <!-- Palmeras -->
+        <div class="flower-item palm-left">💐</div>
+        <div class="flower-item palm-right">💐</div>
+        
+        <!-- Hojas decorativas -->
+	
+        <div class="flower-item leaf3">🍃</div>
+        <div class="flower-item leaf4">🌿</div>
+       
+        
+        <!-- Mariposas -->
+        <div class="flower-item butterfly butterfly1">🦋</div>
+	<div class="flower-item butterfly butterfly2">🦋</div>
+	
+    </div>
+
+    <!-- Flores en el suelo -->
+    <div class="flower-ground">
+        <div class="flower-item flower1">🌺</div>
+        <div class="flower-item flower2">🌸</div>
+        <div class="flower-item flower3">🌻</div>
+        <div class="flower-item flower4">🌼</div>
+        <div class="flower-item flower5">🌹</div>
+    </div>
+
+    <div class="container">
+        <div class="instruction" id="instruction">
+            ✨ entrar ✨
+        </div>
+        <div class="letter-display" id="letterDisplay"></div>
+        <div class="poem-container" id="poemContainer">
+            <div class="poem-decoration decor1">🌸</div>
+            <div class="poem-decoration decor2">🦋</div>
+            <div class="poem-decoration decor3">🌺</div>
+            <div class="poem-decoration decor4">🌻</div>
+            <div class="poem-decoration decor5">🌼</div>
+            <div class="poem-decoration decor6">🦋</div>
+            <div class="poem-decoration decor7">💗</div>
+            <div class="poem-decoration decor8">🌷</div>
+            
+            <div class="poem-letter">G</div>
+            
+            <img src="https://scontent.ftgu3-3.fna.fbcdn.net/v/t39.30808-6/564160268_122094267399083910_5368552107879862377_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGUT3BfLK7NDAtV5DtcDjCXMzTyVds55l8zNPJV2znmX75nFJCDoVQmN7vixROUhcm6LLPCrgPE7plSTPxto_J1&_nc_ohc=VBD1t-JwHgEQ7kNvwFncBdg&_nc_oc=AdlyjqmuOWGh9NhbO5hISJhXXT2iT8Dq8zqQte3IOoubm7inbwQoA3mFxg2cxaTkvGQ&_nc_zt=23&_nc_ht=scontent.ftgu3-3.fna&_nc_gid=9vaIGJ5aXeFC4pMyes-x6A&oh=00_Afeo-KNR4Ihayc55EachSgEAyT6QDfxL4cXvCRi0zX7cZQ&oe=6907FFFC" class="poem-image" alt="mi flor preferida">
+            
+            <div class="poem-text">
+             Génesis, desde que llegaste a mi vida todo se siente diferente. Hay algo en tu forma de ser, en tu risa, en tu mirada, que me hace sentir una paz que no había conocido antes. No sé si fue tu dulzura o la manera en que iluminas todo a tu alrededor, pero desde ese momento no he podido dejar de pensar en ti.
+
+Solo quería que supieras que me encantas, no por lo que haces, sino por lo que eres. Porque tienes una esencia tan única que sin darte cuenta, te vuelves imposible de olvidar. ❤️
+            </div>
+            <button class="restart-btn" onclick="location.reload()">salir</button>
+        </div>
+    </div>
+
+    <script>
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        const instruction = document.getElementById('instruction');
+        const letterDisplay = document.getElementById('letterDisplay');
+        const poemContainer = document.getElementById('poemContainer');
+        
+        let currentIndex = 0;
+        let round = 1;
+        let intervalId = null;
+        let started = false;
+
+        function startAnimation() {
+            if (started) return;
+            started = true;
+            
+            instruction.style.display = 'none';
+            letterDisplay.style.display = 'block';
+            
+            intervalId = setInterval(() => {
+                letterDisplay.textContent = alphabet[currentIndex];
+                letterDisplay.style.animation = 'none';
+                setTimeout(() => {
+                    letterDisplay.style.animation = 'letterGlow 0.3s ease-in-out';
+                }, 10);
+                
+                currentIndex++;
+                
+                // Si terminamos el alfabeto
+                if (currentIndex >= alphabet.length) {
+                    currentIndex = 0;
+                    round++;
+                }
+                
+                // En la segunda vuelta, después de mostrar F, mostrar G y detenerse
+                if (round === 2 && alphabet[currentIndex] === 'G') {
+                    // Mostrar la G
+                    setTimeout(() => {
+                        clearInterval(intervalId);
+                        setTimeout(() => {
+                            letterDisplay.style.display = 'none';
+                            poemContainer.style.display = 'block';
+                        }, 1000);
+                    }, 200);
+                }
+            }, 200);
+        }
+
+        // Detectar clic o toque en cualquier parte de la pantalla
+        document.body.addEventListener('click', startAnimation);
+        document.body.addEventListener('touchstart', startAnimation);
+
+        function addImage() {
+            const urlInput = document.getElementById('imageUrlInput');
+            const imageElement = document.getElementById('poemImage');
+            const url = urlInput.value.trim();
+            
+            if (url) {
+                imageElement.src = url;
+                imageElement.style.display = 'block';
+                imageElement.onerror = function() {
+                    alert('No se pudo cargar la imagen. Verifica que la URL sea correcta.');
+                    imageElement.style.display = 'none';
+                };
+            } else {
+                alert('Por favor, ingresa una URL válida.');
+            }
+        }
+
+        // Permitir agregar imagen al presionar Enter
+        document.getElementById('imageUrlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addImage();
+            }
+        });
+    </script>
+</body>
+</html>
