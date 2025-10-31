@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<title>Carta 🎃💌</title>
+<link href="https://fonts.googleapis.com/css2?family=Marck+Script&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box} 
+:root{
+  --primario:#fff;
+  --fondo-sobre:#2c1603;
+  --solapa-sobre:#ff8b00;
+  --cuerpo-sobre:#ff6d00;
+  --sombra:rgba(0,0,0,0.5);
+  --texto:#4a2c00;
+}
+body{
+  background: radial-gradient(circle at top, #ff9100 0%, #7a1ea1 50%, #2d0057 85%, #000 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  height:100vh;
+  color:#fff;
+  overflow:hidden;
+}
+h1{
+  font-family:"Marck Script",serif;
+  text-align:center;
+  font-size:30px;
+  margin-bottom:40px;
+  color:#ffb84d;
+  text-shadow:0 0 15px #ff8c00;
+}
+.contenedor{width:400px;position:relative;z-index:10;}
+.envoltura-sobre{
+  position:relative;
+  background-color:var(--fondo-sobre);
+  box-shadow:0 0 40px var(--sombra);
+  border-radius:15px;
+}
+.sobre{position:relative;width:400px;height:300px}
+.sobre::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;
+  z-index:4;
+  border-top:180px solid var(--solapa-sobre);
+  border-right:200px solid transparent;
+  border-left:200px solid transparent;
+  transform-origin:top;
+  transition:all .6s ease-in-out .7s;
+  border-radius:10px;
+}
+.solapa-derecha{
+  position:absolute;top:0;right:0;width:100%;height:100%;
+  clip-path:polygon(100% 0,0 100%,100% 100%);
+  background-color:var(--cuerpo-sobre);
+  border-radius:10px;
+}
+.solapa-izquierda{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  clip-path:polygon(0 0,0 100%,100% 100%);
+  background-color:var(--cuerpo-sobre);
+  border-radius:10px;
+}
+.carta{
+  position:absolute;bottom:0;width:100%;height:100%;
+  background-color:var(--primario);
+  text-align:center;
+  box-shadow:0 0 5px var(--sombra);
+  padding:20px;border-radius:10px;
+  transition:transform .7s cubic-bezier(0.4,0,0.2,1);
+}
+.contenido{
+  font-family:"Gill Sans",Calibri,sans-serif;
+  color:#3b1600;
+  text-align:center;
+  font-size:16px;
+  padding:10px;height:100%;
+  line-height:1.3;
+  cursor:pointer;
+}
+
+/* 🎃 Calabaza flotante centrada */
+.calabaza{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,0);
+  width:60px;height:60px;
+  background:radial-gradient(circle at 50% 40%, #ff9100 40%, #d35c00 90%);
+  border-radius:50%;
+  cursor:pointer;
+  z-index:999;
+  box-shadow:inset 0 0 10px #a64500,0 0 15px #ff9100;
+  animation: brillar 2s infinite alternate, flotar 3s ease-in-out infinite;
+}
+@keyframes brillar{
+  from{box-shadow:inset 0 0 10px #a64500,0 0 10px #ff9100;}
+  to{box-shadow:inset 0 0 15px #a64500,0 0 25px #ffcc33;}
+}
+@keyframes flotar{
+  0%,100%{transform:translate(-50%,0);}
+  50%{transform:translate(-50%,-10px);}
+}
+
+/* 🌟 Rotación controlada */
+.calabaza.girar{
+  animation: brillar 2s infinite alternate, flotar 3s ease-in-out infinite, girar 0.8s ease-in-out forwards;
+}
+.calabaza.revertir{
+  animation: brillar 2s infinite alternate, flotar 3s ease-in-out infinite, girarReversa 0.8s ease-in-out forwards;
+}
+@keyframes girar{
+  0%{transform:translate(-50%,0) rotate(0deg);}
+  100%{transform:translate(-50%,0) rotate(90deg);}
+}
+@keyframes girarReversa{
+  0%{transform:translate(-50%,0) rotate(90deg);}
+  100%{transform:translate(-50%,0) rotate(0deg);}
+}
+.calabaza::before{
+  content:"";
+  position:absolute;
+  top:-10px;left:50%;
+  transform:translateX(-50%);
+  width:8px;height:12px;
+  background:#006400;
+  border-radius:3px;
+}
+
+/* 👀 Ojos y boca */
+.calabaza .cara{
+  position:absolute;
+  top:22px;left:50%;
+  transform:translateX(-50%);
+  width:34px;height:20px;
+}
+.ojo{
+  position:absolute;
+  width:0;height:0;
+  border-left:6px solid transparent;
+  border-right:6px solid transparent;
+  border-bottom:8px solid #000;
+  top:0;
+}
+.ojo.izq{left:3px;}
+.ojo.der{right:3px;}
+.boca{
+  position:absolute;
+  bottom:0;left:50%;
+  transform:translateX(-50%);
+  width:22px;height:8px;
+  background:#000;
+  border-radius:0 0 10px 10px;
+  animation: parpadeo 2.5s infinite alternate;
+}
+@keyframes parpadeo{
+  0%,90%{background:#000;}
+  95%,100%{background:#ffcc00;}
+}
+
+/* 📜 Animaciones carta */
+.abierto .sobre::before{transform:rotateX(180deg);z-index:0}
+.carta.mostrar-carta { animation: subirCarta 1s ease-in-out forwards; }
+.carta.cerrando-carta { animation: bajarCarta 1s ease-in-out forwards; }
+@keyframes subirCarta {
+  0% { transform: translateY(0); opacity: 0; }
+  40% { opacity: 1; transform: translateY(-150px); }
+  100% { transform: translateY(-290px); opacity: 1; }
+}
+@keyframes bajarCarta {
+  0% { transform: translateY(0); opacity: 1; }
+  33% { transform: translateY(-260px); opacity: 1; }
+  66% { transform: translateY(-290px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+.carta.abierta{z-index:10000}
+.envoltura-sobre.desactivar-sobre .sobre::before{pointer-events:none}
+
+/* 👻 Emojis flotantes */
+.emoji{
+  position:fixed;
+  top:-40px;
+  font-size:30px;
+  pointer-events:none;
+  animation: caer 6s linear forwards;
+  z-index:9999;
+  opacity:0.9;
+}
+@keyframes caer{
+  0%{transform:translateY(0) rotate(0deg);opacity:1;}
+  100%{transform:translateY(110vh) rotate(360deg);opacity:0;}
+}
+
+/* 🔹 Responsive */
+@media (max-width: 1024px) {
+  .sobre::before {
+    border-top: calc(0.45 * min(80vw, 400px)) solid var(--solapa-sobre);
+    border-right: calc(0.5 * min(80vw, 400px)) solid transparent;
+    border-left: calc(0.5 * min(80vw, 400px)) solid transparent;
+  }
+}
+@media (max-width: 480px) {
+  h1 {font-size:30px;margin-bottom:25px;}
+  .contenedor {width:90vw;}
+  .sobre {width:100%;height:auto;aspect-ratio:4/3;}
+  .carta {padding:35px;}
+  .contenido {font-size:14px;line-height:1;}
+  .calabaza {width:50px;height:50px;}
+  .calabaza .cara {top:18px;width:28px;height:16px;}
+  .boca {width:20px;height:6px;}
+}
+
+/* 🔮 Pantalla inicial centrada */
+#inicio {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #000 0%, #260035 80%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.contenedor-inicio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pumpkin {
+  font-size: 100px;
+  line-height: 1;
+  margin: 0;
+  filter: drop-shadow(0 0 25px #ff8c00);
+  animation: flotarInicio 2.2s ease-in-out infinite alternate;
+}
+
+#inicio h2 {
+  font-family: "Marck Script", cursive;
+  color: #ffb84d;
+  text-shadow: 0 0 20px #ff6d00, 0 0 40px #ff9100;
+  font-size: 30px;
+  margin-top: 25px;
+  animation: aparecerTexto 2s infinite alternate;
+}
+
+#contador {
+  font-size: 45px;
+  margin-top: 20px;
+  font-family: "Marck Script", cursive;
+  color: #ffb84d;
+  text-shadow: 0 0 15px #ff6d00, 0 0 25px #ffcc00;
+}
+
+@keyframes aparecerTexto {from{opacity:0.6;}to{opacity:1;}}
+@keyframes flotarInicio {
+  0% {transform: translateY(0);}
+  100% {transform: translateY(-12px);}
+}
+</style>
+</head>
+<body>
+
+<!-- 🎃 Pantalla inicial -->
+<div id="inicio">
+  <div class="contenedor-inicio">
+    <div class="pumpkin">🎃</div>
+    <h2>Invocando tu carta mágica...</h2>
+    <div id="contador">3</div>
+  </div>
+</div>
+
+<h1>💌 Ábrela sin miedo 🎃</h1>
+<div class="contenedor">
+  <div class="envoltura-sobre">
+    <div class="sobre">
+      <div class="carta">
+        <div class="contenido">
+          <strong>Tu encanto💫</strong><br><br>
+          <p>
+            En la noche oscura, donde las luces parpadean y los gatos maúllan,
+            quiero decirte algo que ni los fantasmas pueden ocultar:
+            <br><br>
+            💖 Tú eres mi hechizo favorito.  
+            🌙 Mi poción de alegría.  
+            🔮 Y mi conjuro de amor eterno.  
+            <br><br>
+            Así que si alguna calabaza se enciende esta noche, sabrás que su brillo lleva tu nombre.
+            <br><br>
+            Con cariño,  
+            <strong>tu programador 🎃</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="calabaza">
+      <div class="cara">
+        <div class="ojo izq"></div>
+        <div class="ojo der"></div>
+        <div class="boca"></div>
+      </div>
+    </div>
+    <div class="solapa-derecha"></div>
+    <div class="solapa-izquierda"></div>
+  </div>
+</div>
+
+<script>
+const envoltura=document.querySelector(".envoltura-sobre");
+const carta=document.querySelector(".carta");
+const calabaza=document.querySelector(".calabaza");
+let bloqueado=false;
+
+document.addEventListener("click",(e)=>{
+  if(bloqueado)return;
+
+  if(e.target.closest(".calabaza")||e.target.matches(".solapa-derecha")||e.target.matches(".solapa-izquierda")||e.target.matches(".sobre")){
+    envoltura.classList.toggle("abierto");
+    if(envoltura.classList.contains("abierto")){
+      calabaza.classList.remove("revertir");
+      calabaza.classList.add("girar");
+    }else{
+      calabaza.classList.remove("girar");
+      calabaza.classList.add("revertir");
+    }
+  } else if(e.target.matches(".sobre *")){
+    bloqueado=true;
+    if(!carta.classList.contains("abierta")){
+      carta.classList.remove("cerrando-carta");
+      carta.classList.add("mostrar-carta");
+      setTimeout(()=>{
+        carta.classList.remove("mostrar-carta");
+        carta.classList.add("abierta");
+      },1000);
+      envoltura.classList.add("desactivar-sobre");
+    }else{
+      carta.classList.remove("mostrar-carta");
+      carta.classList.add("cerrando-carta");
+      envoltura.classList.remove("desactivar-sobre");
+      setTimeout(()=>{
+        carta.classList.remove("cerrando-carta");
+        carta.classList.remove("abierta");
+      },1000);
+    }
+    setTimeout(()=>bloqueado=false,1200);
+  }
+});
+
+/* 🎃 Emojis cayendo */
+const emojis=["🎃","👻","🕷️","🕸️","💀","🦇","🍬","🧙‍♀️","🔥"];
+function crearEmoji(){
+  const e=document.createElement("div");
+  e.classList.add("emoji");
+  e.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+  e.style.left=Math.random()*100+"vw";
+  e.style.fontSize=(Math.random()*20+25)+"px";
+  e.style.animationDuration=(Math.random()*3+4)+"s";
+  document.body.appendChild(e);
+  setTimeout(()=>e.remove(),7000);
+}
+setInterval(crearEmoji,400);
+
+/* ⏳ Contador regresivo */
+window.addEventListener("load",()=>{
+  const inicio=document.getElementById("inicio");
+  const contador=document.getElementById("contador");
+  let tiempo=3;
+  const intervalo=setInterval(()=>{
+    tiempo--;
+    contador.textContent=tiempo;
+    if(tiempo<=0){
+      clearInterval(intervalo);
+      inicio.style.transition="opacity 1.2s";
+      inicio.style.opacity="0";
+      setTimeout(()=>inicio.remove(),1200);
+    }
+  },1000);
+});
+</script>
+</body>
+</html>
