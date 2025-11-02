@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para la mas bonita💕✨</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap');
+
+        /* ===== MÓDULO DE COLORES PERSONALIZABLE ===== */
+        :root {
+            /* Colores de fuegos artificiales - Edita estos valores para cambiar los colores */
+            --firework-pink: 255, 100, 150;
+            --firework-blue: 100, 150, 255;
+            --firework-gold: 255, 200, 100;
+            --firework-green: 150, 255, 150;
+            --firework-orange: 255, 150, 100;
+            --firework-purple: 200, 100, 255;
+            --firework-yellow: 255, 255, 100;
+            --firework-cyan: 100, 255, 255;
+            --firework-red: 255, 100, 100;
+            --firework-white: 255, 255, 255;
+            
+            /* Colores del fondo y texto (no modificar a menos que sepas lo que haces) */
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-middle: #162447;
+            --bg-gradient-end: #e94560;
+            --text-color: #fff;
+            --heart-color: #ff6b6b;
+            --sparkle-color: #ffd700;
+        }
+        /* ===== FIN MÓDULO DE COLORES ===== */
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Amatic SC', cursive;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to bottom, var(--bg-gradient-start) 0%, var(--bg-gradient-middle) 50%, var(--bg-gradient-end) 100%);
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .message-container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 95%;
+            max-width: 1200px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .message {
+            font-size: clamp(4rem, 8vw, 8rem);
+            font-weight: 700;
+            opacity: 0;
+            position: absolute;
+            transform: translateY(50px);
+            animation: fadeInOut 12s ease-in-out infinite;
+            text-shadow: 
+                0 0 20px rgba(255, 255, 255, 0.9),
+                0 0 40px rgba(255, 255, 255, 0.6),
+                0 0 60px rgba(255, 255, 255, 0.3);
+            transition: opacity 1s ease, transform 1s ease;
+            width: 100%;
+            line-height: 1.2;
+            letter-spacing: 0.02em;
+        }
+
+        .message:nth-child(1) { animation-delay: 0s; }
+        .message:nth-child(2) { animation-delay: 3s; }
+        .message:nth-child(3) { animation-delay: 6s; }
+        .message:nth-child(4) { animation-delay: 9s; }
+
+        @keyframes fadeInOut {
+            0%, 25%, 100% { opacity: 0; transform: translateY(50px); }
+            8%, 17% { opacity: 1; transform: translateY(0); }
+        }
+
+        .heart {
+            display: inline-block;
+            color: var(--heart-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .sparkle {
+            display: inline-block;
+            color: var(--sparkle-color);
+            animation: sparkle 1.8s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .click-instruction {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .message {
+                font-size: clamp(4.1rem, 7vw, 6rem);
+            }
+            .message-container {
+                width: 98%;
+                align-items: flex-start;
+                padding-top: 78vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .message {
+                font-size: clamp(3.6rem, 6vw, 5rem);
+            }
+            .message-container {
+                padding-top: 75vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="starrySky"></canvas>
+    <div class="message-container">
+        <div class="message">Usted es mi universo entero y mi vida entera 🌌</div>
+        <div class="message">Estoy loquito de amor por usted <span class="sparkle">✨</span></div>
+        <div class="message">Hare brillar su alma con mucho amor bonito 💖</div>
+        <div class="message">Es usted mi eternidad y sus ojos los mas bonitos <span class="heart">💞</span></div>
+    </div>
+    <div class="click-instruction">Haz clic para crear fuegos artificiales 🎆</div>
+
+    <script>
+        const canvas = document.getElementById('starrySky');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+
+        const stars = [];
+        const shootingStars = [];
+        const fireworks = [];
+        const particles = [];
+
+        let lastFireworkTime = 0;
+        const fireworkCooldown = 300; // 300ms entre fuegos artificiales
+        
+        // Sistema de música robusto - MODIFICADO para inicializar en el primer clic
+        let audio = null;
+        let audioContext = null;
+        let isAudioInitialized = false; // Bandera para saber si ya se intentó inicializar el audio
+        let audioAttempts = 0;
+        const maxAudioAttempts = 5;
+
+        // Obtener colores CSS personalizables
+        function getCSSColor(colorVar) {
+            const style = getComputedStyle(document.documentElement);
+            const colorString = style.getPropertyValue(colorVar).trim();
+            return colorString.split(',').map(c => parseInt(c.trim()));
+        }
+
+        // Nueva función para crear y reproducir audio, llamada solo en interacción del usuario
+        function createAndPlayAudio() {
+            if (isAudioInitialized) return; // Ya se intentó inicializar, no lo hagas de nuevo aquí
+
+            audioAttempts++;
+            if (audioAttempts > maxAudioAttempts) {
+                console.log('Máximo de intentos de audio alcanzado. Puede que el audio no se reproduzca.');
+                return;
+            }
+            
+            try {
+                // Solo crea AudioContext y el elemento de audio una vez
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    audio = new Audio();
+                    audio.src = 'assets/sound.mp3';
+                    audio.loop = true;
+                    audio.volume = 0.7;
+                    audio.preload = 'auto';
+                    
+                    audio.addEventListener('canplaythrough', () => {
+                        console.log('Audio listo para reproducir');
+                    });
+                    
+                    audio.addEventListener('error', (e) => {
+                        console.log('Error de audio:', e);
+                        // Reiniciar isAudioInitialized si hay un error para permitir reintentos
+                        isAudioInitialized = false; 
+                    });
+                }
+                
+                // Asegúrate de reanudar el AudioContext si está suspendido
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
+                // Intentar reproducir
+                const playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            console.log('Música iniciada correctamente');
+                            isAudioInitialized = true; // Audio inicializado y reproduciéndose
+                        })
+                        .catch((error) => {
+                            console.log('Error al reproducir:', error);
+                            // No marcar como inicializado si hay un error en la reproducción
+                            // El próximo clic lo intentará de nuevo si audioAttempts < maxAudioAttempts
+                        });
+                } else {
+                    // Para navegadores antiguos sin Promise en audio.play()
+                    console.log('Reproducción de audio iniciada (sin promesa).');
+                    isAudioInitialized = true;
+                }
+                
+            } catch (error) {
+                console.log('Error al inicializar o reproducir audio:', error);
+                // Si hay un error general en la inicialización, permitir reintentos
+                isAudioInitialized = false; 
+            }
+        }
+
+        // Función para reanudar audio si se pausó (por cambio de tab, etc.)
+        function resumeAudio() {
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            // Solo intentar play si el audio existe y está pausado
+            if (audio && audio.paused && isAudioInitialized) {
+                audio.play().catch(e => console.log('Error al reanudar:', e));
+            }
+        }
+
+        class Star {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.radius = Math.random() * 1.8;
+                this.opacity = Math.random() * 0.6 + 0.4;
+                this.twinkleSpeed = Math.random() * 0.02 + 0.01;
+                this.twinklePhase = Math.random() * Math.PI * 2;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * (Math.sin(Date.now() * this.twinkleSpeed + this.twinklePhase) * 0.4 + 0.8)})`;
+                ctx.fill();
+            }
+        }
+
+        class ShootingStar {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = 0;
+                this.length = Math.random()*60+60;
+                this.speed = Math.random()*3+3;
+                this.angle = Math.PI/4;
+                this.opacity = 1;
+            }
+
+            update() {
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+                this.opacity -= 0.015;
+                if (this.opacity <= 0) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x - Math.cos(this.angle) * this.length, this.y - Math.sin(this.angle) * this.length);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+            }
+        }
+
+        class Firework {
+            constructor(x, y) {
+                this.x = x;
+                this.y = canvas.height;
+                this.targetX = x;
+                this.targetY = y;
+                this.speed = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 5 : 8;
+                this.exploded = false;
+                this.particles = [];
+                this.trail = [];
+                this.color = this.getRandomColor();
+            }
+
+            getRandomColor() {
+                const colorVars = [
+                    '--firework-pink', '--firework-blue', '--firework-gold', 
+                    '--firework-green', '--firework-orange', '--firework-purple', 
+                    '--firework-yellow', '--firework-cyan', '--firework-red', '--firework-white'
+                ];
+                const randomVar = colorVars[Math.floor(Math.random() * colorVars.length)];
+                return getCSSColor(randomVar);
+            }
+
+            update() {
+                if (!this.exploded) {
+                    this.trail.push({ x: this.x, y: this.y });
+                    if (this.trail.length > 10) this.trail.shift();
+                    
+                    const dx = this.targetX - this.x;
+                    const dy = this.targetY - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance > this.speed) {
+                        this.x += (dx / distance) * this.speed;
+                        this.y += (dy / distance) * this.speed;
+                    } else {
+                        this.x = this.targetX;
+                        this.y = this.targetY;
+                        this.explode();
+                    }
+                } else {
+                    this.particles.forEach((particle, index) => {
+                        particle.update();
+                        if (particle.life <= 0) {
+                            this.particles.splice(index, 1);
+                        }
+                    });
+                }
+            }
+
+            explode() {
+                this.exploded = true;
+                const particleCount = Math.random() * 40 + 60;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const angle = (Math.PI * 2 * i) / particleCount;
+                    const velocity = Math.random() * 2 + 1;
+                    
+                    this.particles.push(new Particle(
+                        this.x,
+                        this.y,
+                        Math.cos(angle) * velocity,
+                        Math.sin(angle) * velocity,
+                        this.color
+                    ));
+                }
+            }
+
+            draw() {
+                if (!this.exploded) {
+                    // Dibujar rastro con brillo neón
+                    this.trail.forEach((point, index) => {
+                        const opacity = index / this.trail.length;
+                        
+                        // Brillo exterior neón
+                        ctx.beginPath();
+                        ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${opacity * 0.3})`;
+                        ctx.fill();
+                        
+                        // Núcleo brillante
+                        ctx.beginPath();
+                        ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${opacity})`;
+                        ctx.fill();
+                    });
+
+                    // Cohete con efecto neón mejorado
+                    this.drawNeonCircle(this.x, this.y, 5, this.color, 1);
+                } else {
+                    this.particles.forEach(particle => particle.draw());
+                }
+            }
+
+            drawNeonCircle(x, y, radius, color, opacity) {
+                // Múltiples capas para efecto neón ultra brillante
+                const layers = [
+                    { radius: radius * 3, opacity: opacity * 0.08 },
+                    { radius: radius * 2.5, opacity: opacity * 0.15 },
+                    { radius: radius * 2, opacity: opacity * 0.25 },
+                    { radius: radius * 1.5, opacity: opacity * 0.4 },
+                    { radius: radius * 1.2, opacity: opacity * 0.6 },
+                    { radius: radius, opacity: opacity * 0.9 },
+                    { radius: radius * 0.7, opacity: opacity },
+                    { radius: radius * 0.4, opacity: opacity * 1.2 }
+                ];
+
+                layers.forEach(layer => {
+                    ctx.beginPath();
+                    ctx.arc(x, y, layer.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${Math.min(layer.opacity, 1)})`;
+                    ctx.fill();
+                });
+                
+                // Núcleo ultra brillante blanco
+                ctx.beginPath();
+                ctx.arc(x, y, radius * 0.2, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${opacity * 0.8})`;
+                ctx.fill();
+            }
+
+            isDead() {
+                return this.exploded && this.particles.length === 0;
+            }
+        }
+
+        class Particle {
+            constructor(x, y, vx, vy, color) {
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.color = color;
+                this.life = 1;
+                this.decay = Math.random() * 0.015 + 0.008;
+                this.gravity = 0.03;
+                this.length = Math.random() * 15 + 10;
+                this.prevX = x;
+                this.prevY = y;
+                this.brightness = Math.random() * 0.7 + 0.8; // Brillo más intenso
+            }
+
+            update() {
+                this.prevX = this.x;
+                this.prevY = this.y;
+                
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += this.gravity;
+                this.vx *= 0.985;
+                this.life -= this.decay;
+            }
+
+            draw() {
+                const dx = this.x - this.prevX;
+                const dy = this.y - this.prevY;
+                const length = Math.sqrt(dx * dx + dy * dy);
+                
+                if (length > 0) {
+                    const unitX = dx / length;
+                    const unitY = dy / length;
+                    
+                    const endX = this.x - unitX * this.length;
+                    const endY = this.y - unitY * this.length;
+                    
+                    // Gradiente neón ultra brillante
+                    const gradient = ctx.createLinearGradient(this.x, this.y, endX, endY);
+                    const baseOpacity = this.life * this.brightness;
+                    
+                    gradient.addColorStop(0, `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${baseOpacity * 1.2})`);
+                    gradient.addColorStop(0.5, `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${baseOpacity * 0.8})`);
+                    gradient.addColorStop(1, `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, 0)`);
+                    
+                    // Brillo exterior ultra intenso
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(endX, endY);
+                    ctx.strokeStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${baseOpacity * 0.15})`;
+                    ctx.lineWidth = 8;
+                    ctx.stroke();
+                    
+                    // Brillo medio
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(endX, endY);
+                    ctx.strokeStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${baseOpacity * 0.4})`;
+                    ctx.lineWidth = 5;
+                    ctx.stroke();
+                    
+                    // Línea principal brillante
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(endX, endY);
+                    ctx.strokeStyle = gradient;
+                    ctx.lineWidth = 2.5;
+                    ctx.stroke();
+                    
+                    // Punto brillante con múltiples capas neón
+                    this.drawNeonPoint(this.x, this.y, baseOpacity);
+                }
+            }
+
+            drawNeonPoint(x, y, opacity) {
+                // Efecto neón ultra brillante con múltiples capas
+                const layers = [
+                    { radius: 10, opacity: opacity * 0.08 },
+                    { radius: 8, opacity: opacity * 0.15 },
+                    { radius: 6, opacity: opacity * 0.25 },
+                    { radius: 4, opacity: opacity * 0.4 },
+                    { radius: 3, opacity: opacity * 0.6 },
+                    { radius: 2, opacity: opacity * 0.8 },
+                    { radius: 1.5, opacity: opacity },
+                    { radius: 1, opacity: opacity * 1.2 }
+                ];
+
+                layers.forEach(layer => {
+                    ctx.beginPath();
+                    ctx.arc(x, y, layer.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${Math.min(layer.opacity, 1)})`;
+                    ctx.fill();
+                });
+                
+                // Núcleo blanco ultra brillante
+                ctx.beginPath();
+                ctx.arc(x, y, 0.8, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(opacity * 1.5, 1)})`;
+                ctx.fill();
+                
+                // Destello adicional
+                ctx.beginPath();
+                ctx.arc(x, y, 0.3, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(opacity * 2, 1)})`;
+                ctx.fill();
+            }
+        }
+
+        // Inicializar estrellas
+        for (let i = 0; i < 250; i++) {
+            stars.push(new Star());
+        }
+
+        // Inicializar estrellas fugaces
+        for (let i = 0; i < 4; i++) {
+            shootingStars.push(new ShootingStar());
+        }
+
+        // Event listener para fuegos artificiales y música
+        document.addEventListener('click', (e) => {
+            createAndPlayAudio(); // LLama a la nueva función de inicialización de audio
+            resumeAudio(); // Intenta reanudar por si acaso
+            
+            const currentTime = Date.now();
+            if (currentTime - lastFireworkTime > fireworkCooldown) {
+                const x = e.clientX;
+                const y = e.clientY;
+                
+                fireworks.push(new Firework(x, y));
+                lastFireworkTime = currentTime;
+            }
+        });
+
+        // También funciona en móviles
+        document.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            
+            createAndPlayAudio(); // LLama a la nueva función de inicialización de audio
+            resumeAudio(); // Intenta reanudar por si acaso
+            
+            const currentTime = Date.now();
+            if (currentTime - lastFireworkTime > fireworkCooldown) {
+                const touch = e.touches[0];
+                const x = touch.clientX;
+                const y = touch.clientY;
+                
+                fireworks.push(new Firework(x, y));
+                lastFireworkTime = currentTime;
+            }
+        });
+
+        document.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            resumeAudio(); // Solo reanudar, no crear AudioContext nuevamente
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && audio && !audio.paused) {
+                resumeAudio();
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            resumeAudio();
+        });
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Dibujar estrellas
+            stars.forEach(star => star.draw());
+            
+            // Dibujar estrellas fugaces
+            shootingStars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+            
+            // Dibujar fuegos artificiales
+            fireworks.forEach((firework, index) => {
+                firework.update();
+                firework.draw();
+                
+                if (firework.isDead()) {
+                    fireworks.splice(index, 1);
+                }
+            });
+            
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            stars.forEach(star => {
+                if (star.x > canvas.width) star.x = canvas.width;
+                if (star.y > canvas.height) star.y = canvas.height;
+            });
+        });
+
+        animate();
+    </script>
+</body>
+</html>
