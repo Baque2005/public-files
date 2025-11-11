@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta name="robots" content="noindex, nofollow">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PARA TI </title>
+    <style>
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow: hidden;
+
+    background: linear-gradient(-45deg, #e0c3fc, #8ec5fc, #fbc2eb, #a6c1ee);
+    background-size: 400% 400%;
+    animation: gradientAnimation 15s ease-in-out infinite;
+}
+
+:root {
+    --outline-blue: #A9D0F5;
+    --blush-pink: #FDE6E8;
+    --mouth-pink: #E7A8B9;
+    --main-white: #FFFFFF;
+    --border-thickness: calc(5px * var(--scale-factor));
+    --scale-factor: calc(min(600px, 100vw) / 600px);
+}
+
+.cinnamoroll-container {
+    position: relative;
+    width: min(600px, 100vw);
+    height: calc(450px * var(--scale-factor));
+    filter: url(#sketchy);
+    cursor: pointer;
+}
+
+.head, .ear, .paw {
+    position: absolute;
+    background-color: var(--outline-blue);
+}
+
+.head::before, .ear::before, .paw::before {
+    content: '';
+    position: absolute;
+    background-color: var(--main-white);
+    top: var(--border-thickness);
+    left: var(--border-thickness);
+    right: var(--border-thickness);
+    bottom: var(--border-thickness);
+    z-index: 1;
+}
+
+.head {
+    bottom: calc(80px * var(--scale-factor));
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(280px * var(--scale-factor));
+    height: calc(180px * var(--scale-factor));
+    border-radius: calc(130px * var(--scale-factor)) calc(130px * var(--scale-factor)) calc(40px * var(--scale-factor)) calc(40px * var(--scale-factor));
+    z-index: 10;
+}
+
+.head::before {
+    border-radius: calc(125px * var(--scale-factor)) calc(125px * var(--scale-factor)) calc(35px * var(--scale-factor)) calc(35px * var(--scale-factor));
+}
+
+.ear {
+    width: calc(230px * var(--scale-factor));
+    height: calc(100px * var(--scale-factor));
+    border-radius: calc(120px * var(--scale-factor)) calc(120px * var(--scale-factor)) calc(80px * var(--scale-factor)) calc(80px * var(--scale-factor));
+    z-index: 9;
+    top: calc(225px * var(--scale-factor));
+}
+
+.ear::before {
+    border-radius: calc(115px * var(--scale-factor)) calc(115px * var(--scale-factor)) calc(75px * var(--scale-factor)) calc(75px * var(--scale-factor));
+}
+
+.left-ear {
+    left: calc(40px * var(--scale-factor));
+    animation: float-left-ear 5s ease-in-out infinite;
+}
+
+.right-ear {
+    right: calc(40px * var(--scale-factor));
+    animation: float-right-ear 5s ease-in-out infinite;
+    animation-delay: -2.5s;
+}
+
+.face-details {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
+.eye {
+    position: absolute;
+    width: calc(30px * var(--scale-factor));
+    height: calc(30px * var(--scale-factor));
+    background-color: var(--outline-blue);
+    border-radius: 50%;
+    top: calc(90px * var(--scale-factor));
+    border-top: var(--border-thickness) solid transparent;
+    box-sizing: border-box;
+    transition: all 0.2s ease-in-out;
+}
+
+.cinnamoroll-container:hover .eye {
+    height: calc(15px * var(--scale-factor));
+    background-color: transparent;
+    border-top: var(--border-thickness) solid var(--outline-blue);
+    top: calc(95px * var(--scale-factor));
+    border-radius: 100%;
+}
+
+.left-eye {
+    left: calc(60px * var(--scale-factor));
+}
+
+.right-eye {
+    right: calc(60px * var(--scale-factor));
+}
+
+.cheek {
+    position: absolute;
+    width: calc(50px * var(--scale-factor));
+    height: calc(35px * var(--scale-factor));
+    background-color: var(--blush-pink);
+    border-radius: 50%;
+    top: calc(120px * var(--scale-factor));
+    transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.left-cheek {
+    left: calc(40px * var(--scale-factor));
+}
+
+.right-cheek {
+    right: calc(40px * var(--scale-factor));
+}
+
+.mouth {
+    position: absolute;
+    top: calc(130px * var(--scale-factor));
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.mouth svg {
+    width: calc(20px * var(--scale-factor));
+    height: calc(10px * var(--scale-factor));
+}
+
+.mouth svg path {
+    stroke-width: calc(2.5px * var(--scale-factor));
+}
+
+.paw {
+    width: calc(60px * var(--scale-factor));
+    height: calc(45px * var(--scale-factor));
+    border-radius: 50%;
+    bottom: calc(-35px * var(--scale-factor));
+    z-index: 15;
+}
+
+.paw::before {
+    border-radius: 50%;
+}
+
+.left-paw {
+    left: calc(35px * var(--scale-factor));
+}
+
+.right-paw {
+    right: calc(35px * var(--scale-factor));
+}
+
+.sparkle {
+    position: absolute;
+    border: var(--border-thickness) solid var(--outline-blue);
+    border-radius: 4px;
+}
+
+.s1 {
+    width: calc(25px * var(--scale-factor));
+    height: calc(25px * var(--scale-factor));
+    top: calc(60px * var(--scale-factor));
+    left: calc(80px * var(--scale-factor));
+    transform: rotate(-25deg);
+    border-radius: 50% 50% 50% 0;
+}
+
+.s2 {
+    width: calc(15px * var(--scale-factor));
+    height: calc(15px * var(--scale-factor));
+    top: calc(100px * var(--scale-factor));
+    left: calc(540px * var(--scale-factor));
+    transform: rotate(20deg);
+}
+
+.s3 {
+    width: calc(20px * var(--scale-factor));
+    height: calc(20px * var(--scale-factor));
+    top: calc(70px * var(--scale-factor));
+    right: calc(70px * var(--scale-factor));
+    transform: rotate(20deg);
+}
+
+.s4 {
+    width: calc(15px * var(--scale-factor));
+    height: calc(15px * var(--scale-factor));
+    bottom: calc(50px * var(--scale-factor));
+    left: calc(90px * var(--scale-factor));
+    transform: rotate(10deg);
+}
+
+.cinnamoroll-container:hover .cheek {
+    background-color: #F59AB8;
+    transform: scale(1.1);
+}
+
+@keyframes float-left-ear {
+    0%, 100% {
+        transform: rotate(300deg) translateY(0);
+    }
+    50% {
+        transform: rotate(300deg) translateY(-10px);
+    }
+}
+
+@keyframes float-right-ear {
+    0%, 100% {
+        transform: rotate(60deg) translateY(0);
+    }
+    50% {
+        transform: rotate(60deg) translateY(-10px);
+    }
+}
+#frase-container {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -20px);
+    padding: 15px 25px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 3px solid var(--outline-blue);
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(135, 184, 224, 0.4);
+    font-family: 'Pacifico', cursive;
+    font-size: calc(22px * var(--scale-factor));
+    color: #6a8aaa;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s;
+    z-index: 100;
+    max-width: 90%;
+    pointer-events: none;
+}
+
+#frase-container.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+}</style>
+</head>
+<body>
+
+<svg style="position: absolute; width: 0; height: 0;">
+    <defs>
+        <filter id="sketchy">
+            <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" />
+        </filter>
+    </defs>
+</svg>
+<div id="frase-container"></div>
+<div class="cinnamoroll-container">
+
+    <div class="sparkle s1"></div>
+    <div class="sparkle s2"></div>
+    <div class="sparkle s3"></div>
+    <div class="sparkle s4"></div>
+
+    <div class="ear left-ear"></div>
+    <div class="ear right-ear"></div>
+
+    <div class="head">
+        <div class="face-details">
+            <div class="eye left-eye"></div>
+            <div class="eye right-eye"></div>
+            <div class="cheek left-cheek"></div>
+            <div class="cheek right-cheek"></div>
+            <div class="mouth">
+
+                <svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 5C2 5 5 8 10 5C15 2 18 5 18 5" stroke="#E7A8B9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </div>
+        <div class="paw left-paw"></div>
+        <div class="paw right-paw"></div>
+    </div>
+</div>
+<script type="module">
+const cinnamoroll = document.querySelector('.cinnamoroll-container');
+const fraseContainer = document.getElementById('frase-container');
+
+const frasesBonitas = [
+    "Eres la razón por la que mi mundo es más dulce.",
+    "Tu sonrisa ilumina hasta el día más gris.",
+    "Pensar en ti es como un abrazo para mi corazón.",
+    "Eres mi persona favorita en todo el universo.",
+    "Contigo, cada momento es especial y mágico.",
+    "Me encanta la persona increíble que eres.",
+    "Mi princesa es la mas bella.",
+    "Gracias por hacer mi vida mucho más bonita.",
+    "Que tengas un día tan maravilloso como tú.",
+    "Eres un solecito en forma de persona.",
+    "A tu lado, todo es más fácil y feliz.",
+    "Te Amoooooooooo Mushooooo, MI CACHETONA."
+];
+
+let timeoutId;
+
+cinnamoroll.addEventListener('click', () => {
+
+    clearTimeout(timeoutId);
+
+    fraseContainer.classList.remove('show');
+
+    setTimeout(() => {
+
+        const fraseAleatoria = frasesBonitas[Math.floor(Math.random() * frasesBonitas.length)];
+
+        fraseContainer.textContent = fraseAleatoria;
+
+        fraseContainer.classList.add('show');
+
+        timeoutId = setTimeout(() => {
+            fraseContainer.classList.remove('show');
+        }, 4000);
+    }, 100);
+
+});</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"48074081e95643b5bb21472bf71b368c","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
