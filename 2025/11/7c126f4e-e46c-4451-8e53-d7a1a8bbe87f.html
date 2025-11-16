@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Quieres ser?</title>
+    <style>
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #ffffff;
+    }
+
+    .container {
+        text-align: center;
+    }
+
+    #gifContainerImg {
+        width: 60%;
+        height: 60%;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin: 10px;
+        cursor: pointer;
+    }
+    #siBtn {
+        padding: 10px 20px; 
+        font-size: 16px;
+        margin: 10px;
+        cursor: pointer;
+        background-color: #009705; /* Verde */
+        color: white;
+        border: 2px solid #FFC0CB; /* Bordes rosa */
+        border-radius: 10px; /* Esquinas redondeadas */
+    }
+
+    #noBtn {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin: 10px;
+        cursor: pointer;
+        background-color: #FF5733; /* Rojo */
+        color: white;
+        border: 2px solid #FFC0CB; /* Bordes rosa */
+        border-radius: 10px; /* Esquinas redondeadas */
+    }
+    #noBtn span {
+        font-size: 18px;
+        color: #fcf4f4; /* Cambia el color del texto según tus preferencias */
+        /* Otras propiedades de estilo aquí */
+    }
+
+    #siBtn:hover{
+        background-color: #053a03; /* Cambia a otro color en hover, puedes ajustar el valor según tus preferencias */
+    }
+    #noBtn:hover {
+        background-color: #641e0d; /* Cambia a otro color en hover, puedes ajustar el valor según tus preferencias */
+    }
+    .bg-green {
+        background-color: #ffffff; /* Nuevo color de fondo verde */
+    }
+
+    #messageContainer {
+        font-size: 30px;
+        color: #FF0000; /* Color rojo */
+        font-family: 'YourDesiredFont', sans-serif; /* Reemplaza 'YourDesiredFont' con la fuente que desees */
+        text-shadow: 2px 2px 4px #000; /* Borde simulado */
+        animation: pulse 0.5s infinite alternate; /* Animación de palpitación más rápida */
+    }
+
+    @keyframes pulse {
+        from {
+            transform: scale(1);
+        }
+        to {
+            transform: scale(1.3); /* Zoom más grande */
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div id="gifContainer">
+            <img id="gifContainerImg" src="https://i.pinimg.com/1200x/34/f7/7b/34f77bdaf8498cb67e57bc4b4893b5a5.jpg" alt="Imagen Inicial" >
+        </div>
+        <div id="happyGifContainer" style="display: none;">
+            <img src="https://github.com/Ronald1234-2/musica/blob/main/mocha5final.gif?raw=true" alt="Ositos Felices" style="width: 100%; height: 100%;">
+        </div>
+        <div id="happyGifContainer2" style="display: none;">
+            <img src="https://github.com/Ronald1234-2/musica/blob/main/mocha6final.gif?raw=true" alt="Ositos Felices" style="width: 100%; height: 100%;">
+        </div>
+        <div id="happyGifContainer3" style="display: none;">
+            <img src="https://github.com/Ronald1234-2/musica/blob/main/mocha7final.gif?raw=true" alt="Ositos Felices" style="width: 100%; height: 100%;">
+        </div>
+        <div id="happyGifContainer4" style="display: none;">
+            <img src="https://github.com/Ronald1234-2/musica/blob/main/mocha9final.gif?raw=true" alt="Ositos Felices" style="width: 100%; height: 100%;">
+        </div>
+        <div id="sadGifContainer" style="display: none;">
+            <img src="https://github.com/Ronald1234-2/musica/blob/main/mocha2.gif?raw=true" alt="Osito Triste" style="width: 80%; height: 80%;">
+        </div>
+        <div id="sadGifContainer1" style="display: none;">
+            <img src="https://github.com/Ronald1234-2/musica/blob/main/mocha3.gif?raw=true" alt="Osito Triste" style="width: 80%; height: 80%;">
+        </div>
+        <div id="sadGifContainer2" style="display: none;">
+            <img src="https://github.com/Ronald1234-2/musica/blob/main/mocha4.gif?raw=true" alt="Osito Triste" style="width: 80%; height: 80%;">
+        </div>
+        
+    <!-- Pregunta anterior eliminada -->
+  
+        <h1 id="question">¿Podemos volver a ser amigos?</h1>
+        <div id="messageContainer" style="display: none;"></div>
+
+        <button id="siBtn">Sí</button>
+        <button id="noBtn">No</button>
+        
+    </div>
+    <script>
+    // Script solicitado
+    let noButtonClickCount = 0; // Contador para el botón "No"
+    let noButtonState = 0; // Estado actual del botón "No"
+
+    // Mostrar el gif inicial
+    document.getElementById('gifContainer').style.display = 'block';
+
+    document.getElementById('siBtn').addEventListener('click', function() {
+        // Ocultar todos los gifs e imágenes
+        document.getElementById('sadGifContainer').style.display = 'none';
+        document.getElementById('sadGifContainer1').style.display = 'none';
+        document.getElementById('sadGifContainer2').style.display = 'none';
+        document.getElementById('gifContainer').style.display = 'none';
+        document.getElementById('happyGifContainer').style.display = 'none';
+        document.getElementById('happyGifContainer2').style.display = 'none';
+        document.getElementById('happyGifContainer3').style.display = 'none';
+        document.getElementById('happyGifContainer4').style.display = 'none';
+        // Ocultar imágenes personalizadas si existen
+        let customSadImg = document.getElementById('customSadImg');
+        if (customSadImg) customSadImg.style.display = 'none';
+        let customSadImg2 = document.getElementById('customSadImg2');
+        if (customSadImg2) customSadImg2.style.display = 'none';
+        let customSadImg3 = document.getElementById('customSadImg3');
+        if (customSadImg3) customSadImg3.style.display = 'none';
+        let customSadImg4 = document.getElementById('customSadImg4');
+        if (customSadImg4) customSadImg4.style.display = 'none';
+        let customSadImg5 = document.getElementById('customSadImg5');
+        if (customSadImg5) customSadImg5.style.display = 'none';
+        let customSadImg6 = document.getElementById('customSadImg6');
+        if (customSadImg6) customSadImg6.style.display = 'none';
+
+        // Ocultar los botones y pregunta
+        document.getElementById('question').style.display = 'none';
+        document.getElementById('siBtn').style.display = 'none';
+        document.getElementById('noBtn').style.display = 'none';
+        document.body.classList.add('bg-green');
+
+        // Mostrar el mensaje específico
+        document.getElementById('messageContainer').style.display = 'block';
+        document.getElementById('messageContainer').innerHTML = '¡Sabía que aceptarías, Amigos por siempre!';
+
+        // Insertar el gif si no existe
+        let gifContainerFinal = document.getElementById('gifContainerFinal');
+        if (!gifContainerFinal) {
+            gifContainerFinal = document.createElement('div');
+            gifContainerFinal.id = 'gifContainerFinal';
+            gifContainerFinal.style.marginTop = '20px';
+            gifContainerFinal.style.display = 'flex';
+            gifContainerFinal.style.justifyContent = 'center';
+            gifContainerFinal.style.alignItems = 'center';
+            let gif = document.createElement('img');
+            gif.src = 'https://i.pinimg.com/originals/88/14/9b/88149b0400750578f4d07d9bc3fb0fee.gif';
+            gif.alt = 'Celebración';
+            gif.style.maxWidth = '80%';
+            gif.style.maxHeight = '400px';
+            gifContainerFinal.appendChild(gif);
+            document.querySelector('.container').appendChild(gifContainerFinal);
+        } else {
+            gifContainerFinal.style.display = 'flex';
+        }
+    });
+
+    document.getElementById('noBtn').addEventListener('click', function() {
+        switch (noButtonState) {
+            case 0:
+                document.getElementById('happyGifContainer').style.display = 'none';
+                document.getElementById('gifContainer').style.display = 'none';
+                let customSadImg = document.getElementById('customSadImg');
+                if (!customSadImg) {
+                    customSadImg = document.createElement('img');
+                    customSadImg.id = 'customSadImg';
+                    customSadImg.src = 'https://i.pinimg.com/736x/ab/c2/13/abc2131d5e2f34493d8af91abde6b74b.jpg';
+                    customSadImg.alt = 'Triste personalizado';
+                    customSadImg.style.width = '80%';
+                    customSadImg.style.height = '80%';
+                    customSadImg.style.display = 'block';
+                    customSadImg.style.margin = '0 auto';
+                    document.querySelector('.container').insertBefore(customSadImg, document.getElementById('happyGifContainer'));
+                } else {
+                    customSadImg.style.display = 'block';
+                }
+                document.getElementById('sadGifContainer').style.display = 'none';
+                document.getElementById('noBtn').innerHTML = '¿Seguro que no quieres volver a ser mi amigo?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                document.getElementById('siBtn').style.fontSize = '40px';
+                document.getElementById('siBtn').style.padding = '20px 40px';
+                noButtonClickCount++;
+                noButtonState++;
+                break;
+            case 1:
+                document.getElementById('noBtn').innerHTML = '¿Ni compartir recuerdos?';
+                let customSadImg1 = document.getElementById('customSadImg');
+                if (customSadImg1) customSadImg1.style.display = 'none';
+                let customSadImg2 = document.getElementById('customSadImg2');
+                if (!customSadImg2) {
+                    customSadImg2 = document.createElement('img');
+                    customSadImg2.id = 'customSadImg2';
+                    customSadImg2.src = 'https://i.pinimg.com/736x/f0/db/89/f0db89944ed03e4328337c5f9d42a3a3.jpg';
+                    customSadImg2.alt = 'Triste personalizado 2';
+                    customSadImg2.style.width = '80%';
+                    customSadImg2.style.height = '80%';
+                    customSadImg2.style.display = 'block';
+                    customSadImg2.style.margin = '0 auto';
+                    document.querySelector('.container').insertBefore(customSadImg2, document.getElementById('happyGifContainer'));
+                } else {
+                    customSadImg2.style.display = 'block';
+                }
+                document.getElementById('sadGifContainer').style.display = 'none';
+                document.getElementById('sadGifContainer2').style.display = 'none';
+                document.getElementById('siBtn').style.fontSize = '50px';
+                document.getElementById('siBtn').style.padding = '30px 50px';
+                noButtonState++;
+                break;
+            case 2:
+                document.getElementById('noBtn').innerHTML = '¿Ni reírnos como antes?';
+                let customSadImg2b = document.getElementById('customSadImg2');
+                if (customSadImg2b) customSadImg2b.style.display = 'none';
+                let customSadImg3 = document.getElementById('customSadImg3');
+                if (!customSadImg3) {
+                    customSadImg3 = document.createElement('img');
+                    customSadImg3.id = 'customSadImg3';
+                    customSadImg3.src = 'https://i.pinimg.com/736x/a2/21/0c/a2210c96613f918ec43f2ebbe4996d79.jpg';
+                    customSadImg3.alt = 'Triste personalizado 3';
+                    customSadImg3.style.width = '80%';
+                    customSadImg3.style.height = '80%';
+                    customSadImg3.style.display = 'block';
+                    customSadImg3.style.margin = '0 auto';
+                    document.querySelector('.container').insertBefore(customSadImg3, document.getElementById('happyGifContainer'));
+                } else {
+                    customSadImg3.style.display = 'block';
+                }
+                document.getElementById('sadGifContainer').style.display = 'none';
+                document.getElementById('sadGifContainer2').style.display = 'none';
+                document.getElementById('sadGifContainer1').style.display = 'none';
+                document.getElementById('siBtn').style.fontSize = '60px';
+                document.getElementById('siBtn').style.padding = '40px 60px';
+                noButtonState++;
+                break;
+            case 3:
+                document.getElementById('noBtn').innerHTML = '¿Ni apoyarnos como antes?';
+                let customSadImg3b = document.getElementById('customSadImg3');
+                if (customSadImg3b) customSadImg3b.style.display = 'none';
+                let customSadImg4 = document.getElementById('customSadImg4');
+                if (!customSadImg4) {
+                    customSadImg4 = document.createElement('img');
+                    customSadImg4.id = 'customSadImg4';
+                    customSadImg4.src = 'https://i.pinimg.com/736x/fb/60/1e/fb601ee330dfb714d85e5c2b8ff3107c.jpg';
+                    customSadImg4.alt = 'Triste personalizado 4';
+                    customSadImg4.style.width = '80%';
+                    customSadImg4.style.height = '80%';
+                    customSadImg4.style.display = 'block';
+                    customSadImg4.style.margin = '0 auto';
+                    document.querySelector('.container').insertBefore(customSadImg4, document.getElementById('happyGifContainer'));
+                } else {
+                    customSadImg4.style.display = 'block';
+                }
+                document.getElementById('siBtn').style.fontSize = '70px';
+                document.getElementById('siBtn').style.padding = '50px 70px';
+                noButtonState++;
+                break;
+            case 4:
+                document.getElementById('noBtn').innerHTML = '¿Ni celebrar nuestras viejas aventuras?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                let customSadImg4b = document.getElementById('customSadImg4');
+                if (customSadImg4b) customSadImg4b.style.display = 'none';
+                let customSadImg5 = document.getElementById('customSadImg5');
+                if (!customSadImg5) {
+                    customSadImg5 = document.createElement('img');
+                    customSadImg5.id = 'customSadImg5';
+                    customSadImg5.src = 'https://i.pinimg.com/736x/91/57/c3/9157c374c9be1928391d6e8915f62444.jpg';
+                    customSadImg5.alt = 'Triste personalizado 5';
+                    customSadImg5.style.width = '80%';
+                    customSadImg5.style.height = '80%';
+                    customSadImg5.style.display = 'block';
+                    customSadImg5.style.margin = '0 auto';
+                    document.querySelector('.container').insertBefore(customSadImg5, document.getElementById('happyGifContainer'));
+                } else {
+                    customSadImg5.style.display = 'block';
+                }
+                document.getElementById('siBtn').style.fontSize = '80px';
+                document.getElementById('siBtn').style.padding = '60px 80px';
+                noButtonState++;
+                break;
+            case 5:
+                document.getElementById('noBtn').innerHTML = '¿Ni una nueva oportunidad?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                let customSadImg5b = document.getElementById('customSadImg5');
+                if (customSadImg5b) customSadImg5b.style.display = 'none';
+                let customSadImg6 = document.getElementById('customSadImg6');
+                if (!customSadImg6) {
+                    customSadImg6 = document.createElement('img');
+                    customSadImg6.id = 'customSadImg6';
+                    customSadImg6.src = 'https://i.pinimg.com/736x/8d/55/3b/8d553b1699cb6ab6036820bd0effa614.jpg';
+                    customSadImg6.alt = 'Triste personalizado 6';
+                    customSadImg6.style.width = '80%';
+                    customSadImg6.style.height = '80%';
+                    customSadImg6.style.display = 'block';
+                    customSadImg6.style.margin = '0 auto';
+                    document.querySelector('.container').insertBefore(customSadImg6, document.getElementById('happyGifContainer'));
+                } else {
+                    customSadImg6.style.display = 'block';
+                }
+                document.getElementById('siBtn').style.fontSize = '90px';
+                document.getElementById('siBtn').style.padding = '70px 90px';
+                noButtonState++;
+                break;
+            case 6:
+                document.getElementById('noBtn').innerHTML = '¿Ni compartir memes como antes?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                let customSadImg6b = document.getElementById('customSadImg6');
+                if (customSadImg6b) customSadImg6b.style.display = 'block';
+                document.getElementById('siBtn').style.fontSize = '100px';
+                document.getElementById('siBtn').style.padding = '80px 100px';
+                noButtonState++;
+                break;
+            case 7:
+                document.getElementById('noBtn').innerHTML = '¿Ni escuchar música juntos como antes?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                let customSadImg6c = document.getElementById('customSadImg6');
+                if (customSadImg6c) customSadImg6c.style.display = 'block';
+                document.getElementById('siBtn').style.fontSize = '120px';
+                document.getElementById('siBtn').style.padding = '90px 120px';
+                noButtonState++;
+                break;
+            case 8:
+                document.getElementById('noBtn').innerHTML = '¿Ni salir a pasear como antes?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                let customSadImg6d = document.getElementById('customSadImg6');
+                if (customSadImg6d) customSadImg6d.style.display = 'block';
+                document.getElementById('siBtn').style.fontSize = '140px';
+                document.getElementById('siBtn').style.padding = '100px 140px';
+                noButtonState++;
+                break;
+            case 9:
+                document.getElementById('noBtn').innerHTML = '¿Ni confiar en mí como antes?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                let customSadImg6e = document.getElementById('customSadImg6');
+                if (customSadImg6e) customSadImg6e.style.display = 'block';
+                document.getElementById('siBtn').style.fontSize = '160px';
+                document.getElementById('siBtn').style.padding = '110px 160px';
+                noButtonState++;
+                break;
+            case 10:
+                document.getElementById('noBtn').innerHTML = '¿Ni tener aventuras juntos como antes?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                let customSadImg6f = document.getElementById('customSadImg6');
+                if (customSadImg6f) customSadImg6f.style.display = 'block';
+                document.getElementById('siBtn').style.fontSize = '180px';
+                document.getElementById('siBtn').style.padding = '120px 180px';
+                noButtonState++;
+                break;
+            case 11:
+                document.getElementById('noBtn').innerHTML = '¿Ni apoyarnos siempre como antes?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                let customSadImg6g = document.getElementById('customSadImg6');
+                if (customSadImg6g) customSadImg6g.style.display = 'block';
+                document.getElementById('siBtn').style.fontSize = '200px';
+                document.getElementById('siBtn').style.padding = '130px 200px';
+                noButtonState++;
+                break;
+            case 12:
+                document.getElementById('noBtn').innerHTML = '¿Ni crear recuerdos nuevos juntos?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                let customSadImg6h = document.getElementById('customSadImg6');
+                if (customSadImg6h) customSadImg6h.style.display = 'block';
+                document.getElementById('siBtn').style.fontSize = '220px';
+                document.getElementById('siBtn').style.padding = '140px 220px';
+                noButtonState++;
+                break;
+            case 13:
+                document.getElementById('noBtn').innerHTML = '¿Ni intentarlo otra vez?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                let customSadImg6i = document.getElementById('customSadImg6');
+                if (customSadImg6i) customSadImg6i.style.display = 'block';
+                document.getElementById('siBtn').style.fontSize = '240px';
+                document.getElementById('siBtn').style.padding = '150px 240px';
+                noButtonState++;
+                break;
+            case 14:
+                document.getElementById('noBtn').innerHTML = '¿De verdad no quieres volver a ser mi amigo?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                let customSadImg6j = document.getElementById('customSadImg6');
+                if (customSadImg6j) customSadImg6j.style.display = 'block';
+                document.getElementById('siBtn').style.fontSize = '260px';
+                document.getElementById('siBtn').style.padding = '160px 260px';
+                noButtonState++;
+                break;
+            case 15:
+                document.getElementById('noBtn').innerHTML = '¿Ni una oportunidad para volver a ser amigos?';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                let customSadImg6k = document.getElementById('customSadImg6');
+                if (customSadImg6k) customSadImg6k.style.display = 'block';
+                document.getElementById('siBtn').style.fontSize = '280px';
+                document.getElementById('siBtn').style.padding = '170px 280px';
+                noButtonState++;
+                break;
+            case 16:
+                document.getElementById('noBtn').innerHTML = '¿De verdad no quieres volver a ser mi amigo? :c';
+                document.getElementById('noBtn').style.backgroundColor = '#F1330A';
+                let customSadImg6l = document.getElementById('customSadImg6');
+                if (customSadImg6l) customSadImg6l.style.display = 'block';
+                document.getElementById('sadGifContainer').style.display = 'none';
+                document.getElementById('sadGifContainer1').style.display = 'none';
+                document.getElementById('sadGifContainer2').style.display = 'none';
+                document.getElementById('gifContainer').style.display = 'block';
+                document.getElementById('happyGifContainer').style.display = 'none';
+                if (customSadImg6l) customSadImg6l.style.display = 'none';
+                noButtonState = 0;
+                break;
+            default:
+                break;
+        }
+    });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
