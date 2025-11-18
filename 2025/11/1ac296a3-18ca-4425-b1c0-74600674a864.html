@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feliz Día del Hombre</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    #bg-video-1, #bg-video-2 {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+    }
+    .contenido {
+      position: relative;
+      z-index: 1;
+      color: white;
+      text-align: center;
+      padding-top: 10vh;
+      font-size: 2em;
+      text-shadow: 0 2px 8px #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    #mensaje-animado {
+      font-size: clamp(1em, 2vw, 2em);
+      line-height: 1.5;
+      max-width: 90vw;
+      width: 100%;
+      margin: auto;
+      background: rgba(0,0,0,0.3);
+      border-radius: 16px;
+      padding: clamp(1em, 4vw, 2em);
+      box-shadow: 0 4px 24px #000a;
+      word-break: break-word;
+    }
+    canvas {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+  <video autoplay muted playsinline id="bg-video-1" preload="auto" style="display:block;">
+    <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/From%20KlickPin%20CF%20Editor%20Mobile%20en%202025%20_%20Fotograf%C3%ADa%20de%20paisaje%20Fotograf%C3%ADa%20de%20fuego%20Paisaje%20contempor%C3%A1neo.mp4" type="video/mp4">
+    Tu navegador no soporta videos en HTML5.
+  </video>
+  <video muted playsinline id="bg-video-2" loop preload="auto" style="display:none;">
+    <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/From%20KlickPin%20CF%20life%20motivation%20in%202025%20_%20Motivational%20photos%20Gym%20motivation%20videos%20Best%20motivational%20videos.mp4" type="video/mp4">
+    Tu navegador no soporta videos en HTML5.
+  </video>
+  <div class="contenido">
+    <div id="mensaje-animado"></div>
+  </div>
+  <audio id="audio-fondo" src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/NoteGPT_Speech_1763446457003.mp3" preload="auto"></audio>
+  <audio id="audio-musica-fondo" src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Harry%20Styles%20-%20As%20It%20Was%20(Lyrics).mp3" preload="auto" loop></audio>
+  <div id="modal-inicio" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:1000;display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;font-size:2em;">
+    <div style="max-width:90vw;padding:2em 1em;text-align:center;background:rgba(0,0,0,0.7);border-radius:16px;box-shadow:0 4px 24px #000a;">
+
+     
+      <button id="btn-comenzar" style="font-size:1.2em;padding:0.5em 2em;border-radius:8px;border:none;background:#ff9800;color:white;cursor:pointer;margin-top:1em;">Apreta aqui</button>
+    </div>
+  </div>
+  <canvas id="fireworks" style="pointer-events:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;"></canvas>
+  <script>
+    const video1 = document.getElementById('bg-video-1');
+    const video2 = document.getElementById('bg-video-2');
+    const contenedor = document.getElementById('mensaje-animado');
+    // Animación de texto palabra por palabra con saltos de línea
+    const texto = `A veces ser hombre significa callar dolores que nadie ve, sostener el mundo aunque estés cansado, dar seguridad aunque por dentro tiemble todo. Muchos pasan su día sin felicitaciones, sin flores, sin mensajes largos… como si ser fuerte fuera una obligación y no una carga.
+
+Pero hoy, aunque sea por un momento, recuerda esto: no tienes que ser perfecto para ser valioso. No tienes que ser invencible para que te admiren. También mereces descansar, pedir ayuda, llorar si hace falta y sentir orgullo por haber llegado hasta aquí.
+
+Ser hombre no es cargarlo todo; es aprender, mejorar, levantarte después de cada golpe y seguir construyendo tu camino.
+Quizá no siempre te celebren, pero tu esfuerzo importa, tu lucha importa, y tu historia también.`;
+    const partes = texto.split(/(\s+|\n)/);
+    let i = 0;
+    function mostrarPalabra() {
+      if (i < partes.length) {
+        if (partes[i] === '\n') {
+          contenedor.innerHTML += '<br>';
+        } else {
+          contenedor.innerHTML += partes[i];
+        }
+        i++;
+        setTimeout(mostrarPalabra, partes[i-1].trim() === '' ? 0 : 400);
+      } else {
+        // Al terminar el texto, mostrar el mensaje final llamativo
+        mostrarMensajeFinal();
+      }
+    }
+    // --- Fuegos artificiales ---
+    const canvasFW = document.getElementById('fireworks');
+    const ctxFW = canvasFW.getContext('2d');
+    function resizeCanvasFW() {
+      canvasFW.width = window.innerWidth;
+      canvasFW.height = window.innerHeight;
+    }
+    resizeCanvasFW();
+    window.addEventListener('resize', resizeCanvasFW);
+    const fireworks = [];
+    function randomColor() {
+      const colors = [
+        [255,100,150], [100,150,255], [255,200,100], [150,255,150],
+        [255,150,100], [200,100,255], [255,255,100], [100,255,255],
+        [255,100,100], [255,255,255]
+      ];
+      return colors[Math.floor(Math.random()*colors.length)];
+    }
+    class Firework {
+      constructor(x, y) {
+        this.x = x;
+        this.y = canvasFW.height;
+        this.targetX = x;
+        this.targetY = y;
+        this.speed = 8;
+        this.exploded = false;
+        this.particles = [];
+        this.trail = [];
+        this.color = randomColor();
+      }
+      update() {
+        if (!this.exploded) {
+          this.trail.push({ x: this.x, y: this.y });
+          if (this.trail.length > 10) this.trail.shift();
+          const dx = this.targetX - this.x;
+          const dy = this.targetY - this.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance > this.speed) {
+            this.x += (dx / distance) * this.speed;
+            this.y += (dy / distance) * this.speed;
+          } else {
+            this.x = this.targetX;
+            this.y = this.targetY;
+            this.explode();
+          }
+        } else {
+          this.particles.forEach((particle, index) => {
+            particle.update();
+            if (particle.life <= 0) {
+              this.particles.splice(index, 1);
+            }
+          });
+        }
+      }
+      explode() {
+        this.exploded = true;
+        const particleCount = Math.random() * 40 + 60;
+        for (let i = 0; i < particleCount; i++) {
+          const angle = (Math.PI * 2 * i) / particleCount;
+          const velocity = Math.random() * 2 + 1;
+          this.particles.push(new Particle(
+            this.x,
+            this.y,
+            Math.cos(angle) * velocity,
+            Math.sin(angle) * velocity,
+            this.color
+          ));
+        }
+      }
+      draw() {
+        if (!this.exploded) {
+          this.trail.forEach((point, index) => {
+            const opacity = index / this.trail.length;
+            ctxFW.beginPath();
+            ctxFW.arc(point.x, point.y, 4, 0, Math.PI * 2);
+            ctxFW.fillStyle = `rgba(${this.color[0]},${this.color[1]},${this.color[2]},${opacity*0.3})`;
+            ctxFW.fill();
+            ctxFW.beginPath();
+            ctxFW.arc(point.x, point.y, 2, 0, Math.PI * 2);
+            ctxFW.fillStyle = `rgba(${this.color[0]},${this.color[1]},${this.color[2]},${opacity})`;
+            ctxFW.fill();
+          });
+          ctxFW.beginPath();
+          ctxFW.arc(this.x, this.y, 5, 0, Math.PI * 2);
+          ctxFW.fillStyle = `rgba(${this.color[0]},${this.color[1]},${this.color[2]},1)`;
+          ctxFW.fill();
+        } else {
+          this.particles.forEach(particle => particle.draw());
+        }
+      }
+      isDead() {
+        return this.exploded && this.particles.length === 0;
+      }
+    }
+    class Particle {
+      constructor(x, y, vx, vy, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.color = color;
+        this.life = 1;
+        this.decay = Math.random() * 0.015 + 0.008;
+        this.gravity = 0.03;
+        this.length = Math.random() * 15 + 10;
+        this.prevX = x;
+        this.prevY = y;
+      }
+      update() {
+        this.prevX = this.x;
+        this.prevY = this.y;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += this.gravity;
+        this.vx *= 0.985;
+        this.life -= this.decay;
+      }
+      draw() {
+        const dx = this.x - this.prevX;
+        const dy = this.y - this.prevY;
+        const length = Math.sqrt(dx * dx + dy * dy);
+        if (length > 0) {
+          const unitX = dx / length;
+          const unitY = dy / length;
+          const endX = this.x - unitX * this.length;
+          const endY = this.y - unitY * this.length;
+          ctxFW.beginPath();
+          ctxFW.moveTo(this.x, this.y);
+          ctxFW.lineTo(endX, endY);
+          ctxFW.strokeStyle = `rgba(${this.color[0]},${this.color[1]},${this.color[2]},${this.life})`;
+          ctxFW.lineWidth = 2.5;
+          ctxFW.stroke();
+          ctxFW.beginPath();
+          ctxFW.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+          ctxFW.fillStyle = `rgba(${this.color[0]},${this.color[1]},${this.color[2]},${this.life})`;
+          ctxFW.fill();
+        }
+      }
+    }
+    function animateFW() {
+      ctxFW.clearRect(0, 0, canvasFW.width, canvasFW.height);
+      fireworks.forEach((firework, index) => {
+        firework.update();
+        firework.draw();
+        if (firework.isDead()) {
+          fireworks.splice(index, 1);
+        }
+      });
+      requestAnimationFrame(animateFW);
+    }
+    animateFW();
+    // --- FIN Fuegos artificiales ---
+    // Modal y audio
+    const modal = document.getElementById('modal-inicio');
+    const btnComenzar = document.getElementById('btn-comenzar');
+    const audio = document.getElementById('audio-fondo');
+    const audioMusicaFondo = document.getElementById('audio-musica-fondo');
+    audioMusicaFondo.volume = 0.18;
+    // Creamos el segundo audio para la parte final
+    const audioFinal = document.createElement('audio');
+    audioFinal.src = audio.src;
+    audioFinal.preload = 'auto';
+    document.body.appendChild(audioFinal);
+    // Al inicio, ocultar videos y texto
+    video1.style.display = 'none';
+    video2.style.display = 'none';
+    contenedor.innerHTML = '';
+    let audioFinalStarted = false;
+    btnComenzar.addEventListener('click', function() {
+      modal.style.display = 'none';
+      audio.playbackRate = 1.2; // velocidad aumentada
+      audio.currentTime = 0;
+      audio.play();
+      audioMusicaFondo.play();
+      // Mostrar video1 y comenzar animación de texto
+      video1.style.display = 'block';
+      i = 0;
+      mostrarPalabra();
+    });
+    audio.addEventListener('timeupdate', function() {
+      if (audio.currentTime >= 59 && !audioFinalStarted) {
+        audio.pause();
+        audioFinalStarted = true;
+        setTimeout(function() {
+          audioFinal.currentTime = 59;
+          audioFinal.playbackRate = 0.9; // velocidad diferente para la segunda parte
+          audioFinal.play();
+        }, 1000);
+      }
+    });
+    video1.addEventListener('ended', function() {
+      video1.style.display = 'none';
+      video2.style.display = 'block';
+      video2.currentTime = 0;
+      video2.play();
+      video2.loop = true;
+    });
+    function mostrarMensajeFinal() {
+      contenedor.innerHTML = '';
+      const mensajeFinal = document.createElement('div');
+      mensajeFinal.textContent = 'Feliz Día del Hombre';
+      mensajeFinal.style.position = 'fixed';
+      mensajeFinal.style.top = '50%';
+      mensajeFinal.style.left = '50%';
+      mensajeFinal.style.transform = 'translate(-50%, -50%)';
+      mensajeFinal.style.fontSize = 'clamp(2.5em, 10vw, 6em)';
+      mensajeFinal.style.fontWeight = 'bold';
+      mensajeFinal.style.color = '#fff';
+      mensajeFinal.style.textShadow = '0 0 40px #fff, 0 0 80px #fff, 0 0 120px #ff9800';
+      mensajeFinal.style.padding = '0.5em 2em';
+      mensajeFinal.style.borderRadius = '32px';
+      mensajeFinal.style.zIndex = '10';
+      mensajeFinal.style.animation = 'popIn 1s cubic-bezier(.68,-0.55,.27,1.55)';
+      mensajeFinal.style.boxShadow = '0 8px 32px #000a';
+      mensajeFinal.style.maxWidth = '90vw';
+      mensajeFinal.style.textAlign = 'center';
+      mensajeFinal.classList.add('brillo-letras');
+      document.body.appendChild(mensajeFinal);
+      // Animación CSS
+      const style = document.createElement('style');
+      style.textContent = `@keyframes popIn {0%{opacity:0;transform:scale(0.5) translate(-50%,-50%);}100%{opacity:1;transform:scale(1) translate(-50%,-50%);}}
+      .brillo-letras {animation: brillo 2s infinite alternate;}
+      @keyframes brillo {0%{text-shadow:0 0 20px #fff,0 0 40px #fff,0 0 60px #ff9800;}100%{text-shadow:0 0 60px #fff,0 0 120px #fff,0 0 180px #ff9800;}}`;
+      document.head.appendChild(style);
+      // Lanzar fuegos artificiales automáticamente y sin parar
+      lanzarFuegosArtificialesSinParar();
+    }
+    function lanzarFuegosArtificialesSinParar() {
+      function lanzar() {
+        const x = Math.random()*canvasFW.width*0.8+canvasFW.width*0.1;
+        const y = Math.random()*canvasFW.height*0.5+canvasFW.height*0.2;
+        fireworks.push(new Firework(x, y));
+        setTimeout(lanzar, 500);
+      }
+      lanzar();
+    }
+  </script>
+</body>
+</html>
