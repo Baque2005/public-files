@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Broma - Hackeo romántico</title>
+  <style>
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: "Courier New", Courier, monospace;
+      background:#000;
+      color:#0f0;
+      overflow:hidden;
+    }
+
+    .terminal {
+      box-sizing: border-box;
+      padding:20px;
+      height:100%;
+      width:100%;
+      background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(2,8,2,0.9) 100%);
+      display:flex;
+      align-items:flex-start;
+      justify-content:flex-start;
+    }
+
+    pre {
+      margin:0;
+      white-space:pre-wrap;
+      word-break:break-word;
+      line-height:1;
+      font-size:14px;
+      max-height:100%;
+      width:100%;
+      overflow:auto;
+      -webkit-user-select:none;
+      user-select:none;
+    }
+
+    .scanline {
+      pointer-events:none;
+      position:fixed;
+      inset:0;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,0.02) 0px,
+          rgba(255,255,255,0.02) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+      mix-blend-mode:overlay;
+      z-index:2;
+    }
+
+    .modal {
+      position:fixed;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%) scale(0.8);
+      background:rgba(0,0,0,0.95);
+      border:2px solid rgba(0,255,128,0.12);
+      padding:30px 40px;
+      color:#fff;
+      text-align:center;
+      z-index:10;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      border-radius:12px;
+      display:none;
+    }
+
+    .modal h1{
+      margin:0 0 10px 0;
+      font-size:28px;
+      color:#ff6b9a;
+    }
+    .modal p{
+      margin:0;
+      font-size:18px;
+    }
+
+    .modal.show {
+      display:block;
+      animation: pop 520ms cubic-bezier(.2,.9,.3,1);
+      transform:translate(-50%,-50%) scale(1);
+    }
+    @keyframes pop {
+      from { transform:translate(-50%,-50%) scale(0.6); opacity:0 }
+      to   { transform:translate(-50%,-50%) scale(1); opacity:1 }
+    }
+
+    .btn {
+      margin-top:14px;
+      display:inline-block;
+      padding:8px 14px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.03);
+      color:#fff;
+      cursor:pointer;
+      font-size:14px;
+    }
+    .credits {
+      position:fixed;
+      right:8px;
+      bottom:8px;
+      font-size:12px;
+      color:#0a0;
+      opacity:0.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal" aria-hidden="true">
+    <pre id="output"></pre>
+  </div>
+
+  <div class="scanline"></div>
+
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <h1>Hackeado correctamente</h1>
+    <p>tu corazón 💖</p>
+    <button id="restart" class="btn">Volver a intentarlo</button>
+  </div>
+
+  <div class="credits">creador: THE BEST CODES</div>
+  <script>
+    const output = document.getElementById('output');
+    const modal = document.getElementById('modal');
+    const restartBtn = document.getElementById('restart');
+
+    const BURST_MIN = 6;
+    const BURST_MAX = 30;
+    const PAUSE_BETWEEN_BURSTS = 6;
+    const GLITCH_PROB = 0.06;
+    const CURSOR_CHAR = '|';
+    const SHOW_CURSOR = true;
+
+    const CHARS = ('abcdefghijklmnopqrstuvwxyz' +
+                   'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
+                   '0123456789' +
+                   '!@#$%&*()-_=+[]{};:,.<>?/\\|~^').split('');
+
+    const FAKE_LINES = [
+      'Initializing subsystem...',
+      'Bypassing firewall - step 3/7',
+      'Decrypting love_protocol_v1...',
+      'ACCESS GRANTED',
+      'user@remote:~$ echo "amor..."',
+      'Reading heartbeat data...',
+      'Establishing secure channel...',
+      'Compiling feelings.o',
+      'Uploading selfies...'
+    ];
+
+    let cursorVisible = true;
+    let typing = true;
+    let audioContext;
+    let typingTimeout;
+
+    function rnd(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+
+    // SONIDO HACKER - 4 SEGUNDOS EXACTOS
+    function createHackerSound() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      
+      const startTime = audioContext.currentTime;
+      const duration = 4;
+      
+      const oscillator1 = audioContext.createOscillator();
+      const oscillator2 = audioContext.createOscillator();
+      const oscillator3 = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      const filter = audioContext.createBiquadFilter();
+      
+      filter.type = 'lowpass';
+      filter.frequency.value = 1200;
+      
+      oscillator1.type = 'square';
+      oscillator2.type = 'sawtooth';
+      oscillator3.type = 'triangle';
+      
+      for(let i = 0; i < duration * 30; i++) {
+        const time = startTime + (i * (duration / (duration * 30)));
+        oscillator1.frequency.setValueAtTime(200 + Math.random() * 400, time);
+        oscillator2.frequency.setValueAtTime(400 + Math.random() * 600, time);
+        oscillator3.frequency.setValueAtTime(100 + Math.random() * 200, time);
+      }
+      
+      gainNode.gain.setValueAtTime(0.1, startTime);
+      gainNode.gain.linearRampToValueAtTime(0.15, startTime + 0.5);
+      gainNode.gain.setValueAtTime(0.15, startTime + duration - 0.2);
+      gainNode.gain.linearRampToValueAtTime(0, startTime + duration);
+      
+      oscillator1.connect(filter);
+      oscillator2.connect(filter);
+      oscillator3.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator1.start(startTime);
+      oscillator2.start(startTime);
+      oscillator3.start(startTime);
+      
+      oscillator1.stop(startTime + duration);
+      oscillator2.stop(startTime + duration);
+      oscillator3.stop(startTime + duration);
+    }
+
+    function generateBurst(len){
+      let s = '';
+      for(let i=0;i<len;i++){
+        if(Math.random() < GLITCH_PROB){
+          s += '\n' + FAKE_LINES[rnd(0,FAKE_LINES.length-1)] + '\n';
+        }
+        s += CHARS[rnd(0,CHARS.length-1)];
+      }
+      return s;
+    }
+
+    function appendText(text){
+      output.textContent += text;
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function startTyping(){
+      output.textContent = '';
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden','true');
+      typing = true;
+
+      // INICIAR SONIDO
+      createHackerSound();
+
+      function step(){
+        if(!typing) return;
+
+        const burst = rnd(BURST_MIN, BURST_MAX);
+        const text = generateBurst(burst);
+        const addLine = (Math.random() < 0.14);
+        appendText(text + (addLine ? '\n' : ''));
+
+        typingTimeout = setTimeout(step, PAUSE_BETWEEN_BURSTS);
+      }
+
+      step();
+
+      // DETENER DESPUÉS DE EXACTAMENTE 4 SEGUNDOS
+      setTimeout(() => {
+        typing = false;
+        clearTimeout(typingTimeout);
+        output.textContent = ''; // Limpiar letras
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden','false');
+      }, 4000);
+    }
+
+    restartBtn.addEventListener('click', () => {
+      startTyping();
+    });
+
+    if(SHOW_CURSOR){
+      const cursorEl = document.createElement('span');
+      cursorEl.id = 'fake-cursor';
+      cursorEl.textContent = CURSOR_CHAR;
+      cursorEl.style.opacity = '1';
+      cursorEl.style.display = 'inline';
+      output.appendChild(cursorEl);
+      setInterval(() => {
+        cursorVisible = !cursorVisible;
+        cursorEl.style.opacity = cursorVisible ? '1' : '0';
+      }, 500);
+    }
+
+    window.addEventListener('load', () => {
+      setTimeout(startTyping, 350);
+    });
+  </script>
+</body>
+</html>
