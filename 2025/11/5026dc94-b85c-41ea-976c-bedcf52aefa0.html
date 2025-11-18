@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lluvia de Te Amo</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: linear-gradient(to right, #ffcccc, #ffe6e6);
+      font-family: 'Arial', sans-serif;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .te-amo {
+      position: absolute;
+      color: red;
+      font-size: 20px;
+      font-weight: bold;
+      animation: caer 5s linear forwards;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    @keyframes caer {
+      0% {
+        top: -10%;
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        top: 110%;
+        opacity: 0;
+        transform: translateY(100vh);
+      }
+    }
+
+    .estatico {
+      animation: estallar 1s ease-out forwards;
+    }
+
+    @keyframes estallar {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1.5);
+      }
+    }
+
+    h1 {
+      position: absolute;
+      top: 40px;
+      width: 100%;
+      text-align: center;
+      color: #b30000;
+      font-size: 2.5em;
+      text-shadow: 1px 1px 5px white;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Lluvia de Te Amo ❤️</h1>
+
+  <script>
+    // Lluvia automática de "Te Amo"
+    function crearLluvia() {
+      const teAmo = document.createElement("div");
+      teAmo.classList.add("te-amo");
+      teAmo.innerText = "Te amo";
+      teAmo.style.left = Math.random() * 100 + "vw";
+      teAmo.style.fontSize = (16 + Math.random() * 10) + "px";
+      document.body.appendChild(teAmo);
+
+      setTimeout(() => {
+        teAmo.remove();
+      }, 5000);
+    }
+
+    setInterval(crearLluvia, 300);
+
+    // Al hacer clic, se estampa un "Te amo"
+    document.addEventListener("click", (e) => {
+      const estatico = document.createElement("div");
+      estatico.classList.add("te-amo", "estatico");
+      estatico.innerText = "Te amo";
+      estatico.style.left = e.clientX + "px";
+      estatico.style.top = e.clientY + "px";
+      estatico.style.position = "absolute";
+      estatico.style.fontSize = "22px";
+      document.body.appendChild(estatico);
+
+      setTimeout(() => {
+        estatico.remove();
+      }, 1500);
+    });
+  </script>
+</body>
+</html>
