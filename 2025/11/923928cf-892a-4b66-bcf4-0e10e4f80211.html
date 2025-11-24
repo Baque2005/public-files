@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Meli</title>
+    <style>
+        /* --- ESTILOS GENERALES Y DEL FONDO --- */
+        *, *::after, *::before {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-color: #000;
+            --fl-speed: 0.8s;
+            --speed-leaf: 2s;
+            --accent-color: #a259e6;
+            /* Colores personalizados solicitados */
+            --color-nosotras-1: #DA70D6; /* Orquídea */
+            --color-nosotras-2: #98dcd7; /* Turquesa pálido */
+        }
+
+        body {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: var(--dark-color);
+            overflow: hidden;
+            perspective: 1000px;
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+
+        .night {
+            position: fixed;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100%;
+            filter: blur(0.1vmin);
+            /* Mantuve el fondo original, aunque puede ser complejo en algunos móviles */
+            background-image: radial-gradient(ellipse at top, transparent 0%, var(--dark-color)), radial-gradient(ellipse at bottom, var(--dark-color), rgba(145, 233, 255, 0.2)), repeating-linear-gradient(220deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px), repeating-linear-gradient(189deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px), repeating-linear-gradient(148deg, rgb(0, 0, 0) 0px, rgb(0, 0, 0) 19px, transparent 19px, transparent 22px), linear-gradient(90deg, rgb(0, 255, 250), rgb(240, 240, 240));
+            z-index: -10;
+        }
+
+        /* --- ESTILOS DE LA NUEVA PÁGINA (Inicio, Nosotras, Futuro) --- */
+        #nueva-pagina {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 500;
+            display: none; /* Oculto al inicio */
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            /* CAMBIO CLAVE: Usa flex-wrap para que los botones puedan saltar de línea si es necesario */
+            flex-wrap: wrap; 
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            /* Reducir el padding para móviles */
+            padding: 10px 0; 
+            border-bottom: 1px solid rgba(162, 89, 230, 0.3);
+            /* Asegurar que se pegue al borde superior en móviles */
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #ccc;
+            /* Reducir fuente para móviles */
+            font-size: 1rem; 
+            /* Reducir margen para móviles */
+            margin: 5px 10px; 
+            cursor: pointer;
+            padding: 5px 10px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-btn.active {
+            color: var(--color-nosotras-1); /* Color personalizado */
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--color-nosotras-1);
+        }
+
+        .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--color-nosotras-2); /* Color personalizado */
+            box-shadow: 0 0 10px var(--color-nosotras-2);
+        }
+
+        .content-section {
+            flex: 1;
+            display: none; /* Se maneja con JS */
+            flex-direction: column;
+            align-items: center;
+            /* CAMBIO CLAVE: Usar overflow-y: auto para permitir scroll del contenido */
+            overflow-y: auto; 
+            justify-content: flex-start; /* Empezar el contenido desde arriba */
+            padding: 20px;
+            text-align: center;
+            animation: slideIn 0.5s ease forwards;
+        }
+        
+        /* Ajuste para el scroll en la sección activa */
+        .content-section.active {
+            display: flex;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.05);
+            /* Reducir padding para móviles */
+            padding: 20px; 
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), linear-gradient(135deg, var(--color-nosotras-1), var(--color-nosotras-2));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            
+            /* CAMBIO CLAVE: Max width más ajustado al 95% para tener más espacio en los bordes */
+            max-width: 500px;
+            width: 95%; 
+            box-shadow: 0 0 30px rgba(152, 220, 215, 0.15);
+            /* Añadir margen inferior para que no se pegue al final al hacer scroll */
+            margin-bottom: 40px; 
+        }
+
+        h2 {
+            /* Reducir fuente para móviles */
+            font-size: 2rem; 
+            margin-bottom: 15px;
+            background: -webkit-linear-gradient(left, var(--color-nosotras-1), var(--color-nosotras-2));
+            -webkit-text-fill-color: white;
+            text-shadow: 0 0 20px rgba(218, 112, 214, 0.3);
+        }
+
+        p {
+            /* Ajustar fuente base */
+            font-size: 1rem; 
+            line-height: 1.5;
+            color: #eee;
+        }
+
+        /* Botón Continuar (Debajo de las flores) */
+        #btn-continuar {
+            position: fixed;
+            bottom: 3vh; /* Más cerca del borde para móviles */
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 25px; /* Reducir padding */
+            font-size: 1rem; /* Reducir fuente */
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--color-nosotras-1);
+            color: var(--color-nosotras-1);
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 200;
+            opacity: 0;
+            transition: all 0.5s ease;
+            box-shadow: 0 0 15px rgba(218, 112, 214, 0.3);
+            pointer-events: none;
+        }
+
+        #btn-continuar:hover {
+            background: var(--color-nosotras-1);
+            color: #fff;
+            box-shadow: 0 0 25px var(--color-nosotras-1);
+        }
+
+        /* --- PANTALLA INICIAL (Botón Para ti) - Ajustes para móviles --- */
+        .btn-para-ti {
+            padding: 1em 2em; /* Reducir padding */
+            font-size: 1.5em; /* Reducir fuente */
+            border-radius: 30px;
+            background: linear-gradient(90deg, #a259e6 0%, #e0b3ff 100%);
+            color: #fff;
+            border: 2.5px solid #e0b3ff;
+            box-shadow: 0 0 20px #a259e6aa, 0 0 40px #e0b3ff55;
+            cursor: pointer;
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 1px; /* Reducir espaciado */
+            transition: transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .special-text {
+            position: fixed;
+            top: 5%; /* Subir el texto */
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 4vmin; /* Un poco más grande para móviles */
+            text-shadow: 0 0 10px #fff, 0 0 20px #e0b3ff;
+            z-index: 10;
+            opacity: 0;
+            animation: fadeIn 3s 1s forwards;
+            text-align: center;
+            width: 90%;
+            white-space: nowrap; /* Evitar que el texto se parta */
+        }
+        
+        /* --- FLORES --- */
+        .flowers { 
+            position: relative; 
+            /* Reducir el tamaño de las flores para que no ocupen toda la pantalla */
+            transform: scale(0.6); 
+            z-index: 2; 
+            transition: opacity 1.5s ease; 
+        }
+        
+        /* Ajustar la posición de las flores para móviles si es necesario */
+        .flower { bottom: 10vmin; } 
+
+        /* --- MEDIA QUERY para ajustes finos en pantallas muy pequeñas --- */
+        @media (max-width: 480px) {
+            .flowers {
+                /* Reducir aún más el tamaño en pantallas muy pequeñas */
+                transform: scale(0.5);
+            }
+            .flower { 
+                /* Asegurar que el fondo del tallo no se salga por abajo */
+                bottom: 5vmin; 
+            }
+            .flower__line {
+                /* Reducir altura máxima del tallo para móviles */
+                height: 40vmin !important; 
+            }
+            
+            .content-card {
+                /* Asegurar el ancho completo del contenido si es necesario */
+                width: 95%;
+            }
+
+            .nav-btn {
+                /* Más espacio entre botones en pantallas muy estrechas */
+                font-size: 0.9rem;
+                margin: 5px 8px;
+            }
+        }
+        
+        /* --- ESTRELLAS FUGACES, ANIMACIONES (Mantener el resto de tu CSS original aquí) --- */
+        /* ... Tu CSS original para .shooting-stars, @keyframes, .flower__leaf, etc. ... */
+        
+        /* --- ESTRELLAS FUGACES --- */
+        .shooting-stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .shooting-star { position: absolute; width: 4px; height: 4px; background: #fff; border-radius: 50%; box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.8); opacity: 0; animation: shootingStar 3s linear infinite; }
+        .shooting-star::before { content: ''; position: absolute; top: 50%; right: 0; transform: translateY(-50%); width: 0; height: 2px; background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%); animation: shootingStarTail 3s linear infinite; }
+        .shooting-star:nth-child(1) { top: 5%; left: -10%; animation-delay: 0s; animation-duration: 2.5s; }
+        .shooting-star:nth-child(2) { top: 15%; left: -10%; animation-delay: 2s; animation-duration: 3s; }
+        .shooting-star:nth-child(3) { top: 25%; left: -10%; animation-delay: 4s; animation-duration: 2.8s; }
+        .shooting-star:nth-child(4) { top: 0%; left: -10%; animation-delay: 6s; animation-duration: 3.2s; }
+        
+        @keyframes shootingStar { 0% { opacity: 0; transform: translateX(0) translateY(0) rotate(45deg); } 10% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; transform: translateX(120vw) translateY(50vh) rotate(10deg); } }
+        @keyframes shootingStarTail { 0% { width: 0; } 30% { width: 100px; } 100% { width: 0; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- FLORES - SOLO PARTES CLAVE PARA REFERENCIA --- */
+        .flower { position: absolute; bottom: 15vmin; transform-origin: bottom center; z-index: 50; }
+        
+        /* Animaciones y posiciones de flores (Aumentadas) */
+        .flower--1 { left: 50%; animation: moving-flower-1 4s linear infinite; } /* Centro */
+        .flower--2 { left: 50%; transform: rotate(20deg); animation: moving-flower-2 4s linear infinite; } /* Derecha 1 */
+        .flower--3 { left: 50%; transform: rotate(-15deg); animation: moving-flower-3 4s linear infinite; } /* Izquierda 1 */
+        .flower--4 { left: 50%; transform: rotate(35deg) scale(0.9); z-index: 40; animation: moving-flower-2 5s linear infinite; } /* Derecha 2 (Nueva) */
+        .flower--5 { left: 50%; transform: rotate(-35deg) scale(0.9); z-index: 40; animation: moving-flower-3 5s linear infinite; } /* Izquierda 2 (Nueva) */
+
+        .flower__leafs { position: relative; animation: blooming-flower 2s backwards; }
+        .flower__leafs--1 { animation-delay: 1.1s; }
+        .flower__leafs--2 { animation-delay: 1.4s; }
+        .flower__leafs--3 { animation-delay: 1.7s; }
+        .flower__leafs--4 { animation-delay: 2.0s; } /* Nueva */
+        .flower__leafs--5 { animation-delay: 2.3s; } /* Nueva */
+
+        .flower__leafs::after { content: ""; position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); width: 8vmin; height: 8vmin; background-color: #ffdd00; filter: blur(10vmin); }
+
+        .flower__leaf { position: absolute; bottom: 0; left: 50%; width: 9vmin; height: 15vmin; background: radial-gradient(circle at 50% 20%, #e0b3ff 0%, #a259e6 30%, #6c0a4e 60%, #4b0066 80%, #1a0033 100%); border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%; transform-origin: bottom center; opacity: 0.97; z-index: 2; border: 1.5px solid #003366; box-shadow: 0 0 1vmin #5fa8e6, 0 0 0.5vmin #b3e0ff, inset 0 0 1.5vmin #001133; }
+        .flower__leaf--1 { transform: translate(-50%, -5%) rotate(-22deg); z-index: 1; }
+        .flower__leaf--2 { transform: translate(-50%, -5%) rotate(22deg); z-index: 1; }
+        .flower__leaf--3 { transform: translate(-50%, -10%) rotate(0deg); z-index: 2; }
+        .flower__leaf--4, .flower__leaf--5, .flower__leaf--6 { width: 7vmin; height: 12vmin; background: radial-gradient(circle at 50% 20%, #f4e0ff 0%, #e0b3ff 30%, #a259e6 55%, #6c0a4e 80%, #1a0033 100%); z-index: 3; }
+        .flower__leaf--4 { transform: translate(-50%, -8%) rotate(-10deg); }
+        .flower__leaf--5 { transform: translate(-50%, -8%) rotate(10deg); }
+        .flower__leaf--6 { transform: translate(-50%, -12%) rotate(0deg); }
+
+        .flower__center { position: absolute; left: -2vmin; top: -2vmin; width: 4vmin; height: 4vmin; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #e0b3ff 0%, #a259e6 80%, #4b0066 100%); border: 2px solid #a259e6; box-shadow: 0 0 1vmin #e0b3ff, 0 0 0.5vmin #a259e6, inset 0 0 1vmin #4b0066; }
+
+        .flower__line { height: 55vmin; width: 2vmin; background-image: linear-gradient(to left, rgb(0, 0, 0, 0.3), transparent, rgba(255, 255, 255, 0.2)), linear-gradient(to top, transparent 10%, #2d5016, #4a7c23, #6b8e23); box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.7); animation: grow-flower-tree 4s backwards; }
+        .flower--1 .flower__line { height: 70vmin; animation-delay: 0.3s; }
+        .flower--2 .flower__line { height: 60vmin; animation-delay: 0.6s; }
+        .flower--3 .flower__line { animation-delay: 0.9s; }
+        .flower--4 .flower__line { height: 50vmin; animation-delay: 1.2s; } /* Nueva */
+        .flower--5 .flower__line { height: 50vmin; animation-delay: 1.5s; } /* Nueva */
+
+        .flower__line__leaf { --w: 8vmin; --h: calc(var(--w) + 3vmin); position: absolute; top: 20%; left: 90%; width: var(--w); height: var(--h); border-top-right-radius: var(--h); border-bottom-left-radius: var(--h); background-image: linear-gradient(to top, rgba(45, 80, 22, 0.6), #4a7c23, #6b8e23); box-shadow: inset 0 0 1vmin rgba(0, 0, 0, 0.3); }
+        .flower__line__leaf--1 { transform: rotate(70deg) rotateY(30deg); animation: blooming-leaf-right var(--fl-speed) 1.6s backwards; }
+        .flower__line__leaf--2 { top: 45%; transform: rotate(70deg) rotateY(30deg); animation: blooming-leaf-right var(--fl-speed) 1.4s backwards; }
+        .flower__line__leaf--3, .flower__line__leaf--4 { border-top-right-radius: 0; border-bottom-left-radius: 0; border-top-left-radius: var(--h); border-bottom-right-radius: var(--h); left: -460%; top: 12%; transform: rotate(-70deg) rotateY(30deg); animation: blooming-leaf-left var(--fl-speed) 1.2s backwards; }
+        .flower__line__leaf--4 { top: 40%; animation: blooming-leaf-left var(--fl-speed) 1s backwards; }
+
+        .flower__light { position: absolute; bottom: 0vmin; width: 0.8vmin; height: 0.8vmin; background-color: #fff; border-radius: 50%; filter: blur(0.1vmin); animation: tulip-light 6s linear infinite backwards; }
+        .flower__light--1 { left: -2vmin; animation-delay: 1s; } 
+        .flower__light--2 { left: 3vmin; animation-delay: 0.5s; }
+        .flower__light--3 { left: -6vmin; animation-delay: 0.3s; }
+        .flower__light--4 { left: 6vmin; animation-delay: 0.9s; }
+        
+        .flower__grass { --c: #4a7c23; --line-w: 2vmin; position: absolute; bottom: 12vmin; left: -7vmin; display: flex; flex-direction: column; align-items: flex-end; z-index: 20; transform-origin: bottom center; transform: rotate(-48deg) rotateY(40deg); }
+        .flower__grass--1 { animation: moving-grass 2s linear infinite; }
+
+        .flower__grass__leaf { --size: 10vmin; position: absolute; width: calc(var(--size) * 2.1); height: var(--size); border-top-left-radius: var(--size); border-top-right-radius: var(--size); background-image: linear-gradient(to top, transparent, transparent 30%, var(--c)); z-index: 100; }
+        .flower__grass__leaf--1 { top: -6%; left: 30%; --size: 6vmin; transform: rotate(-20deg); animation: growing-grass-ans--1 var(--speed-leaf) 2.6s backwards; }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes tulip-light { 0% { opacity: 0; transform: translateY(0vmin); } 20% { opacity: 1; } 100% { transform: translateY(-25vmin); opacity: 0; } }
+        @keyframes moving-flower-1 { 0%, 100% { transform: rotate(2deg); } 50% { transform: rotate(-2deg); } }
+        @keyframes moving-flower-2 { 0%, 100% { transform: rotate(18deg); } 50% { transform: rotate(14deg); } }
+        @keyframes moving-flower-3 { 0%, 100% { transform: rotate(-18deg); } 50% { transform: rotate(-20deg) rotateY(-10deg); } }
+        @keyframes blooming-leaf-right { 0% { transform: rotate(70deg) rotateY(30deg) scale(0); } }
+        @keyframes blooming-leaf-left { 0% { transform: rotate(-70deg) rotateY(30deg) scale(0); } }
+        @keyframes grow-flower-tree { 0% { height: 0; border-radius: 1vmin; } }
+        @keyframes blooming-flower { 0% { transform: scale(0); } }
+        @keyframes moving-grass { 0%, 100% { transform: rotate(-48deg) rotateY(40deg); } 50% { transform: rotate(-50deg) rotateY(40deg); } }
+
+    </style>
+</head>
+<body class="not-loaded">
+
+    <div id="pantalla-inicial" style="position:fixed;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;z-index:300;background:rgba(0,0,0,0.98); transition: opacity 1s;">
+        <button id="btn-para-ti" class="btn-para-ti">Para ti</button>
+        <audio id="audio-para-ti" src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Carla%20Morrison%20-%20Disfruto%20(letra).mp3"></audio>
+    </div>
+
+    <div id="contenido-flores" style="display:none;">
+        <div class="night"></div>
+        <div class="special-text">Flores para mi amada</div>
+        
+        <div class="shooting-stars">
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+        </div>
+
+        <div class="flowers">
+            <div class="flower flower--1">
+                <div class="flower__leafs flower__leafs--1">
+                    <div class="flower__leaf flower__leaf--1"></div>
+                    <div class="flower__leaf flower__leaf--2"></div>
+                    <div class="flower__leaf flower__leaf--3"></div>
+                    <div class="flower__leaf flower__leaf--4"></div>
+                    <div class="flower__center"></div>
+                    <div class="flower__light flower__light--1"></div>
+                    <div class="flower__light flower__light--2"></div>
+                </div>
+                <div class="flower__line">
+                    <div class="flower__line__leaf flower__line__leaf--1"></div>
+                    <div class="flower__line__leaf flower__line__leaf--2"></div>
+                </div>
+            </div>
+            
+            <div class="flower flower--2">
+                <div class="flower__leafs flower__leafs--2">
+                    <div class="flower__leaf flower__leaf--1"></div>
+                    <div class="flower__leaf flower__leaf--2"></div>
+                    <div class="flower__leaf flower__leaf--3"></div>
+                    <div class="flower__leaf flower__leaf--4"></div>
+                    <div class="flower__center"></div>
+                    <div class="flower__light flower__light--1"></div>
+                </div>
+                <div class="flower__line">
+                    <div class="flower__line__leaf flower__line__leaf--1"></div>
+                    <div class="flower__line__leaf flower__line__leaf--2"></div>
+                </div>
+            </div>
+
+            <div class="flower flower--3">
+                <div class="flower__leafs flower__leafs--3">
+                    <div class="flower__leaf flower__leaf--1"></div>
+                    <div class="flower__leaf flower__leaf--2"></div>
+                    <div class="flower__leaf flower__leaf--3"></div>
+                    <div class="flower__leaf flower__leaf--4"></div>
+                    <div class="flower__center"></div>
+                    <div class="flower__light flower__light--1"></div>
+                </div>
+                <div class="flower__line">
+                    <div class="flower__line__leaf flower__line__leaf--1"></div>
+                    <div class="flower__line__leaf flower__line__leaf--2"></div>
+                </div>
+            </div>
+
+            <div class="flower flower--4">
+                <div class="flower__leafs flower__leafs--4">
+                    <div class="flower__leaf flower__leaf--1"></div>
+                    <div class="flower__leaf flower__leaf--2"></div>
+                    <div class="flower__leaf flower__leaf--3"></div>
+                    <div class="flower__leaf flower__leaf--4"></div>
+                    <div class="flower__center"></div>
+                    <div class="flower__light flower__light--1"></div>
+                </div>
+                <div class="flower__line">
+                    <div class="flower__line__leaf flower__line__leaf--1"></div>
+                    <div class="flower__line__leaf flower__line__leaf--2"></div>
+                </div>
+            </div>
+
+            <div class="flower flower--5">
+                <div class="flower__leafs flower__leafs--5">
+                    <div class="flower__leaf flower__leaf--1"></div>
+                    <div class="flower__leaf flower__leaf--2"></div>
+                    <div class="flower__leaf flower__leaf--3"></div>
+                    <div class="flower__leaf flower__leaf--4"></div>
+                    <div class="flower__center"></div>
+                    <div class="flower__light flower__light--1"></div>
+                </div>
+                <div class="flower__line">
+                    <div class="flower__line__leaf flower__line__leaf--1"></div>
+                    <div class="flower__line__leaf flower__line__leaf--2"></div>
+                </div>
+            </div>
+            
+            <div class="flower__grass flower__grass--1">
+                <div class="flower__grass__leaf flower__grass__leaf--1"></div>
+            </div>
+        </div>
+
+        <button id="btn-continuar">Ver más..</button>
+    </div>
+
+    <div id="nueva-pagina">
+        <nav class="nav-container">
+            <button class="nav-btn active" onclick="mostrarSeccion('inicio')">Comienzo</button>
+            <button class="nav-btn" onclick="mostrarSeccion('nosotras')">Nosotras</button>
+            <button class="nav-btn" onclick="mostrarSeccion('futuro')">Futuro</button>
+        </nav>
+
+        <section id="inicio" class="content-section active">
+            <div class="content-card">
+                <h2>Como comenzo</h2>
+                <p>Bienvenida a este pequeño espacio creado pensando en ti.</p>
+                <p>Todo comenzo con milu(precioso señorito que encontre),no me cansare de recordar como comenzamos ya que es
+                    algo que jamas olvidare por que conoci al amor de mi vida, simplemente te hable sin saber que mi vida iba dar
+                    un giro tan inesperado, recuero tambien ese 31 de diciembre que me meti debajo de la mesa con la esperanza
+                    de tener una persona que me ame y no tardo mucho en llegar ya que un 23 de enero encontre a esta personita hermosa,
+                    no hay palabras para agradecerte por todo lo que has hecho en mi vida, darme de nuevo felicidad,ver las cosas de 
+                    otra manera,que realmente si existen personas que saben amar y entregan todo por alguien,que aceptas todo de mi
+                    sin importar que tan duro fue mi pasado aun asi lo aceptaste y miras con una mentalidad de futuro para que olvide 
+                    todo lo malo que pase, sanaste una herida que no hiciste y no hablo de amor, simplemente tu has hecho que yo mejora
+                    fisica y mentalmente,son muchas cosas las cuales me sanaste y tu no las dañaste, pero aun asi gracias por que 
+                    llegaste como un angelito del cielo a sacarme del bloqueo que tenia y eso no lo hace cualquiera, te amo mi preciosa melissa
+                .</p>
+                <br>
+                <p style="font-size:2rem">🩷</p>
+            </div>
+        </section>
+
+        <section id="nosotras" class="content-section">
+            <div class="content-card">
+                <h2>Nosotras</h2>
+                <p>Todos los momentos que hemos vivido.</p>
+                <p>Estando juntas he aprendido tantas cosas, la he pasado tan bien a tu lado, no hay un momento que no quiera estar contgo, por quenrealmente disfruto de ti, de tu presencia,de tu amor,
+                de tu dulzura, de esos pequeños momentos juntas que lo hacen ser únicos y comodos, simplemente tu y solo tu me llenas, no sabes como amo estar contigo
+                y que me mires con esos hermosos ojos que me derriten, que cada abrazo y beso tuyo lo disfruto como si fuera el ultimo, por que te amo tanto mas de lo que yo imagino y estoy muy orgullosa
+                de tenerte como mi mujer, mi amada, mi bebe , mi niña y orgullosamente mi novia.</p>
+                <br>
+                <div style="font-size: 1.5rem"></div>
+            </div>
+        </section>
+
+        <section id="futuro" class="content-section">
+            <div class="content-card">
+                <h2>Futuro</h2>
+                <p>Lo mejor está por venir.</p>
+                <p>Se que estamos jovenes y aun nos falta mucho camino que recorrer,que a pesar de todo lo bonito de la relacion
+                tambien tenemos nuestras discusiones y diferencias pero eso no hace que no quiera mucho tiempo mas contigo
+                antes me dan las fuerzas de mejorar y seguir a tu lado,de apoyarte en cada logro asi sea pequeño,por que soy
+                realmente feliz viendote lucir y brilar consiguiendo tus sueños, si llevamos 7 meses pero se que estamos listas
+                para mucho mas y ser mejor para la una y la otra.</p>
+                <br>
+                <p style="font-size:2rem"></p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Lógica de inicio (Pantalla "Para ti")
+        const btnParaTi = document.getElementById('btn-para-ti');
+        const pantallaInicial = document.getElementById('pantalla-inicial');
+        const contenidoFlores = document.getElementById('contenido-flores');
+        const audio = document.getElementById('audio-para-ti');
+        const btnContinuar = document.getElementById('btn-continuar');
+
+        btnParaTi.addEventListener('click', () => {
+            // Iniciar Audio
+            audio.play().catch(e => console.log("Audio autoplay prevenido por navegador"));
+            
+            // Ocultar pantalla inicial
+            pantallaInicial.style.opacity = '0';
+            setTimeout(() => {
+                pantallaInicial.style.display = 'none';
+                contenidoFlores.style.display = 'block';
+                document.body.classList.remove('not-loaded');
+                
+                // Mostrar botón "Continuar" después de 4.5 segundos (cuando las flores hayan crecido)
+                setTimeout(() => {
+                    btnContinuar.style.opacity = '1';
+                    btnContinuar.style.pointerEvents = 'all';
+                }, 4500);
+            }, 1000);
+        });
+
+        // Lógica para ir a la nueva página
+        const nuevaPagina = document.getElementById('nueva-pagina');
+        const floresContainer = document.querySelector('.flowers');
+
+        btnContinuar.addEventListener('click', () => {
+            // Desvanecer flores y texto
+            floresContainer.style.opacity = '0';
+            document.querySelector('.special-text').style.opacity = '0';
+            btnContinuar.style.opacity = '0';
+
+            // Mostrar nueva página
+            setTimeout(() => {
+                contenidoFlores.style.display = 'none';
+                nuevaPagina.style.display = 'flex';
+                // Pequeño delay para la transición de opacidad
+                setTimeout(() => {
+                    nuevaPagina.style.opacity = '1';
+                }, 50);
+            }, 1000);
+        });
+
+        // Lógica de Pestañas (Inicio, Nosotras, Futuro)
+        function mostrarSeccion(seccionId) {
+            // Remover clase active de todos los botones y secciones
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+
+            // Activar botón clickeado (buscando por el texto onclick, simplificado)
+            const botones = document.querySelectorAll('.nav-btn');
+            if(seccionId === 'inicio') botones[0].classList.add('active');
+            if(seccionId === 'nosotras') botones[1].classList.add('active');
+            if(seccionId === 'futuro') botones[2].classList.add('active');
+
+            // Mostrar sección correspondiente
+            document.getElementById(seccionId).classList.add('active');
+            
+            // CAMBIO: Asegurar que el contenido empiece desde arriba al cambiar de pestaña
+            document.getElementById(seccionId).scrollTop = 0;
+        }
+    </script>
+</body>
+</html>
