@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galaxia Andrómeda</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #000008;
+    }
+    #app {
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      inset: 0;
+    }
+  </style>
+  <!-- Three.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+</head>
+<body>
+  <video id="bg-video" autoplay loop muted playsinline style="position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:-2;pointer-events:none;">
+    <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/From%20KlickPin%20CF%20Deep%20Space%20Nebula%20%5BVideo%5D%20_%20Deep%20space%20Wallpaper%20space%20Hubble%20space.mp4" type="video/mp4">
+  </video>
+    <div id="app" style="position:fixed;inset:0;z-index:1;"></div>
+  <script>
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const scene = new THREE.Scene();
+      // No establecer background, dejarlo transparente para ver el video
+    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 150);
+    camera.position.set(0, 14, 34);
+    camera.lookAt(0, 0, 0);
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setClearColor(0x000008, 0); // Fondo transparente
+    renderer.setSize(width, height);
+    document.querySelector('#app').appendChild(renderer.domElement);
+
+    // OrbitControls para manipular la cámara con el mouse
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.minDistance = 6;
+    controls.maxDistance = 80;
+    controls.target.set(0, 0, 0);
+    controls.update();
+
+    // Galaxy generation
+    // Partículas blancas (estrellas lejanas)
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 3500; // Más partículas blancas
+    const starPositions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+      const i3 = i * 3;
+      // Distribuir en una esfera grande, lejos del centro
+      const r = 80 + Math.random() * 40;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      starPositions[i3] = r * Math.sin(phi) * Math.cos(theta);
+      starPositions[i3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      starPositions[i3 + 2] = r * Math.cos(phi);
+    }
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.08,
+      sizeAttenuation: true,
+      depthWrite: false,
+      transparent: true,
+      opacity: 0.7
+    });
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+
+    // Galaxy generation
+    const galaxyGeometry = new THREE.BufferGeometry();
+    const count = 50000;
+    const positions = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+
+    const colorInside = new THREE.Color(0xff6030);
+    const colorOutside = new THREE.Color(0x1b3984);
+
+    for (let i = 0; i < count; i++) {
+      const i3 = i * 3;
+      const radius = Math.random() * 15;
+      const spinAngle = radius * 1.2;
+      const branchAngle = (i % 4) / 4 * Math.PI * 2;
+
+      positions[i3] = Math.cos(branchAngle + spinAngle) * radius;
+      positions[i3 + 1] = 0;
+      positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius;
+
+      const mixedColor = colorInside.clone();
+      mixedColor.lerp(colorOutside, radius / 15);
+      colors[i3] = mixedColor.r;
+      colors[i3 + 1] = mixedColor.g;
+      colors[i3 + 2] = mixedColor.b;
+    }
+
+    galaxyGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    galaxyGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const galaxyMaterial = new THREE.PointsMaterial({
+      size: 0.01,
+      sizeAttenuation: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      vertexColors: true
+    });
+
+    const galaxy = new THREE.Points(galaxyGeometry, galaxyMaterial);
+    scene.add(galaxy);
+
+    // Texto 3D encima de la galaxia
+    const fontLoader = new THREE.FontLoader();
+    fontLoader.load('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_regular.typeface.json', function(font) {
+      const textGeometry = new THREE.TextGeometry('I love You', {
+        font: font,
+        size: 1.8, // tamaño reducido
+        height: 0.4,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 0.13,
+        bevelSize: 0.18,
+        bevelOffset: 0,
+        bevelSegments: 5
+      });
+      textGeometry.center();
+      // Material con brillo y emisividad
+      const textMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffe0fa,
+        emissive: 0xffaaff,
+        emissiveIntensity: 1.2,
+        metalness: 0.7,
+        roughness: 0.18
+      });
+      const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+      textMesh.position.set(0, 14, 0); // más arriba
+      textMesh.castShadow = true;
+      scene.add(textMesh);
+    });
+
+    // Cargar y agregar el corazón 3D debajo de las letras
+    const loader = new THREE.GLTFLoader();
+    loader.load(
+      'https://assets.codepen.io/74321/heart.glb',
+      function(gltf) {
+        const heartModel = gltf.scene.children[0];
+          heartModel.scale.set(2.5, 2.5, 2.5); // tamaño reducido
+        const textureLoader = new THREE.TextureLoader();
+        heartModel.material = new THREE.MeshMatcapMaterial({
+          matcap: textureLoader.load('https://assets.codepen.io/74321/3.png'),
+          color: '#ff3366',
+          transparent: true,
+          opacity: 1
+        });
+        heartModel.position.set(0, 7, 0); // debajo del texto
+        heartModel.castShadow = true;
+        heartModel.receiveShadow = true;
+        heartModel.name = 'centralHeart';
+        scene.add(heartModel);
+          // Luz puntual para el corazón
+          const heartLight = new THREE.PointLight(0xff3366, 1.5, 30);
+          heartLight.position.set(0, 7, 8);
+          heartLight.castShadow = true;
+          scene.add(heartLight);
+          // Luz emisiva para brillo extra
+          const heartGlow = new THREE.PointLight(0xff99cc, 4.5, 40);
+          heartGlow.position.set(0, 7, 0);
+          heartGlow.castShadow = false;
+          scene.add(heartGlow);
+        // Guardar referencia global para animar
+        window.heartModel = heartModel;
+      }
+    );
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
+    scene.add(ambientLight);
+    // Luz direccional para la galaxia
+    const galaxyLight = new THREE.PointLight(0x7ecfff, 1.7, 120);
+    galaxyLight.position.set(0, 12, 18);
+    scene.add(galaxyLight);
+    // Luz puntual cálida para dar contraste
+    const warmLight = new THREE.PointLight(0xffe0a0, 1.1, 80);
+    warmLight.position.set(-18, 8, 10);
+    scene.add(warmLight);
+    // Luz para el texto
+    const spotLight = new THREE.SpotLight(0xffe0fa, 2.2, 100, Math.PI / 6, 0.5, 2);
+    spotLight.position.set(0, 20, 20);
+    spotLight.castShadow = true;
+    scene.add(spotLight);
+
+    // Estrellas fugaces
+    const shootingStars = [];
+    const maxShootingStars = 18;
+    function createShootingStar() {
+      // Geometría de línea para la estela
+      const geometry = new THREE.BufferGeometry();
+      const length = 12 + Math.random() * 10; // más largas
+      const dir = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      // Posición inicial lejos en el fondo
+      const r = 90 + Math.random() * 30;
+      const x0 = r * Math.sin(phi) * Math.cos(dir);
+      const y0 = r * Math.sin(phi) * Math.sin(dir);
+      const z0 = r * Math.cos(phi);
+      // Dirección de movimiento
+      const dx = Math.cos(dir) * Math.sin(phi);
+      const dy = Math.sin(dir) * Math.sin(phi);
+      const dz = Math.cos(phi);
+      // Línea de la estela
+      const positions = new Float32Array([
+        x0, y0, z0,
+        x0 + dx * length, y0 + dy * length, z0 + dz * length
+      ]);
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const material = new THREE.LineBasicMaterial({
+        color: 0xffffcc,
+        linewidth: 6,
+        transparent: true,
+        opacity: 1
+      });
+      const line = new THREE.Line(geometry, material);
+      scene.add(line);
+      // Velocidad y vida
+      const speed = 1.2 + Math.random() * 1.1;
+      shootingStars.push({
+        mesh: line,
+        x: x0,
+        y: y0,
+        z: z0,
+        dx,
+        dy,
+        dz,
+        speed,
+        life: 0,
+        maxLife: 1.1 + Math.random() * 0.5
+      });
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      galaxy.rotation.y += 0.001;
+
+      // Efecto giratorio al corazón
+      if (window.heartModel) {
+        window.heartModel.rotation.y += 0.008; // más lento
+        window.heartModel.rotation.x += 0.0025; // más lento
+      }
+
+      // Animar estrellas fugaces
+      for (let i = shootingStars.length - 1; i >= 0; i--) {
+        const s = shootingStars[i];
+        s.x += s.dx * s.speed;
+        s.y += s.dy * s.speed;
+        s.z += s.dz * s.speed;
+        s.life += 0.016;
+        // Actualizar posición de la línea
+        const positions = s.mesh.geometry.attributes.position.array;
+        positions[0] = s.x;
+        positions[1] = s.y;
+        positions[2] = s.z;
+        positions[3] = s.x + s.dx * 8;
+        positions[4] = s.y + s.dy * 8;
+        positions[5] = s.z + s.dz * 8;
+        s.mesh.geometry.attributes.position.needsUpdate = true;
+        // Desvanecer
+        s.mesh.material.opacity = Math.max(0, 0.85 * (1 - s.life / s.maxLife));
+        if (s.life > s.maxLife) {
+          scene.remove(s.mesh);
+          shootingStars.splice(i, 1);
+        }
+      }
+      // Crear nuevas estrellas fugaces aleatoriamente
+      if (shootingStars.length < maxShootingStars && Math.random() < 0.35) {
+        createShootingStar();
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Responsive resize
+    window.addEventListener('resize', () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    });
+  </script>
+</body>
+</html>
