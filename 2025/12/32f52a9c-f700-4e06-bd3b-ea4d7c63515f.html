@@ -1,0 +1,210 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Felices todo el año</title>
+	<style>
+		body, html {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+		.video-bg {
+			position: fixed;
+			top: 0;
+			left: 0;
+			min-width: 100vw;
+			min-height: 100vh;
+			width: 100vw;
+			height: 100vh;
+			object-fit: cover;
+			z-index: -1;
+			display: none;
+		}
+		.content {
+			position: relative;
+			z-index: 1;
+		}
+		.modal {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			background: rgba(0,0,0,0.8);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 10;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.5s cubic-bezier(.4,0,.2,1);
+		}
+		.modal.show {
+			opacity: 1;
+			pointer-events: auto;
+		}
+		.modal-content {
+			background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+			padding: 40px 50px;
+			border-radius: 18px;
+			text-align: center;
+			box-shadow: 0 4px 32px rgba(252, 182, 159, 0.4), 0 2px 20px rgba(0,0,0,0.15);
+			transform: translateY(-40px) scale(0.95);
+			opacity: 0;
+			transition: all 0.5s cubic-bezier(.4,0,.2,1);
+		}
+		.modal.show .modal-content {
+			transform: translateY(0) scale(1);
+			opacity: 1;
+		}
+		#startModal .modal-content h2 {
+			color: #ff4081;
+			font-family: 'Segoe Script', cursive, sans-serif;
+			font-size: 2.2em;
+			margin-bottom: 10px;
+		}
+		#startModal .modal-content p {
+			color: #333;
+			font-size: 1.2em;
+			margin-bottom: 25px;
+		}
+		#startModal .modal-content button {
+			background: linear-gradient(90deg, #ff4081 0%, #ffb347 100%);
+			color: #fff;
+			font-weight: bold;
+			font-size: 1.2em;
+			border: none;
+			border-radius: 25px;
+			padding: 12px 40px;
+			box-shadow: 0 2px 10px rgba(255,64,129,0.15);
+			cursor: pointer;
+			transition: background 0.2s, transform 0.2s;
+		}
+		#startModal .modal-content button:hover {
+			background: linear-gradient(90deg, #ffb347 0%, #ff4081 100%);
+			transform: scale(1.05);
+		}
+		.modal button {
+			padding: 10px 30px;
+			font-size: 1.2em;
+			border: none;
+			border-radius: 5px;
+			background: #ff4081;
+			color: #fff;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+		.modal button:hover {
+			background: #e73370;
+		}
+		#cariModal {
+			display: flex;
+		}
+		#cariModal .modal-content {
+			background: #fffbe7;
+			color: #d72660;
+			font-family: 'Segoe Script', cursive, sans-serif;
+			font-size: 1.3em;
+		}
+		#cariModal .fecha {
+			margin-top: 20px;
+			font-size: 1em;
+			color: #333;
+		}
+	</style>
+</head>
+<body>
+	<div class="modal" id="startModal">
+		<div class="modal-content">
+			<h2>Haz clic en el botón</h2>
+			
+			<button id="startBtn">Comenzar</button>
+		</div>
+	</div>
+	<div class="modal" id="cariModal" style="display:none;">
+		<div class="modal-content">
+			<p id="mensajeCari">Eres una persona maravillosa y cada momento contigo es un regalo para mi corazón.</p>
+			<div class="fecha" id="fechaCari"></div>
+			<button id="cerrarCari">Cerrar</button>
+		</div>
+	</div>
+	<video class="video-bg" id="bgVideo" muted playsinline>
+		<source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/From%20KlickPin%20CF%20Ghim%20tr%C3%AAn%20Book%20art%20drawings.mp4" type="video/mp4">
+		Tu navegador no soporta el video de fondo.
+	</video>
+	<div class="content">
+		<!-- Aquí va tu contenido -->
+	</div>
+	<script>
+		const modal = document.getElementById('startModal');
+		const startBtn = document.getElementById('startBtn');
+		const video = document.getElementById('bgVideo');
+		const cariModal = document.getElementById('cariModal');
+		const cerrarCari = document.getElementById('cerrarCari');
+		const fechaCari = document.getElementById('fechaCari');
+		const mensajeCari = document.getElementById('mensajeCari');
+		let firstPlay = true;
+		let modalCariMostrado = false;
+
+		function mostrarFechaBonita() {
+			const hoy = new Date();
+			const dia = String(hoy.getDate()).padStart(2, '0');
+			const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+			const anio = hoy.getFullYear();
+			const fechaStr = `${dia}/${mes}/${anio}`;
+			fechaCari.textContent = `Hasta el día de hoy (${fechaStr}) me has hecho muy feliz, y cada instante a tu lado es un motivo más para sonreír y agradecerle a la vida por ti.`;
+		}
+
+		function mostrarModal(modalEl) {
+			modalEl.style.display = 'flex';
+			setTimeout(() => {
+				modalEl.classList.add('show');
+			}, 10);
+		}
+
+		function ocultarModal(modalEl) {
+			modalEl.classList.remove('show');
+			setTimeout(() => {
+				modalEl.style.display = 'none';
+			}, 500);
+		}
+
+		startBtn.addEventListener('click', () => {
+			ocultarModal(modal);
+			video.style.display = 'block';
+			video.currentTime = 0;
+			video.muted = false;
+			video.play();
+		});
+
+		video.addEventListener('timeupdate', () => {
+			if (firstPlay && !modalCariMostrado && video.currentTime >= 5) {
+				modalCariMostrado = true;
+				mostrarFechaBonita();
+				mostrarModal(cariModal);
+			}
+			if (!firstPlay && video.currentTime >= 7) {
+				video.currentTime = 6;
+				video.play();
+			}
+		});
+
+		cerrarCari.addEventListener('click', () => {
+			ocultarModal(cariModal);
+			setTimeout(() => {
+				if (firstPlay) {
+					firstPlay = false;
+					video.muted = true;
+					video.currentTime = 6;
+				}
+			}, 500);
+		});
+
+		// Mostrar modal de bienvenida al cargar
+		window.addEventListener('DOMContentLoaded', () => {
+			mostrarModal(modal);
+		});
+	</script>
+</body>
+</html>
