@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para ti, mi amor</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        #intro-text {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: 30px;
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 2s forwards 1s;
+            padding: 0 20px;
+        }
+
+        #heart {
+            font-size: clamp(3rem, 10vw, 5rem);
+            animation: pulse 2s infinite, float 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        #heart:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: fall linear infinite, blink 1s infinite alternate;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh); }
+        }
+
+        @keyframes blink {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .message {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            max-width: 90%;
+            padding: 0 10px;
+            min-height: 3em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .prefix {
+            margin-bottom: 10px;
+            animation: colorChange 3s infinite;
+        }
+
+        @keyframes colorChange {
+            0% { color: #ff0000; }
+            20% { color: #ff00ff; }
+            40% { color: #0000ff; }
+            60% { color: #ffff00; }
+            80% { color: #ff6600; }
+            100% { color: #ff1493; }
+        }
+
+        .hacker-text {
+            color: #fff;
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #0073e6, 0 0 20px #0073e6;
+            transition: all 0.1s;
+        }
+
+        .hacker-text.complete {
+            animation: strongGlow 0.5s infinite alternate;
+        }
+
+        @keyframes strongGlow {
+            from {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff00ff, 0 0 40px #ff00ff;
+            }
+            to {
+                text-shadow: 0 0 15px #fff, 0 0 25px #fff, 0 0 35px #ff00ff, 0 0 45px #ff00ff, 0 0 55px #ff00ff;
+            }
+        }
+
+        .slide img {
+            width: min(80vw, 300px);
+            height: min(80vw, 300px);
+            object-fit: contain;
+            border-radius: 10px;
+            margin: 10px 0;
+            filter: drop-shadow(0 0 10px rgba(156, 39, 176, 0.7));
+        }
+
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            margin: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+            cursor: pointer;
+        }
+
+        .dot:hover {
+            transform: scale(1.2);
+        }
+
+        .dot.active {
+            background-color: rgba(255, 255, 255, 1);
+            transform: scale(1.2);
+        }
+
+        /* Ajustes para pantallas muy pequeñas */
+        @media (max-height: 500px) {
+            .slide {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-content: center;
+            }
+            
+            .message {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .slide img {
+                width: min(40vh, 200px);
+                height: min(40vh, 200px);
+            }
+        }
+
+        /* Mejoras de accesibilidad */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
+</head>
+<body>
+    <video id="bg-video" autoplay loop muted playsinline style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -2; pointer-events: none;">
+        <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/PinDown.io_@hope_pin_1763428759.mp4" type="video/mp4">
+        Tu navegador no soporta el video de fondo.
+    </video>
+    <div id="intro-screen">
+        <div id="intro-text"> Toca el corazón</div>
+        <div id="heart" role="button" aria-label="Comenzar presentación">❤️</div>
+    </div>
+
+    <div class="stars" id="stars" aria-hidden="true"></div>
+
+    <div class="slide" id="slide1">
+        <div class="message" id="message1">
+            
+            <div class="hacker-text">¡Buenos días, mi niña hermosa! te quiero y te amo</div>
+        </div>
+        <img src="https://media.tenor.com/vzkveVGDzmAAAAAi/dudu-hug-bubu-dudu-kiss.gif" alt="Pareja abrazándose">
+    </div>
+
+    <div class="slide" id="slide2">
+        <div class="message" id="message2">
+            
+            <div class="hacker-text">te mando unos besos enormes para que sepas lo mucho que te amo mi vida</div>
+        </div>
+        <img src="https://media.tenor.com/r0VCmLiA3mEAAAAi/sseeyall-bubu-dudu.gif" alt="Pareja feliz">
+    </div>
+
+    <div class="slide" id="slide3">
+        <div class="message" id="message3">
+          
+            <div class="hacker-text">Despierta con la certeza de que eres muy especial para mí</div>
+        </div>
+        <img src="https://media.tenor.com/8ACLlUAgrlgAAAAi/%E4%B8%80%E4%BA%8C%E5%B8%83%E5%B8%83-%E8%B2%BC%E8%B2%BC.gif" alt="Personaje sonriendo">
+    </div>
+
+    <div class="slide" id="slide4">
+        <div class="message" id="message4">
+            
+            <div class="hacker-text">Te mando un abrazo enorme para que empieces el día feliz</div>
+        </div>
+        <img src="https://media.tenor.com/aMOxt0o16TQAAAAi/bubu-bubu-dudu.gif" alt="Personaje pensando">
+    </div>
+
+    <div class="slide" id="slide5">
+        <div class="message" id="message5">
+           
+            <div class="hacker-text">Que cada rayito de sol te recuerde cuánto te quiero</div>
+        </div>
+        <img src="https://media.tenor.com/wIx44jsp4DMAAAAi/kiss.gif" alt="Pareja besándose">
+    </div>
+
+    <div class="slide" id="slide6">
+        <div class="message" id="message6">
+            
+            <div class="hacker-text">Hoy será un gran día porque tú existes en él</div>
+        </div>
+        <img src="https://media.tenor.com/qQmsOJoeMoMAAAAi/dudu-bubu.gif" alt="Pareja juntos">
+    </div>
+
+    <div class="slide" id="slide7">
+        <div class="message" id="message7">
+           
+            <div class="hacker-text">¡Te deseo un día tan bonito como tu sonrisa!</div>
+        </div>
+        <img src="https://media.tenor.com/PXKZhCEfEfsAAAAi/bubu-bubu-dudu.gif" alt="Corazones animados">
+    </div>
+
+    <div class="progress-dots" id="progress-dots"></div>
+
+    <audio id="bg-music" loop>
+           <source src="https://github.com/Baque2005/public-files/raw/refs/heads/main/2025/Si%20supieras%20lo%20que%20siento%20con%20mirarte%20-%20Gonzalo%20%C3%81vila%20(Lyrics)%20-%20Oldtimes.mp3" type="audio/mpeg">
+
+
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <script>
+        // Configuración
+        const phrases = [
+            "¡Buenos días, mi niña hermosa! te amoo muchooo",
+            "Que este nuevo día te traiga mucha alegría y energía",
+            "Despierta con la certeza de que eres muy especial para mí",
+            "Te mando besos enormes para que empieces el día feliz",
+            "Que cada rayito de sol te recuerde cuánto te quiero",
+            "Hoy será un gran día porque tú existes en él",
+            "¡Te deseo un día tan bonito como tu sonrisa!"
+        ];
+
+        // Variables
+        let currentSlide = 0;
+        let slideInterval;
+        const totalSlides = phrases.length;
+        const starsContainer = document.getElementById('stars');
+        const introScreen = document.getElementById('intro-screen');
+        const heart = document.getElementById('heart');
+        const bgMusic = document.getElementById('bg-music');
+        const progressDots = document.getElementById('progress-dots');
+        const slides = document.querySelectorAll('.slide');
+
+        // Inicialización
+        function init() {
+            createProgressDots();
+            preloadImages();
+            setEventListeners();
+        }
+
+        // Crear puntos de progreso
+        function createProgressDots() {
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                dot.setAttribute('data-index', i);
+                if (i === 0) dot.classList.add('active');
+                progressDots.appendChild(dot);
+            }
+        }
+
+        // Precargar imágenes para mejor experiencia
+        function preloadImages() {
+            const images = document.querySelectorAll('.slide img');
+            images.forEach(img => {
+                const image = new Image();
+                image.src = img.src;
+            });
+        }
+
+        // Efecto hacker para el texto
+        const hackerLetters = "01!@#$%^&*()_+-=[]{}|;:,.<>?/";
+        
+        function hackerEffect(element, finalText, iterations = 3) {
+            let iteration = 0;
+            
+            const interval = setInterval(() => {
+                element.textContent = element.textContent.split('')
+                    .map((letter, index) => {
+                        if (index < iteration || letter === ' ') {
+                            return finalText[index];
+                        }
+                        return hackerLetters[Math.floor(Math.random() * hackerLetters.length)];
+                    })
+                    .join('');
+                
+                if (iteration >= finalText.length) {
+                    clearInterval(interval);
+                    element.classList.add('complete'); // Añadir clase para el brillo fuerte
+                }
+                
+                iteration += 1 / iterations;
+            }, 30);
+        }
+
+        // Crear estrellas que caen
+        function createStars() {
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Tamaño aleatorio entre 1px y 3px
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Posición aleatoria
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * -100}px`;
+                
+                // Duración de animación aleatoria entre 5s y 15s
+                const duration = Math.random() * 10 + 5;
+                star.style.animationDuration = `${duration}s`;
+                
+                // Retraso aleatorio
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Cambiar slide
+        function showSlide(index) {
+            // Validar índice
+            if (index < 0) index = totalSlides - 1;
+            if (index >= totalSlides) index = 0;
+            
+            currentSlide = index;
+            
+            // Ocultar todos los slides
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            // Mostrar slide actual
+            slides[index].classList.add('active');
+            
+            // Actualizar puntos de progreso
+            document.querySelectorAll('.dot').forEach((dot, i) => {
+                if (i === index) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+            
+            // Remover clase de brillo fuerte de todos los mensajes
+            document.querySelectorAll('.hacker-text').forEach(text => {
+                text.classList.remove('complete');
+            });
+            
+            // Aplicar efecto hacker al mensaje
+            const messageElement = document.querySelector(`#message${index + 1} .hacker-text`);
+            hackerEffect(messageElement, phrases[index]);
+            
+            // Reiniciar el intervalo
+            resetSlideInterval();
+        }
+
+        // Avanzar al siguiente slide
+        function nextSlide() {
+            showSlide((currentSlide + 1) % totalSlides);
+        }
+
+        // Retroceder al slide anterior
+        function prevSlide() {
+            showSlide((currentSlide - 1 + totalSlides) % totalSlides);
+        }
+
+        // Iniciar presentación
+        function startPresentation() {
+            introScreen.style.opacity = '0';
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+            }, 1000);
+            
+            createStars();
+            showSlide(0);
+            
+            // Reproducir música
+            bgMusic.volume = 0.3; // Volumen más bajo para mejor experiencia
+            bgMusic.play().catch(e => console.log("Autoplay bloqueado:", e));
+            
+            // Iniciar intervalo para cambiar slides automáticamente
+            resetSlideInterval();
+        }
+
+        // Reiniciar el intervalo de cambio de slides
+        function resetSlideInterval() {
+            if (slideInterval) clearInterval(slideInterval);
+            slideInterval = setInterval(nextSlide, 8000);
+        }
+
+        // Configurar event listeners
+        function setEventListeners() {
+            // Iniciar presentación al hacer clic en el corazón
+            heart.addEventListener('click', startPresentation);
+            
+            // Permitir clic en cualquier parte para avanzar
+            document.addEventListener('click', (e) => {
+                if (introScreen.style.display === 'none' && !e.target.classList.contains('dot')) {
+                    nextSlide();
+                }
+            });
+            
+            // Navegación por teclado
+            document.addEventListener('keydown', (e) => {
+                if (introScreen.style.display === 'none') {
+                    if (e.key === 'ArrowRight') nextSlide();
+                    if (e.key === 'ArrowLeft') prevSlide();
+                }
+            });
+            
+            // Navegación por puntos
+            document.querySelectorAll('.dot').forEach(dot => {
+                dot.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.getAttribute('data-index'));
+                    showSlide(index);
+                });
+            });
+            
+            // Ajustar tamaño de imágenes al cargar y al redimensionar
+            window.addEventListener('load', adjustImages);
+            window.addEventListener('resize', adjustImages);
+        }
+
+        // Ajustar tamaño de imágenes
+        function adjustImages() {
+            const images = document.querySelectorAll('.slide img');
+            const size = Math.min(window.innerWidth * 0.8, window.innerHeight * 0.5, 300);
+            
+            images.forEach(img => {
+                img.style.width = `${size}px`;
+                img.style.height = `${size}px`;
+            });
+        }
+
+        // Inicializar la aplicación
+        init();
+    </script>
+</body>
+</html>
