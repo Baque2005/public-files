@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Para la madre de mis futuros hijos (Nickoll)</title>
+  <style>
+    :root {
+/* Fondo blanco-rosado degradado para la pantalla inicial */
+body {
+  background: linear-gradient(135deg, #fff6fa 0%, #ffb6d5 40%, #ff69b4 100%);
+}
+
+/* Fondo negro para la lluvia */
+#love-section {
+  background: #000 !important;
+}
+      --bg-color-document: #ff92ad;
+      --bg-color-container: #fdd3e8;
+      --border-color: #b0436e;
+      --bg-color-btn-si: #e93d82;
+      --bg-color-btn-si-hover: #ff92ad;
+      --bg-color-btn-no: #37172f;
+      --bg-color-btn-no-hover: #4b143d;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", "Open Sans", "Helvetica Neue", sans-serif;
+      height: 100dvh;
+      width: 100%;
+      overflow: hidden;
+    }
+    /* Pantalla inicial */
+    .box {
+      width: 80vw;
+      background: var(--bg-color-container);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      margin: auto;
+      margin-top: 10vh;
+      text-align: center;
+      padding: 20px;
+    }
+    .box h1 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .btn-container {
+      margin: 10px 0;
+    }
+    .btn-si, .btn-no {
+      width: 80px;
+      height: 40px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      cursor: pointer;
+      color: #fff;
+    }
+    .btn-si { background: var(--bg-color-btn-si); }
+    .btn-si:hover { background: var(--bg-color-btn-si-hover); }
+    .btn-no { background: var(--bg-color-btn-no); }
+    .btn-no:hover { background: var(--bg-color-btn-no-hover); }
+    .box img { width: 90%; margin: 12px 0; }
+    .hidden { display: none !important; }
+
+    /* Galaxia */
+    #galaxy-section, #love-section {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: none;
+    }
+    #galaxy-canvas { width: 100%; height: 100%; display: block; }
+    #btnToqueAqui {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background: #ff4081;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    #btnToqueAqui:hover { background: #ff92ad; }
+
+    /* Lluvia de Te Amo */
+    .love-word {
+      position: absolute;
+      color: #ff0000;
+      font-size: 24px;
+      user-select: none;
+      pointer-events: none;
+      text-shadow: 0 0 8px rgba(255, 0, 0, 0.7);
+      opacity: 0.9;
+      animation: fall linear infinite;
+      font-weight: bold;
+    }
+    @keyframes fall { to { transform: translateY(100vh); } }
+    .explosion {
+      position: absolute;
+      font-size: 20px;
+      animation: explode 1.8s ease-out forwards;
+      opacity: 0;
+      font-weight: bold;
+      text-shadow: 0 0 5px rgba(255,255,255,0.7);
+    }
+    @keyframes explode {
+      0% { transform: translate(0,0) scale(1); opacity:1; }
+      100% { transform: translate(var(--tx),var(--ty)) scale(0); opacity:0; }
+    }
+    #btnVolver {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 12px 20px;
+      background: #222;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    #btnVolver:hover { background: #444; }
+  </style>
+</head>
+<body>
+  <!-- Modal de inicio -->
+  <div id="modal-inicio" style="
+    position:fixed;z-index:1000;top:0;left:0;width:100vw;height:100vh;
+    background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;flex-direction:column;">
+    <div style="background:#fff6fa;padding:40px 30px 30px 30px;border-radius:18px;box-shadow:0 0 32px #ffb6d5;text-align:center;max-width:90vw;">
+      <h2 style="color:#e93d82;font-size:2.1rem;margin-bottom:18px;">para ti mi amor</h2>
+      <button id="btnComenzar" style="padding:16px 38px;font-size:1.2rem;background:#e93d82;color:#fff;border:none;border-radius:12px;cursor:pointer;box-shadow:0 2px 12px #ffb6d5;">Comenzar</button>
+    </div>
+  </div>
+  <!-- Canvas de estrellas de fondo -->
+  <canvas id="star-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;display:none;"></canvas>
+  <div id="love-section" style="display:none;position:relative;z-index:1;">
+    <audio id="bg-music" preload="auto" loop>
+      <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/PUBLIC%20-%20Make%20You%20Mine%20%20Sub%20espa%C3%B1ol%20(lyrics).mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <script>
+    // Fondo de estrellas animadas
+    const starCanvas = document.getElementById('star-canvas');
+    const ctx = starCanvas.getContext('2d');
+    let W = window.innerWidth, H = window.innerHeight;
+    function resizeStarCanvas() {
+      W = window.innerWidth; H = window.innerHeight;
+      starCanvas.width = W; starCanvas.height = H;
+    }
+    window.addEventListener('resize', resizeStarCanvas);
+    resizeStarCanvas();
+    // Configuración de partículas
+    const STAR_COUNT = 120;
+    const stars = [];
+    for(let i=0;i<STAR_COUNT;i++){
+      stars.push({
+        x: Math.random()*W,
+        y: Math.random()*H,
+        r: Math.random()*1.2+0.5,
+        speed: Math.random()*0.18+0.04,
+        angle: Math.random()*Math.PI*2,
+        drift: (Math.random()-0.5)*0.08
+      });
+    }
+    function animateStars(){
+      if(starCanvas.style.display === 'none') return; // No animar si está oculto
+      ctx.clearRect(0,0,W,H);
+      for(const s of stars){
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(255,255,255,'+(0.7+Math.random()*0.3)+')';
+        ctx.shadowColor = '#fff';
+        ctx.shadowBlur = 8;
+        ctx.fill();
+        ctx.restore();
+        // Movimiento
+        s.x += Math.cos(s.angle)*s.speed + s.drift;
+        s.y += Math.sin(s.angle)*s.speed;
+        // Rebote o wrap
+        if(s.x < 0) s.x = W;
+        if(s.x > W) s.x = 0;
+        if(s.y < 0) s.y = H;
+        if(s.y > H) s.y = 0;
+      }
+      requestAnimationFrame(animateStars);
+    }
+
+    // Modal: mostrar lluvia y estrellas al pulsar botón
+    document.getElementById('btnComenzar').onclick = function() {
+      document.getElementById('modal-inicio').style.display = 'none';
+      document.getElementById('love-section').style.display = 'block';
+      starCanvas.style.display = 'block';
+      animateStars();
+      // Música
+      const music = document.getElementById('bg-music');
+      music.currentTime = 0;
+      music.play();
+    };
+  // Solo lluvia romántica
+    const frasesLluvia = [
+      "Te amo",
+      "Eres mi vida",
+      "Siempre juntos",
+      "Eres mi sol",
+      "Mi razón de sonreír",
+      "Contigo todo es mejor",
+      "Eres mi universo",
+      "Gracias por existir",
+      "Te pienso siempre",
+      "Mi corazón es tuyo",
+      "Eres mi sueño",
+      "Te quiero mucho",
+      "Eres mi alegría",
+      "Mi amor por ti es infinito",
+      "Eres mi todo",
+      "Quiero estar contigo toda mi vida",
+      "Eres mi princesa",
+      "Eres mi destino",
+      "Te extraño",
+      "Eres mi paz",
+      "Eres mi inspiración",
+      "Eres mi mejor historia",
+      "Te adoro",
+      "Eres mi luz",
+      "Eres mi flor favorita"
+    ];
+    const lluviaImgs = [
+      "https://i.pinimg.com/1200x/d1/47/50/d147501c6d7854bae28fe00770c5b2d6.jpg",
+      "https://i.pinimg.com/736x/f6/fd/c3/f6fdc3c6238325f7a851dad9ce50ee9a.jpg"
+    ];
+  const body = document.getElementById("love-section");
+    function createFalling(){
+      const tipo = Math.random();
+      if(tipo < 0.3) {
+        // Imagen con animación aún más lenta
+        const img = document.createElement("img");
+        img.src = lluviaImgs[Math.floor(Math.random()*lluviaImgs.length)];
+        img.className = "love-word";
+        img.style.width = (Math.random()*40+90)+"px";
+        img.style.height = "auto";
+        img.style.left = Math.random()*95+"vw";
+        img.style.opacity = "0";
+        img.style.transition = "opacity 0.7s";
+        // Duración más larga (14s)
+        img.style.animation = "fall 14s cubic-bezier(.22,1.2,.36,1) forwards";
+        img.style.filter = "drop-shadow(0 0 16px #fff) drop-shadow(0 0 32px #ff69b4)";
+        body.appendChild(img);
+        setTimeout(()=>img.style.opacity="1", 10);
+        setTimeout(()=>img.remove(), 14100);
+      } else {
+        // Frase romántica con animación aún más lenta
+        const word = document.createElement("div");
+        word.className = "love-word";
+        word.textContent = frasesLluvia[Math.floor(Math.random()*frasesLluvia.length)];
+        word.style.left = Math.random()*95+"vw";
+        word.style.opacity = "0";
+        word.style.transition = "opacity 0.7s";
+        word.style.fontSize = (Math.random()*18+22)+"px";
+        word.style.color = "#ff69b4";
+        word.style.textShadow = "0 0 12px #fff, 0 0 24px #ff69b4";
+        // Duración más larga (13s)
+        word.style.animation = "fall 13s cubic-bezier(.22,1.2,.36,1) forwards";
+        body.appendChild(word);
+        setTimeout(()=>word.style.opacity="1", 10);
+        setTimeout(()=>word.remove(), 13100);
+      }
+    }
+    setInterval(createFalling, 900);
+    // Explosión de corazones al hacer click
+    body.addEventListener("click",e=>{
+      for(let i=0;i<40;i++){
+        const particle=document.createElement("div");
+        particle.className="explosion";
+        particle.textContent=Math.random()>0.3?"Te Amo":"❤️";
+        particle.style.left=e.clientX+"px";
+        particle.style.top=e.clientY+"px";
+        particle.style.color="#ff69b4";
+        const angle=Math.random()*Math.PI*2;const dist=Math.random()*150+80;
+        particle.style.setProperty("--tx",Math.cos(angle)*dist+"px");
+        particle.style.setProperty("--ty",Math.sin(angle)*dist+"px");
+        particle.style.fontSize=(Math.random()*15+18)+"px";
+        body.appendChild(particle);
+        setTimeout(()=>particle.remove(),1800);
+      }
+    });
+  </script>
+</body>
+</html>
