@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Galaxia para ti</title>
+  <meta name="description" content="Galaxia interactiva de frases de cariño 💘">
+  <meta property="og:title" content="Galaxia para ti">
+  <meta property="og:description" content="Una galaxia interactiva con palabras de cariño 💖">
+  <meta property="og:image" content="og-cover.png">
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <style>
+    html,body{margin:0;height:100%;background:#000;overflow:hidden}
+    #galaxy-canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+    .attribution{position:fixed;left:10px;bottom:10px;font-size:11px;color:#ff9ccf;opacity:.8;background:rgba(0,0,0,.35);padding:6px 8px;border-radius:8px}
+    .player{position:fixed;left:10px;right:10px;bottom:10px;display:flex;gap:8px;align-items:center;
+             background:rgba(35,10,20,.35);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px;
+             backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial}
+    .player button{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff}
+    .player input[type=file]{display:none}
+    .pill{position:fixed;top:10px;left:50%;transform:translateX(-50%);padding:6px 12px;border-radius:999px;
+          background:rgba(255,150,190,.18);border:1px solid rgba(255,160,200,.5);color:#fff;
+          font:12px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial}
+    .error{position:fixed;inset:auto 10px 70px 10px;background:#300010;color:#ffd6ea;border:1px solid #ff80b5;border-radius:10px;padding:10px;font:12px system-ui;display:none;}
+  </style>
+
+  <!-- Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body>
+<canvas id="galaxy-canvas"></canvas>
+
+<div class="pill">Te amo con todo mi ser, mi chiquita bella, amo cada parte de ti, te admiro, eres una maravillosa persona, mi zahirita 💗</div>
+<div class="attribution">Base: tlanex · Adaptación romántica 💕</div>
+<div id="err" class="error"></div>
+
+<div class="player">
+  <button id="playBtn">▶︎</button>
+  <span style="font-size:12px;opacity:.9">Elige tu canción 💖</span>
+  <input type="file" id="pickFile" accept="audio/*">
+  <button id="pickBtn">Elegir canción</button>
+  <audio id="audio">
+    <source src="nobody_new.mp3" type="audio/mpeg">
+  </audio>
+</div>
+
+<canvas id="fx" style="position:fixed;inset:0;pointer-events:none;"></canvas>
+
+<script>
+(function(){
+const err = document.getElementById('err');
+function showError(msg){ err.textContent = msg; err.style.display='block'; }
+
+// ===== AUDIO =====
+const audio = document.getElementById('audio');
+const playBtn = document.getElementById('playBtn');
+const pickBtn = document.getElementById('pickBtn');
+const pickFile = document.getElementById('pickFile');
+
+playBtn.onclick = async () => {
+  try {
+    if (audio.paused) { await audio.play(); playBtn.textContent='⏸︎'; }
+    else { audio.pause(); playBtn.textContent='▶︎'; }
+  } catch(e){ showError('nobody_new.mp3'); }
+};
+pickBtn.onclick = () => pickFile.click();
+pickFile.onchange = () => {
+  if (pickFile.files[0]) {
+    audio.src = URL.createObjectURL(pickFile.files[0]);
+    audio.play().then(()=> playBtn.textContent='⏸︎');
+  }
+};
+
+// ===== THREE.JS =====
+const canvas = document.getElementById('galaxy-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(2, devicePixelRatio));
+renderer.outputEncoding = THREE.sRGBEncoding;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(80, innerWidth/innerHeight, 0.1, 2000);
+camera.position.set(0,25,90);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+function makePrettyStarTexture(size=1024, count=2600) {
+  const c = document.createElement('canvas'); c.width=c.height=size;
+  const g = c.getContext('2d');
+  const r = size/2;
+  const bg = g.createRadialGradient(r,r,r*0.2, r,r,r);
+  bg.addColorStop(0,'#120006');
+  bg.addColorStop(1,'#000000');
+  g.fillStyle = bg; g.fillRect(0,0,size,size);
+
+  for (let i=0;i<count;i++) {
+    const x=Math.random()*size,y=Math.random()*size;
+    const glow=g.createRadialGradient(x,y,0,x,y,3);
+    glow.addColorStop(0,'rgba(255,220,235,.8)');
+    glow.addColorStop(1,'rgba(255,150,190,.15)');
+    g.fillStyle=glow;
+    g.beginPath(); g.arc(x,y,1.2,0,Math.PI*2); g.fill();
+  }
+  return new THREE.CanvasTexture(c);
+}
+
+const bgGeo = new THREE.SphereGeometry(600,64,64);
+const starTex = makePrettyStarTexture();
+const bg = new THREE.Mesh(bgGeo, new THREE.MeshBasicMaterial({ map: starTex, side: THREE.BackSide }));
+scene.add(bg);
+
+// ===== GALAXIA =====
+const galaxy = new THREE.Group(); scene.add(galaxy);
+const phrases = ["Mi gordita <3", " Hermosa🩷 ", "Mi motivación", "Mi sol", "Preciosa", "Mi corazón❤️", "Mi Todo", "Me Encantas :3", "🩷 Zahira 🩷", "Te Amo", "Mi Canción Favorita 🎶", "Unica ", "Mi princesa 👑", "Mi Amor", "Mi Mundo🩷", "Mi Luz 🌠", "Mi Niña", "Mi Tesoro🩷", "Mi Paz", "Mi Eterna", "Mi Sueño", "Mi Pensamiento Favorito", "Mi futuro", "Mi mujer", "Te Amo Infinitamente ♾️"];
+const arms=5, radius=80;
+
+function makeTextTexture(text){
+  const c=document.createElement('canvas'); c.width=1024;c.height=128;
+  const g=c.getContext('2d');
+  g.font='800 48px system-ui';
+  g.textAlign='center'; g.textBaseline='middle';
+  g.shadowColor='rgba(255,120,180,0.95)';
+  g.shadowBlur=24;
+  g.fillStyle='rgba(255,210,230,0.98)';
+  g.fillText(text,c.width/2,c.height/2);
+  return new THREE.CanvasTexture(c);
+}
+
+for(let i=0;i<200;i++){
+  const tex=makeTextTexture(phrases[i%phrases.length]);
+  const spr=new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, transparent:true }));
+  const a=(i/40)*Math.PI*2;
+  const d=(i/200)*radius;
+  spr.position.set(Math.cos(a)*d,(Math.random()-0.5)*10,Math.sin(a)*d);
+  spr.scale.set(20,3,1);
+  galaxy.add(spr);
+}
+
+// ===== CENTRO ROSA =====
+const core=new THREE.Mesh(
+  new THREE.SphereGeometry(12,64,64),
+  new THREE.MeshBasicMaterial({ color:0xff6fb1 })
+);
+scene.add(core);
+
+function animate(){
+  requestAnimationFrame(animate);
+  galaxy.rotation.y += 0.0015;
+  core.rotation.y += 0.003;
+  controls.update();
+  renderer.render(scene,camera);
+}
+animate();
+
+})();
+</script>
+</body>
+</html>
+
