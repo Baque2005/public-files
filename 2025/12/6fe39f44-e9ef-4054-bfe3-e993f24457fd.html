@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Botón corazón con frases especiales y fondo bonito</title>
+<style>
+  /* Animación de fondo degradado */
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+
+    /* Fondo degradado animado */
+    background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #ff9a9e);
+    background-size: 800% 800%;
+    animation: gradientAnimation 20s ease infinite;
+  }
+
+  #loveBtn {
+    position: relative;
+    z-index: 10;
+    font-size: 4rem;
+    background: #ff69b4;
+    border: none;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 6px 15px rgba(255, 105, 180, 0.5);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+  }
+  #loveBtn:hover {
+    background: #ff4f81;
+    transform: scale(1.1);
+  }
+  .phrase {
+    position: absolute;
+    z-index: 20;
+    color: #fff;
+    background: linear-gradient(135deg, #ff6a9e, #ff3d7f);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: bold;
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(255, 61, 127, 0.8);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    opacity: 1;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-out;
+  }
+</style>
+</head>
+<body>
+
+<button id="loveBtn" aria-label="Botón corazón">❤️</button>
+
+<script>
+  const phrasesOriginal = [
+    "Eres hermosa sin esfuerzo.",
+    "Tienes una mirada que destaca.",
+    "Tu sonrisa tiene algo especial.",
+    "Inteligente y segura, así eres.",
+    "Bonita por dentro y por fuera.",
+    "Me encanta tu forma de pensar.",
+    "Tienes estilo y mucha personalidad.",
+    "Eres fuerte, pero también muy dulce.",
+    "Brillas sin hacer ruido.",
+    "Tu vibra es de las que se quedan.",
+    "Eres real, y eso vale mucho.",
+    "Encantas sin intentarlo.",
+    "Naturalmente linda.",
+    "Siempre de buen gusto.",
+    "Sabes estar sin querer llamar la atención.",
+    "Eres increíble.",
+    "BAÑATE",
+    "Me encanta tu cabelloooo",
+    "Me encantan tus ojitos todo bonitos",
+    "Amo tus lunares en especial las que estan cerca a tus ojitos",
+    "Amo la forma en que te preocupas por alguien",
+    "Te Amo mi MCR",
+    "Te Amo mi rosa peresoza",
+    "Te Amo rosa fresita",
+    "Dos palabras cinco letras",
+    "Te Amooo",
+    "TQM",
+    "Ojala y el destino nos junte mas adelante",
+    "No hay un solo dia que no piense en ti",
+    "Te pienso y te extraño Todos, Todos los dias",
+    "Tengo sueños en los que estás Tu",
+    "soy muy inteligente JDJDJSJ, Te amo",
+    "Si me extrañas tienes a nuestro conejito",
+    "Si me quieres buscame",
+    "Tu te robaste mi corazón",
+    "Te Quiero muchoo mi MCR"
+  ];
+
+  let phrases = [...phrasesOriginal];
+
+  const loveBtn = document.getElementById('loveBtn');
+
+  const directions = [
+    { x: 0, y: -120 },
+    { x: -80, y: -100 },
+    { x: 80, y: -100 },
+    { x: -120, y: 0 },
+    { x: 120, y: 0 },
+    { x: -80, y: -40 },
+    { x: 80, y: -40 },
+    { x: 0, y: -150 }
+  ];
+
+  loveBtn.addEventListener('click', () => {
+    if (phrases.length === 0) {
+      phrases = [...phrasesOriginal];
+    }
+
+    const index = Math.floor(Math.random() * phrases.length);
+    const phraseText = phrases.splice(index, 1)[0];
+
+    const phraseEl = document.createElement('span');
+    phraseEl.className = 'phrase';
+    phraseEl.textContent = phraseText;
+
+    const rect = loveBtn.getBoundingClientRect();
+    phraseEl.style.left = rect.left + rect.width / 2 + 'px';
+    phraseEl.style.top = rect.top + rect.height / 2 + 'px';
+    phraseEl.style.transform = 'translate(-50%, -50%)';
+
+    const dir = directions[Math.floor(Math.random() * directions.length)];
+    const duration = 7000; // 7 segundos
+
+    phraseEl.animate([
+      { transform: 'translate(-50%, -50%) translate(0, 0)', opacity: 1 },
+      { transform: `translate(-50%, -50%) translate(${dir.x}px, ${dir.y}px) scale(1.2)`, opacity: 0 }
+    ], {
+      duration: duration,
+      easing: 'ease-out',
+      fill: 'forwards'
+    });
+
+    document.body.appendChild(phraseEl);
+
+    setTimeout(() => {
+      phraseEl.remove();
+    }, duration);
+  });
+</script>
+
+</body>
+</html>
+
+
+
+
