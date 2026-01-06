@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Libro del Amor 💖</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --book-w: 960px;
+    --book-h: 620px;
+    --page-w: calc(var(--book-w) / 2);
+    --page-h: var(--book-h);
+    --persp: 3600px;
+    --cover-bg: #b03060;
+    --cover-accent: #f8c8dc;
+    --ink: #2c1a1a;
+    --radius: 14px;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{
+    height:100%;
+    overflow:hidden;
+    font-family:'Great Vibes',cursive;
+    background:linear-gradient(120deg,#0b0020,#0d1b3d,#220033,#001a26);
+    background-size:400% 400%;
+    animation:gradientShift 30s ease infinite;
+  }
+  @keyframes gradientShift{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
+
+  .stars{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+  .star{position:absolute;border-radius:50%;background:white;opacity:0;animation:twinkle linear infinite}
+  @keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.4)}}
+
+  .shooting-star{position:fixed;width:140px;height:2px;background:linear-gradient(90deg,white,transparent);
+    filter:drop-shadow(0 0 6px white);opacity:.9;z-index:10000;pointer-events:none}
+
+  .scene{position:fixed;inset:0;perspective:var(--persp);display:flex;align-items:center;justify-content:center;z-index:3}
+  .book{width:var(--book-w);height:var(--book-h);position:absolute;top:50%;left:50%;
+    transform-style:preserve-3d;opacity:0;transform:translate(-50%,-50%) scale(.9);
+    transition:opacity 1s ease,transform 1s cubic-bezier(.25,.8,.25,1)}
+  .book.ready{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+  .sheet{width:var(--page-w);height:var(--page-h);position:absolute;top:0;left:50%;
+    transform-origin:left center;transform-style:preserve-3d;border-radius:var(--radius);overflow:visible}
+  .face{position:absolute;inset:0;transform-style:preserve-3d;backface-visibility:hidden;
+    border-radius:var(--radius);overflow:hidden}
+  .face.left{transform:rotateY(180deg)}
+  .inner{position:absolute;inset:0}
+
+  .cover{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    border-radius:var(--radius);
+    color:#fff;
+    padding:40px;
+    box-shadow:0 6px 14px rgba(0,0,0,.55);
+  }
+  .cover h1{font-size:4rem;margin:0 0 1rem;text-shadow:0 2px 6px rgba(0,0,0,.6)}
+  .cover p{font-size:2rem;margin:0}
+  .cover-back{color:#f8c8dc}
+  .page{position:absolute;inset:0;border-radius:var(--radius);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;padding:60px;text-align:center;
+    font-size:2.6rem;line-height:1.6;background:linear-gradient(135deg,#fffef9,#fdf6e3);
+    box-shadow:inset 0 0 12px rgba(0,0,0,.15);z-index:0}
+  .page:nth-child(even){background:linear-gradient(135deg,#fefefe,#f7f7f7)}
+  .folio{position:absolute;bottom:10px;width:100%;text-align:center;font-size:1.2rem;opacity:.5}
+
+  .shadow{position:absolute;inset:0;border-radius:var(--radius);
+    pointer-events:none;opacity:0;transition:opacity .35s ease;mix-blend-mode:multiply;z-index:0}
+  .curl-overlay,.specular,.edge-spec{z-index:1}
+  .curl-overlay{position:absolute;inset:0;pointer-events:none;opacity:0}
+  .edge-spec{position:absolute;top:0;bottom:0;width:10px;right:0;
+    background:linear-gradient(180deg,rgba(0,0,0,.06),rgba(255,255,255,.08),rgba(0,0,0,.06));
+    filter:blur(.4px);opacity:0}
+  .specular{position:absolute;inset:0;opacity:0;mix-blend-mode:screen;
+    background:radial-gradient(100% 60% at 35% 50%,rgba(255,255,255,.20) 0%,rgba(255,255,255,.06) 35%,transparent 60%)}
+
+  .hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:11000}
+  .hearts span{position:absolute;opacity:.85;font-size:2rem}
+  .hearts:not(.horizontal) span{bottom:-20px;animation:floatV var(--dur,6s) linear both}
+  @keyframes floatV{0%{transform:translateY(0) scale(1);opacity:.85}100%{transform:translateY(-120vh) scale(1.5);opacity:0}}
+  .hearts.horizontal{transform:rotate(90deg);transform-origin:center}
+  .hearts.horizontal span{bottom:-20px;animation:floatV var(--dur,6s) linear both}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="scene" id="scene"><div class="book closed closed-front" id="book"></div></div>
+<div class="hearts" id="hearts"></div>
+
+<script>
+(function(){
+  const starsContainer=document.getElementById("stars");
+  const hearts=document.getElementById("hearts");
+  const book=document.getElementById("book");
+  const scene=document.getElementById("scene");
+  let isHorizontal=false;
+  function checkOrientation(){const vw=innerWidth,vh=innerHeight;isHorizontal=vh>vw;}
+  addEventListener("resize",checkOrientation);addEventListener("orientationchange",checkOrientation);checkOrientation();
+
+  for(let i=0;i<120;i++){const star=document.createElement("div");star.className="star";
+    star.style.left=(Math.random()*100)+"%";star.style.top=(Math.random()*100)+"%";
+    const size=Math.random()*2+1;star.style.width=size+"px";star.style.height=size+"px";
+    star.style.animationDuration=(Math.random()*5+3)+"s";star.style.animationDelay=(Math.random()*10)+"s";
+    starsContainer.appendChild(star);}
+
+  function shootingStar(){const star=document.createElement("div");star.className="shooting-star";
+    star.style.height=(Math.random()*2+1)+"px";const speed=1000+Math.random()*3000;
+    if(isHorizontal){star.style.top=(Math.random()*100)+"%";star.style.left="110vw";
+      star.animate([{transform:"translateX(0)",opacity:1},{transform:"translateX(-130vw)",opacity:0}],{duration:speed,easing:"linear"});}
+    else{star.style.top=(Math.random()*100)+"%";star.style.left="-150px";
+      star.animate([{transform:"translateX(0)",opacity:1},{transform:"translateX(130vw)",opacity:0}],{duration:speed,easing:"linear"});}
+    document.body.appendChild(star);setTimeout(()=>star.remove(),speed);}
+  setInterval(shootingStar,600);
+
+  setInterval(()=>{const h=document.createElement("span");
+    h.textContent=["❤️","💗","💖","💕"][Math.floor(Math.random()*4)];
+    h.style.setProperty('--dur',(Math.random()*3+3)+'s');
+    h.style.left=(Math.random()*100)+"%";
+    h.style.fontSize=(Math.random()*1.5+1.2)+"rem";
+    hearts.appendChild(h);
+    setTimeout(()=>h.remove(),7000);
+  },900);
+
+  const mensajes={
+    1:"Amarte ❤️ es descubrir que mi hogar 🏡 cabe en tu abrazo 🤗.",
+    2:"Tu risa 😂 es el idioma favorito 💕 de mi corazón 💖.",
+    3:"Contigo 💑 aprendí que el tiempo ⏳ también sabe suspirar 😍.",
+    4:"Eres mi certeza 🌹 en los días grises ☁️ y mi sorpresa ✨ en los soleados ☀️.",
+    5:"Si la vida 📖 es un libro, tú eres mis páginas favoritas ❤️.",
+    6:"Gracias 🙏 por ser el milagro cotidiano 🌸 al que llamo amor 💘."
+  };
+  const TOTAL_PAGES=6, TOTAL_SHEETS=Math.ceil(TOTAL_PAGES/2)+1;
+
+  const makePage=n=>{
+    const p=document.createElement('div');
+    p.className='page';
+    p.innerHTML=`<div>${mensajes[n]??"Mensaje "+n}</div><div class="folio">${n}</div>`;
+    return p;
+  };
+
+  // Portada frontal
+  const coverFront = () => {
+    const c = document.createElement('div');
+    c.className = 'cover';
+    c.style.position = "absolute";
+    c.style.inset = "0";
+    c.style.background = `
+      linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+      url('https://adfy2.icu/img/portada.png') center/cover no-repeat,
+      #8b0000
+    `;
+    c.style.color = "#fff";
+    c.style.textAlign = "center";
+    c.style.textShadow = "0 3px 8px rgba(0,0,0,.9)";
+    c.style.display = "flex";
+    c.style.flexDirection = "column";
+    c.style.justifyContent = "center";
+    c.style.borderRadius = "14px";
+
+    c.innerHTML = `
+      <div>
+        <h1 style="font-size:3.8rem; margin:0; margin-top:12rem;">📖 Libro del Amor 💕</h1>
+        <p style="font-size:2rem; margin-top:8rem;">Un viaje de sentimientos 💖✨</p>
+      </div>
+    `;
+
+    const spine = document.createElement('div');
+    spine.style.position = "absolute";
+    spine.style.left = "0";
+    spine.style.top = "0";
+    spine.style.bottom = "0";
+    spine.style.width = "30px";
+    spine.style.background = "linear-gradient(90deg, #b22222 0%, #8b0000 100%)";
+    spine.style.borderTopLeftRadius = "14px";
+    spine.style.borderBottomLeftRadius = "14px";
+
+    c.appendChild(spine);
+    return c;
+  };
+
+  // Portada trasera personalizada
+  const coverBack = () => {
+    const c = document.createElement('div');
+    c.className = 'cover cover-back';
+    c.style.position = "absolute";
+    c.style.inset = "0";
+    c.style.background = `
+      linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+      url('https://adfy2.icu/img/portadatrasera.png') center/cover no-repeat,
+      #2c1a1a
+    `;
+    c.style.textAlign = "center";
+    c.style.color = "#fff";
+    c.style.textShadow = "0 3px 8px rgba(0,0,0,.9)";
+    c.style.display = "flex";
+    c.style.flexDirection = "column";
+    c.style.justifyContent = "center";
+    c.style.borderRadius = "14px";
+
+    c.innerHTML = `
+      <div>
+        <h1 style="font-size:3.5rem; margin:0; margin-top:12rem;"></h1>
+        <p style="font-size:2rem; margin-top:30rem;">Con todo mi amor para ti  ❤️</p>
+      </div>
+    `;
+    
+    // Lomo derecho (para la contraportada)
+const spineBack = document.createElement('div');
+spineBack.style.position = "absolute";
+spineBack.style.right = "0";
+spineBack.style.top = "0";
+spineBack.style.bottom = "0";
+spineBack.style.width = "30px"; /* grosor del lomo */
+spineBack.style.background = "linear-gradient(270deg, #b22222 0%, #8b0000 100%)";
+spineBack.style.borderTopRightRadius = "14px";
+spineBack.style.borderBottomRightRadius = "14px";
+
+c.appendChild(spineBack);
+
+
+    return c;
+  };
+  
+  
+
+  const sheets=[];
+  for(let i=0;i<TOTAL_SHEETS;i++){
+    const S=document.createElement('div');
+    S.className='sheet';S.dataset.i=i;S._a=0;S._t=0;S._v=0;S.style.zIndex=4000-i;
+    const R=document.createElement('div');R.className='face right';
+    const L=document.createElement('div');L.className='face left';
+    const Rin=document.createElement('div');Rin.className='inner';
+    const Lin=document.createElement('div');Lin.className='inner';
+
+    if(i===0){
+      Rin.appendChild(coverFront());
+      Lin.appendChild(makePage(1));
+    } else if(i===TOTAL_SHEETS-1){
+      Rin.appendChild(makePage(TOTAL_PAGES));
+      Lin.appendChild(coverBack());
+    } else {
+      const pr=2*i,pl=2*i+1;
+      if(pr<=TOTAL_PAGES)Rin.appendChild(makePage(pr));
+      if(pl<=TOTAL_PAGES)Lin.appendChild(makePage(pl));
+    }
+
+    R.appendChild(Rin);L.appendChild(Lin);
+    const curlR=document.createElement('div');curlR.className='curl-overlay';
+    const curlL=document.createElement('div');curlL.className='curl-overlay';
+    const specR=document.createElement('div');specR.className='specular';
+    const specL=document.createElement('div');specL.className='specular';
+    const edgeR=document.createElement('div');edgeR.className='edge-spec';
+    const edgeL=document.createElement('div');edgeL.className='edge-spec';
+    Rin.appendChild(curlR);Rin.appendChild(specR);Rin.appendChild(edgeR);
+    Lin.appendChild(curlL);Lin.appendChild(specL);Lin.appendChild(edgeL);
+    S.appendChild(R);S.appendChild(L);
+    const shadow=document.createElement("div");
+    shadow.className="shadow";S.appendChild(shadow);S._shadow=shadow;
+    S._curlR=curlR;S._curlL=curlL;S._specR=specR;S._specL=specL;S._edgeR=edgeR;S._edgeL=edgeL;
+    S.addEventListener('pointerdown',onDown);S.addEventListener('touchstart',onDown);
+    book.appendChild(S);sheets.push(S);
+  }
+
+  let pointer=0;const K=14,D=5,DT=1/60;let run=false;
+  function frame(){
+    run=true;let move=false;
+    for(const s of sheets){
+      const d=s._t-s._a;s._v+=(K*d-D*s._v)*DT;s._a+=s._v*DT;
+      if(s._a<0){s._a=0;s._v=0}if(s._a>Math.PI){s._a=Math.PI;s._v=0}
+      const angle=-s._a*180/Math.PI;s.style.transform=`rotateY(${angle}deg)`;
+      const progress=s._a/Math.PI;
+      if(progress>0&&progress<1){
+        const alpha=(progress<0.5)?0.55*progress:0.55*(1-progress);
+        const spread=60+90*progress;
+        s._shadow.style.background=`radial-gradient(120% 100% at ${progress*100}% 50%,rgba(0,0,0,${alpha}) 0%,rgba(0,0,0,${alpha*0.5}) ${spread}%,transparent 100%)`;
+        s._shadow.style.opacity=alpha>0.01?1:0;
+      } else {s._shadow.style.opacity=0;}
+      const deg=s._a*180/Math.PI;
+      s.style.zIndex=(deg<90)?(4000-+s.dataset.i):(6000+ +s.dataset.i);
+      if(Math.abs(d)>1e-3)move=true;
+    }
+    if(move)requestAnimationFrame(frame);else run=false;
+  }
+
+  function fitSmooth(){
+    const vw=window.innerWidth,vh=window.innerHeight;
+    const bookW=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--book-w'));
+    const bookH=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--book-h'));
+    const margin=16;let scale,rot;
+    if(vh>vw){
+      rot=90;hearts.classList.add("horizontal");
+      scale=Math.min((vw-margin*2)/bookH,(vh-margin*2)/bookW);
+    } else {
+      rot=0;hearts.classList.remove("horizontal");
+      scale=Math.min((vw-margin*2)/bookW,(vh-margin*2)/bookH);
+    }
+    let offsetX=0,offsetY=0;
+    if(rot===0){
+      if(pointer===0)offsetX=-bookW/4*scale;
+      if(pointer===sheets.length)offsetX=bookW/4*scale;
+    } else {
+      if(pointer===0)offsetY=-bookW/4*scale;
+      if(pointer===sheets.length)offsetY=bookW/4*scale;
+    }
+    book.style.transition="transform 0.9s cubic-bezier(.25,1.5,.5,1)";
+    book.style.transform=`translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) rotate(${rot}deg) scale(${scale})`;
+  }
+
+  let drag=null;
+  function getPos(e){
+    if(e.touches&&e.touches.length){return{x:e.touches[0].clientX,y:e.touches[0].clientY};}
+    return{x:e.clientX,y:e.clientY};
+  }
+  function onDown(e){
+    const pos=getPos(e);
+    const s=e.currentTarget;
+    const i=+s.dataset.i;
+    if(!(i===pointer||i===pointer-1))return;
+    drag={s,i,sx:pos.x,sy:pos.y,sa:s._a};
+    s.style.zIndex=8000;
+    if(e.type.startsWith("pointer"))s.setPointerCapture(e.pointerId);
+    document.addEventListener('pointermove',onMove);
+    document.addEventListener('pointerup',onUp,{once:true});
+    document.addEventListener('touchmove',onMove,{passive:false});
+    document.addEventListener('touchend',onUp,{once:true});
+  }
+  function onMove(e){
+    if(!drag)return;if(e.cancelable)e.preventDefault();
+    const pos=getPos(e);const {s,sx,sy,sa}=drag;
+    const rot=book.style.transform.includes("90deg")?90:0;let delta,base;
+    if(rot===90){delta=pos.y-sy;base=scene.clientHeight*0.5;}
+    else{delta=pos.x-sx;base=scene.clientWidth*0.5;}
+    let a=sa-(delta/base)*Math.PI;
+    if(a<0)a=0;if(a>Math.PI)a=Math.PI;
+    s._t=a;if(!run)frame();
+  }
+  function onUp(){
+    if(!drag)return;const {s,i}=drag;drag=null;
+    document.removeEventListener('pointermove',onMove);
+    document.removeEventListener('touchmove',onMove);
+    const goLeft=s._a>=Math.PI/2;s._t=goLeft?Math.PI:0;
+    pointer=goLeft?Math.max(pointer,i+1):Math.min(pointer,i);
+    if(!run)frame();fitSmooth();
+  }
+  addEventListener('resize',fitSmooth);
+  addEventListener('orientationchange',fitSmooth);
+  addEventListener("load",()=>{
+    fitSmooth();
+    setTimeout(()=>book.classList.add("ready"),100);
+  });
+})();
+</script>
+</body>
+</html>
