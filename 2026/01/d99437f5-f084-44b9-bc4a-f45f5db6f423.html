@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+      <h1 class="title">Hello World! </h1>
+      <p id="currentTime"></p>
+      <script src="script.js"></script>
+  </body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Aniversario Mi Morenaza 💘</title>
+    <style>
+        body { background-color: #fbe9e7; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: 'Arial', sans-serif; overflow: hidden; }
+        .book { width: 300px; height: 400px; position: relative; perspective: 1500px; }
+        .page { width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transform-origin: left; transition: transform 1s; transform-style: preserve-3d; cursor: pointer; border-radius: 0 10px 10px 0; }
+        .page.flipped { transform: rotateY(-180deg); }
+        .front, .back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; box-sizing: border-box; }
+        .back { transform: rotateY(180deg); background-color: #fffafa; }
+        img { width: 100%; border-radius: 5px; margin-bottom: 10px; border: 2px solid #f8bbd0; }
+        h1 { color: #d32f2f; font-size: 1.2rem; }
+        p { font-size: 0.9rem; color: #5d4037; }
+        .heart { color: #e91e63; font-size: 2rem; }
+    </style>
+</head>
+<body>
+<div class="book">
+    <div class="page" onclick="this.classList.toggle('flipped')" style="z-index: 3;">
+        <div class="front">
+            <div class="heart">💘</div>
+            <h1>Feliz Aniversario Mi Morenaza</h1>
+            <p>Toca para abrir...</p>
+        </div>
+        <div class="back">
+            <img src="https://i.blogs.es/089063/emilia-duki/1366_2000.jpg">
+            <p>Te amo mucho mi argentinita, eres todo mi universo 💘</p>
+        </div>
+    </div>
+    <div class="page" onclick="this.classList.toggle('flipped')" style="z-index: 2;">
+        <div class="front">
+            <img src="https://www.billboard.com/wp-content/uploads/2023/11/Emilia-y-Duki-Latin-GRAMMY-2023-billboard-1548.jpg">
+            <p>Nunca había sentido algo así, y lo sentí contigo... nunca quisiera que acabe.</p>
+        </div>
+        <div class="back">
+            <p>Cada vez que estoy contigo es algo súper increíble, no se asemeja a nada.</p>
+            <div class="heart">❤️</div>
+        </div>
+    </div>
+    <div class="page" style="z-index: 1;">
+        <div class="front">
+            <img src="https://media.elpatagonico.com/p/09619565f14e414f08e4884f33100657/adjuntos/193/imagenes/049/564/0049564245/1200x675/smart/duki-y-emilia-mernes.jpg">
+            <p>Te amo hoy y siempre. 💘</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
