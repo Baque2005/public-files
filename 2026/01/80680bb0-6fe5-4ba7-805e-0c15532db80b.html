@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>para la doña</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background: #000;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #universe {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #000000 100%);
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        #solar-system {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1000px;
+            height: 1000px;
+        }
+
+        .sun {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #ffd700, #ff8c00);
+            border-radius: 50%;
+            box-shadow: 0 0 80px #ff8c00, 0 0 120px #ff6600;
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        .orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .planet-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .planet {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            z-index: 5;
+        }
+
+        .planet:hover {
+            transform: translate(-50%, -50%) scale(1.4) !important;
+        }
+
+        .planet-name {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            text-shadow: 0 0 5px black, 0 0 10px black;
+            pointer-events: none;
+            background: rgba(0,0,0,0.5);
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+
+        #info-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            max-width: 350px;
+            display: none;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.5s;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        #info-panel h2 {
+            margin-bottom: 15px;
+            color: #ffd700;
+            font-size: 24px;
+        }
+
+        #info-panel p {
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,102,0,0.3);
+        }
+
+        .title {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 32px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div id="universe">
+        <h1 class="title">Para usted MICHELLE🌌 </h1>
+        <div id="solar-system">
+            <div class="sun" onclick="showInfo('Sol')"></div>
+            <div id="planets-container"></div>
+        </div>
+        <div id="info-panel">
+            <button class="close-btn" onclick="closeInfo()">×</button>
+            <h2 id="planet-title"></h2>
+            <p id="planet-description"></p>
+        </div>
+    </div>
+
+    <script>
+        const planetData = {
+            'Sol': {
+                description: '✨ Mi MICHELLE usted brilla como el sol, y siempre lo hará, con esa sonrisa y esos ojitos ✨'
+            },
+            'Mercurio': {
+                description: 'Como Mercurio, el más rápido y brillante, usted tiene la energía y la chispa para alcanzar cualquier meta que se proponga. ¡Nunca deje de brillar, MICHELLE! 💫'
+            },
+            'Venus': {
+                description: 'Mi MICHELLE, al igual que Venus resplandece en el cielo, su belleza interior y exterior ilumina la vida de todos los que la rodean. Es única y maravillosa. 🌟'
+            },
+            'Tierra': {
+                description: 'Así como la Tierra es el hogar de la vida, usted es el corazón de quienes la aman. Su bondad y ternura hacen de este mundo un lugar mejor. te admiro muchísimo, MICHELLE. 💚'
+            },
+            'Marte': {
+                description: 'MICHELLE, tiene la valentía y determinación de Marte. Es una guerrera capaz de conquistar cada desafío con fuerza y pasión. ¡Sigue adelante con ese espíritu imparable! 💪❤️'
+            },
+            'Júpiter': {
+                description: 'Como Júpiter es el más grande, su corazón es inmenso y lleno de amor. Su grandeza no tiene límites, MICHELLE. Siempre será especial para mi. 🌠'
+            },
+            'Saturno': {
+                description: 'MICHELLE, es tan especial como los hermosos anillos de Saturno. Su presencia adorna cada momento y nos recuerda que la vida es mágica con usted. ¡Es extraordinaria! ✨💛'
+            },
+            'Urano': {
+                description: 'Su originalidad y forma única de ser la hacen brillar como Urano. MICHELLE, nunca cambie, porque ser diferente es lo que la hace perfecta tal como es. 💙'
+            },
+            'Neptuno': {
+                description: 'Como las profundidades misteriosas de Neptuno, hay tanto por descubrir en usted, MICHELLE. Su sensibilidad y dulzura son un tesoro invaluable. Es amada más allá de las estrellas. 🌊💙'
+            }
+        };
+
+        const planets = [
+            { name: 'Mercurio', size: 12, orbitRadius: 100, speed: 2, color: '#8c7853' },
+            { name: 'Venus', size: 18, orbitRadius: 140, speed: 1.5, color: '#ffc649' },
+            { name: 'Tierra', size: 20, orbitRadius: 180, speed: 1.2, color: '#4a90e2' },
+            { name: 'Marte', size: 16, orbitRadius: 220, speed: 1, color: '#e27b58' },
+            { name: 'Júpiter', size: 45, orbitRadius: 290, speed: 0.6, color: '#c88b3a' },
+            { name: 'Saturno', size: 40, orbitRadius: 350, speed: 0.5, color: '#f4d03f' },
+            { name: 'Urano', size: 28, orbitRadius: 400, speed: 0.35, color: '#4fd0e7' },
+            { name: 'Neptuno', size: 26, orbitRadius: 450, speed: 0.25, color: '#4169e1' }
+        ];
+
+        // Crear estrellas
+        function createStars() {
+            const universe = document.getElementById('universe');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2.5 + 0.5;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                universe.appendChild(star);
+            }
+        }
+
+        // Crear planetas
+        function createPlanets() {
+            const solarSystem = document.getElementById('solar-system');
+            const container = document.getElementById('planets-container');
+            
+            planets.forEach((planet) => {
+                // Crear órbita
+                const orbit = document.createElement('div');
+                orbit.className = 'orbit';
+                orbit.style.width = planet.orbitRadius * 2 + 'px';
+                orbit.style.height = planet.orbitRadius * 2 + 'px';
+                solarSystem.appendChild(orbit);
+
+                // Crear contenedor del planeta que rota
+                const planetContainer = document.createElement('div');
+                planetContainer.className = 'planet-container';
+                planetContainer.dataset.speed = planet.speed;
+                planetContainer.dataset.angle = Math.random() * 360;
+                
+                // Crear planeta
+                const planetEl = document.createElement('div');
+                planetEl.className = 'planet';
+                planetEl.style.width = planet.size + 'px';
+                planetEl.style.height = planet.size + 'px';
+                planetEl.style.background = planet.color;
+                planetEl.style.boxShadow = `0 0 15px ${planet.color}, inset -5px -5px 10px rgba(0,0,0,0.5)`;
+                planetEl.onclick = () => showInfo(planet.name);
+
+                // Añadir nombre del planeta
+                const nameLabel = document.createElement('div');
+                nameLabel.className = 'planet-name';
+                nameLabel.textContent = planet.name;
+                planetEl.appendChild(nameLabel);
+
+                planetContainer.appendChild(planetEl);
+                container.appendChild(planetContainer);
+
+                // Guardar datos para animación
+                planetContainer.planet = planet;
+                planetContainer.planetEl = planetEl;
+            });
+
+            // Iniciar animación
+            animate();
+        }
+
+        function animate() {
+            const containers = document.querySelectorAll('.planet-container');
+            
+            containers.forEach(container => {
+                const planet = container.planet;
+                const planetEl = container.planetEl;
+                
+                // Actualizar ángulo
+                let angle = parseFloat(container.dataset.angle);
+                angle += planet.speed * 0.5;
+                container.dataset.angle = angle;
+                
+                // Calcular posición
+                const rad = angle * Math.PI / 180;
+                const x = 500 + Math.cos(rad) * planet.orbitRadius;
+                const y = 500 + Math.sin(rad) * planet.orbitRadius;
+                
+                // Aplicar posición
+                planetEl.style.left = x + 'px';
+                planetEl.style.top = y + 'px';
+                planetEl.style.transform = 'translate(-50%, -50%)';
+            });
+            
+            requestAnimationFrame(animate);
+        }
+
+        function showInfo(planetName) {
+            const panel = document.getElementById('info-panel');
+            const title = document.getElementById('planet-title');
+            const description = document.getElementById('planet-description');
+            
+            title.textContent = planetName;
+            description.textContent = planetData[planetName].description;
+            panel.style.display = 'block';
+        }
+
+        function closeInfo() {
+            document.getElementById('info-panel').style.display = 'none';
+        }
+
+        // Inicializar
+        createStars();
+        createPlanets();
+    </script>
+</body>
+</html>
