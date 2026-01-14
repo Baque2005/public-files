@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi amor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            font-family: 'Nunito', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #bg {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .contenedor {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            color: #d81b60;
+            font-size: 2.5rem;
+            letter-spacing: 0.2px;
+        }
+
+        .cuadro-de-mensaje {
+            margin: 20px 0;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        #message {
+            font-size: 1.8rem;
+            color: #333;
+            line-height: 1.25;
+            will-change: transform, opacity, filter;
+        }
+
+        #message.animado {
+            animation: messagePop 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes messagePop {
+            0% {
+                opacity: 0;
+                transform: translateY(8px) scale(0.98);
+                filter: blur(1.5px);
+            }
+            55% {
+                opacity: 1;
+                transform: translateY(-2px) scale(1.01);
+                filter: blur(0);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        button {
+            background: #d81b60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            position: relative;
+            overflow: visible;
+        }
+
+        button:hover {
+            background: #ad1457;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .particula {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            pointer-events: none;
+            z-index: 9999;
+            background: radial-gradient(circle at 30% 30%, #ff6b6b, #d81b60 60%, #9c124f);
+            box-shadow: 0 0 12px rgba(216, 27, 96, 0.35);
+            transform: translate3d(0, 0, 0) scale(1);
+            opacity: 0;
+            animation: particulaBurst 680ms ease-out forwards;
+        }
+
+        @keyframes particulaBurst {
+            0% {
+                opacity: 0;
+                transform: translate3d(0, 0, 0) scale(0.85);
+            }
+            10% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(var(--dx), var(--dy), 0) scale(0.25);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #message.animado {
+                animation: none;
+            }
+            .particula {
+                animation: none;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg" aria-hidden="true"></canvas>
+    <div class="contenedor">
+        <h1>Para el Amor de mi Vida</h1>
+        <div class="cuadro-de-mensaje">
+            <p id="message">Eres la persona más importante en mi vida.</p>
+        </div>
+        <button id="btn">Nuevo Mensaje</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mensajes = [
+                "Eres mi sol en los días grises.",
+                "Tu sonrisa es mi razón para ser feliz.",
+                "Cada momento a tu lado es un regalo.",
+                "Te amo más de lo que las palabras pueden expresar.",
+                "Eres la mejor cosa que me ha pasado en la vida.",
+                "Mi amor por ti crece cada día más.",
+                "Eres mi todo.",
+                "Contigo, todo tiene sentido.",
+                "Gracias por existir y por elegirme.",
+                "Eres mi lugar favorito.",
+                "Me encanta la vida cuando estás en ella.",
+                "Tu amor me calma y me hace fuerte.",
+                "No hay nadie como tú.",
+                "Mi corazón te pertenece.",
+                "Eres mi mejor casualidad.",
+                "Quiero compartir contigo todos mis días.",
+                "A tu lado, todo es más bonito.",
+                "Mi mundo se ilumina cuando estás conmigo.",
+                "Te pienso y sonrío sin darme cuenta.",
+                "Eres mi paz y mi alegría.",
+                "Siempre quiero volver a ti.",
+                "Eres mi persona favorita.",
+                "Mi amor por ti es infinito.",
+                "Tú y yo, siempre.",
+                "Eres mi razón y mi destino.",
+                "Te elegiría una y mil veces."
+            ];
+
+            const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            const messageElement = document.getElementById('message');
+            const btn = document.getElementById('btn');
+
+            function getRandomMessage() {
+                const randomIndex = Math.floor(Math.random() * mensajes.length);
+                return mensajes[randomIndex];
+            }
+
+            function animarMensaje(nuevoTexto) {
+                messageElement.classList.remove('animado');
+                // Forzar reflow para reiniciar la animación
+                void messageElement.offsetWidth;
+                messageElement.textContent = nuevoTexto;
+                messageElement.classList.add('animado');
+            }
+
+            function lanzarParticulas(origenX, origenY) {
+                const cantidad = 22;
+                for (let i = 0; i < cantidad; i++) {
+                    const particula = document.createElement('span');
+                    particula.className = 'particula';
+
+                    const angulo = Math.random() * Math.PI * 2;
+                    const potencia = 40 + Math.random() * 90;
+                    const dx = Math.cos(angulo) * potencia;
+                    const dy = Math.sin(angulo) * potencia - (30 + Math.random() * 35);
+
+                    particula.style.left = `${origenX}px`;
+                    particula.style.top = `${origenY}px`;
+                    particula.style.setProperty('--dx', `${dx}px`);
+                    particula.style.setProperty('--dy', `${dy}px`);
+
+                    const tam = 6 + Math.random() * 7;
+                    particula.style.width = `${tam}px`;
+                    particula.style.height = `${tam}px`;
+
+                    document.body.appendChild(particula);
+                    particula.addEventListener('animationend', () => {
+                        particula.remove();
+                    }, { once: true });
+                }
+            }
+
+            // Fondo animado: partículas y corazones
+            const canvas = document.getElementById('bg');
+            const ctx = canvas.getContext('2d');
+
+            function resizeCanvas() {
+                const dpr = Math.max(1, window.devicePixelRatio || 1);
+                canvas.width = Math.floor(window.innerWidth * dpr);
+                canvas.height = Math.floor(window.innerHeight * dpr);
+                canvas.style.width = `${window.innerWidth}px`;
+                canvas.style.height = `${window.innerHeight}px`;
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            }
+
+            const fondo = {
+                particulas: [],
+                corazones: [],
+                burbujas: [],
+                ultimo: performance.now(),
+                acumulador: 0,
+            };
+
+            function crearParticulaFondo() {
+                const x = Math.random() * window.innerWidth;
+                const y = window.innerHeight + 10;
+                const size = 1.5 + Math.random() * 3.5;
+                const vx = (Math.random() - 0.5) * 0.6;
+                const vy = 0.6 + Math.random() * 1.4;
+                const alpha = 0.18 + Math.random() * 0.25;
+                return { x, y, vx, vy, size, alpha };
+            }
+
+            function crearCorazonFondo() {
+                const x = Math.random() * window.innerWidth;
+                const y = window.innerHeight + 20;
+                const size = 12 + Math.random() * 18;
+                const vx = (Math.random() - 0.5) * 0.35;
+                const vy = 0.45 + Math.random() * 0.9;
+                const alpha = 0.20 + Math.random() * 0.35;
+                const rot = (Math.random() - 0.5) * 0.5;
+                return { x, y, vx, vy, size, alpha, rot };
+            }
+
+            function crearBurbujaTexto(origenX, origenY, modoClick = false) {
+                const textos = [
+                    'Te amo',
+                    'Te quiero',
+                    'Mi vida',
+                    'Mi amor',
+                    'Eres mi todo',
+                    'Eres mi razón',
+                    'Siempre contigo',
+                    'Para siempre',
+                    'Eres mi cielo',
+                    'Me encantas',
+                    'Te adoro',
+                    'Mi corazón',
+                    'Te extraño',
+                    'Eres mi paz',
+                    'Eres mi alegría',
+                    'Solo tú',
+                    'Besitos',
+                    'Abrazos',
+                    'Te elijo',
+                    'Infinito',
+                    'Eres magia',
+                    'Te necesito',
+                    'Juntos',
+                    'Amor bonito'
+                ];
+
+                const text = textos[Math.floor(Math.random() * textos.length)];
+
+                const x = Number.isFinite(origenX)
+                    ? (origenX + (Math.random() - 0.5) * 80)
+                    : (Math.random() * window.innerWidth);
+
+                const y = Number.isFinite(origenY)
+                    ? (origenY + (Math.random() - 0.5) * 40)
+                    : (window.innerHeight + 30);
+
+                const fontSize = (modoClick ? 16 : 14) + Math.random() * (modoClick ? 12 : 10);
+                const vx = (Math.random() - 0.5) * (modoClick ? 0.6 : 0.28);
+                const vy = (modoClick ? 0.75 : 0.35) + Math.random() * (modoClick ? 1.1 : 0.75);
+                const alpha = (modoClick ? 0.28 : 0.16) + Math.random() * (modoClick ? 0.25 : 0.25);
+                const rot = (Math.random() - 0.5) * (modoClick ? 0.24 : 0.18);
+                const padX = 12;
+                const padY = 9;
+                return { x, y, vx, vy, fontSize, alpha, rot, text, padX, padY };
+            }
+
+            function roundRect(context, x, y, w, h, r) {
+                const radius = Math.min(r, w / 2, h / 2);
+                context.beginPath();
+                context.moveTo(x + radius, y);
+                context.arcTo(x + w, y, x + w, y + h, radius);
+                context.arcTo(x + w, y + h, x, y + h, radius);
+                context.arcTo(x, y + h, x, y, radius);
+                context.arcTo(x, y, x + w, y, radius);
+                context.closePath();
+            }
+
+            function tickFondo(now) {
+                const dt = Math.min(0.033, (now - fondo.ultimo) / 1000);
+                fondo.ultimo = now;
+                fondo.acumulador += dt;
+
+                // Spawns (ajustable)
+                const targetParticulas = 26;
+                const targetCorazones = 10;
+                const targetBurbujas = 9;
+                const maxBurbujas = targetBurbujas + 24;
+
+                while (fondo.particulas.length < targetParticulas) fondo.particulas.push(crearParticulaFondo());
+                while (fondo.corazones.length < targetCorazones) fondo.corazones.push(crearCorazonFondo());
+                while (fondo.burbujas.length < targetBurbujas) fondo.burbujas.push(crearBurbujaTexto());
+                if (fondo.burbujas.length > maxBurbujas) {
+                    fondo.burbujas.splice(0, fondo.burbujas.length - maxBurbujas);
+                }
+
+                // Limpia y pinta
+                ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+                // Partículas
+                for (let i = fondo.particulas.length - 1; i >= 0; i--) {
+                    const p = fondo.particulas[i];
+                    p.x += p.vx * 60 * dt;
+                    p.y -= p.vy * 60 * dt;
+                    if (p.y < -20) {
+                        fondo.particulas[i] = crearParticulaFondo();
+                        continue;
+                    }
+
+                    ctx.beginPath();
+                    ctx.fillStyle = `rgba(216, 27, 96, ${p.alpha})`;
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Corazones (texto)
+                for (let i = fondo.corazones.length - 1; i >= 0; i--) {
+                    const h = fondo.corazones[i];
+                    h.x += h.vx * 60 * dt;
+                    h.y -= h.vy * 60 * dt;
+                    if (h.y < -40) {
+                        fondo.corazones[i] = crearCorazonFondo();
+                        continue;
+                    }
+
+                    ctx.save();
+                    ctx.translate(h.x, h.y);
+                    ctx.rotate(h.rot);
+                    ctx.globalAlpha = h.alpha;
+                    ctx.fillStyle = '#d81b60';
+                    ctx.font = `${Math.round(h.size)}px "Nunito", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
+                    ctx.fillText('♥', 0, 0);
+                    ctx.restore();
+                }
+
+                // Burbujas con texto
+                for (let i = fondo.burbujas.length - 1; i >= 0; i--) {
+                    const b = fondo.burbujas[i];
+                    b.x += b.vx * 60 * dt;
+                    b.y -= b.vy * 60 * dt;
+                    if (b.y < -80) {
+                        fondo.burbujas[i] = crearBurbujaTexto();
+                        continue;
+                    }
+
+                    ctx.save();
+                    ctx.translate(b.x, b.y);
+                    ctx.rotate(b.rot);
+                    ctx.globalAlpha = b.alpha;
+
+                    ctx.font = `700 ${Math.round(b.fontSize)}px "Nunito", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
+                    const metrics = ctx.measureText(b.text);
+                    const textW = metrics.width;
+                    const w = textW + b.padX * 2;
+                    const h = b.fontSize + b.padY * 2;
+                    const x0 = -w / 2;
+                    const y0 = -h / 2;
+
+                    // Sombra suave
+                    ctx.shadowColor = 'rgba(216, 27, 96, 0.18)';
+                    ctx.shadowBlur = 14;
+                    ctx.shadowOffsetY = 6;
+
+                    // Burbuja
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.26)';
+                    ctx.strokeStyle = 'rgba(216, 27, 96, 0.32)';
+                    ctx.lineWidth = 1.2;
+                    roundRect(ctx, x0, y0, w, h, 999);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Texto
+                    ctx.shadowColor = 'transparent';
+                    ctx.fillStyle = 'rgba(216, 27, 96, 0.85)';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(b.text, 0, 0);
+
+                    // Brillito
+                    ctx.globalAlpha = b.alpha * 0.9;
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+                    ctx.beginPath();
+                    ctx.ellipse(-w * 0.18, -h * 0.10, w * 0.18, h * 0.22, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.restore();
+                }
+
+                requestAnimationFrame(tickFondo);
+            }
+
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            if (!reduceMotion) requestAnimationFrame(tickFondo);
+
+            btn.addEventListener('click', () => {
+                const rect = btn.getBoundingClientRect();
+                const x = rect.left + rect.width / 2;
+                const y = rect.top + rect.height / 2;
+
+                animarMensaje(getRandomMessage());
+                if (!reduceMotion) {
+                    lanzarParticulas(x, y);
+                    // Extra: burbujas con palabras al hacer clic
+                    for (let i = 0; i < 7; i++) {
+                        fondo.burbujas.push(crearBurbujaTexto(x, y, true));
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
