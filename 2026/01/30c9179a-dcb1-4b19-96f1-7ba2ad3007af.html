@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>para mi cachetona ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(to bottom, #1a1a2e 0%, #0f0f1e 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #fff;
+        }
+
+        .space {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        }
+
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        .star {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            background: white;
+            box-shadow: 0 0 2px white;
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: shoot 3s linear infinite;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translateX(0) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-300px) translateY(300px);
+                opacity: 0;
+            }
+        }
+
+        .scene {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .gift-box {
+            text-align: center;
+            animation: giftFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes giftFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .gift-icon {
+            font-size: 150px;
+            filter: drop-shadow(0 10px 30px rgba(255, 107, 107, 0.5));
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gift-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .gift-message {
+            color: #4a90e2;
+            font-size: 1.8em;
+            margin: 30px 0;
+            text-shadow: 0 0 10px #4a90e2;
+        }
+
+        .open-button {
+            background: linear-gradient(145deg, #ff6b9d, #ff4757);
+            border: none;
+            color: white;
+            padding: 20px 50px;
+            font-size: 1.5em;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 25px rgba(255, 107, 107, 0.5);
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            margin: 10px;
+        }
+
+        .open-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(255, 107, 107, 0.8);
+        }
+
+        .close-button {
+            background: linear-gradient(145deg, #4a90e2, #357abd);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 25px rgba(74, 144, 226, 0.5);
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            margin-top: 30px;
+        }
+
+        .close-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(74, 144, 226, 0.8);
+        }
+
+        .content {
+            display: none;
+            animation: revealAnim 1s ease-out;
+        }
+
+        .content.show {
+            display: block;
+        }
+
+        .walle-container {
+            position: relative;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .walle {
+            width: 300px;
+            height: auto;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+            animation: walleBlink 4s infinite;
+        }
+
+        @keyframes walleBlink {
+            0%, 48%, 52%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+
+        .eve {
+            width: 250px;
+            height: auto;
+            filter: drop-shadow(0 10px 20px rgba(255,255,255,0.3));
+            animation: eveFloat 3s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes eveFloat {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            25% { transform: translateY(-15px) translateX(5px); }
+            50% { transform: translateY(-5px) translateX(-5px); }
+            75% { transform: translateY(-20px) translateX(3px); }
+        }
+
+        .plant-box {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 40px;
+            animation: plantGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes plantGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px #90EE90); }
+            50% { filter: drop-shadow(0 0 20px #90EE90); }
+        }
+
+        .message-box {
+            background: rgba(20, 20, 40, 0.8);
+            border: 3px solid #4a90e2;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 700px;
+            box-shadow: 0 0 30px rgba(74, 144, 226, 0.5),
+                        inset 0 0 30px rgba(74, 144, 226, 0.1);
+            animation: boxGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes boxGlow {
+            0%, 100% { box-shadow: 0 0 30px rgba(74, 144, 226, 0.5), inset 0 0 30px rgba(74, 144, 226, 0.1); }
+            50% { box-shadow: 0 0 50px rgba(74, 144, 226, 0.8), inset 0 0 50px rgba(74, 144, 226, 0.2); }
+        }
+
+        .title {
+            font-size: 2.5em;
+            color: #4a90e2;
+            text-shadow: 0 0 10px #4a90e2;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+        }
+
+        .message {
+            font-size: 1.3em;
+            line-height: 2;
+            color: #e0e0e0;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .directive {
+            font-size: 2em;
+            color: #90EE90;
+            text-shadow: 0 0 15px #90EE90;
+            margin: 20px 0;
+            letter-spacing: 2px;
+            animation: directiveFlash 2s ease-in-out infinite;
+        }
+
+        @keyframes directiveFlash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* ESTILO CENTRADO PARA LOS BOTONES */
+        .centered-actions {
+            text-align: center; /* Centra el contenido (botones) */
+            margin: 20px 0;
+        }
+
+        .button {
+            background: linear-gradient(145deg, #4a90e2, #357abd);
+            border: none;
+            color: white;
+            padding: 20px 50px;
+            font-size: 1.5em;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 25px rgba(74, 144, 226, 0.5);
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            margin: 20px 0;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(74, 144, 226, 0.8);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .reveal {
+            animation: revealAnim 1s ease-out forwards;
+        }
+
+        @keyframes revealAnim {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .dance-scene {
+            margin-top: 30px;
+            font-size: 80px;
+            /* Agregamos cursor: pointer para indicar que es interactivo */
+            cursor: pointer; 
+            animation: danceRotate 4s linear infinite;
+        }
+
+        .dance-scene.paused {
+            animation-play-state: paused;
+            opacity: 0.7;
+            filter: grayscale(100%);
+        }
+
+        @keyframes danceRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .earth {
+            position: fixed;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 200px;
+            opacity: 0.3;
+            animation: earthRotate 60s linear infinite;
+        }
+
+        @keyframes earthRotate {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="space"></div>
+    <div class="stars" id="stars"></div>
+    <div class="earth">🌍</div>
+
+    <audio id="audioPlayer" src="https://open.spotify.com/intl-es/track/5GpfyJrKHJI36jDKtQiyGN?si=3b0f5609b1934d88" loop></audio>
+
+    <div class="scene">
+        <div class="gift-box" id="giftBox">
+            <div class="gift-icon">🎁</div>
+            <div class="gift-message">Tengo algo especial para ti...</div>
+            <button class="open-button" onclick="abrirRegalo()">[ ABRIR REGALO ]</button>
+        </div>
+
+        <div class="content" id="content">
+            <div class="walle-container">
+                <div class="plant-box">🌱</div>
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjeTikNIT2UjY0MzvDOPmYqKvv0hDniBJ5faWTKFT9O6oEzqlyWq8Dr3DWO21sPCQcCfQGI0z00-AV1rG7QiImk4NIRSCgDuw1ybV5g7o7uL5qaZli52IK5SNDqqLtboJlm1Ip1CTpkSZM/s0/Clipart+Render+Wall+E+y+Eva+PNG+Descarga+gratis+%252823%2529.png" alt="WALL-E" class="walle">
+            </div>
+
+            <div class="message-box">
+                <h1 class="title">[ MENSAJE ESPECIAL ]</h1>
+                
+                <div class="message">
+                    > Durante 700 años, WALL-E esperó encontrar algo especial...<br>
+                    > Yo no tuve que esperar tanto para encontrarte a ti.<br><br>
+                    > Como WALL-E guardaba tesoros en su contenedor,<br>
+                    > así guardo cada momento contigo en mi corazón.<br><br>
+                    > Él encontró una planta que salvó a la humanidad,<br>
+                    > Yo te encontré a ti, y salvaste mi mundo.
+                </div>
+
+                <div class="directive">:: DIRECTIVA ::</div>
+                <div class="message" style="text-align: center; font-size: 1.5em; color: #90EE90;">
+                    💚 TRAER VIDA A LA TIERRA 💚
+                </div>
+                
+                <div class="centered-actions">
+                    <button class="button" onclick="revelar()">[ PRESIONA AQUÍ ]</button>
+                </div>
+
+                <div id="hidden" class="hidden">
+                    <div class="message" style="margin-top: 30px; text-align: center;">
+                        <div style="margin: 20px 0;">
+                            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgh49_J8pDsIkg40RIeebE6b0w5v6V5206UvTni5w_vWJXpEIvrIH38Q5M7YbrBeDTVEDFe57-A1tuSP1LGEm1Swt-RliDZ5ivLJjHPGQwLmxvv2S3TaNUURDaWUKSAa4ww2dg1He0coEk/s0/Clipart+Render+Wall+E+y+Eva+PNG+Descarga+gratis+%25284%2529.png" alt="WALL-E y EVE" style="width: 500px; max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 0 30px rgba(74, 144, 226, 0.6);">
+                        </div>
+                        
+                        <div style="font-size: 1.5em; color: #4a90e2; margin: 30px 0;">
+                            "Define... bailar" 💫
+                        </div>
+                        
+                        <div class="dance-scene" id="musicIcon" onclick="toggleMusic()">🎵</div>
+                        
+                        <div style="margin-top: 30px; font-size: 1.4em; line-height: 2;">
+                            ¿Quieres bailar conmigo<br>
+                            entre las estrellas?<br><br>
+                            Como WALL-E y EVE...<br>
+                            <span style="color: #90EE90; text-shadow: 0 0 10px #90EE90;">
+                                Juntos podemos crear vida donde no la hay.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="centered-actions">
+                    <button class="close-button" onclick="cerrarRegalo()">[ CERRAR REGALO ]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Crear estrellas
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 200; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animation = `twinkle ${Math.random() * 3 + 2}s infinite`;
+            starsContainer.appendChild(star);
+        }
+
+        // Crear estrellas fugaces
+        for (let i = 0; i < 3; i++) {
+            const shootingStar = document.createElement('div');
+            shootingStar.className = 'shooting-star';
+            shootingStar.style.left = Math.random() * 100 + '%';
+            shootingStar.style.top = Math.random() * 50 + '%';
+            shootingStar.style.animationDelay = Math.random() * 5 + 's';
+            starsContainer.appendChild(shootingStar);
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes twinkle {
+                0%, 100% { opacity: 0.2; }
+                50% { opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        function revelar() {
+            const hidden = document.getElementById('hidden');
+            hidden.classList.remove('hidden');
+            hidden.classList.add('reveal');
+        }
+
+        function abrirRegalo() {
+            document.getElementById('giftBox').style.display = 'none';
+            document.getElementById('content').classList.add('show');
+            // Al abrir el regalo, intentamos iniciar la música si el navegador lo permite
+            const audioPlayer = document.getElementById('audioPlayer');
+            if (audioPlayer.src && !audioPlayer.paused) {
+                 audioPlayer.play().catch(error => {
+                    // La reproducción automática falló (común en navegadores).
+                    console.log("Música no iniciada automáticamente. Haz clic en el disco.");
+                 });
+            }
+        }
+
+        function cerrarRegalo() {
+            document.getElementById('content').classList.remove('show');
+            document.getElementById('giftBox').style.display = 'block';
+            document.getElementById('hidden').classList.add('hidden');
+            document.getElementById('hidden').classList.remove('reveal');
+            
+            // Pausar la música al cerrar el regalo
+            const audioPlayer = document.getElementById('audioPlayer');
+            const musicIcon = document.getElementById('musicIcon');
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0; // Reinicia la canción
+            musicIcon.classList.add('paused');
+        }
+
+        // FUNCIÓN AGREGADA PARA CONTROLAR EL AUDIO
+        function toggleMusic() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const musicIcon = document.getElementById('musicIcon');
+
+            if (!audioPlayer.src) {
+                alert("¡IMPORTANTE! No has configurado la URL de la canción.");
+                return;
+            }
+
+            if (audioPlayer.paused) {
+                // Iniciar la música
+                audioPlayer.play().catch(error => {
+                    alert("No se pudo iniciar la música. El navegador requiere una interacción previa.");
+                });
+                musicIcon.classList.remove('paused');
+            } else {
+                // Pausar la música
+                audioPlayer.pause();
+                musicIcon.classList.add('paused');
+            }
+        }
+    </script>
+</body>
+</html>
