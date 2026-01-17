@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Zoraida ❤️</title>
+    <style>
+        body { 
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+            background-color: #f7b1bd;
+            /* FONDO DE SNOOPY Y CASITA ROJA (ESTILO TU FOTO) */
+            background-image: url("https://i.pinimg.com/originals/8e/33/93/8e339396328994514309f9846399435c.png");
+            background-size: 400px;
+            background-repeat: repeat;
+            overflow: hidden;
+        }
+
+        /* BURBUJAS BLANCAS IDÉNTICAS A TU IMAGEN */
+        .burbuja {
+            background: white;
+            color: #d81b60;
+            font-weight: bold;
+            padding: 15px 40px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            z-index: 10;
+            text-align: center;
+            border: none;
+        }
+
+        #tit { font-size: 28px; margin-bottom: 40px; }
+
+        /* EL SOBRE ROSA */
+        .sobre-wrapper { position: relative; width: 350px; height: 230px; cursor: pointer; z-index: 5; transition: 0.5s; }
+        .sobre-trasero { position: absolute; width: 100%; height: 100%; background-color: #e66b8a; border-radius: 8px; z-index: 1; }
+        .sobre-frente {
+            position: absolute; width: 100%; height: 100%; background-color: #f0829e;
+            clip-path: polygon(0 0, 0% 100%, 100% 100%, 100% 0, 50% 50%);
+            z-index: 3; border-radius: 8px;
+        }
+        .solapa {
+            position: absolute; top: 0; left: 0; width: 0; height: 0;
+            border-left: 175px solid transparent; border-right: 175px solid transparent;
+            border-top: 130px solid #d45273; z-index: 4;
+            transform-origin: top; transition: transform 0.6s ease;
+        }
+
+        /* LA CARTA BLANCA CON TU TEXTO */
+        .carta {
+            position: absolute; top: 10px; left: 15px; width: 320px; height: 200px;
+            background: white; padding: 30px; box-sizing: border-box;
+            border-radius: 5px; z-index: 2; transition: all 0.8s ease-in-out;
+            opacity: 0; overflow-y: auto; text-align: center;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .carta h2 { color: #d81b60; font-size: 18px; margin-bottom: 15px; }
+        .carta p { color: #444; font-size: 14.5px; line-height: 1.6; margin: 10px 0; }
+
+        /* EFECTO DE APERTURA */
+        .abierto .solapa { transform: rotateX(180deg); z-index: 0; }
+        .abierto .carta {
+            transform: translateY(-330px); height: 600px; opacity: 1;
+            z-index: 100; width: 400px; left: -25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .ocultar { opacity: 0; transform: scale(0); pointer-events: none; }
+        #ins { font-size: 22px; margin-top: 40px; animation: latido 1.5s infinite; cursor: pointer; }
+        @keyframes latido { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+    </style>
+</head>
+<body>
+
+    <div id="tit" class="burbuja">¡Feliz Cumpleaños Mi Amor! ❤️</div>
+
+    <div class="sobre-wrapper" onclick="abrir(this)">
+        <div class="solapa"></div>
+        <div class="sobre-frente"></div>
+        <div class="sobre-trasero"></div>
+        <div class="carta">
+            <h2>Para la niña de mis ojos ❤️</h2>
+            <p>Feliz cumpleaños a la niña de mis ojos la mujer que me hace feliz en cada momento me siento muy orgulloso de la mujer que eres tus cualidades te hacen única mi amor.</p>
+            <p>Hoy es un día muy especial porque celebramos la mujer maravillosa y hermoss seremos tú y yo en lo más alto y lo más bajo apoyándote y amándote incondicionalmente cada momento que pasa tu lado es único Le agradezco a Diosito por ponerte mi camino te deseo mucho salud, amor y prosperidad.</p>
+            <p>Hoy no puedo estar cerca fisicamente, pero eso no cambia lo importante: que pienso en ti, que te celebro y que me alegra que existas. A la distancia se aprende a valorar más los momentos, las palabras y hasta los silencios compartidos, y tú haces que todo eso valga la pena.</p>
+            <p>Espero que este nuevo año te trate bonito, que te acerque a lo que sueñas y que te regale calma, risas y razones para sentirte orgullosa de ti. Yo estaré aquí, acompañándote como pueda, aprendiendo contigo y sumando momentos, aunque sea a kilómetros de diferencia. Gracias por ser como eres, por tu forma de ver las cosas y por lo que compartes conmigo.</p>
+            <p style="color: #d81b60; font-weight: bold; font-size: 18px; margin-top: 20px;">Te recontra amo infinitamente mi amor</p>
+            <p style="text-align: right; font-weight: bold; color: #d81b60; margin-top: 20px;">De: Axel | Para: Zoraida</p>
+        </div>
+    </div>
+
+    <div id="ins" class="burbuja">Toca el sobre para abrir ❤️</div>
+
+    <script>
+        function abrir(e) {
+            e.classList.toggle('abierto');
+            document.getElementById('tit
