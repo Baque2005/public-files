@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>14 de Febrero 2026</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        }
+        .card {
+            background: #ffffff;
+            padding: 40px 50px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+            max-width: 400px;
+        }
+        h1 {
+            color: #e6005c;
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 18px;
+            color: #333;
+        }
+        .fecha {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>San Valentín 💖</h1>
+        <p id="mensaje"></p>
+        <div class="fecha">14 de febrero de 2026</div>
+    </div>
+
+    <script>
+        function mensajeSanValentin() {
+            const fechaObjetivo = new Date(2026, 1, 14); // Mes 1 = Febrero
+            const hoy = new Date();
+
+            // Normalizar horas
+            fechaObjetivo.setHours(0,0,0,0);
+            hoy.setHours(0,0,0,0);
+
+            if (hoy.getTime() === fechaObjetivo.getTime()) {
+                return "¡Feliz 14 de Febrero 2026! Que este día esté lleno de cariño y buenos momentos 💘";
+            } else if (hoy < fechaObjetivo) {
+                const diferencia = fechaObjetivo - hoy;
+                const dias = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
+                return `Faltan ${dias} días para el 14 de Febrero de 2026 💝`;
+            } else {
+                return "El 14 de Febrero de 2026 ya pasó, pero los buenos recuerdos permanecen ❤️";
+            }
+        }
+
+        document.getElementById("mensaje").textContent = mensajeSanValentin();
+    </script>
+</body>
+</html>
+
+<!by kevincci>
