@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌌 Universo </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+        }
+
+        .universo {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Nebulosa y Vía Láctea fijas */
+        .nebulosa {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(25, 25, 112, 0.2) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(72, 61, 139, 0.1) 0%, transparent 60%);
+            filter: blur(60px);
+        }
+
+        /* Capas de estrellas */
+        .estrella {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: titila 4s infinite;
+        }
+
+        @keyframes titila {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.9); }
+        }
+
+        /* El Sol */
+        .sol-contenedor {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sol {
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background-image: url('https://assets.stickpng.com/thumbs/580b585b2edbce24c47b270f.png');
+            background-size: cover;
+            box-shadow: 0 0 60px 15px rgba(255, 200, 0, 0.6);
+            animation: pulsarSol 8s infinite ease-in-out;
+        }
+
+        @keyframes pulsarSol {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.02); filter: brightness(1.1); }
+        }
+
+        /* CONFIGURACIÓN DE PLANETAS FIJOS */
+        .planeta-estatico {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .planeta-estatico:hover {
+            transform: scale(1.1);
+            z-index: 20;
+        }
+
+        .imagen-planeta {
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            animation: flotarSolo 6s ease-in-out infinite;
+        }
+
+        @keyframes flotarSolo {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .pos-tierra { top: 15%; left: 15%; }
+        .pos-marte { top: 20%; right: 15%; }
+        .pos-jupiter { bottom: 15%; left: 10%; }
+        .pos-saturno { bottom: 20%; right: 10%; }
+        .pos-luna { top: 40%; right: 30%; }
+
+        .tierra { width: 90px; height: 90px; background-image: url('https://assets.stickpng.com/thumbs/580b585b2edbce24c47b2704.png'); }
+        .marte { width: 70px; height: 70px; background-image: url('https://w7.pngwing.com/pngs/75/937/png-transparent-planet-earth-planet-mars-mercury-jupiter-mars-atmosphere-sphere-venus-thumbnail.png'); }
+        .jupiter { width: 130px; height: 130px; background-image: url('https://assets.stickpng.com/thumbs/580b585b2edbce24c47b2707.png'); }
+        .luna { width: 50px; height: 50px; background-image: url('https://assets.stickpng.com/thumbs/580b585b2edbce24c47b270b.png'); }
+
+        .saturno-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: flotarSolo 7s ease-in-out infinite;
+        }
+
+        .saturno {
+            width: 100px;
+            height: 100px;
+            background-image: url('https://w7.pngwing.com/pngs/810/795/png-transparent-jupiter-the-nine-planets-solar-system-saturn-jupiter-sphere-venus-solar-system-thumbnail.png');
+            background-size: cover;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .anillos-saturno {
+            position: absolute;
+            width: 200px;
+            height: 60px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(75deg);
+            border-radius: 50%;
+            background: radial-gradient(ellipse, transparent 35%, rgba(200, 180, 140, 0.4) 40%, transparent 45%, rgba(180, 160, 120, 0.3) 50%, transparent 60%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+
+        /* Etiquetas */
+        .etiqueta-planeta {
+            color: white;
+            margin-top: 10px;
+            font-size: 0.9em;
+            opacity: 0.6;
+            text-shadow: 0 0 5px black;
+        }
+
+        .texto-sol {
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: gold;
+            font-size: 2.5em;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.5);
+            font-style: normal;
+            opacity: 0.9;
+            font-family: 'Georgia', 'Palatino', 'Times New Roman', serif;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* Color de letra blanco para los mensajes */
+        .mensaje {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(10, 10, 30, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            z-index: 100;
+            opacity: 0;
+            transition: all 0.5s ease;
+            text-align: center;
+            border: 1px solid gold;
+            color: white; 
+        }
+        
+        .mensaje.mostrar { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        
+        .mensaje button {
+            margin-top: 20px; 
+            padding: 10px 20px;
+            background: gold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="universo" id="universo">
+        <div class="nebulosa"></div>
+        
+        <div id="estrellasLejanas"></div>
+
+        <div class="planeta-estatico pos-tierra" onclick="mostrarMensaje('🌍 Tierra', 'La Tierra es bella porque sabe sostener la vida. Usted es bella porque todo parece encontrar su lugar cuando existe cerca de su presencia. En usted, la belleza no es apariencia, es armonía.')">
+            <div class="imagen-planeta tierra"></div>
+            <div class="etiqueta-planeta">Tierra</div>
+        </div>
+
+        <div class="planeta-estatico pos-marte" onclick="mostrarMensaje('🔴 Marte', 'Ni el desierto más cálido iguala el calor de su esencia, pues usted llena de vida el vacío con su sola presencia. Su belleza es como Marte, un misterio que nos invita, una mujer poderosa cuya luz el cielo siempre solicita, gobernando el universo con su fuerza y su inteligencia.')">
+            <div class="imagen-planeta marte"></div>
+            <div class="etiqueta-planeta">Marte</div>
+        </div>
+
+        <div class="planeta-estatico pos-jupiter" onclick="mostrarMensaje('🪐 Júpiter', 'Su belleza es como Júpiter, una fuerza monumental, una esfera de luz que domina el vacío con calma. Posee la estructura de un gigante celestial y el brillo sereno que nace desde su propia alma. Usted es el centro donde la luz se vuelve armonía, un mundo de nubes de oro y tormentas de cristal; su existencia dicta el orden de la astronomía y convierte lo simple en algo eterno y estelar.')">
+            <div class="imagen-planeta jupiter"></div>
+            <div class="etiqueta-planeta">Júpiter</div>
+        </div>
+
+        <div class="planeta-estatico pos-saturno" onclick="mostrarMensaje('💍 Saturno', 'Si el cielo es un jardín, usted es el astro más especial, con la elegancia de Saturno y un brillo casi celestial. Su belleza es como Júpiter, inmensa y llena de magia, una mujer tan increíble que de alegría siempre contagia, siendo la obra más perfecta del catálogo universal.')">
+            <div class="saturno-wrapper">
+                <div class="saturno"></div>
+                <div class="anillos-saturno"></div>
+            </div>
+            <div class="etiqueta-planeta">Saturno</div>
+        </div>
+
+        <div class="planeta-estatico pos-luna" onclick="mostrarMensaje('🌙 Luna', 'Usted tiene el brillo que solo la Luna sabe entregar, un encanto tan dulce que nadie ha dejado de admirar. Es el lado más bello y perfecto que tiene el universo, una joya que merece ser parte de cada buen verso, porque su sola presencia es la que nos hace soñar.')">
+            <div class="imagen-planeta luna"></div>
+            <div class="etiqueta-planeta">Luna</div>
+        </div>
+
+        <div class="sol-contenedor" onclick="mostrarMensaje('☀️ Sol ', 'No existe en el cosmos un fuego de tal magnitud, como el Sol que habita en su mirada y su juventud. Esos ojos verdosos que enamoran al que los llega a mirar, son el único refugio donde el corazón quiere descansar, siendo usted la luz más bella de toda la galaxia, la cual nadie se cansara de admirar.')">
+            <div class="texto-sol">ASI DE BELLA ES USTED</div>
+            <div class="sol"></div>
+            <div class="etiqueta-planeta">Sol</div>
+        </div>
+
+        <div class="mensaje" id="mensaje">
+            <h1 id="mensaje-titulo"></h1>
+            <p id="mensaje-texto"></p>
+            <button onclick="cerrarMensaje()">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        function crearEstrellas() {
+            const lejanas = document.getElementById('estrellasLejanas');
+            for (let i = 0; i < 300; i++) {
+                const estrella = document.createElement('div');
+                estrella.className = 'estrella';
+                estrella.style.width = '1px';
+                estrella.style.height = '1px';
+                estrella.style.left = Math.random() * 100 + '%';
+                estrella.style.top = Math.random() * 100 + '%';
+                estrella.style.animationDelay = Math.random() * 5 + 's';
+                lejanas.appendChild(estrella);
+            }
+        }
+
+        function mostrarMensaje(titulo, texto) {
+            const mensaje = document.getElementById('mensaje');
+            const tituloElemento = document.getElementById('mensaje-titulo');
+            const textoElemento = document.getElementById('mensaje-texto');
+            
+            tituloElemento.textContent = titulo;
+            textoElemento.textContent = texto;
+            mensaje.classList.add('mostrar');
+        }
+        function cerrarMensaje() { document.getElementById('mensaje').classList.remove('mostrar'); }
+
+        window.onload = crearEstrellas;
+    </script>
+</body>
+</html>
