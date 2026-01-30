@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corazón Animado - Flujo de Partículas</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: black;
+            transition: background-color 1s ease;
+            font-family: 'Arial Rounded MT Bold', Arial, Helvetica, sans-serif;
+        }
+
+        canvas {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        /* Texto centrado encima del canvas */
+        #centerText {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            font-size: clamp(28px, 6vw, 72px);
+            font-weight: 700;
+            color: white;
+            text-align: center;
+            letter-spacing: 1px;
+            pointer-events: none;
+            text-shadow: 0 0 10px rgba(255,255,255,0.25), 0 6px 20px rgba(0,0,0,0.5);
+            animation: pulseText 2.5s ease-in-out infinite, floatText 6s ease-in-out infinite;
+            user-select: none;
+        }
+
+        @keyframes pulseText {
+            0% { transform: translate(-50%, -50%) scale(0.98); opacity: 0.85; }
+            50% { transform: translate(-50%, -50%) scale(1.06); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.98); opacity: 0.85; }
+        }
+
+        @keyframes floatText {
+            0% { transform: translate(-50%, -52%) }
+            50% { transform: translate(-50%, -48%) }
+            100% { transform: translate(-50%, -52%) }
+        }
+
+        /* (Se eliminó el botón de play inferior) */
+
+        /* Botón superior derecho para alternar música */
+        #toggleAudio {
+            position: absolute;
+            right: 18px;
+            top: 18px;
+            z-index: 5;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="heart"></canvas>
+
+    <div id="centerText">Fəridə Barışaq gülüm</div>
+
+    <button id="toggleAudio" aria-label="Alternar música">🔊</button>
+
+    <!-- Reproductor de fondo -->
+    <audio id="bgAudio" preload="auto" crossorigin="anonymous" loop>
+        <source src="https://cdn.jsdelivr.net/gh/Baque2005/Organizador@master/Miro%20%20Onun%20%C3%96z%C3%BCn%C9%99%20(Prod%20by%20SarkhanBeats)%20(1).mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        /**
+         * LÓGICA DE ANIMACIÓN DE CORAZÓN (PARTÍCULAS Y RASTRO)
+         */
+        const canvas = document.getElementById('heart');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let pointsOrigin = [];
+        let pointsTarget = [];
+        let particles = [];
+        let phase = 0; // 0: Rainbow, 1: White, 2: Black/White, 3: Green
+        let time = 0;
+        const startOffset = 16; // segundos desde donde iniciar la reproducción
+        let audioStarted = false;
+        
+        const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase());
+        const koef = isMobile ? 0.7 : 1;
+        const trailCount = isMobile ? 25 : 45;
+
+        // Ecuación paramétrica del corazón
+        function getHeartPoint(rad) {
+            return [
+                Math.pow(Math.sin(rad), 3),
+                -(15 * Math.cos(rad) - 5 * Math.cos(2 * rad) - 2 * Math.cos(3 * rad) - Math.cos(4 * rad))
+            ];
+        }
+
+        function scaleAndTranslate(pos, sx, sy, dx, dy) {
+            return [dx + pos[0] * sx, dy + pos[1] * sy];
+        }
+
+        function init() {
+            resize();
+            
+            // Generar capas de puntos para el corazón
+            const dr = isMobile ? 0.2 : 0.08;
+            for (let i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(getHeartPoint(i), 210, 13, 0, 0));
+            for (let i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(getHeartPoint(i), 150, 9, 0, 0));
+            for (let i = 0; i < Math.PI * 2; i += dr) pointsOrigin.push(scaleAndTranslate(getHeartPoint(i), 90, 5, 0, 0));
+            
+            const heartPointsCount = pointsOrigin.length;
+
+            // Inicializar partículas
+            for (let i = 0; i < heartPointsCount; i++) {
+                const x = Math.random() * width;
+                const y = Math.random() * height;
+                
+                particles[i] = {
+                    vx: 0,
+                    vy: 0,
+                    speed: Math.random() + 5,
+                    targetIdx: Math.floor(Math.random() * heartPointsCount),
+                    direction: 2 * (i % 2) - 1,
+                    force: 0.2 * Math.random() + 0.7,
+                    trail: []
+                };
+                
+                for (let k = 0; k < trailCount; k++) {
+                    particles[i].trail[k] = { x: x, y: y };
+                }
+            }
+
+            // Ciclo de fases del video (cada 4 segundos)
+            setInterval(() => {
+                phase = (phase + 1) % 4;
+                updateStyles();
+            }, 4000);
+
+            // Intentar reproducir audio al iniciar y configurar el toggle
+            tryPlayAudio();
+            setupToggleButton();
+
+            animate();
+        }
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        function updateStyles() {
+            if (phase === 2) {
+                document.body.style.backgroundColor = "white";
+            } else {
+                document.body.style.backgroundColor = "black";
+            }
+        }
+
+        function getParticleColor(i) {
+            switch(phase) {
+                case 0: // Rainbow
+                    return `hsla(${(i + time * 50) % 360}, 70%, 60%, 0.4)`;
+                case 1: // White
+                    return `rgba(255, 255, 255, 0.4)`;
+                case 2: // Black
+                    return `rgba(0, 0, 0, 0.4)`;
+                case 3: // Green
+                    return `rgba(100, 255, 150, 0.4)`;
+            }
+        }
+
+        function updatePulse(kx, ky) {
+            for (let i = 0; i < pointsOrigin.length; i++) {
+                pointsTarget[i] = [
+                    kx * pointsOrigin[i][0] + width / 2,
+                    ky * pointsOrigin[i][1] + height / 2
+                ];
+            }
+        }
+
+        function animate() {
+            // Fondo con rastro
+            ctx.fillStyle = (phase === 2) ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
+            ctx.fillRect(0, 0, width, height);
+
+            // Calcular pulso
+            const n = -Math.cos(time);
+            updatePulse((1 + n) * 0.5 * koef * (width/500), (1 + n) * 0.5 * koef * (width/500));
+            time += (Math.sin(time) < 0 ? 9 : (n > 0.8) ? 0.2 : 1) * 0.01;
+
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                const target = pointsTarget[p.targetIdx];
+                
+                const dx = p.trail[0].x - target[0];
+                const dy = p.trail[0].y - target[1];
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                // Si llega al punto objetivo, busca el siguiente en el borde
+                if (distance < 10) {
+                    if (Math.random() > 0.95) {
+                        p.targetIdx = Math.floor(Math.random() * pointsOrigin.length);
+                    } else {
+                        if (Math.random() > 0.99) p.direction *= -1;
+                        p.targetIdx = (p.targetIdx + p.direction + pointsOrigin.length) % pointsOrigin.length;
+                    }
+                }
+
+                // Movimiento físico
+                p.vx -= (dx / distance) * p.speed;
+                p.vy -= (dy / distance) * p.speed;
+                
+                p.trail[0].x += p.vx;
+                p.trail[0].y += p.vy;
+                
+                p.vx *= p.force;
+                p.vy *= p.force;
+
+                // Actualizar rastro (seguimiento elástico)
+                for (let k = 1; k < p.trail.length; k++) {
+                    const prev = p.trail[k - 1];
+                    const curr = p.trail[k];
+                    curr.x -= 0.4 * (curr.x - prev.x);
+                    curr.y -= 0.4 * (curr.y - prev.y);
+                }
+
+                // Dibujar partícula y rastro
+                ctx.fillStyle = getParticleColor(i);
+                for (let k = 0; k < p.trail.length; k++) {
+                    ctx.fillRect(p.trail[k].x, p.trail[k].y, 1.5, 1.5);
+                }
+            }
+
+            // Dibujar destellos en los puntos objetivo
+            ctx.fillStyle = (phase === 2) ? "rgba(0,0,0,0.5)" : "rgba(255,255,255,0.5)";
+            for (let i = 0; i < pointsTarget.length; i += 5) {
+                ctx.fillRect(pointsTarget[i][0], pointsTarget[i][1], 1, 1);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resize);
+        window.onload = init;
+
+        // Intentar reproducir audio; si falla, mostrar botón para que el usuario lo active
+        function tryPlayAudio() {
+            const audio = document.getElementById('bgAudio');
+            const toggleBtn = document.getElementById('toggleAudio');
+            if (!audio) return;
+            // Forzar carga y volumen razonable
+            try { audio.load(); } catch(e){}
+            audio.volume = 0.9;
+            ensureStartOffset(audio);
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    if (toggleBtn) toggleBtn.textContent = '🔊';
+                }).catch((err) => {
+                    // Autoplay bloqueado o error — el toggle funcionará cuando el usuario interactúe
+                    if (toggleBtn) toggleBtn.textContent = '🔇';
+                    console.warn('Autoplay no permitido o error al reproducir:', err);
+                });
+            }
+        }
+
+        // Asegura que antes de la primera reproducción el audio empiece desde `startOffset`
+        function ensureStartOffset(audio) {
+            if (!audio || audioStarted) return;
+            if (audio.readyState > 0) {
+                try { audio.currentTime = Math.min(startOffset, audio.duration || startOffset); } catch(e){}
+            } else {
+                audio.addEventListener('loadedmetadata', function() {
+                    try { audio.currentTime = Math.min(startOffset, audio.duration || startOffset); } catch(e){}
+                }, { once: true });
+            }
+        }
+
+        // Lógica del botón superior para alternar audio
+        function setupToggleButton() {
+            const audio = document.getElementById('bgAudio');
+            const toggleBtn = document.getElementById('toggleAudio');
+            if (!toggleBtn || !audio) return;
+            // Actualizar icono según estado
+            const updateIcon = () => { toggleBtn.textContent = audio.paused ? '🔇' : '🔊'; };
+            toggleBtn.addEventListener('click', () => {
+                if (audio.paused) {
+                    ensureStartOffset(audio);
+                    audio.play().then(updateIcon).catch((e)=>{ console.warn('Play error:', e); });
+                } else {
+                    audio.pause();
+                    updateIcon();
+                }
+            });
+            // Mantener icono sincronizado si el audio cambia por otras vías
+            audio.addEventListener('play', () => { audioStarted = true; updateIcon(); });
+            audio.addEventListener('pause', updateIcon);
+            // Mostrar errores en consola si el recurso falla
+            audio.addEventListener('error', (e) => {
+                console.error('Error en elemento audio:', e);
+            });
+        }
+    </script>
+</body>
+</html>
