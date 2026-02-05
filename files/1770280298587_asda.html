@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>My Love ❤️</title>
+  
+  <meta name="google-adsense-account" content="ca-pub-4704501585981299">
+
+</head>
+<body>
+<div class="bg-gif-fijo"></div>
+<!-- partial:index.partial.html -->
+<style>
+	.modal-imagen-flotante {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		background: rgba(0,0,0,0.7);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 2000;
+		transition: opacity 0.3s;
+	}
+	.modal-imagen-flotante img {
+		max-width: 90vw;
+		max-height: 80vh;
+		border-radius: 18px;
+		box-shadow: 0 4px 32px rgba(0,0,0,0.25);
+	}
+	.modal-imagen-flotante .close-img-modal {
+		position: absolute;
+		top: 24px;
+		right: 32px;
+		background: #d14d44;
+		color: #fff;
+		border: none;
+		border-radius: 50%;
+		width: 40px;
+		height: 40px;
+		font-size: 2rem;
+		cursor: pointer;
+		z-index: 2100;
+	}
+	.letra-flotante {
+		position: fixed;
+		top: 18px;
+		left: 50%;
+		transform: translateX(-50%);
+		background: rgba(255, 182, 193, 0.95);
+		color: #ad1457;
+		font-size: 1.3rem;
+		font-weight: bold;
+		padding: 0.7em 1.5em;
+		border-radius: 2em;
+		box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+		z-index: 1500;
+		animation: flotarLetra 2.5s ease-in-out infinite alternate;
+		pointer-events: none;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	@media (max-width: 600px) {
+		.letra-flotante {
+			font-size: 1rem;
+			padding: 0.5em 1em;
+		}
+		.modal-imagen-flotante img {
+			max-width: 98vw;
+			max-height: 70vh;
+		}
+	}
+	@keyframes flotarLetra {
+		0% { transform: translateX(-50%) translateY(0); }
+		100% { transform: translateX(-50%) translateY(12px); }
+	}
+	@import url(https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap);
+
+*,
+::before,
+::after {
+	box-sizing: border-box;
+}
+body  {
+	font-family: "Quicksand", sans-serif;
+	background: linear-gradient(to bottom right, #ffecec, #fff5f5, #ffebeb);
+	color: #333;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	margin: 0;
+	padding: 1rem;
+	margin-top: 50px;
+	overflow: hidden;
+	-webkit-tap-highlight-color: transparent;
+	/* Fondo gif animado principal */
+	background-image: url('https://i.pinimg.com/originals/86/88/46/86884660bea7d4d283b9945e2d60bf2f.gif');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+  }
+
+.envelope {
+   --duration: 1000ms;
+
+   --shadow-width: calc(var(--envelope-width) * 0.85);
+   --shadow-blur: 15px;
+
+   --envelope-width: 300px;
+   --envelope-height: 175px;
+   --envelope-clr-bg: #f8bbd0; /* rosa pastel */
+   --envelope-clr-bg-side: #f48fb1; /* rosa pastel más oscuro */
+   --envelope-clr-bg-bottom: #fce4ec; /* rosa pastel claro */
+   --envelope-clr-bg-top: #f8bbd0; /* rosa pastel */
+   --envelope-clr-txt: #fff;
+
+   /*--envelope-transform: rotateY(0deg);*/
+   --envelope-transform-hover: rotateY(180deg);
+   --eople-rotate-delay-hover: 0ms;
+
+   --letter-clr-bg: #fff0f6; /* fondo carta rosa muy claro */
+   --letter-clr-text: #ad1457; /* texto rosa oscuro */
+   --letter-font-size: 1rem;
+   --letter-delay: 0ms;
+   --letter-delay-hover: calc(
+	   var(--duration) * 1.25
+   ); /* delay before revealing card */
+
+   --letter-height: calc(var(--envelope-height) - 2rem);
+   --letter-height-hover: calc(var(--envelope-height) * 1.75);
+
+   --fold-rotate: rotateX(0deg);
+   /*--fold-zindex: 10;*/
+   --fold-zindex-hover: 0;
+   --fold-rotate-hover: rotateX(180deg);
+   --fold-delay: calc(var(--duration) / 2); /* delay before opening top section */
+   --fold-delay-hover: calc(var(--duration) * .75);
+
+   --front-font-size: 1rem;
+   --snowman-width: 50px;
+   --bells-width: 30px;
+
+   position: relative;
+   height: var(--envelope-height);
+   width: var(--envelope-width);
+   perspective: 1000px;
+   cursor: pointer;
+}
+
+@media (min-width: 720px) {
+	   .envelope {
+		   --envelope-width: 600px;
+		   --envelope-height: 350px;
+		   --letter-font-size: 1.6rem;
+		   --snowman-width: 130px;
+		   --bells-width: 60px;
+		   --front-font-size: 1.25rem;
+	   }
+}
+/* shadow */
+.envelope::after {
+	content: "";
+	position: absolute;
+	top: 110%;
+	left: 50%;
+	width: var(--shadow-width);
+	height: 40px;
+	transition: var(--duration) ease-in-out;
+	transition-delay: var(--eople-rotate-delay);
+	transform: var(--shadow-transform);
+	translate: -50% 0;
+	border-radius: 50%;
+	background: rgba(56, 6, 6, 0.4);
+	filter: blur(var(--shadow-blur));
+}
+
+.envelope.open {
+	--envelope-transform: var(--envelope-transform-hover, 0deg);
+	--eople-rotate-delay: var(--eople-rotate-delay-hover);
+	--shadow-transform: rotateY(180deg);
+	--fold-rotate: var(--fold-rotate-hover);
+	--fold-delay: var(--fold-delay-hover);
+	--fold-zindex: var(--fold-zindex-hover);
+	--letter-height: var(--letter-height-hover);
+	--letter-delay: var(--letter-delay-hover);
+}
+
+.envelope-inner {
+	position: relative;
+	width: 100%;
+	height: 100%;
+
+	transition: var(--duration) ease-in-out;
+	transition-delay: var(--eople-rotate-delay);
+	transform-style: preserve-3d;
+	transform: var(--envelope-transform);
+	display: grid;
+}
+
+.envelope-front,
+.envelope-back {
+	position: relative;
+	grid-area: 1/1;
+	width: 100%;
+	height: 100%;
+	background-color: var(--envelope-clr-bg);
+	-webkit-backface-visibility: hidden;
+	backface-visibility: hidden;
+	perspective: 1000px;
+	isolation: isolate;
+}
+
+.envelope-front {
+	color: var(--envelope-clr-txt);
+	display: grid;
+	place-content: center;
+}
+.envelope-front .postage-stamp {
+	position: absolute;
+	top: 1em;
+	right: 0.5em;
+	width: 15%;
+}
+.envelope-front .address {
+	text-align: left;
+	font-size: var(--front-font-size);
+}
+.envelope-front .address > p > span:first-child {
+	font-family: system-ui;
+	font-weight: 200;
+}
+.envelope-front .address > p > span:last-of-type {
+	font-weight: 800;
+}
+
+.envelope-back {
+	/* start with back rotated*/
+	transform: rotateY(180deg);
+}
+/* back folds */
+.envelope-back::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+	background-image: conic-gradient(
+		transparent 60deg,
+		var(--envelope-clr-bg-side) 60deg 120deg,
+		var(--envelope-clr-bg-bottom) 120deg 240deg,
+		var(--envelope-clr-bg-side) 240deg 300deg,
+		transparent 300deg
+	);
+}
+/* top fold which folds up on hover */
+.envelope-back .top-fold {
+	position: absolute;
+	inset: 0;
+	z-index: var(--fold-zindex, 10);
+	background-color: var(--envelope-clr-bg-top);
+	clip-path: polygon(0% 0%, 50% 55%, 100% 0%);
+
+	transform: var(--fold-rotate);
+	transform-origin: top;
+	transition: var(--duration) ease-in-out;
+	transition-delay: var(--fold-delay);
+}
+
+.letter {
+	position: absolute;
+	bottom: 5px;
+	left: 50%;
+	width: 90%;
+	height: var(--letter-height);
+	font-size: var(--letter-font-size);
+	transform: translateX(-50%);
+	background: var(--letter-clr-bg);
+	z-index: 2;
+	padding: 2em 3em;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	align-items: center;
+	text-align: center;
+	transition: var(--duration) ease-in-out;
+	transition-delay: var(--letter-delay);
+	overflow: hidden;
+}
+.letter > svg.snowman {
+	width: var(--snowman-width);
+}
+.letter svg.bells {
+	width: var(--bells-width);
+	color: orange;
+}
+.letter p {
+	margin: 0;
+	font-weight: bold;
+	width: 32ch;
+	color: var(--letter-clr-text);
+}
+
+.custom-image {
+    width: 100px;
+    height: 100px;
+    object-fit: contain; 
+}
+.custom-image2 {
+    width: 150px;
+    height: 150px;
+    object-fit: contain; 
+}
+
+.highlight {
+    display: block; 
+    margin-top: 10px; 
+    font-size: 1.8rem;  
+    font-weight: bold; 
+}
+
+/* Modal styles */
+.modal-carta {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0,0,0,0.5);
+	justify-content: center;
+	align-items: center;
+	/* Quitar fondo gif animado del modal */
+}
+.modal-carta.active {
+	display: flex;
+}
+.modal-carta-content {
+	background: #fff;
+	border-radius: 16px;
+	padding: 2rem 2.5rem;
+	max-width: 90vw;
+	max-height: 90vh;
+	overflow-y: auto;
+	box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+	text-align: left;
+	position: relative;
+	word-break: break-word;
+	scrollbar-width: thin;
+	z-index: 1;
+	}
+	.modal-carta-content::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: url('https://i.pinimg.com/originals/75/ae/bd/75aebda066961b252038ec187b62ad8d.gif') bottom center / contain no-repeat;
+		border-radius: 16px;
+		z-index: 2;
+		pointer-events: none;
+		opacity: 1;
+	}
+	.modal-carta-content > * {
+		position: relative;
+		z-index: 3;
+	}
+
+	/* Páginas del modal */
+	.modal-pages {
+		position: relative;
+		z-index: 3;
+	}
+	.modal-page {
+		display: none;
+	}
+	.modal-page.active {
+		display: block;
+	}
+
+	/* Flechas para cambiar de página */
+	.modal-nav {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 44px;
+		height: 44px;
+		border: none;
+		border-radius: 50%;
+		background: rgba(255, 105, 180, 0.92);
+		color: #fff;
+		font-size: 1.9rem;
+		line-height: 44px;
+		text-align: center;
+		cursor: pointer;
+		z-index: 5;
+		box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+		user-select: none;
+	}
+	.modal-nav:hover {
+		background: rgba(255, 105, 180, 1);
+	}
+	.modal-nav-prev {
+		left: 10px;
+	}
+	.modal-nav-next {
+		right: 10px;
+	}
+	.modal-nav[hidden] {
+		display: none;
+	}
+	@media (max-width: 600px) {
+		.modal-nav {
+			width: 40px;
+			height: 40px;
+			font-size: 1.7rem;
+			line-height: 40px;
+		}
+	}
+	@media (max-width: 600px) {
+		.modal-carta-content {
+			padding: 1rem 0.5rem;
+			max-width: 98vw;
+			max-height: 98vh;
+		}
+		.modal-carta-content::after {
+			background-size: contain;
+		}
+	}
+
+
+.modal-carta-content img {
+	max-width: 200px;
+	margin: 1rem auto;
+	display: block;
+	opacity: 0;
+	transform: scale(0.85) translateY(40px);
+	transition:
+	  opacity 0.9s cubic-bezier(.4,0,.2,1),
+	  transform 0.9s cubic-bezier(.4,0,.2,1);
+}
+.img-carta.visible {
+	opacity: 1;
+	transform: scale(1) translateY(0);
+	box-shadow: 0 8px 32px rgba(255,182,193,0.18), 0 2px 12px rgba(0,0,0,0.08);
+}
+.modal-carta-close {
+	position: absolute;
+	top: 10px;
+	right: 15px;
+	background: #d14d44;
+	color: #fff;
+	border: none;
+	border-radius: 50%;
+	width: 32px;
+	height: 32px;
+	font-size: 1.2rem;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.modal-carta-close:hover {
+	background: #a63a34;
+}
+
+.img-carta {
+	max-width: 120px !important;
+	max-height: 120px !important;
+	border-radius: 16px;
+	box-shadow: 0 2px 12px rgba(255,182,193,0.18), 0 0 24px 4px #fff0f6;
+	margin: 10px;
+	border: 5px solid #ff69b4;
+	background: linear-gradient(135deg, #fffde4 60%, #ffb6d9 100%);
+	position: relative;
+	overflow: visible;
+	animation: imgSubeBaja 2.2s infinite alternate;
+}
+@keyframes imgSubeBaja {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-12px) scale(1.05); }
+    100% { transform: translateY(0); }
+}
+.img-carta-frame {
+    position: absolute;
+    top: -8px; left: -8px; right: -8px; bottom: -8px;
+    pointer-events: none;
+    border-radius: 20px;
+    z-index: 2;
+}
+.img-carta-frame svg rect {
+	stroke: #ff69b4 !important;
+}
+.img-carta-particle {
+	position: absolute;
+	width: 10px; height: 10px;
+	border-radius: 50%;
+	background: radial-gradient(circle, #fff8e1 60%, #ff69b4 100%);
+	box-shadow: 0 0 12px 4px #ff69b4;
+	opacity: 0.7;
+	animation: particleBlink 1.2s infinite alternate;
+}
+@keyframes particleBlink {
+    0% { opacity: 0.2; transform: scale(0.7); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0.2; transform: scale(0.7); }
+}
+@media (max-width: 600px) {
+    .img-carta {
+        max-width: 80px !important;
+        max-height: 80px !important;
+        border-width: 3px;
+    }
+}
+/* ...existing code... */
+</style>
+<!-- Audio oculto para reproducir la música -->
+<audio id="audioCarta" src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Manuel%20Medrano%20-%20Afuera%20del%20Planeta%20(V%C3%ADdeo%20Oficial).mp3" preload="auto"></audio>
+
+<div class="envelope">
+	<div class="envelope-inner">
+		<div class="envelope-front">
+			<div class="postage-stamp ">
+				<svg fill="currentColor" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 300" xml:space="preserve">
+					<path d="M253.98,257.652c0-8.568,8.568-17.748,17.136-18.361c-1.224-4.895-1.224-10.402-0.611-15.299 c-3.061,0.611-7.345,0-10.404-1.225c-6.12-3.061-9.792-9.18-9.792-15.912c0-9.18,7.956-20.807,17.136-21.42 c0-2.447,0.612-4.896,0.612-7.344s0.612-4.896,0.612-7.344c-7.956,3.061-17.137-4.283-18.973-12.24 c-1.836-9.792,4.284-17.748,12.853-21.42c-0.612-1.836-0.612-4.284-0.612-6.12c0-3.672,0-7.344,0.612-11.016 c-3.061,0-6.12-1.224-9.181-3.06c-4.283-3.06-6.731-7.344-7.344-12.24c0-0.612,0-1.836,0-2.448c0-9.792,8.568-15.3,17.136-16.524 c-0.611-3.672,0-7.956,0-11.628c0-3.06,0-6.12,0.612-9.18c-7.956,2.448-18.36-4.284-20.808-12.24 c-2.448-7.956,1.836-17.748,9.792-20.808c-1.225-3.06-1.225-6.732-1.225-10.404c0-3.06-0.611-6.732-0.611-9.792 c-9.792,12.24-39.168,4.284-40.393-9.18C205.632,3.672,200.124,1.836,195.84,0c0.611,9.18-7.956,17.748-17.137,17.748 c-9.18,0-16.523-6.732-18.359-15.3c-2.448,0-4.896,0-6.732-0.612c-2.448,0-4.896-0.612-7.956-1.224c0,4.284-2.448,9.18-5.508,12.24 c-3.672,3.672-9.18,6.12-14.076,6.12c-1.224,0-2.448,0-3.672-0.612c-5.508-1.224-12.24-4.896-14.076-11.016 c0-0.612,0-0.612,0-1.224c-4.896,0.612-11.016-0.612-15.912-2.448c-0.612,8.568-9.18,15.3-18.36,14.076 c-4.284-0.612-9.792-3.06-11.016-7.344c0-0.612,0-0.612,0-1.224c0,0,0,0.612-0.612,0.612c-3.672,3.06-8.568,2.448-12.852,1.836 c-1.224,0-2.448,0-3.672,0c1.224,0.612,1.836,1.836,2.448,2.448c3.672,4.896,5.508,11.016,3.06,17.136 c-3.06,8.568-14.076,12.24-22.032,9.18c0,1.224-0.612,1.836-0.612,3.06c-0.612,3.672-0.612,6.732-0.612,10.404 c9.792-1.224,22.644,1.224,23.868,12.852c0.612,5.508-3.06,11.016-8.568,12.852c-2.448,1.224-5.508,1.224-7.956,1.224 c-0.612,0-1.224,0-2.448-0.612c0,1.836,0,4.284,0,6.12c0,3.672,0.612,7.344-0.612,11.016l0,0c0.612,0,0.612-0.612,1.224-0.612 c11.628-3.672,23.256,7.344,19.584,18.972c-1.224,4.896-5.508,8.568-9.792,10.404c-3.672,1.224-6.732,1.836-10.404,1.836 c-0.612,1.836-0.612,3.06-1.224,4.896c-0.612,2.448-0.612,5.508-0.612,7.956c8.568-4.284,22.032-1.836,22.644,9.18 c0.612,9.179-10.404,24.48-21.42,23.869c0,1.223,0,3.059,0,4.283c0,2.447-0.612,4.896-0.612,7.957 c2.448-1.225,6.12-1.836,9.18-1.836c6.12,0.611,11.016,4.895,12.24,11.016c3.672,13.463-9.18,22.643-20.808,20.807 c-0.612,4.285-1.224,9.793-1.836,13.465c5.508-4.283,17.748-3.061,21.42,4.283c8.568,15.912-8.568,25.705-22.032,28.152 c0,4.896,0,10.404-1.224,15.301c7.344-4.285,18.36-4.285,25.704,0c7.956,4.896,11.628,13.463,11.628,22.031 c3.672-0.611,7.344-1.223,11.016-1.223c0-8.568,9.18-20.197,16.524-20.809c4.896-0.613,9.792,2.447,11.628,7.344 c1.836,4.283,1.224,9.791,3.06,14.076c0.612,0,1.224-0.611,1.836-0.611c3.06,0,4.896-0.613,7.344-1.838 c-0.612-1.836,0-3.672,0.612-6.119c1.224-4.896,5.508-9.18,10.404-10.404c11.016-3.061,19.584,4.896,22.645,14.688 c3.672-0.611,7.344-0.611,11.628-0.611c1.836,0,3.672,0,5.508,0.611c-2.448-8.566,4.284-18.971,13.464-19.584 c0.612,0,1.224,0,1.836,0c5.508,0,10.404,3.061,13.464,6.732c1.836,2.449,3.672,5.508,4.284,8.568c1.224,0,2.448,0,4.284,0 s3.672,0,5.508,0c1.224-7.955,9.792-14.076,17.748-14.688c7.956-0.613,15.912,3.672,19.584,11.016 c5.508-3.672,13.464-6.119,20.808-6.119c0-2.449,0-4.896,0-7.957C261.936,273.564,253.98,264.996,253.98,257.652z M243.576,266.221 c0,4.283-6.12,4.283-6.12,0l0,0c-3.672-77.725-4.896-155.449-9.792-233.173c-0.611,0.612-1.224,0.612-2.447,0.612 c-52.633,0-105.264,1.836-157.896,1.836c0,0,0,0-0.612,0c6.732,15.3,3.06,41.616,3.06,57.528c0,17.748,0,35.496,0,53.856 c0,39.78,0,79.56-1.224,119.341c0,1.836-1.224,3.059-2.448,3.672c50.796-12.854,115.668-14.076,167.688-6.732 c1.836,0.611,3.061,1.836,3.061,3.672s-1.225,4.283-3.672,4.896c-15.912,0.611-31.824,0.611-47.736,0.611 c-12.852,0-25.704,0-39.168,0.611c-26.316,1.225-53.856,4.285-79.56,0.613c-1.836,0-1.836-3.061,0-3.672 c-2.448,1.223-6.732,0-6.12-3.672c1.224-76.5-1.836-154.225,3.06-230.725c0-2.448,0-4.896,0.612-7.344c0-3.06,4.284-3.06,4.284,0 c0,0.612,0,1.224,0,1.224c19.584-2.448,39.168-3.672,59.364-4.896c33.048-1.224,66.097-1.224,98.532-0.612 c1.224,0,2.448,0.612,3.06,1.224c1.837-2.448,6.732-1.836,7.345,2.448c2.447,25.704,4.896,51.408,6.12,77.112 C244.8,158.508,246.024,212.977,243.576,266.221z M152.388,192.168c-3.06,1.836-6.732-0.611-7.344-3.061l0,0c0,0,0,0-0.612-0.611 c-30.6-7.957-63.036-45.9-55.692-77.112c3.06-12.852,15.3-26.316,29.988-22.032c12.852,3.672,22.032,19.584,28.152,32.436 c6.12-15.3,16.524-34.272,30.6-40.392c11.628-4.896,22.644,0,27.54,11.628C219.708,127.908,178.704,174.42,152.388,192.168z"></path>
+				</svg>
+			</div>
+			<div class="address">
+				<p><span>Para:</span> <span>Michelle</span></p>
+				<p><span>De:</span> <span>David </span></p>
+			</div>
+		</div>
+		<div class="envelope-back">
+			<div class="top-fold"></div>
+			<div class="letter">
+				<img src="https://img.freepik.com/vector-premium/pulgar-dedos-imprimir-marca-huella-dactilar-amor-corazon_53500-1839.jpg" alt="love1" class="custom-image">
+				<p>Para samy <span class="highlight">Leelo</span></p>
+				<img src="https://img.freepik.com/fotos-premium/imagen-flores-amarillas-palabras-sol-citadas-ella_1191871-60686.jpg" alt="love2" class="custom-image2">
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal de la carta completa -->
+<div class="modal-carta" id="modalCarta">
+	<div class="modal-carta-content">
+			<div id="letraFlotante" class="letra-flotante" style="display:none;">Te Amo!</div>
+		   <button class="modal-carta-close" id="closeModalCarta" title="Cerrar">&times;</button>
+		   <button class="modal-nav modal-nav-prev" id="prevPage" title="Anterior" hidden>&lsaquo;</button>
+		   <button class="modal-nav modal-nav-next" id="nextPage" title="Siguiente">&rsaquo;</button>
+
+		   <div class="modal-pages">
+			   <div class="modal-page active" id="page1">
+				   <div id="imagenes-carta" style="display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin: 1.2rem auto 1.2rem auto;">
+					   <img src="https://i.pinimg.com/originals/cc/b0/f9/ccb0f9404a977f334f2b3ec7f697c267.gif" alt="gif" class="img-carta" style="max-width:320px; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+				   </div>
+				   <div style="white-space: pre-line; font-size:1.1rem; color:#333; margin-top:1.5rem;">
+	Mi amor, hoy celebro el día en que nació la chica más increíble que pude haber conocido. Alguien tan decidida que, incluso cuando las cosas se ponen difíciles, no se rinde. Alguien que, a pesar de haber caído muchas veces, siempre se levanta y lo sigue intentando. Alguien que, con su inmenso amor, refugia a quienes la aman, y yo soy afortunado de ser una de esas personas.  
+	 
+	  Por eso, quiero que tengas un día espectacular. Que salgas y disfrutes con tus amigos o familiares, y que sepas que, a pesar de la distancia, mi amor por ti no cesa, sino que al contrario, ¡crece aún más! Hay tantas cosas que aún tenemos que vivir juntos, así que espera hasta que podamos reunirnos de nuevo.  
+	 
+	  ¡Ten un hermoso día, lo mereces más que nadie!  
+	 
+	  Con todo mi cariño,  
+	  David, tu querido esposo
+
+	  No importa a dónde vaya,  
+	  que haga o cuando,  
+	  aquí en mi pecho  
+	  siempre quedará el amor  
+	  que te prometí con tanto  
+	  anhelo, alimentando  
+	  el incendio del corazón  
+	  que se apagará  
+	  cuando deje de latir  
+	  en nombre de tu recuerdo.
+				</div>
+			   </div>
+			   <div class="modal-page" id="page2">
+				   <div style="display:flex; justify-content:center; margin-top:0.5rem;">
+					   <img src="https://i.pinimg.com/originals/94/11/13/9411139071618bc2922a8c3a87724b6b.gif" alt="gif-arriba" style="max-width:320px; width:100%; height:auto; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08); opacity:1; transform:none;">
+				   </div>
+				   <div style="white-space: pre-line; font-size:1.2rem; color:#333; margin-top:1.2rem; text-align:center; font-weight:600;">
+					si se acaba el mundo extrañaria tu pelo,no las nubes, buscaría tu piel no las flores me perdería en el mar de tu mirada y escalaría la curva de tus besos esperando a que sean eternos.
+				   </div>
+				   <div style="white-space: pre-line; font-size:1.1rem; color:#333; margin-top:1.2rem; text-align:center; font-weight:600;">
+					ven, con todo y tus quejas, con todos y tus penas.
+
+					ven con esa vista tierna y radiante, con esos ojos que sospecho llevan la galaxia entera.
+
+					Ven, que te invito al otro lado del mundo, para tomarnos un café o de las manos. 
+
+					Ven, a sentarnos en silencio o hablar por horas.
+
+					ven para protegernos del mundo cruel, de las drogas y de las canas.
+
+					ven ahora que mi alma tiene abierta la puerta y mi pecho, taquicardia
+				   </div>
+				   <div style="display:flex; justify-content:center; margin-top:1.2rem; margin-bottom:0.5rem;">
+					   <img src="https://i.pinimg.com/736x/a9/cb/72/a9cb72561569b1be471086e503c21f95.jpg" alt="imagen-final" style="max-width:260px; width:100%; height:auto; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08); opacity:1; transform:none;">
+				   </div>
+			   </div>
+		   </div>
+
+	</div>
+</div>
+<!-- partial -->
+ 
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4704501585981299"
+     crossorigin="anonymous"></script>
+
+<script>
+	// Bloqueo de clic derecho y teclas
+	document.addEventListener('contextmenu', function (e) {
+		e.preventDefault();
+	});
+	document.addEventListener('keydown', function (e) {
+		if (e.key === 'F12') {
+			e.preventDefault();
+		}
+		if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+			e.preventDefault();
+		}
+		if (e.ctrlKey && e.key === 'u') {
+			e.preventDefault();
+		}
+	});
+
+	// Animación al hacer click y mostrar modal al terminar animación
+	document.addEventListener('DOMContentLoaded', function () {
+	   var envelope = document.querySelector('.envelope');
+	   var modal = document.getElementById('modalCarta');
+	   var closeModal = document.getElementById('closeModalCarta');
+	   var nextPageBtn = document.getElementById('nextPage');
+	   var prevPageBtn = document.getElementById('prevPage');
+	   var page1 = document.getElementById('page1');
+	   var page2 = document.getElementById('page2');
+	   var letraFlotante = document.getElementById('letraFlotante');
+	   var animationDuration = 1000; // ms, igual que --duration
+	   var modalTimeout = null;
+	   var currentPage = 1;
+
+	   // Animación de imágenes una por una
+	   function mostrarImagenesSecuencialmente() {
+		   var imagenes = document.querySelectorAll('#imagenes-carta img');
+		   var delay = 600; // más lento para efecto gradual
+		   imagenes.forEach(function(img) {
+			   img.classList.remove('visible');
+		   });
+		   // Forzar reflow para que la transición se active
+		   void document.body.offsetWidth;
+		   imagenes.forEach(function(img, i) {
+			   setTimeout(function() {
+				   img.classList.add('visible');
+			   }, delay * i);
+		   });
+	   }
+
+	   // Mostrar letra flotante al abrir la carta
+	   function mostrarLetraFlotante() {
+		   if (letraFlotante) {
+			   letraFlotante.style.display = 'block';
+		   }
+	   }
+
+	   function setPage(pageNumber) {
+		   currentPage = pageNumber;
+		   if (page1) page1.classList.toggle('active', currentPage === 1);
+		   if (page2) page2.classList.toggle('active', currentPage === 2);
+		   if (prevPageBtn) prevPageBtn.hidden = currentPage === 1;
+		   if (nextPageBtn) nextPageBtn.hidden = currentPage === 2;
+		   if (currentPage === 1) {
+			   mostrarImagenesSecuencialmente();
+		   }
+	   }
+
+	   // Modal para imagen flotante
+	   function crearModalImagen(src) {
+		   var modalImg = document.createElement('div');
+		   modalImg.className = 'modal-imagen-flotante';
+		   modalImg.innerHTML = '<button class="close-img-modal" title="Cerrar">&times;</button>' +
+			   '<img src="' + src + '" alt="Imagen ampliada">';
+		   document.body.appendChild(modalImg);
+		   // Cerrar al hacer click en botón o fondo
+		   modalImg.querySelector('.close-img-modal').onclick = function() {
+			   document.body.removeChild(modalImg);
+		   };
+		   modalImg.onclick = function(e) {
+			   if (e.target === modalImg) {
+				   document.body.removeChild(modalImg);
+			   }
+		   };
+	   }
+
+	   // Evento click en cada imagen
+	   setTimeout(function() {
+		   var imagenes = document.querySelectorAll('.img-carta');
+		   imagenes.forEach(function(img) {
+			   img.addEventListener('click', function(e) {
+				   e.stopPropagation();
+				   crearModalImagen(img.src);
+			   });
+		   });
+	   }, 500);
+
+	   if (nextPageBtn) {
+		   nextPageBtn.addEventListener('click', function (e) {
+			   e.preventDefault();
+			   e.stopPropagation();
+			   setPage(2);
+		   });
+	   }
+	   if (prevPageBtn) {
+		   prevPageBtn.addEventListener('click', function (e) {
+			   e.preventDefault();
+			   e.stopPropagation();
+			   setPage(1);
+		   });
+	   }
+
+	if (envelope) {
+		envelope.addEventListener('click', function () {
+			// Si ya está abierta, no volver a mostrar el modal
+			var isOpen = envelope.classList.contains('open');
+			envelope.classList.toggle('open');
+
+			// Reproducir música al abrir la carta solo la primera vez
+			var audio = document.getElementById('audioCarta');
+			if (audio) {
+				audio.loop = true;
+				if (!isOpen && audio.paused) {
+					var startAt = 29;
+					var playFrom = function () {
+						try {
+							// Si la duración es menor a 30s, caer a 0
+							if (isFinite(audio.duration) && audio.duration > 0 && audio.duration <= startAt) {
+								audio.currentTime = 0;
+							} else {
+								audio.currentTime = startAt;
+							}
+						} catch (err) {
+							// Ignorar errores de seek (p.ej. metadata no cargada)
+						}
+						audio.play();
+					};
+					// Esperar metadata para poder saltar al segundo 30
+					if (audio.readyState >= 1) {
+						playFrom();
+					} else {
+						audio.addEventListener('loadedmetadata', playFrom, { once: true });
+						try { audio.load(); } catch (err) {}
+					}
+				}
+			}
+
+			// Si se abre, mostrar modal tras la animación
+			if (!isOpen) {
+				if (modalTimeout) clearTimeout(modalTimeout);
+				modalTimeout = setTimeout(function () {
+					modal.classList.add('active');
+					setPage(1);
+					mostrarImagenesSecuencialmente();
+					mostrarLetraFlotante();
+				}, animationDuration + 100); // un poco más por seguridad
+			}
+		});
+	}
+	function cerrarModalYCarta() {
+		modal.classList.remove('active');
+		if (letraFlotante) letraFlotante.style.display = 'none';
+		if (envelope) envelope.classList.remove('open');
+		setPage(1);
+		// La música sigue sonando, no se pausa ni reinicia
+	}
+	   if (closeModal) {
+		   closeModal.addEventListener('click', cerrarModalYCarta);
+	   }
+	   // Cerrar modal al hacer click fuera del contenido
+	   if (modal) {
+		   modal.addEventListener('click', function (e) {
+			   if (e.target === modal) {
+				   cerrarModalYCarta();
+			   }
+		   });
+	   }
+	});
+</script>
+
+  
+
+</body>
+</html>
