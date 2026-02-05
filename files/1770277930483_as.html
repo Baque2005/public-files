@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Love ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <script>
+        // Marca rápida para activar estilos solo cuando hay JS.
+        document.documentElement.classList.add('js');
+    </script>
+    <style>
+        /* --- ESTILOS GENERALES Y FONDO --- */
+        *, ::before, ::after { box-sizing: border-box; }
+        
+        body {
+            font-family: "Quicksand", sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: #fce4ec;
+        }
+
+        /* Video de fondo (persistente) */
+        .bg-video-wrap {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            opacity: 0;
+            transition: opacity 350ms ease;
+            background: #000;
+        }
+
+        .bg-video-wrap.visible { opacity: 1; }
+
+        .bg-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            opacity: 0;
+            transition: opacity 900ms ease;
+        }
+
+        .bg-video.visible { opacity: 1; }
+
+        /* --- INTRO (BOTÓN -> VIDEO -> IMAGEN -> CARTA) --- */
+        .intro-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+            display: none;
+            place-items: center;
+            background: radial-gradient(1200px 800px at 50% 40%, rgba(255,255,255,0.08), rgba(0,0,0,0.92));
+            opacity: 1;
+            transition: opacity 500ms ease;
+        }
+
+        .intro-overlay.playing {
+            background: transparent;
+        }
+
+        .js .intro-overlay {
+            display: grid;
+        }
+
+        .intro-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .intro-btn {
+            appearance: none;
+            border: 0;
+            cursor: pointer;
+            font-family: "Quicksand", sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 14px 22px;
+            border-radius: 999px;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ad1457, #f06292);
+            box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+            transform: translateY(0);
+            transition: transform 180ms ease, filter 180ms ease;
+        }
+
+        .intro-btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
+        .intro-btn:active { transform: translateY(0); filter: brightness(0.98); }
+        .intro-btn[disabled] { opacity: 0.75; cursor: not-allowed; }
+
+        /* Imagen centrada entre video y carta */
+        .center-image-wrap {
+            position: fixed;
+            inset: 0;
+            z-index: 3;
+            display: grid;
+            place-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 350ms ease;
+        }
+
+        .center-image-wrap.visible { opacity: 1; }
+
+        .center-image-wrap.lift .intro-image {
+            animation: none;
+            transform: translateY(-42vh) scale(0.86);
+            opacity: 0.98;
+        }
+
+        @media (max-width: 420px) {
+            .center-image-wrap.lift .intro-image {
+                transform: translateY(-44vh) scale(0.86);
+            }
+        }
+
+        .intro-image {
+            width: min(460px, 86vw);
+            max-height: 72vh;
+            object-fit: cover;
+            border-radius: 18px;
+            box-shadow: 0 30px 90px rgba(0,0,0,0.55);
+            transform: translateY(14px) scale(0.92);
+            opacity: 0;
+            animation: none;
+            transition: transform 900ms cubic-bezier(0.2, 0.9, 0.2, 1), opacity 900ms ease;
+        }
+
+        .intro-image.animate {
+            animation: introPopIn 900ms cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+        }
+
+        @keyframes introPopIn {
+            0% { opacity: 0; transform: translateY(18px) scale(0.90); }
+            60% { opacity: 1; transform: translateY(0) scale(1.02); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        #mainContent {
+            opacity: 1;
+            transform: none;
+            filter: none;
+            pointer-events: auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .js #mainContent {
+            opacity: 0;
+            transform: scale(0.985);
+            filter: blur(6px);
+            pointer-events: none;
+            transition: opacity 650ms ease, transform 650ms ease, filter 650ms ease;
+        }
+
+        .js #mainContent.visible {
+            opacity: 1;
+            transform: scale(1);
+            filter: blur(0);
+            pointer-events: auto;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .intro-overlay,
+            .bg-video-wrap,
+            .center-image-wrap,
+            #mainContent { transition: none; }
+            .intro-image.animate { animation: none; opacity: 1; transform: none; }
+        }
+
+        .bg-gif-fijo {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image: url('https://i.pinimg.com/736x/5c/93/09/5c9309639f018d95d09d746795627fa4.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.9);
+        }
+
+        body.video-active .bg-gif-fijo { display: none; }
+
+        /* --- Ajuste de aspecto del 1er video en celulares ---
+           El video 1 es muy panorámico; en retrato conviene NO recortar (contain).
+           El video 2 (fuego) queda en cover.
+        */
+        @media (orientation: portrait) {
+            body.video1-active #bgVideo1 {
+                object-fit: contain;
+                object-position: center;
+            }
+        }
+
+        /* --- SOBRE (ENVELOPE) --- */
+        .envelope {
+            --width: 300px;
+            --height: 175px;
+            position: relative;
+            width: var(--width);
+            height: var(--height);
+            perspective: 1000px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        @media (min-width: 720px) {
+            .envelope { --width: 500px; --height: 290px; }
+        }
+
+        .envelope-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s ease-in-out;
+            transform-style: preserve-3d;
+        }
+
+        .envelope.open .envelope-inner { transform: rotateY(180deg); }
+
+        .envelope-front, .envelope-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .envelope-front {
+            background: #f8bbd0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .envelope-front .stamp-wrap {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 60px;
+            height: 70px;
+            border-radius: 4px;
+            border: 2px dashed #ad1457;
+            overflow: hidden;
+        }
+
+        .envelope-front .stamp-wrap img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .envelope-front .stamp-wrap img.stamp-overlay {
+            opacity: 0.98;
+        }
+
+        .envelope-back {
+            background: #f48fb1;
+            transform: rotateY(180deg);
+        }
+
+        .envelope-back::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: conic-gradient(transparent 60deg, #f06292 60deg 120deg, #fce4ec 120deg 240deg, #f06292 240deg 300deg, transparent 300deg);
+            z-index: 2;
+        }
+
+        .top-fold {
+            position: absolute;
+            inset: 0;
+            background: #f48fb1;
+            clip-path: polygon(0% 0%, 50% 55%, 100% 0%);
+            z-index: 10;
+            transform-origin: top;
+            transition: transform 0.4s ease 0.4s;
+        }
+
+        .envelope.open .top-fold { transform: rotateX(180deg); z-index: 0; }
+
+        .letter-preview {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            width: 90%;
+            height: 80%;
+            background: white;
+            transform: translateX(-50%);
+            z-index: 1;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.4s ease 0.6s;
+        }
+
+        .envelope.open .letter-preview { transform: translate(-50%, -40%); }
+
+        /* --- MODAL MEJORADO --- */
+        .modal-carta {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+        }
+
+        .modal-carta.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-carta-content {
+            background: transparent;
+            width: 100%;
+            max-width: 520px;
+            max-height: calc(100vh - 80px);
+            border-radius: 22px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.18);
+            overflow: hidden; /* el scroll lo gestionará el body interno */
+            padding: 10px; /* espacio para que el borde interno no se pegue al contenedor */
+            box-sizing: border-box;
+        }
+
+        .modal-carta-content::-webkit-scrollbar { display: none; }
+
+        /* Contenido interno que crece con el scroll: aquí va el borde rosado */
+        .modal-carta-body {
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            padding: 26px 20px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            box-sizing: border-box;
+            border: 0; /* sin borde por defecto, usamos box-shadow para el marco */
+            box-shadow: inset 0 0 0 4px rgba(244,143,177,0.95);
+        }
+
+        .modal-carta-body::-webkit-scrollbar { display: none; }
+
+        /* GIF del modal (Nuevo) */
+        .modal-footer-gif {
+            width: 100%;
+            max-width: 250px;
+            display: block;
+            margin: 20px auto 0;
+            border-radius: 15px;
+            opacity: 0.9;
+        }
+
+        .modal-carta-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f48fb1;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .modal-carta-close:hover { transform: scale(1.1) rotate(90deg); }
+
+        .letra-flotante-badge {
+            display: inline-block;
+            background: #ad1457;
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            animation: float 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes float {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        /* Ajustes responsivos para el modal en móviles */
+        @media (max-width: 420px) {
+            .modal-carta { padding: 12px; }
+            .modal-carta-content {
+                padding: 18px 14px;
+                border: 4px solid #fff;
+                max-width: 96vw;
+                max-height: calc(100vh - 40px);
+                border-radius: 16px;
+            }
+            .modal-carta-content::before { box-shadow: inset 0 0 0 3px rgba(244,143,177,0.95); }
+            .modal-footer-gif { max-width: 200px; }
+        }
+
+        .texto-carta {
+            font-size: 1.2rem;
+            line-height: 1.6;
+                color: #6b1aa9;
+            text-align: center;
+            margin-bottom: 20px;
+                font-weight: 600;
+        }
+
+            .texto-carta .resaltado {
+                font-weight: 800;
+                color: #4a0b74;
+                background: rgba(244,143,177,0.06);
+                padding: 6px 8px;
+                border-radius: 8px;
+                display: inline-block;
+            }
+
+        .img-polaroid {
+            width: 180px;
+            height: 180px;
+            background: white;
+            padding: 10px 10px 30px 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            transform: rotate(-3deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+            display: block;
+            cursor: zoom-in;
+        }
+
+        .img-polaroid.visible {
+            opacity: 1;
+            transform: rotate(2deg) scale(1.1);
+        }
+
+        .img-polaroid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        /* --- MODAL IMAGEN AMPLIADA --- */
+        .modal-imagen-flotante {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 3000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        
+        .modal-imagen-flotante img {
+            max-width: 90%;
+            max-height: 80%;
+            border: 10px solid white;
+            border-radius: 5px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Video de fondo (queda en el último frame al finalizar) -->
+    <div class="bg-video-wrap" id="bgVideoWrap" aria-hidden="true">
+        <video
+            class="bg-video"
+            id="bgVideo1"
+            preload="auto"
+            playsinline
+        >
+            <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/From%20KlickPin%20CF%20Golden%20Bird%20Logo%20Reveal%20-%20Fee%20Premiere%20Pro%20Logo%20Video%20Template%20_%20Simple%20background%20images%20Green%20background%20video%20Light%20background%20images.mp4" type="video/mp4">
+        </video>
+
+        <video
+            class="bg-video"
+            id="bgVideo2"
+            preload="auto"
+            playsinline
+            loop
+        >
+            <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/From%20KlickPin%20CF%20Fondos%20para%20videos%20infantilesNina%20G%C3%B3mez%20Medina%20avatar%20link.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Imagen centrada (encima del video, debajo de la carta) -->
+    <div class="center-image-wrap" id="centerImageWrap" aria-hidden="true">
+        <img
+            class="intro-image"
+            id="introImage"
+            src="https://i.pinimg.com/1200x/aa/91/f7/aa91f7c943957e43c66945b34f4b0576.jpg"
+            alt="Imagen"
+        >
+    </div>
+
+    <!-- Intro: solo el botón -->
+    <div class="intro-overlay" id="introOverlay">
+        <button class="intro-btn" id="startBtn" type="button">Apreta aquí</button>
+    </div>
+
+    <div id="mainContent">
+
+        <div class="bg-gif-fijo"></div>
+
+    <!-- Audios -->
+        <audio id="audioIntro" preload="auto" loop>
+            <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Steve%20Lacy%20-%20Bad%20Habit%20(Official%20Video).mp3" type="audio/mpeg">
+        </audio>
+
+    <!-- Sobre -->
+        <div class="envelope" id="envelope">
+            <div class="envelope-inner">
+                <div class="envelope-front">
+                    <div class="stamp-wrap" aria-hidden="true">
+                        <img src="https://i.pinimg.com/1200x/5e/74/2d/5e742ddbda9fae201369444e5222a8ba.jpg" alt="">
+                        <img src="https://i.pinimg.com/736x/23/8a/a4/238aa40b5660bcfb77bf176050727d9e.jpg" class="stamp-overlay" alt="">
+                    </div>
+                    <div style="text-align: left; color: white;">
+                        <p><b>Para:</b> Dayana Génesis </p>
+                        <p><b>De:</b> Julian</p>
+                    </div>
+                </div>
+                <div class="envelope-back">
+                    <div class="top-fold"></div>
+                    <div class="letter-preview">
+                        <img src="https://img.freepik.com/vector-premium/pulgar-dedos-imprimir-marca-huella-dactilar-amor-corazon_53500-1839.jpg" style="width: 50px;" alt="">
+                        <p style="color: #ad1457; font-weight: bold; font-size: 0.9rem;">Ábreme...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Modal de la Carta -->
+        <div class="modal-carta" id="modalCarta">
+            <div class="modal-carta-content">
+                <button class="modal-carta-close" id="closeModalCarta">&times;</button>
+                
+                <div class="modal-carta-body">
+                    <div style="text-align: center;">
+                        <div class="letra-flotante-badge">¡Feliz cumpleaños!</div>
+                        
+                        <div class="img-polaroid" id="imgPrincipal">
+                            <img src="https://i.postimg.cc/vH5X5HWG/Whats_App_Image_2026_02_03_at_11_45_15_AM.jpg" alt="nuestro momento">
+                        </div>
+
+<div class="texto-carta">
+    Que hoy subas de nivel en la vida como en Free Fire,<br>
+    con muchas risas, buenas partidas y cero lag (no reniegues conmigo loca) 😄<br><br>
+
+    En Roblox sigues siendo la pro (eso ya está aceptado, creo),<br>
+    y que no se pierda el orgullo en Clash Royale y Brawl Stars 😌<br><br>
+
+    Gracias por las partidas, las bromas<br>
+    y esos ratos que se pasan rápido jugando 🎮<br><br>
+
+    Que este nuevo año te venga con cosas bonitas,<br>
+    buena vibra y muchos momentos que valgan la pena ✨<br><br>
+
+    <strong class="resaltado">¡Pásala increíble hoy! 🥳💎</strong>
+</div>
+
+
+
+                        <!-- Nuevo GIF solicitado -->
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Bloqueo de seguridad básico
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // --- Intro ---
+        const introOverlay = document.getElementById('introOverlay');
+        const startBtn = document.getElementById('startBtn');
+        const bgVideoWrap = document.getElementById('bgVideoWrap');
+        const bgVideo1 = document.getElementById('bgVideo1');
+        const bgVideo2 = document.getElementById('bgVideo2');
+        const centerImageWrap = document.getElementById('centerImageWrap');
+        const introImage = document.getElementById('introImage');
+        const mainContent = document.getElementById('mainContent');
+
+        const VIDEO1_STOP_AT_SECONDS = 5.4;
+
+        let introDone = false;
+        let transitioned = false;
+
+        function revealMainContent() {
+            if (introDone) return;
+            introDone = true;
+
+            mainContent.classList.add('visible');
+            introOverlay.classList.add('hidden');
+        }
+
+        function showImageThenMain() {
+            document.body.classList.add('video-active');
+            bgVideoWrap.classList.add('visible');
+            centerImageWrap.classList.add('visible');
+            introImage.classList.add('animate');
+
+            // La carta queda lista detrás de la imagen.
+            setTimeout(revealMainContent, 150);
+
+            // Al 1 segundo, la imagen se sube para revelar la carta.
+            setTimeout(() => {
+                // La animación (forwards) puede mantener el transform; la quitamos para permitir la transición.
+                introImage.classList.remove('animate');
+                // Forzar reflow para asegurar que el navegador aplique el cambio de estado.
+                void introImage.offsetWidth;
+                centerImageWrap.classList.add('lift');
+            }, 1000);
+        }
+
+        function transitionFromVideo1() {
+            if (transitioned) return;
+            transitioned = true;
+
+            // Detener el video 1 en el segundo 5
+            try {
+                bgVideo1.pause();
+                bgVideo1.currentTime = VIDEO1_STOP_AT_SECONDS;
+            } catch (_) {}
+
+            // Iniciar video 2 (loop) con crossfade + mostrar imagen/carta
+            startLoopVideoWithFade();
+            showImageThenMain();
+        }
+
+        async function startLoopVideoWithFade() {
+            // Arranca el video 2 (en bucle) y hace transición suave desde el video 1
+            document.body.classList.remove('video1-active');
+            document.body.classList.add('video2-active');
+            try {
+                bgVideo2.classList.add('visible');
+                bgVideo2.muted = bgVideo1.muted;
+                await bgVideo2.play();
+            } catch (_) {
+                // si no se puede reproducir el 2, al menos deja la imagen/carta
+            }
+
+            // Crossfade: quitar el 1 después de que el 2 ya esté visible
+            setTimeout(() => {
+                bgVideo1.classList.remove('visible');
+                try {
+                    bgVideo1.pause();
+                    bgVideo1.currentTime = 0;
+                } catch (_) {}
+            }, 950);
+        }
+
+        async function startIntro() {
+            startBtn.disabled = true;
+            startBtn.style.display = 'none';
+
+            // Música al presionar el botón (interacción del usuario)
+            try {
+                const introAudio = document.getElementById('audioIntro');
+                if (introAudio) {
+                    try { introAudio.pause(); } catch (_) {}
+                    try { introAudio.currentTime = 0; } catch (_) {}
+
+                    // Asegurar que haya datos suficientes antes de saltar a 2s
+                    try { introAudio.load(); } catch (_) {}
+                    await new Promise((resolve) => {
+                        if (introAudio.readyState >= 3) return resolve();
+                        introAudio.addEventListener('canplay', () => resolve(), { once: true });
+                        // Fallback por si el evento no dispara
+                        setTimeout(resolve, 800);
+                    });
+
+                    try { introAudio.currentTime = 2; } catch (_) {}
+                    await introAudio.play();
+                }
+            } catch (_) {
+                // Algunos navegadores pueden bloquear si detectan falta de interacción
+            }
+
+            introOverlay.classList.add('playing');
+            document.body.classList.add('video-active');
+            document.body.classList.add('video1-active');
+            document.body.classList.remove('video2-active');
+            bgVideoWrap.classList.add('visible');
+
+            // Estado inicial: mostrar video 1, ocultar video 2
+            bgVideo2.classList.remove('visible');
+            bgVideo1.classList.add('visible');
+
+            // Reset de estado por si se reintenta
+            transitioned = false;
+            try { bgVideo1.currentTime = 0; } catch (_) {}
+
+            // Intentar reproducir con audio; si falla por políticas, caer a muted.
+            try {
+                bgVideo1.muted = false;
+                await bgVideo1.play();
+            } catch (err) {
+                try {
+                    bgVideo1.muted = true;
+                    await bgVideo1.play();
+                } catch (_) {
+                    // si no se puede reproducir, saltar directo
+                    showImageThenMain();
+                }
+            }
+
+            // Al llegar al segundo 5, detenemos el video 1 y pasamos al video 2.
+            const onTimeUpdate = () => {
+                if (bgVideo1.currentTime >= VIDEO1_STOP_AT_SECONDS) {
+                    bgVideo1.removeEventListener('timeupdate', onTimeUpdate);
+                    transitionFromVideo1();
+                }
+            };
+            bgVideo1.addEventListener('timeupdate', onTimeUpdate);
+        }
+
+        // Fallbacks
+        bgVideo1.addEventListener('ended', transitionFromVideo1);
+        bgVideo1.addEventListener('error', transitionFromVideo1);
+        startBtn.addEventListener('click', startIntro);
+
+        const envelope = document.getElementById('envelope');
+        const modal = document.getElementById('modalCarta');
+        const closeBtn = document.getElementById('closeModalCarta');
+        const introAudio = document.getElementById('audioIntro');
+        const imgPolaroid = document.getElementById('imgPrincipal');
+
+        // Función para abrir la carta
+        envelope.addEventListener('click', () => {
+            const isOpening = !envelope.classList.contains('open');
+            envelope.classList.toggle('open');
+
+            if (isOpening) {
+                // Abrir modal tras la animación del sobre
+                setTimeout(() => {
+                    modal.classList.add('active');
+                    setTimeout(() => {
+                        imgPolaroid.classList.add('visible');
+                    }, 500);
+                }, 1200);
+            }
+        });
+
+        // Cerrar modal
+        function closeModal() {
+            modal.classList.remove('active');
+            imgPolaroid.classList.remove('visible');
+            setTimeout(() => {
+                envelope.classList.remove('open');
+            }, 300);
+            // La música sigue sonando
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if(e.target === modal) closeModal();
+        });
+
+        // Click en la imagen para ampliar
+        imgPolaroid.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const fullImg = document.createElement('div');
+            fullImg.className = 'modal-imagen-flotante';
+            fullImg.innerHTML = `<img src="${imgPolaroid.querySelector('img').src}">`;
+            fullImg.onclick = () => document.body.removeChild(fullImg);
+            document.body.appendChild(fullImg);
+        });
+    </script>
+</body>
+</html>
