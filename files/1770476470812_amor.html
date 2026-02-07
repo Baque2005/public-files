@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>7 MESES💖</title>
+  <style>
+    :root { --rosa:#ff6aa2; --magenta:#ff2d55; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: "Poppins", system-ui, sans-serif;
+      color: #fff;
+      background: linear-gradient(120deg, #0b0b10, #131325 40%, #1d0f1d);
+      overflow: hidden;
+    }
+    .bg {
+      position: fixed; inset: 0; z-index: -2;
+      background:
+        radial-gradient(1200px 800px at 20% 30%, rgba(255,45,85,.12), transparent 60%),
+        radial-gradient(900px 700px at 80% 70%, rgba(255,106,162,.12), transparent 60%);
+      filter: saturate(120%);
+      animation: floatBg 18s ease-in-out infinite alternate;
+    }
+    @keyframes floatBg { to { transform: translateY(-20px); } }
+    .hearts { position: fixed; inset: 0; pointer-events: none; z-index: -1; }
+    .heart {
+      position: absolute; width: 16px; height: 16px; opacity: .75;
+      background: var(--rosa); transform: rotate(45deg);
+      animation: rise 8s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(255,106,162,.6));
+    }
+    .heart::before, .heart::after {
+      content: ""; position: absolute; width: 16px; height: 16px; background: var(--rosa); border-radius: 50%;
+    }
+    .heart::before { left: -8px; }
+    .heart::after  { top: -8px; }
+    @keyframes rise {
+      0% { transform: translateY(20vh) scale(.8) rotate(45deg); opacity: 0; }
+      15% { opacity: .9; }
+      100% { transform: translateY(-120vh) scale(1.4) rotate(45deg); opacity: 0; }
+    }
+    .wrap { height: 100%; display: grid; place-items: center; padding: 24px; text-align: center; }
+    .card {
+      max-width: 720px; width: 100%;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 24px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+      padding: 28px 24px 20px;
+    }
+    .badge { display:inline-block; padding:6px 12px; border-radius:999px; font-size:12px; letter-spacing:.4px;
+      background:rgba(255,106,162,.18); border:1px solid rgba(255,106,162,.4); margin-bottom:10px;
+    }
+    h1 {
+      margin:8px 0 4px; font-weight:600; font-size:clamp(28px,5vw,40px);
+      text-shadow:0 4px 20px rgba(255,45,85,.25);
+    }
+    .type { min-height:2.2em; white-space:pre-wrap; }
+    .counter { margin-top:10px; font-weight:300; font-size:clamp(14px,3.5vw,18px); opacity:.9; }
+    .buttons { display:flex; gap:12px; justify-content:center; margin-top:18px; flex-wrap:wrap; }
+    .btn {
+      padding:10px 16px; border-radius:14px; font-weight:600; border:1px solid transparent;
+      background:linear-gradient(90deg, var(--magenta), var(--rosa));
+      color:#fff; cursor:pointer; transition:transform .12s ease, box-shadow .2s;
+      box-shadow:0 8px 24px rgba(255,45,85,.28);
+    }
+    .btn:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(255,45,85,.34); }
+    .btn.ghost { background:transparent; border-color:rgba(255,255,255,.25); }
+    .quote { margin-top:16px; font-size:15px; opacity:.95; display:none; }
+    footer { margin-top:18px; font-size:12px; opacity:.7; }
+    @media (max-width:420px) {
+      .card { padding:22px 18px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="hearts" id="hearts"></div>
+  <div class="wrap">
+    <div class="card">
+      <span class="badge">Para: <span id="names"></span> 💞</span>
+      <h1 id="title">Gracias por estos maravillosos 7 meses💞</h1>
+      <div id="type" class="type"></div>
+      <div id="counter" class="counter"></div>
+      <div class="buttons">
+        <button class="btn" id="surprise">💌 Mensaje sorpresa para la mas hermosa</button>
+        <button class="btn ghost" id="play">▶️ Música</button>
+      </div>
+      <p class="quote" id="quote"></p>
+      <footer>Hecho con cariño para mi alma gemela❤️ </footer>
+    </div>
+  </div>
+  <audio id="audio" preload="none"></audio>
+  <script>
+    "use strict";
+
+    const NOMBRE_1 = "my";
+    const NOMBRE_2 = "love ";
+    const FECHA_INICIO = "2025-06-18"; // aca va la fecha de noviazgo para carcule los dias
+    const MENSAJE = "Gracias por formar parte de mi vida y por darme el privilegio de estar a su lado, gracias por estos 7 meses 💖";
+    const CANCION_URL = "https://raw.githubusercontent.com/aspajo2006/mi-musica/main/LA%20SANTA%20GRIFA%20%E2%A7%B8%E2%A7%B8%20PENSANDO%20EN%20TI%20%E2%A7%B8%E2%A7%B8%20VIDEO%20OFICIAL.mp3";// el audio
+// aca va las frases lo que dice el mensaje sorpresa
+    const FRASES = [
+      "Gracias por darme el honor de ser suyo. ❤️✨",
+      "Mi vida a su lado es mas perfecta, asi como su sonrisa. ✨",
+      "En cada latido de mi corazon está su nombre. ❤️",
+      "Gracias por permitirme amarla. 💕",
+      "Le sere fiel toda la eternidad. 💕",
+      "Soy su fiel esclavo para toda la vida. 💕",
+      "Mi amor eterno sera siempre usted. 🌸",
+      "Usted es el sueño del que nunca quiero despertar. 🌙",
+      "Gracias por existir en mi vida, gracias por amarme. 💫",
+      "La amo más de lo que las palabras pueden decir. 💕"
+    ];
+
+    const namesEl = document.getElementById("names");
+    const typeEl = document.getElementById("type");
+    const counterEl = document.getElementById("counter");
+    const quoteEl = document.getElementById("quote");
+    const audioEl = document.getElementById("audio");
+    const heartsContainer = document.getElementById("hearts");
+    const playBtn = document.getElementById("play");
+
+    namesEl.textContent = `${NOMBRE_1}  ${NOMBRE_2}`; //aca se va el "Y" entre los 2 nombres
+
+    (function typeWriter(text, delay = 45) {
+      let i = 0;
+      function tick() {
+        typeEl.textContent = text.slice(0, i++);
+        if (i <= text.length) setTimeout(tick, delay);
+      }
+      tick();
+    })(MENSAJE);
+
+    function actualizarContador() {
+      const inicio = new Date(FECHA_INICIO + "T00:00:00");
+      const diff = Math.floor((new Date() - inicio) / (1000 * 60 * 60 * 24));
+      counterEl.textContent = !isNaN(diff) ? `Llevamos ${diff} días juntos 💫` : "";
+    }
+    actualizarContador();
+    setInterval(actualizarContador, 60000);
+
+    function spawnHeart() {
+      const h = document.createElement("div");
+      h.className = "heart";
+      const size = 10 + Math.random() * 18;
+      h.style.width = size + "px";
+      h.style.height = size + "px";
+      h.style.left = Math.random() * 100 + "vw";
+      h.style.animationDuration = 6 + Math.random() * 6 + "s";
+      h.style.opacity = (0.6 + Math.random() * 0.4).toFixed(2);
+      heartsContainer.appendChild(h);
+      setTimeout(() => h.remove(), 12000);
+    }
+    setInterval(spawnHeart, 350);
+
+    document.getElementById("surprise").addEventListener("click", () => {
+      const frase = FRASES[Math.floor(Math.random() * FRASES.length)];
+      quoteEl.textContent = frase;
+      quoteEl.style.display = "block";
+    });
+
+    audioEl.src = CANCION_URL;
+
+    let playing = false;
+    playBtn.addEventListener("click", () => {
+      if (!playing) {
+        audioEl.currentTime = 0;
+        audioEl.play();
+      } else {
+        audioEl.pause();
+      }
+    });
+    audioEl.addEventListener("play", () => {
+      playing = true;
+      playBtn.textContent = "⏸️ Pausa";
+    });
+    audioEl.addEventListener("pause", () => {
+      playing = false;
+      playBtn.textContent = "▶️ Música";
+    });
+  </script>
+</body>
+</html>
