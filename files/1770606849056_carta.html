@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para ti, Mich ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Corazones flotantes de fondo */
+        .heart-bg {
+            position: fixed;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.1);
+            animation: float 15s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Pantalla de inicio */
+        .intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1s, visibility 1s;
+        }
+
+        .intro-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .intro-heart {
+            font-size: 100px;
+            animation: heartbeat 1.5s infinite;
+            margin-bottom: 30px;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10%, 30% { transform: scale(1.1); }
+            20%, 40% { transform: scale(1); }
+        }
+
+        .intro-text {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .start-btn {
+            background: white;
+            color: #f5576c;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .start-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Tarjeta principal */
+        .card {
+            background: white;
+            border-radius: 30px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-top: 50px;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1s forwards 0.5s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #f5576c;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Sección de razones */
+        .reasons {
+            margin: 30px 0;
+        }
+
+        .reason-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            opacity: 0;
+            animation: slideIn 0.5s forwards;
+        }
+
+        .reason-item:nth-child(1) { animation-delay: 0.7s; }
+        .reason-item:nth-child(2) { animation-delay: 0.9s; }
+        .reason-item:nth-child(3) { animation-delay: 1.1s; }
+        .reason-item:nth-child(4) { animation-delay: 1.3s; }
+        .reason-item:nth-child(5) { animation-delay: 1.5s; }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .reason-item:active {
+            transform: scale(0.98);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .reason-item .emoji {
+            font-size: 30px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .reason-item h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .reason-item p {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* Botón especial */
+        .special-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            width: 100%;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+            transition: transform 0.3s;
+        }
+
+        .special-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Modal de mensaje especial */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 400px;
+            animation: popIn 0.5s;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content .big-emoji {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        .modal-content h2 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .modal-content p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .close-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Contador de amor */
+        .love-counter {
+            text-align: center;
+            margin: 30px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 20px;
+        }
+
+        .love-counter .number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #f5576c;
+            margin: 10px 0;
+        }
+
+        .love-counter .label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Galería de emojis interactiva */
+        .emoji-gallery {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .emoji-item {
+            font-size: 40px;
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .emoji-item:active {
+            transform: scale(1.3) rotate(10deg);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            font-size: 14px;
+            padding-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de inicio -->
+    <div class="intro-screen" id="introScreen">
+        <div class="intro-heart">💝</div>
+        <div class="intro-text">Algo especial para ti, Mich</div>
+        <button class="start-btn" onclick="startExperience()">Abrir ❤️</button>
+    </div>
+
+    <!-- Corazones de fondo -->
+    <div id="heartsContainer"></div>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>Para mi Mich 💕</h1>
+                <p class="subtitle">La persona más especial del mundo</p>
+            </div>
+
+            <div class="love-counter">
+                <div class="label">Días amándote</div>
+                <div class="number" id="daysCounter">∞</div>
+                <div class="label">Y contando...</div>
+            </div>
+
+            <div class="reasons">
+                <div class="reason-item" onclick="showReaction(this)">
+                    <span class="emoji">✨</span>
+                    <h3>Tu sonrisa</h3>
+                    <p>Ilumina cada uno de mis días y hace que todo tenga sentido</p>
+                </div>
+
+                <div class="reason-item" onclick="showReaction(this)">
+                    <span class="emoji">🌟</span>
+                    <h3>Tu forma de ser</h3>
+                    <p>Única, auténtica y absolutamente perfecta para mí</p>
+                </div>
+
+                <div class="reason-item" onclick="showReaction(this)">
+                    <span class="emoji">💫</span>
+                    <h3>Tus abrazos</h3>
+                    <p>Mi lugar favorito en el mundo entero</p>
+                </div>
+
+                <div class="reason-item" onclick="showReaction(this)">
+                    <span class="emoji">🌈</span>
+                    <h3>Tu voz</h3>
+                    <p>La melodía más hermosa que existe</p>
+                </div>
+
+                <div class="reason-item" onclick="showReaction(this)">
+                    <span class="emoji">💖</span>
+                    <h3>Tu amor</h3>
+                    <p>Lo más valioso que tengo y que cuido con todo mi corazón</p>
+                </div>
+            </div>
+
+            <div class="emoji-gallery">
+                <div class="emoji-item" onclick="createFloatingEmoji('😍')">😍</div>
+                <div class="emoji-item" onclick="createFloatingEmoji('💕')">💕</div>
+                <div class="emoji-item" onclick="createFloatingEmoji('🥰')">🥰</div>
+                <div class="emoji-item" onclick="createFloatingEmoji('💝')">💝</div>
+                <div class="emoji-item" onclick="createFloatingEmoji('✨')">✨</div>
+                <div class="emoji-item" onclick="createFloatingEmoji('🌹')">🌹</div>
+                <div class="emoji-item" onclick="createFloatingEmoji('💫')">💫</div>
+                <div class="emoji-item" onclick="createFloatingEmoji('🦋')">🦋</div>
+            </div>
+
+            <button class="special-btn" onclick="showSpecialMessage()">
+                Mensaje Especial 💌
+            </button>
+        </div>
+
+        <div class="footer">
+            Hecho con todo mi amor para ti 💝
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="big-emoji">💝</div>
+            <h2>Te amo, Mich</h2>
+            <p>Eres lo mejor que me ha pasado en la vida. Cada día a tu lado es un regalo. Gracias por existir, por amarme y por ser exactamente como eres. Eres mi persona favorita, mi hogar, mi todo.</p>
+            <p><strong>Siempre tuyo ❤️</strong></p>
+            <button class="close-btn" onclick="closeModal()">💕 Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        // Crear corazones de fondo
+        function createBackgroundHearts() {
+            const container = document.getElementById('heartsContainer');
+            const hearts = ['💕', '💖', '💗', '💝', '💘'];
+            
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-bg';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 15 + 's';
+                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                container.appendChild(heart);
+            }
+        }
+
+        // Iniciar experiencia
+        function startExperience() {
+            document.getElementById('introScreen').classList.add('hidden');
+            createBackgroundHearts();
+            animateCounter();
+        }
+
+        // Mostrar mensaje especial
+        function show
