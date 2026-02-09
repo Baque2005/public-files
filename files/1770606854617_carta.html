@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️ Para Mich</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            overflow-x: hidden;
+            background: #000;
+            color: white;
+            user-select: none;
+        }
+
+        /* Pantalla inicial */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(45deg, #ff0050, #ff8c00, #ff0050);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            cursor: pointer;
+        }
+
+        .splash-screen.hide {
+            display: none;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .splash-heart {
+            font-size: 120px;
+            animation: pulseBig 1s infinite;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.8));
+        }
+
+        @keyframes pulseBig {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .splash-text {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 30px 0;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        .tap-text {
+            font-size: 18px;
+            opacity: 0.8;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Pregunta inicial */
+        .question-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .question-screen.active {
+            display: flex;
+        }
+
+        .question-box {
+            background: white;
+            color: #333;
+            padding: 40px 30px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.5s;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .question-box h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #ff0050;
+        }
+
+        .question-box p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #ff0050, #ff8c00);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255,0,80,0.4);
+        }
+
+        .btn-no {
+            background: #ddd;
+            color: #666;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+        }
+
+        /* Contenido principal */
+        .main-content {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .main-content.active {
+            display: block;
+        }
+
+        /* Sección hero */
+        .hero-section {
+            min-height: 100vh;
+            background: linear-gradient(45deg, #ff0050, #00f2ff);
+            background-size: 400% 400%;
+            animation: gradientShift 5s ease infinite;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            top: 0;
+            left: 0;
+        }
+
+        .heart-float {
+            position: absolute;
+            font-size: 30px;
+            animation: floatUp 4s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .hero-content {
+            z-index: 10;
+        }
+
+        .hero-content h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255,255,255,0.8);
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 30px rgba(255,255,255,0.8); }
+            50% { text-shadow: 0 0 50px rgba(255,255,255,1); }
+        }
+
+        .hero-content p {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .scroll-btn {
+            background: white;
+            color: #ff0050;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Sección de razones */
+        .reasons-section {
+            min-height: 100vh;
+            background: #1a1a2e;
+            padding: 60px 20px;
+        }
+
+        .reasons-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+            color: #ff0050;
+        }
+
+        .reason-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            padding: 40px 30px;
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            animation: fadeIn 1s;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .reason-card:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reason-card .emoji {
+            font-size: 60px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .reason-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .reason-card p {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        /* Galería interactiva */
+        .gallery-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .gallery-title {
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 400px;
+            margin-bottom: 40px;
+        }
+
+        .emoji-item {
+            font-size: 50px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .emoji-item:active {
+            transform: scale(1.3) rotate(15deg);
+        }
+
+        /* Sección final */
+        .final-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ff0050, #ff8c00);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .final-content {
+            max-width: 500px;
+        }
+
+        .final-content h2 {
+            font-size: 40px;
+            margin-bottom: 30px;
+        }
+
+        .final-content p {
+            font-size: 20px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .love-button {
+            background: white;
+            color: #ff0050;
+            border: none;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Modal final */
+        .final-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100000;
+            padding: 20px;
+        }
+
+        .final-modal.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: linear-gradient(135deg, #ff0050, #ff8c00);
+            padding: 50px 30px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 400px;
+            animation: zoomIn 0.5s;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .modal-box .big-heart {
+            font-size: 100px;
+            animation: heartbeat 1s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25%, 75% { transform: scale(1.1); }
+        }
+
+        .modal-box h2 {
+            font-size: 32px;
+            margin: 20px 0;
+        }
+
+        .modal-box p {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .close-btn {
+            background: white;
+            color: #ff0050;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de carga -->
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-heart">💝</div>
+        <div class="splash-text">Para ti, Mich</div>
+        <div class="tap-text">Toca para abrir ✨</div>
+    </div>
+
+    <!-- Pregunta inicial -->
+    <div class="question-screen" id="questionScreen">
+        <div class="question-box">
+            <h2>Mich... 💕</h2>
+            <p>¿Quieres ser mi novia para siempre?</p>
+            <div class="btn-container">
+                <button class="btn-yes" id="btnYes">Sí ❤️</button>
+                <button class="btn-no" id="btnNo">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="main-content" id="mainContent">
+        <!-- Sección Hero -->
+        <div class="hero-section">
+            <div class="floating-hearts" id="floatingHearts"></div>
+            <div class="hero-content">
+                <h1>Te Amo Mich 💖</h1>
+                <p>Eres mi todo</p>
+                <p>Mi razón de ser</p>
+                <button class="scroll-btn" onclick="scrollToReasons()">Ver más ⬇️</button>
+            </div>
+        </div>
+
+        <!-- Sección de razones -->
+        <div class="reasons-section" id="reasonsSection">
+            <h2 class="reasons-title">Por qué te amo ❤️</h2>
+            
+            <div class="reason-card" onclick="createExplosion(event)">
+                <span class="emoji">✨</span>
+                <h3>Tu sonrisa</h3>
+                <p>Ilumina cada uno de mis días y hace que todo valga la pena
