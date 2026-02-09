@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️ Para Mich</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow-x: hidden;
+            background: #000;
+            color: white;
+            user-select: none;
+        }
+
+        /* Pantalla inicial estilo TikTok */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(45deg, #ff0050, #ff8c00, #ff0050);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s;
+        }
+
+        .splash-screen.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .splash-heart {
+            font-size: 120px;
+            animation: pulseBig 1s infinite;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.8));
+        }
+
+        @keyframes pulseBig {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .splash-text {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 30px 0;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        .tap-text {
+            font-size: 18px;
+            opacity: 0.8;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Pregunta inicial */
+        .question-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .question-screen.active {
+            display: flex;
+        }
+
+        .question-box {
+            background: white;
+            color: #333;
+            padding: 40px 30px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.5s;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .question-box h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #ff0050;
+        }
+
+        .question-box p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #ff0050, #ff8c00);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255,0,80,0.4);
+            transition: transform 0.2s;
+        }
+
+        .btn-yes:active {
+            transform: scale(0.95);
+        }
+
+        .btn-no {
+            background: #ddd;
+            color: #666;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .btn-no:hover {
+            transform: translate(var(--x), var(--y));
+        }
+
+        /* Contenido principal */
+        .main-content {
+            display: none;
+            min-height: 100vh;
+            background: #000;
+        }
+
+        .main-content.active {
+            display: block;
+        }
+
+        /* Sección de video estilo TikTok */
+        .video-section {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #ff0050, #00f2ff);
+            background-size: 400% 400%;
+            animation: gradientShift 5s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floating-hearts {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .heart-float {
+            position: absolute;
+            font-size: 30px;
+            animation: floatUp 4s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .main-message {
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        .main-message h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255,255,255,0.8);
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 30px rgba(255,255,255,0.8); }
+            50% { text-shadow: 0 0 50px rgba(255,255,255,1); }
+        }
+
+        .main-message p {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .swipe-indicator {
+            position: absolute;
+            bottom: 30px;
+            font-size: 16px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Cartas deslizables */
+        .cards-section {
+            min-height: 100vh;
+            background: #000;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-stack {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 500px;
+        }
+
+        .love-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            cursor: grab;
+            transition: transform 0.3s;
+            touch-action: none;
+        }
+
+        .love-card:active {
+            cursor: grabbing;
+        }
+
+        .love-card .emoji {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .love-card h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .love-card p {
+            font-size: 18px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        /* Botón final */
+        .final-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .final-message {
+            max-width: 500px;
+        }
+
+        .final-message h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .final-message p {
+            font-size: 20px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .love-button {
+            background: white;
+            color: #f5576c;
+            border: none;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Explosión de corazones */
+        .heart-explosion {
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+        }
+
+        /* Contador de amor */
+        .love-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+        }
+
+        .love-counter.show {
+            display: block;
+            animation: slideInRight 0.5s;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(200px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Modal final */
+        .final-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100000;
+            padding: 20px;
+        }
+
+        .final-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #ff0050, #ff8c00);
+            padding: 50px 30px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 400px;
+            animation: zoomIn 0.5s;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content .big-heart {
+            font-size: 100px;
+            animation: heartbeat 1s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+        }
+
+        .modal-content h2 {
+            font-size: 32px;
+            margin: 20px 0;
+        }
+
+        .modal-content p {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .close-modal-btn {
+            background: white;
+            color: #ff0050;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de carga -->
+    <div class="splash-screen" id="splashScreen" onclick="hideSplash()">
+        <div class="splash-heart">💝</div>
+        <div class="splash-text">Para ti, Mich</div>
+        <div class="tap-text">Toca para abrir ✨</div>
+    </div>
+
+    <!-- Pregunta inicial -->
+    <div class="question-screen" id="questionScreen">
+        <div class="question-box">
+            <h2>Mich... 💕</h2>
+            <p>¿Quieres ser mi novia para siempre?</p>
+            <div class="btn-container">
+                <button class="btn-yes" onclick="answerYes()">Sí ❤️</button>
+                <button class="btn-no" id="btnNo" onmouseover="moveButton()" ontouchstart="moveButton()">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contador de amor -->
+    <div class="love-counter" id="loveCounter">
+        ❤️ <span id="counterNumber">0</span>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="main-content" id="mainContent">
+        <!-- Sección 1: Video estilo TikTok -->
+        <div class="video-section">
+            <div class="floating-hearts" id="floatingHearts"></div>
+            <div class="main-message">
+                <h1>Te Amo Mich 💖</h1>
+                <p>Eres mi todo</p>
+            </div>
+            <div class="swipe-indicator">Desliza hacia arriba ⬆️</div>
+        </div>
+
+        
