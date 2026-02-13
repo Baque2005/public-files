@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="https://images.vexels.com/media/users/3/144097/isolated/preview/3dedcd235214cdde6b4e171fdbf66c9d-heart-icon.png" type="image/x-icon">
+  <title>For You</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #fff0f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .container {
+      
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(255, 105, 180, 0.2);
+      z-index: 10;
+    }
+    h1 {
+      color: #ff69b4;
+      margin-bottom: 30px;
+    }
+    #loveButton {
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    #loveButton:hover {
+      background-color: #ff1493;
+      transform: scale(1.05);
+    }
+    .heart {
+      font-size: 24px;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+    
+    .message-box {
+      position: absolute;
+      font-size: 20px;
+      color: #ff1493;
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border: 2px solid #ff69b4;
+      opacity: 0.9;
+      pointer-events: none;
+      animation: fadeAway 4s ease-out forwards;
+      max-width: 250px;
+      text-align: center;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+    }
+    
+    @keyframes fadeAway {
+      0% {
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://i.pinimg.com/736x/1c/2e/7f/1c2e7f0614e76eb3724daeeea00b3992.jpg" alt="Imagen de amor" style="max-width: 220px; border-radius: 15px; box-shadow: 0 4px 12px rgba(255,105,180,0.15); margin-bottom: 20px;">
+    <h1>Presiona el botón<span class="heart">❤️</span></h1>
+    <button id="loveButton">¡Clic!</button>
+  </div>
+
+  <script>
+    const loveButton = document.getElementById('loveButton');
+
+    // Mensajes variados de amor y cariño
+    const loveMessages = [
+      "Te amo Danna:3.",
+      "Eres mi todo mi amor.",
+      "Te pienso.",
+      "Me haces muy feliz.",
+      "Eres mi paz.",
+      "Te admiro.",
+      "Te valoro.",
+      "Eres mi sol.",
+      "Te abrazo.",
+      "Eres mi alegría.",
+      "Te quiero.",
+      "Eres especial.",
+      "Eres mi razón.",
+      "Eres mi luz.",
+      "Te adoro.",
+      "Eres mi fuerza.",
+      "Eres mi mundo.",
+      "Eres mi sueño.",
+      "Eres mi inspiración.",
+      "Eres mi refugio.",
+      "Eres mi destino.",
+      "Eres mi magia.",
+      "Eres mi vida.",
+      "Eres mi corazón.",
+      "Eres mi esperanza.",
+      "Eres mi compañía.",
+      "Eres mi alegría diaria.",
+      "Eres mi mejor regalo.",
+      "Eres mi mejor historia.",
+      "Eres mi mejor momento.",
+      "Eres mi mejor sueño.",
+      "Eres mi mejor abrazo.",
+      "Eres mi mejor sonrisa.",
+      "Eres mi mejor día.",
+      "Eres mi mejor noche.",
+      "Eres mi mejor pensamiento.",
+      "Eres mi mejor deseo.",
+      "Eres mi mejor compañía.",
+      "Eres mi mejor aventura.",
+      "Eres mi mejor canción.",
+      "Eres mi mejor poema.",
+      "Eres mi mejor razón.",
+      "Eres mi mejor paz.",
+      "Eres mi mejor alegría.",
+      "Eres mi mejor amor.",
+      "Eres mi mejor todo.",
+      "Te amo infinito.",
+      "Te amo mucho.",
+      "Te amo siempre.",
+      "Te amo más.",
+      "Te amo aquí.",
+      "Te amo ahora.",
+      "Te amo hoy.",
+      "Te amo mañana.",
+      "Te amo y te pienso.",
+      "Te amo y te abrazo.",
+      "Te amo y te extraño.",
+      "Te amo y te admiro.",
+      "Te amo y te valoro.",
+      "Te amo y te cuido.",
+      "Te amo y te busco.",
+      "Te amo y te encuentro.",
+      "Te amo y te elijo.",
+      "Te amo y te sueño.",
+      "Te amo y te espero.",
+      "Te amo y te sonrío.",
+      "Te amo y te regalo mi corazón.",
+      "Te amo y te regalo mi vida.",
+      "Te amo y te regalo mi alegría.",
+      "Te amo y te regalo mi paz.",
+      "Te amo y te regalo mi amor."
+      // ...puedes agregar aún más si lo deseas...
+    ];
+
+    let lastIndex = -1;
+    loveButton.addEventListener('click', () => {
+      // Efecto de clic en el botón
+      loveButton.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        loveButton.style.transform = 'scale(1.05)';
+      }, 100);
+
+      // Crear caja de mensaje
+      const messageBox = document.createElement('div');
+      messageBox.className = 'message-box';
+
+      // Seleccionar mensaje aleatorio, evitando repetir el último
+      let randomIndex;
+      do {
+        randomIndex = Math.floor(Math.random() * loveMessages.length);
+      } while (randomIndex === lastIndex && loveMessages.length > 1);
+      lastIndex = randomIndex;
+      messageBox.innerHTML = loveMessages[randomIndex];
+
+      // Posición aleatoria en la pantalla (evitando bordes)
+      const posX = 20 + Math.random() * 60;
+      const posY = 20 + Math.random() * 60;
+
+      messageBox.style.left = `${posX}%`;
+      messageBox.style.top = `${posY}%`;
+
+      // Añadir al cuerpo
+      document.body.appendChild(messageBox);
+
+      // Eliminar después de la animación
+      setTimeout(() => {
+        messageBox.remove();
+      }, 5000);
+    });
+  </script>
+</body>
+</html>
