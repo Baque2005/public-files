@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Love ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS GENERALES Y FONDO --- */
+        *, ::before, ::after { box-sizing: border-box; }
+        
+        body {
+            font-family: "Quicksand", sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: #fce4ec;
+        }
+
+        .bg-gif-fijo {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image: url('https://i.pinimg.com/736x/5c/93/09/5c9309639f018d95d09d746795627fa4.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.9);
+        }
+
+        /* --- SOBRE (ENVELOPE) --- */
+        .envelope {
+            --width: 300px;
+            --height: 175px;
+            position: relative;
+            width: var(--width);
+            height: var(--height);
+            perspective: 1000px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        @media (min-width: 720px) {
+            .envelope { --width: 500px; --height: 290px; }
+        }
+
+        .envelope-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s ease-in-out;
+            transform-style: preserve-3d;
+        }
+
+        .envelope.open .envelope-inner { transform: rotateY(180deg); }
+
+        .envelope-front, .envelope-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .envelope-front {
+            background: #f8bbd0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .envelope-front img.stamp {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 60px;
+            height: 70px;
+            border-radius: 4px;
+            border: 2px dashed #ad1457;
+        }
+
+        .envelope-back {
+            background: #f48fb1;
+            transform: rotateY(180deg);
+        }
+
+        .envelope-back::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: conic-gradient(transparent 60deg, #f06292 60deg 120deg, #fce4ec 120deg 240deg, #f06292 240deg 300deg, transparent 300deg);
+            z-index: 2;
+        }
+
+        .top-fold {
+            position: absolute;
+            inset: 0;
+            background: #f48fb1;
+            clip-path: polygon(0% 0%, 50% 55%, 100% 0%);
+            z-index: 10;
+            transform-origin: top;
+            transition: transform 0.4s ease 0.4s;
+        }
+
+        .envelope.open .top-fold { transform: rotateX(180deg); z-index: 0; }
+
+        .letter-preview {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            width: 90%;
+            height: 80%;
+            background: white;
+            transform: translateX(-50%);
+            z-index: 1;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.4s ease 0.6s;
+        }
+
+        .envelope.open .letter-preview { transform: translate(-50%, -40%); }
+
+        /* --- MODAL MEJORADO --- */
+        .modal-carta {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+        }
+
+        .modal-carta.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-carta-content {
+            background: transparent;
+            width: 100%;
+            max-width: 520px;
+            max-height: calc(100vh - 80px);
+            border-radius: 22px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.18);
+            overflow: hidden; /* el scroll lo gestionará el body interno */
+            padding: 10px; /* espacio para que el borde interno no se pegue al contenedor */
+            box-sizing: border-box;
+        }
+
+        .modal-carta-content::-webkit-scrollbar { display: none; }
+
+        /* Contenido interno que crece con el scroll: aquí va el borde rosado */
+        .modal-carta-body {
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            padding: 26px 20px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            box-sizing: border-box;
+            border: 0; /* sin borde por defecto, usamos box-shadow para el marco */
+            box-shadow: inset 0 0 0 4px rgba(244,143,177,0.95);
+        }
+
+        .modal-carta-body::-webkit-scrollbar { display: none; }
+
+        /* GIF del modal (Nuevo) */
+        .modal-footer-gif {
+            width: 100%;
+            max-width: 250px;
+            display: block;
+            margin: 20px auto 0;
+            border-radius: 15px;
+            opacity: 0.9;
+        }
+
+        .modal-carta-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f48fb1;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .modal-carta-close:hover { transform: scale(1.1) rotate(90deg); }
+
+        .letra-flotante-badge {
+            display: inline-block;
+            background: #ad1457;
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            animation: float 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes float {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        /* Ajustes responsivos para el modal en móviles */
+        @media (max-width: 420px) {
+            .modal-carta { padding: 12px; }
+            .modal-carta-content {
+                padding: 18px 14px;
+                border: 4px solid #fff;
+                max-width: 96vw;
+                max-height: calc(100vh - 40px);
+                border-radius: 16px;
+            }
+            .modal-carta-content::before { box-shadow: inset 0 0 0 3px rgba(244,143,177,0.95); }
+            .modal-footer-gif { max-width: 200px; }
+        }
+
+        .texto-carta {
+            font-size: 1.2rem;
+            line-height: 1.6;
+                color: #6b1aa9;
+            text-align: center;
+            margin-bottom: 20px;
+                font-weight: 600;
+        }
+
+            .texto-carta .resaltado {
+                font-weight: 800;
+                color: #4a0b74;
+                background: rgba(244,143,177,0.06);
+                padding: 6px 8px;
+                border-radius: 8px;
+                display: inline-block;
+            }
+
+        .img-polaroid {
+            width: 180px;
+            height: 180px;
+            background: white;
+            padding: 10px 10px 30px 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            transform: rotate(-3deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+            display: block;
+            cursor: zoom-in;
+        }
+
+        .img-polaroid.visible {
+            opacity: 1;
+            transform: rotate(2deg) scale(1.1);
+        }
+
+        .img-polaroid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        /* --- MODAL IMAGEN AMPLIADA --- */
+        .modal-imagen-flotante {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 3000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        
+        .modal-imagen-flotante img {
+            max-width: 90%;
+            max-height: 80%;
+            border: 10px solid white;
+            border-radius: 5px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-gif-fijo"></div>
+
+    <!-- Audio Oculto -->
+    <audio id="audioCarta" loop>
+        <source src="https://github.com/Asprog3rX/Reprodcutor/raw/refs/heads/main/Coldplay%20-%20Yellow(Sub%20Espa%C3%B1ol%20%20Lyrics).mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Sobre -->
+    <div class="envelope" id="envelope">
+        <div class="envelope-inner">
+            <div class="envelope-front">
+                <img src="https://i.pinimg.com/1200x/5e/74/2d/5e742ddbda9fae201369444e5222a8ba.jpg" class="stamp" alt="stamp">
+                <div style="text-align: left; color: white;">
+                    <p><b>Para:</b> Mi Princesa LJDA ❤️</p>
+                    <p><b>De:</b> Roy de tu Corazón</p>
+                </div>
+            </div>
+            <div class="envelope-back">
+                <div class="top-fold"></div>
+                <div class="letter-preview">
+                    <img src="https://img.freepik.com/vector-premium/pulgar-dedos-imprimir-marca-huella-dactilar-amor-corazon_53500-1839.jpg" style="width: 50px;" alt="">
+                    <p style="color: #ad1457; font-weight: bold; font-size: 0.9rem;">Ábreme...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de la Carta -->
+    <div class="modal-carta" id="modalCarta">
+        <div class="modal-carta-content">
+            <button class="modal-carta-close" id="closeModalCarta">&times;</button>
+            
+            <div class="modal-carta-body">
+                <div style="text-align: center;">
+                    <div class="letra-flotante-badge">¡Te Amo!</div>
+                    
+                    <div class="img-polaroid" id="imgPrincipal">
+                        <img src="https://i.pinimg.com/originals/0c/86/c2/0c86c2f0c9e8203d5b51708bd7c4d5d4.gif" alt="nuestro momento">
+                    </div>
+
+                    <div class="texto-carta">
+                        Este año es nuestro primer San Valentín siendo muy especial para mi❤️<br><br>
+                        No sólo por todo lo hermoso que hemos vivido sino por cómo hemos mejorado en esta relación.
+Me has permitido mejorar personal y profesionalmente con cada conversación que hemos podido tener y aunque debo seguir mejorando ten presente que lo haré ☺️<br><br>
+                       Aunque en estas fechas pasemos ocupados o muy estresados quiero decirte que me perdones pero  estoy aprendiendo más a darte más el espacio que necesitas.<br><br>
+                        <strong class="resaltado">Gracias por ser parte de nuestra historia que poco a poco se va construyendo teniendo un crecimiento personal y profesional ☺️</strong><br><br>
+                        <strong class="resaltado">Agradezco mucho que hayamos podido conversar el sábado pasado.
+
+Te amo hoy, mañana y siempre mi amor ❤️ que nuestras metas sigan adelante.</strong>
+                    </div>
+
+                    <!-- Nuevo GIF solicitado -->
+                    <img src="https://i.pinimg.com/736x/64/3d/70/643d7085156af6a80bdbc903a93632c8.jpg" class="modal-footer-gif" alt="gif amor">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Bloqueo de seguridad básico
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        const envelope = document.getElementById('envelope');
+        const modal = document.getElementById('modalCarta');
+        const closeBtn = document.getElementById('closeModalCarta');
+        const audio = document.getElementById('audioCarta');
+        const imgPolaroid = document.getElementById('imgPrincipal');
+
+        // Función para abrir la carta
+        envelope.addEventListener('click', () => {
+            const isOpening = !envelope.classList.contains('open');
+            envelope.classList.toggle('open');
+
+            if (isOpening) {
+                // Iniciar música solo si no se está reproduciendo ya
+                if (audio.paused) {
+                    audio.currentTime = 29; 
+                    audio.play().catch(() => console.log("Se requiere interacción para iniciar audio"));
+                }
+
+                // Abrir modal tras la animación del sobre
+                setTimeout(() => {
+                    modal.classList.add('active');
+                    setTimeout(() => {
+                        imgPolaroid.classList.add('visible');
+                    }, 500);
+                }, 1200);
+            }
+        });
+
+        // Cerrar modal
+        function closeModal() {
+            modal.classList.remove('active');
+            imgPolaroid.classList.remove('visible');
+            setTimeout(() => {
+                envelope.classList.remove('open');
+            }, 300);
+            // La música sigue sonando
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if(e.target === modal) closeModal();
+        });
+
+        // Click en la imagen para ampliar
+        imgPolaroid.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const fullImg = document.createElement('div');
+            fullImg.className = 'modal-imagen-flotante';
+            fullImg.innerHTML = `<img src="${imgPolaroid.querySelector('img').src}">`;
+            fullImg.onclick = () => document.body.removeChild(fullImg);
+            document.body.appendChild(fullImg);
+        });
+    </script>
+</body>
+</html>
