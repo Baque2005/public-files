@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agujero Negro del Amor</title>
+  <style>
+    /* Modal personalizado */
+    #modal-bienvenida {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(10, 10, 30, 0.92);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.7s;
+    }
+    #modal-bienvenida.oculto {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #modal-bienvenida .contenido {
+      background: rgba(30, 30, 60, 0.98);
+      border-radius: 18px;
+      box-shadow: 0 0 40px #000a;
+      padding: 2.5rem 2.5rem 2rem 2.5rem;
+      text-align: center;
+      color: #fff;
+      font-family: 'Great Vibes', cursive, Arial, sans-serif;
+      font-size: 2.2rem;
+      max-width: 90vw;
+    }
+    #modal-bienvenida button {
+      margin-top: 2.2rem;
+      font-size: 1.5rem;
+      padding: 0.8rem 2.2rem;
+      border-radius: 12px;
+      background: #c9204b;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+      transition: background 0.2s;
+    }
+    #modal-bienvenida button:hover {
+      background: #a31536;
+    }
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(ellipse at bottom, #0d1b2a, #000000);
+    }
+    canvas {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100dvh;
+    }
+  </style>
+</head>
+<body>
+  <div id="modal-bienvenida">
+    <div class="contenido">
+      <div>Toca aqui ❤</div>
+      <img src="https://i.pinimg.com/736x/2e/08/91/2e0891b0f215a1afa9d3afe64381de4a.jpg" alt="Bienvenida" style="max-width:80%; border-radius:12px; display:block; margin:1rem auto;">
+      <button id="btn-ingresar">presiona aquí</button>
+    </div>
+  </div>
+  <canvas id="galaxy-canvas"></canvas>
+  <audio id="musica" autoplay loop>
+    <source src="https://raw.githubusercontent.com/baque2005/public-files/main/assets/audio/453_1771544855121_Elvis_Presley__Can_t_Help_Falling_In_Love__Sub._Espa__ol_.mp3" type="audio/mpeg">
+  </audio>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module">
+    // Modal y cambio de canción
+    window.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('modal-bienvenida');
+      const btn = document.getElementById('btn-ingresar');
+      const audio = document.getElementById('musica');
+      btn.addEventListener('click', () => {
+        modal.classList.add('oculto');
+        setTimeout(() => { modal.style.display = 'none'; }, 700);
+        // Cambiar la canción
+        audio.pause();
+        audio.src = 'https://raw.githubusercontent.com/baque2005/public-files/main/assets/audio/453_1771544855121_Elvis_Presley__Can_t_Help_Falling_In_Love__Sub._Espa__ol_.mp3';
+        audio.load();
+        audio.play();
+      });
+    });
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+    import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
+    // === ESCENA Y RENDER ===
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+    const renderer = new THREE.WebGLRenderer({
+      canvas: document.getElementById('galaxy-canvas'),
+      antialias: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    // === AGUJERO NEGRO ===
+    const blackHole = new THREE.Mesh(
+      new THREE.SphereGeometry(30, 64, 64),
+      new THREE.MeshStandardMaterial({ color: 0x000000, metalness: 1, roughness: 1 })
+    );
+    scene.add(blackHole);
+
+    // === TEXTO 3D CENTRAL ===
+    let centerTextMesh = null;
+    const fontLoader = new FontLoader();
+    // use a bolder, more stylized font
+    fontLoader.load('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/fonts/gentilis_bold.typeface.json', (font) => {
+      const text = 'MI SAN VALENTIN';
+      const textGeom = new TextGeometry(text, {
+        font: font,
+        size: 28, // reducido un poco
+        height: 6,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 1.6,
+        bevelSize: 0.8,
+        bevelSegments: 6
+      });
+      textGeom.computeBoundingBox();
+      const bb = textGeom.boundingBox;
+      const xOffset = -0.5 * (bb.max.x - bb.min.x);
+      const textMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xff66aa, emissiveIntensity: 1.2, metalness: 0.25, roughness: 0.05 });
+      const textMesh = new THREE.Mesh(textGeom, textMat);
+      textMesh.position.set(xOffset, 55, 0);
+      textMesh.rotation.x = -Math.PI / 16;
+      textMesh.renderOrder = 999;
+      textMesh.material.depthTest = false;
+      // create a soft glow by adding a slightly larger additive mesh
+      const glowMat = new THREE.MeshBasicMaterial({ color: 0xff66aa, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthTest: false });
+      const glowMesh = new THREE.Mesh(textGeom.clone(), glowMat);
+      glowMesh.position.copy(textMesh.position);
+      glowMesh.rotation.copy(textMesh.rotation);
+      glowMesh.scale.multiplyScalar(1.08);
+      glowMesh.renderOrder = 998;
+      scene.add(glowMesh);
+      centerTextMesh = textMesh;
+      scene.add(textMesh);
+    });
+
+    // Disco de acreción
+    const diskGeometry = new THREE.RingGeometry(40, 120, 256);
+    const diskCanvas = document.createElement("canvas");
+    diskCanvas.width = 1024;
+    diskCanvas.height = 1024;
+    const ctx = diskCanvas.getContext("2d");
+
+    const gradient = ctx.createRadialGradient(512, 512, 100, 512, 512, 500);
+    gradient.addColorStop(0, "rgba(255,255,255,0.9)");
+    gradient.addColorStop(0.3, "rgba(255,200,0,0.95)");
+    gradient.addColorStop(0.6, "rgba(255,100,0,0.9)");
+    gradient.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, diskCanvas.width, diskCanvas.height);
+
+    const diskTexture = new THREE.CanvasTexture(diskCanvas);
+    const accretionDisk = new THREE.Mesh(
+      diskGeometry,
+      new THREE.MeshBasicMaterial({ map: diskTexture, side: THREE.DoubleSide, transparent: true })
+    );
+    accretionDisk.rotation.x = Math.PI / 2;
+    scene.add(accretionDisk);
+
+    // === FRASES ROMÁNTICAS EN ÓRBITA ===
+    const galaxyGroup = new THREE.Group();
+    scene.add(galaxyGroup);
+
+const phrases = [
+  "Mi luz 😄",
+  "tqm 💫",
+  "Solo tu 🌟",
+  "Mi vida 🕊️",
+  "14 juntos 🥰",
+  "San valentin 😊",
+  "ojitos lindos 🌺",
+  "Mi vida ♾️",
+  "Corazon 💞",
+  "Te Adoro 😍",
+  "Mi estrella ✨",
+  "Mi sol ☀️",
+  "Por ti 🤗",
+  "Juntos 💑"
+];
+    function createTextTexture(text) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 250; // un poco más alto para letras grandes
+      const ctx = canvas.getContext('2d');
+      ctx.shadowColor = "rgba(255, 50, 150, 1)";
+      ctx.shadowBlur = 50;
+
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+      gradient.addColorStop(0, "#ff4da6");
+      gradient.addColorStop(0.5, "#ffffff");
+      gradient.addColorStop(1, "#ff4da6");
+
+      ctx.font = "bold 120px Arial"; // más grandes
+      ctx.fillStyle = gradient;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    const phraseCount = 100;
+    const arms = 6;
+    const radius = 500;
+
+    for (let i = 0; i < phraseCount; i++) {
+      const phraseIndex = i % phrases.length;
+      const textTexture = createTextTexture(phrases[phraseIndex]);
+      const material = new THREE.SpriteMaterial({ map: textTexture, transparent: true });
+      const sprite = new THREE.Sprite(material);
+
+      const angle = (i % (phraseCount / arms)) * (Math.PI * 2 / (phraseCount / arms));
+      const armAngle = Math.floor(i / (phraseCount / arms)) * (Math.PI * 2 / arms);
+      const distance = Math.pow(i / phraseCount, 0.9) * radius;
+
+      sprite.position.set(
+        Math.cos(angle + armAngle) * distance,
+        (Math.random() - 0.5) * 100,
+        Math.sin(angle + armAngle) * distance
+      );
+      sprite.scale.set(65, 12, 1); // letras más grandes
+      galaxyGroup.add(sprite);
+    }
+
+    // === ESTRELLAS ===
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 6000;
+    const starPositions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+      starPositions[i * 3] = (Math.random() - 0.5) * 8000;
+      starPositions[i * 3 + 1] = (Math.random() - 0.5) * 8000;
+      starPositions[i * 3 + 2] = (Math.random() - 0.5) * 8000;
+    }
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1.2 });
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+
+    // === LUCES ===
+    scene.add(new THREE.AmbientLight(0x8888aa, 1));
+
+    // === ORBITING SPRITES IN THREE.JS ===
+    // We'll place animated sprites (using the GIF as a texture) on 3D orbits around the center.
+    const orbitSpritesGroup = new THREE.Group();
+    scene.add(orbitSpritesGroup);
+    const orbitTextureUrl = 'https://i.pinimg.com/originals/02/30/1f/02301f1307b63b6440b2d704ca48599e.gif';
+    const loader = new THREE.TextureLoader();
+    loader.load(orbitTextureUrl, (texture) => {
+      const orbitCount = 14;
+      for (let i = 0; i < orbitCount; i++) {
+        const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false });
+        const sprite = new THREE.Sprite(material);
+        const radius = 160 + Math.random() * 480;
+        sprite.userData = {
+          angle: Math.random() * Math.PI * 2,
+          radius: radius,
+          speed: 0.2 + Math.random() * 0.6,
+          height: (Math.random() - 0.5) * 120
+        };
+        const s = 60 + Math.random() * 80;
+        sprite.scale.set(s, s, 1);
+        const x = Math.cos(sprite.userData.angle) * sprite.userData.radius;
+        const z = Math.sin(sprite.userData.angle) * sprite.userData.radius;
+        sprite.position.set(x, sprite.userData.height, z);
+        orbitSpritesGroup.add(sprite);
+      }
+    });
+
+    // (DOM overlays removed) Orbiting images are rendered as Three.js sprites above.
+
+    // === ANIMACIÓN ===
+    const clock = new THREE.Clock();
+    function animate() {
+      const delta = clock.getDelta();
+      const elapsed = clock.getElapsedTime();
+      galaxyGroup.rotation.y = elapsed * 0.015;
+      accretionDisk.rotation.z += 0.002;
+
+      // efecto de pulso en frases
+      galaxyGroup.children.forEach((sprite, i) => {
+        const scale = 65 + Math.sin(elapsed * 2 + i) * 8;
+        sprite.scale.set(scale, 14, 1);
+        sprite.material.opacity = 0.85 + Math.sin(elapsed * 3 + i) * 0.15;
+      });
+
+      // Update Three.js orbit sprites
+      orbitSpritesGroup.children.forEach((sprite, i) => {
+        sprite.userData.angle += sprite.userData.speed * delta;
+        const x = Math.cos(sprite.userData.angle) * sprite.userData.radius;
+        const z = Math.sin(sprite.userData.angle) * sprite.userData.radius;
+        sprite.position.set(x, sprite.userData.height, z);
+        // face the camera
+        sprite.quaternion.copy(camera.quaternion);
+        // subtle rotation for liveliness
+        sprite.material.rotation = (elapsed * 0.5 + i) % (Math.PI * 2);
+      });
+
+      // pulse central text glow & subtle scale
+      if (typeof centerTextMesh !== 'undefined' && centerTextMesh && centerTextMesh.material) {
+        const pulse = 0.6 + 0.4 * Math.abs(Math.sin(elapsed * 2));
+        centerTextMesh.material.emissiveIntensity = 0.8 + pulse * 0.8;
+        const baseScale = 1.0 + 0.02 * Math.sin(elapsed * 1.8);
+        centerTextMesh.scale.set(baseScale, baseScale, baseScale);
+      }
+
+      renderer.render(scene, camera);
+      controls.update();
+      requestAnimationFrame(animate);
+    }
+
+    camera.position.set(0, 180, 700);
+    animate();
+  </script>
+</body>
+</html>
