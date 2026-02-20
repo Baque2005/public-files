@@ -65,14 +65,14 @@
 <body>
   <div id="modal-bienvenida">
     <div class="contenido">
-      <div>quiereme oee ❤</div>
-      <img src="https://i.postimg.cc/T1BFKsb2/Captura-de-pantalla-2026-02-18-172350.png" alt="Bienvenida" style="max-width:80%; border-radius:12px; display:block; margin:1rem auto;">
+      <div>Toca aqui ❤</div>
+      <img src="https://i.postimg.cc/GhprfBd4/Captura-de-pantalla-2026-02-18-172339.png" alt="Bienvenida" style="max-width:80%; border-radius:12px; display:block; margin:1rem auto;">
       <button id="btn-ingresar">presiona aquí</button>
     </div>
   </div>
   <canvas id="galaxy-canvas"></canvas>
   <audio id="musica" autoplay loop>
-    <source src="https://raw.githubusercontent.com/baque2005/public-files/main/assets/audio/453_1771548914573_Elvis_Presley__Can_t_Help_Falling_In_Love__Sub._Espa__ol_.mp3" type="audio/mpeg">
+    <source src="https://raw.githubusercontent.com/baque2005/public-files/main/assets/audio/453_1771550009005_Elvis_Presley__Can_t_Help_Falling_In_Love__Sub._Espa__ol_.mp3" type="audio/mpeg">
   </audio>
 
   <script type="importmap">
@@ -95,7 +95,7 @@
         setTimeout(() => { modal.style.display = 'none'; }, 700);
         // Cambiar la canción
         audio.pause();
-        audio.src = 'https://raw.githubusercontent.com/baque2005/public-files/main/assets/audio/453_1771548914573_Elvis_Presley__Can_t_Help_Falling_In_Love__Sub._Espa__ol_.mp3';
+        audio.src = 'https://raw.githubusercontent.com/baque2005/public-files/main/assets/audio/453_1771550009005_Elvis_Presley__Can_t_Help_Falling_In_Love__Sub._Espa__ol_.mp3';
         audio.load();
         audio.play();
       });
@@ -129,7 +129,7 @@
     const fontLoader = new FontLoader();
     // use a bolder, more stylized font
     fontLoader.load('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/fonts/gentilis_bold.typeface.json', (font) => {
-      const text = 'MI SAN VALENTIN';
+      const text = 'TU ERES FEAA OE';
       const textGeom = new TextGeometry(text, {
         font: font,
         size: 28, // reducido un poco
