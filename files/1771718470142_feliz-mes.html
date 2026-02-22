@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Love ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS GENERALES Y FONDO --- */
+        *, ::before, ::after { box-sizing: border-box; }
+        
+        body {
+            font-family: "Quicksand", sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background-color: #A9BA9D; /* fondo verde claro */
+        }
+
+        .bg-gif-fijo {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-gif-fijo video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.9);
+            display: block;
+        }
+
+        /* Flechas alrededor del sobre, encima del video pero debajo del sobre */
+        .arrows-container {
+            position: fixed;
+            inset: 0;
+            z-index: 0; /* encima del video (video -1), debajo del sobre (envelope tendrá z-index:1) */
+            pointer-events: none;
+        }
+
+        .arrow {
+            position: absolute;
+            width: 96px;
+            height: auto;
+            transform-origin: center center;
+            opacity: 0.95;
+            filter: drop-shadow(0 6px 16px rgba(0,0,0,0.14));
+            pointer-events: none;
+        }
+
+        /* posiciones ajustadas: solo esquinas, más cerca del centro */
+        .arrow.a-top-left { top: 94px; left: 30%; transform: translate(-50%,0) rotate(45deg) scaleX(-1); }
+        .arrow.a-top-right { top: 94px; right: 30%; transform: translate(50%,0) rotate(135deg) scaleX(-1); }
+        .arrow.a-bottom-left { bottom: 30px; left: 30%; transform: translate(-50%,0) rotate(-45deg) scaleX(-1); }
+        .arrow.a-bottom-right { bottom: 30px; right: 30%; transform: translate(50%,0) rotate(-135deg) scaleX(-1); }
+
+        /* animación de arriba/abajo en la imagen interior para no romper rotaciones */
+        .arrow img { width: 100%; height: auto; display: block; animation: bob 1.6s ease-in-out infinite; }
+        .arrow.a-top-left img { animation-delay: 0s; }
+        .arrow.a-top-right img { animation-delay: 0.15s; }
+        .arrow.a-bottom-left img { animation-delay: 0.3s; }
+        .arrow.a-bottom-right img { animation-delay: 0.45s; }
+
+        @keyframes bob {
+            0% { transform: translateY(-8px); }
+            50% { transform: translateY(8px); }
+            100% { transform: translateY(-8px); }
+        }
+
+        @media (min-width: 720px) {
+            .arrow { width: 160px; }
+            .arrow.a-top-left { top: 120px; left: 34%; }
+            .arrow.a-top-right { top: 120px; right: 34%; }
+            .arrow.a-bottom-left { bottom: 120px; left: 34%; }
+            .arrow.a-bottom-right { bottom: 120px; right: 34%; }
+        }
+
+        /* --- SOBRE (ENVELOPE) --- */
+        .envelope {
+            --width: 300px;
+            --height: 175px;
+            position: relative;
+            width: var(--width);
+            height: var(--height);
+            perspective: 1000px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        @media (min-width: 720px) {
+            .envelope { --width: 500px; --height: 290px; }
+        }
+
+        .envelope-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s ease-in-out;
+            transform-style: preserve-3d;
+        }
+
+        .envelope.open .envelope-inner { transform: rotateY(180deg); }
+
+        .envelope-front, .envelope-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .envelope-front {
+            background: linear-gradient(135deg, #f7f9fb 0%, #eef2f5 50%, #f7f9fb 100%); /* blanco plateado */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .envelope-front img.stamp {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 60px;
+            height: 70px;
+            border-radius: 4px;
+            border: 2px dashed #9e9e9e; /* borde plateado */
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .envelope-back {
+            background: linear-gradient(180deg, #eef2f5 0%, #e4e9ee 100%);
+            transform: rotateY(180deg);
+        }
+
+        .envelope-back::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: conic-gradient(transparent 60deg, #d6d6d6 60deg 120deg, #f7f9fb 120deg 240deg, #d6d6d6 240deg 300deg, transparent 300deg);
+            z-index: 2;
+            opacity: 0.95;
+        }
+
+        .top-fold {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, #f7f9fb 0%, #e6eaee 100%);
+            clip-path: polygon(0% 0%, 50% 55%, 100% 0%);
+            z-index: 10;
+            transform-origin: top;
+            transition: transform 0.4s ease 0.4s;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .envelope.open .top-fold { transform: rotateX(180deg); z-index: 0; }
+
+        .letter-preview {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            width: 90%;
+            height: 80%;
+            background: white;
+            transform: translateX(-50%);
+            z-index: 1;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.4s ease 0.6s;
+        }
+
+        .envelope.open .letter-preview { transform: translate(-50%, -40%); }
+
+        /* --- MODAL MEJORADO --- */
+        .modal-carta {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+        }
+
+        .modal-carta.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-carta-content {
+            background: transparent;
+            width: 100%;
+            max-width: 520px;
+            max-height: calc(100vh - 80px);
+            border-radius: 22px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.18);
+            overflow: hidden; /* el scroll lo gestionará el body interno */
+            padding: 10px; /* espacio para que el borde interno no se pegue al contenedor */
+            box-sizing: border-box;
+        }
+
+        .modal-carta-content::-webkit-scrollbar { display: none; }
+
+        /* Contenido interno que crece con el scroll: aquí va el borde rosado */
+        .modal-carta-body {
+            background: linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)), url('https://i.pinimg.com/originals/91/11/14/9111146d9693b72329f59fb00df47f13.gif');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-blend-mode: overlay;
+            border-radius: 18px;
+            padding: 26px 20px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            box-sizing: border-box;
+            border: 0; /* sin borde por defecto, usamos box-shadow para el marco */
+            box-shadow: inset 0 0 0 4px rgba(129,199,132,0.95); /* marco verde */
+        }
+
+        .modal-carta-body::-webkit-scrollbar { display: none; }
+
+        /* GIF del modal (Nuevo) */
+        .modal-footer-gif {
+            width: 100%;
+            max-width: 250px;
+            display: block;
+            margin: 20px auto 0;
+            border-radius: 15px;
+            opacity: 0.9;
+        }
+
+        .modal-carta-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #81c784;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .modal-carta-close:hover { transform: scale(1.1) rotate(90deg); }
+
+        .letra-flotante-badge {
+            display: inline-block;
+            background: #2e7d32;
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            animation: float 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes float {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        /* Ajustes responsivos para el modal en móviles */
+        @media (max-width: 420px) {
+            .modal-carta { padding: 12px; }
+            .modal-carta-content {
+                padding: 18px 14px;
+                border: 4px solid #fff;
+                max-width: 96vw;
+                max-height: calc(100vh - 40px);
+                border-radius: 16px;
+            }
+            .modal-carta-content::before { box-shadow: inset 0 0 0 3px rgba(129,199,132,0.95); }
+            .modal-footer-gif { max-width: 200px; }
+        }
+
+        .texto-carta {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #1b5e20; /* texto verde oscuro */
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+            .texto-carta .resaltado {
+                font-weight: 800;
+                color: #154406;
+                background: rgba(129,199,132,0.06);
+                padding: 6px 8px;
+                border-radius: 8px;
+                display: inline-block;
+            }
+
+        /* Paginación de párrafos */
+        .page-container { width: 100%; }
+        .page {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 180px;
+            box-sizing: border-box;
+            padding: 10px 0 6px 0;
+        }
+        .page.active { display: flex; }
+
+        /* Bienvenida dentro del modal */
+        .welcome-page { display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 18px 6px; min-height: 200px; }
+        .welcome-title { font-size: 1.25rem; color: #1b5e20; font-weight: 700; margin-bottom: 12px; }
+        .welcome-page.fade-out { animation: welcomeOut 420ms ease forwards; }
+        @keyframes welcomeOut { to { opacity: 0; transform: translateY(-18px); } }
+
+        .welcome-img { width: min(80vw, 920px); border-radius: 0; box-shadow: none; border: none; cursor: pointer; animation: heartbeat 1.2s infinite; }
+
+        /* Primera página: titular e imagen animada */
+        .first-page { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+        .first-page-title { font-size: 2.2rem; color: #0b4f1a; margin: 0 0 12px 0; font-weight:900; text-align:center; }
+        .first-page-img { width: min(40vw, 380px); max-width: 92vw; border-radius: 6px; display:block; animation: pulse 1.6s ease-in-out infinite; cursor: pointer; }
+        .first-page-extra-img { width: min(40vw, 380px); margin-top: 10px; border-radius: 6px; display:block; animation: fadeIn 420ms ease; }
+        .first-page-extra-text { font-size: 1rem; color: #154406; margin-top:10px; font-weight:500; text-align:center; padding: 0 10px; }
+        .first-page-extra2-img { width: min(36vw, 340px); margin-top: 12px; border-radius: 6px; display:block; animation: fadeIn 420ms ease; }
+        .first-page-extra2-text { font-size: 1rem; color: #154406; margin-top:10px; font-weight:500; text-align:center; padding: 0 12px; }
+        .first-page-extra3-img { width: min(36vw, 360px); margin-top: 12px; border-radius: 6px; display:block; animation: fadeIn 420ms ease; }
+        .first-page-final-text { font-size: 1rem; color: #154406; margin-top:12px; font-weight:500; text-align:center; padding: 0 12px; white-space: pre-wrap; }
+        .first-page-extra4-img { width: min(36vw, 360px); margin-top: 14px; border-radius: 6px; display:block; animation: fadeIn 420ms ease; }
+        .first-page-subtext { font-size: 1.12rem; color: #154406; margin-top:12px; font-weight:600; text-align:center; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
+
+        @media (max-width: 420px) {
+            .welcome-img { width: min(92vw, 560px); }
+            .first-page-img { width: min(84vw, 340px); }
+            .first-page-extra-img { width: min(84vw, 340px); }
+            .first-page-title { font-size: 1.15rem; }
+        }
+
+        .page-next {
+            width: 120px;
+            max-width: 36%;
+            margin-top: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+            transition: transform 0.15s ease;
+            user-select: none;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.08); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .page-next { animation: heartbeat 1.2s infinite; }
+
+        .img-polaroid {
+            width: 180px;
+            height: 180px;
+            background: white;
+            padding: 10px 10px 30px 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            transform: rotate(-3deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+            display: block;
+            cursor: zoom-in;
+        }
+
+        .img-polaroid.visible {
+            opacity: 1;
+            transform: rotate(2deg) scale(1.1);
+        }
+
+        .img-polaroid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        /* --- MODAL IMAGEN AMPLIADA --- */
+        .modal-imagen-flotante {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 3000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        
+        .modal-imagen-flotante img {
+            max-width: 90%;
+            max-height: 80%;
+            border: 10px solid white;
+            border-radius: 5px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Animación de movimiento continuo para imágenes del modal y primeras páginas */
+        @keyframes imgFloat {
+            0% { transform: translateY(0) translateX(0) rotate(0) scale(1); }
+            25% { transform: translateY(-6px) translateX(-4px) rotate(-1deg) scale(1.02); }
+            50% { transform: translateY(-2px) translateX(0) rotate(0) scale(1.01); }
+            75% { transform: translateY(-6px) translateX(4px) rotate(1deg) scale(1.02); }
+            100% { transform: translateY(0) translateX(0) rotate(0) scale(1); }
+        }
+
+        /* Aplicar solo a imágenes dentro del modal y a las imágenes de las páginas (para no sobrescribir animaciones de flechas) */
+        .modal-carta img,
+        .first-page-img,
+        .first-page-extra-img,
+        .first-page-extra2-img,
+        .first-page-extra3-img,
+        .first-page-extra4-img,
+        .img-polaroid img,
+        .stamp {
+            animation: imgFloat 4s ease-in-out infinite;
+            transition: transform 220ms ease, box-shadow 220ms ease;
+            will-change: transform;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-gif-fijo">
+        <video id="bgVideo" autoplay muted loop playsinline>
+            <source src="https://github.com/Asprog3rX/Reprodcutor/raw/refs/heads/main/From%20KlickPin%20CF%20stars%20in%20sky%20%5BVideo%5D%20_%20Fondos%20hd%20para%20android%20Fondos%20de%20pantalla%20kawaii%20Fondo%20de%20pantalla%20brillante.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Flechas alrededor del sobre (encima del video) -->
+    <div class="arrows-container" aria-hidden="true">
+        <div class="arrow a-top-left"><img src="https://i.postimg.cc/nLwFXyyW/efb75725879ab15b8d72e408d8560c44.png" alt=""></div>
+        <div class="arrow a-top-right"><img src="https://i.postimg.cc/nLwFXyyW/efb75725879ab15b8d72e408d8560c44.png" alt=""></div>
+        <div class="arrow a-bottom-left"><img src="https://i.postimg.cc/nLwFXyyW/efb75725879ab15b8d72e408d8560c44.png" alt=""></div>
+        <div class="arrow a-bottom-right"><img src="https://i.postimg.cc/nLwFXyyW/efb75725879ab15b8d72e408d8560c44.png" alt=""></div>
+    </div>
+
+    <!-- Audio Oculto -->
+    <audio id="audioCarta" loop>
+        <source src="https://github.com/Asprog3rX/Reprodcutor/raw/refs/heads/main/Phillip%20Phillips%20-%20Gone,%20Gone,%20Gone.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Sobre -->
+    <div class="envelope" id="envelope">
+        <div class="envelope-inner">
+            <div class="envelope-front">
+                <img src="https://i.pinimg.com/736x/75/94/ba/7594bad28bd1dccf359b98c64b93d0bd.jpg" class="stamp" alt="stamp">
+                    <div style="text-align: left; color: #000;">
+                    <p><b>Con mucho amor para mi princesa❤️</b></p>
+                    
+                </div>
+            </div>
+            <div class="envelope-back">
+                <div class="top-fold"></div>
+                <div class="letter-preview">
+                    <img src="https://img.freepik.com/vector-premium/pulgar-dedos-imprimir-marca-huella-dactilar-amor-corazon_53500-1839.jpg" style="width: 50px;" alt="">
+                        <p style="color: #000; font-weight: bold; font-size: 0.9rem;">Ábreme...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de la Carta -->
+    <div class="modal-carta" id="modalCarta">
+        <div class="modal-carta-content">
+            <button class="modal-carta-close" id="closeModalCarta">&times;</button>
+            
+            <div class="modal-carta-body">
+                <div style="text-align: center;">
+                    
+                    <div class="img-polaroid" id="imgPrincipal">
+                        <img src="https://i.pinimg.com/originals/6c/bf/28/6cbf28264b871dac7f1eac409ea03bfd.gif" alt="nuestro momento">
+                    </div>
+
+                    <div class="texto-carta" id="textoOriginal">
+
+                        Te amo hoy, mañana y siempre.<br>
+
+                        De: Roy de tu corazón<br>
+                        Para: Mi princesa LJDA❤️
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Bloqueo de seguridad básico
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        const envelope = document.getElementById('envelope');
+        const modal = document.getElementById('modalCarta');
+        const closeBtn = document.getElementById('closeModalCarta');
+        const audio = document.getElementById('audioCarta');
+        const imgPolaroid = document.getElementById('imgPrincipal');
+
+        // --- Paginación de párrafos ---
+        (function setupPagination(){
+            const textoOriginal = document.getElementById('textoOriginal');
+            if(!textoOriginal) return;
+            const raw = textoOriginal.innerHTML.trim();
+            // Dividir por doble salto de línea HTML (<br><br>)
+            const parts = raw.split(/<br>\s*<br>/i).map(s => s.trim()).filter(Boolean);
+
+            const pageContainer = document.createElement('div');
+            pageContainer.id = 'pageContainer';
+            pageContainer.className = 'page-container';
+
+            parts.forEach((part, idx) => {
+                const page = document.createElement('div');
+                page.className = 'page';
+                page.innerHTML = `
+                    <div class="texto-carta">${part}</div>
+                    <div class="page-next" role="button" aria-label="Siguiente"></div>
+                `;
+                pageContainer.appendChild(page);
+            });
+
+            // Crear pantalla de bienvenida
+            const welcome = document.createElement('div');
+            welcome.className = 'welcome-page';
+            welcome.innerHTML = `
+                <h2 class="welcome-title">Toca aqui mi princesa</h2>
+                <img id="welcomeImg" class="welcome-img" src="https://i.postimg.cc/pV3Bfyfq/Gemini-Generated-Image-x3nhn0x3nhn0x3nh-(1).png" alt="Bienvenida">
+            `;
+
+            // Envolver welcome + pages
+            const wrapper = document.createElement('div');
+            wrapper.appendChild(welcome);
+            wrapper.appendChild(pageContainer);
+
+            textoOriginal.parentNode.replaceChild(wrapper, textoOriginal);
+
+            const pages = Array.from(pageContainer.querySelectorAll('.page'));
+            if(pages.length === 0) return;
+            let current = 0;
+
+            // Añadir titular en la primera página (índice 0) y una imagen animada debajo
+            if(pages[0]) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'first-page';
+
+                const titulo = document.createElement('h3');
+                titulo.textContent = 'Este mensaje es para ti';
+                titulo.className = 'first-page-title';
+
+                const imgEl = document.createElement('img');
+                imgEl.src = 'https://www.shutterstock.com/image-vector/route-icon-between-two-points-600nw-2540109749.jpg';
+                imgEl.alt = '';
+                imgEl.className = 'first-page-img';
+
+                const subtext = document.createElement('div');
+                subtext.className = 'first-page-subtext';
+                subtext.textContent = 'Se que ahora estamos asi';
+
+                const extraImg = document.createElement('img');
+                extraImg.className = 'first-page-extra-img';
+                extraImg.src = 'https://i.postimg.cc/G2DhyMJ8/Gemini-Generated-Image-175k7z175k7z175k.png';
+                extraImg.alt = '';
+
+                const extraText = document.createElement('div');
+                extraText.className = 'first-page-extra-text';
+                extraText.textContent = 'Aunque estos meses del 2026 han estado y estaremos llenos de ajetreos, mucho estrés y sobrecargo en nuestras asignaciones, he comprendido y me lo has dicho, que el amor también significa respetar el espacio y enfrentar muchos retos a la manera de cada uno';
+
+                wrapper.appendChild(titulo);
+                wrapper.appendChild(imgEl);
+                wrapper.appendChild(subtext);
+                wrapper.appendChild(extraImg);
+                wrapper.appendChild(extraText);
+
+                const extraImg2 = document.createElement('img');
+                extraImg2.className = 'first-page-extra2-img';
+                extraImg2.src = 'https://i.pinimg.com/736x/67/7e/8d/677e8d8cd3b192151aaa8cda642e8b89.jpg';
+                extraImg2.alt = '';
+                wrapper.appendChild(extraImg2);
+
+                const extraText2 = document.createElement('div');
+                extraText2.className = 'first-page-extra2-text';
+                extraText2.textContent = 'Puedo no ser el mejor mejor hombre del mundo, pero sigo aprendiendo a respetarte y amarte con mucho cariño de mi corazón . Porque el amor no solo significa estar en los mejores momentos, sino saber amar en los silencios, en la distancia y en medio de las dificultades que nos ponga la vida';
+                wrapper.appendChild(extraText2);
+
+                const extraImg3 = document.createElement('img');
+                extraImg3.className = 'first-page-extra3-img';
+                extraImg3.src = 'https://i.pinimg.com/1200x/40/86/81/408681ceb38ae3e8c6a12201451ef6c8.jpg';
+                extraImg3.alt = '';
+                wrapper.appendChild(extraImg3);
+
+                const finalText = document.createElement('div');
+                finalText.className = 'first-page-final-text';
+                finalText.innerHTML = 'Quiero decirte que,<br>Te amo:<br>En los días buenos y malos;<br>En los días con risas y silencios;<br>En los momentos fáciles y complicados que nos de la vida.<br><br>Pero más que todo, me siento muy feliz de cumplir 5 meses de enamorados contigo mi amor❤️, lo más hermoso que nos ha dado las vida fue coincidir, enamorarnos e ir construyendo esta historia, tienes un lugar muy especial en mi corazón';
+                wrapper.appendChild(finalText);
+
+                const extraImg4 = document.createElement('img');
+                extraImg4.className = 'first-page-extra4-img';
+                extraImg4.src = 'https://i.postimg.cc/gjKStWHb/Gemini-Generated-Image-12spi12spi12spi1.png';
+                extraImg4.alt = '';
+                wrapper.appendChild(extraImg4);
+                pages[0].insertAdjacentElement('afterbegin', wrapper);
+            }
+
+            // Inicialmente ocultamos las páginas y mostramos la bienvenida
+            pages.forEach(pg => pg.classList.remove('active'));
+
+            // Manejar clic en imagen de bienvenida: transición bonita y mostrar primera página
+            const welcomeImg = document.getElementById('welcomeImg');
+            if(welcomeImg) {
+                welcomeImg.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // animar salida
+                    welcome.classList.add('fade-out');
+                    // dejar que la animación termine
+                    setTimeout(() => {
+                        welcome.style.display = 'none';
+                        // mostrar primera página con transición
+                        pages[current].classList.add('active');
+                        // mostrar footer GIF si existe
+                        const footerGif = document.querySelector('.modal-footer-gif');
+                        if(footerGif) footerGif.style.display = 'block';
+                    }, 420);
+                });
+            }
+
+            // navegación en páginas (botones)
+            pages.forEach((pg, i) => {
+                const btn = pg.querySelector('.page-next');
+                if(!btn) return;
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    pages[current].classList.remove('active');
+                    current = (current + 1) % pages.length; // avanza y hace loop
+                    pages[current].classList.add('active');
+                });
+            });
+        })();
+
+        // Función para abrir la carta
+        envelope.addEventListener('click', () => {
+            const isOpening = !envelope.classList.contains('open');
+            envelope.classList.toggle('open');
+
+            if (isOpening) {
+                // Iniciar música solo si no se está reproduciendo ya
+                if (audio.paused) {
+                    audio.currentTime = 7; 
+                    audio.play().catch(() => console.log("Se requiere interacción para iniciar audio"));
+                }
+
+                // Abrir modal tras la animación del sobre
+                setTimeout(() => {
+                    // ocultar polaroid y GIF inicialmente para mostrar sólo la bienvenida
+                    if(imgPolaroid) imgPolaroid.style.display = 'none';
+                    const footerGif = modal.querySelector('.modal-footer-gif');
+                    if(footerGif) footerGif.style.display = 'none';
+                    modal.classList.add('active');
+                }, 1200);
+            }
+        });
+
+        // Cerrar modal
+        function closeModal() {
+            modal.classList.remove('active');
+            imgPolaroid.classList.remove('visible');
+            // reset welcome and pages for next open
+            const welcome = document.querySelector('.welcome-page');
+            if(welcome) { welcome.style.display = ''; welcome.classList.remove('fade-out'); }
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(p => p.classList.remove('active'));
+            // hide footer gif again
+            const footerGif = modal.querySelector('.modal-footer-gif');
+            if(footerGif) footerGif.style.display = 'none';
+            setTimeout(() => {
+                envelope.classList.remove('open');
+            }, 300);
+            // La música sigue sonando
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if(e.target === modal) closeModal();
+        });
+
+        // Click en la imagen para ampliar
+        imgPolaroid.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const fullImg = document.createElement('div');
+            fullImg.className = 'modal-imagen-flotante';
+            fullImg.innerHTML = `<img src="${imgPolaroid.querySelector('img').src}">`;
+            fullImg.onclick = () => document.body.removeChild(fullImg);
+            document.body.appendChild(fullImg);
+        });
+    </script>
+</body>
+</html>
