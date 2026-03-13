@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viernes 13</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Bebas+Neue&family=Fredoka+One&family=Nunito:wght@400;700&display=swap');
+
+        :root {
+            --blood: #7a0000;
+            --glow: rgba(122,0,0,0.7);
+            --bg: #050505;
+            --text: #b0b0b0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 2s ease;
+            cursor: crosshair;
+        }
+
+        /* ── HAPPY OVERLAY ── */
+        #happy-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #ff9de2, #ffd6a5, #a0f7a0, #a8d8ff);
+            background-size: 400% 400%;
+            animation: rainbowBg 4s ease infinite;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s ease;
+            font-family: 'Fredoka One', cursive;
+        }
+        #happy-overlay.show { opacity: 1; pointer-events: all; }
+        #happy-title {
+            font-size: 5rem;
+            color: #fff;
+            text-shadow: 3px 3px 0 #ff69b4, 6px 6px 0 #ffd700;
+            animation: bounce 0.6s infinite alternate;
+            text-align: center;
+        }
+        #happy-subtitle {
+            font-size: 1.8rem;
+            color: #fff;
+            margin-top: 20px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        }
+        #confetti-canvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        @keyframes rainbowBg {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes bounce {
+            from { transform: translateY(0) rotate(-3deg) scale(1); }
+            to   { transform: translateY(-15px) rotate(3deg) scale(1.05); }
+        }
+
+        /* ── FOG ── */
+        .fog {
+            position: absolute;
+            inset: 0;
+            background: url('https://www.transparenttextures.com/patterns/dust.png');
+            opacity: 0.15;
+            pointer-events: none;
+            animation: drift 20s linear infinite;
+        }
+        @keyframes drift {
+            from { background-position: 0 0; }
+            to   { background-position: 500px 500px; }
+        }
+
+        /* ── LIGHTNING ── */
+        #lightning {
+            position: fixed;
+            inset: 0;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* ── BLOOD DRIPS ── */
+        .blood-drip {
+            position: absolute;
+            top: -10px;
+            width: 3px;
+            height: 0;
+            background: linear-gradient(to bottom, #8b0000, #5c0000);
+            box-shadow: 0 0 6px #5c0000;
+            border-radius: 0 0 50% 50%;
+            animation: drip linear infinite;
+        }
+        .blood-drip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: -3px;
+            width: 9px;
+            height: 9px;
+            background: #5c0000;
+            border-radius: 50%;
+        }
+        @keyframes drip {
+            0%   { height: 0;     opacity: 1; top: 0; }
+            70%  { height: 200px; opacity: 1; top: 75vh; }
+            100% { height: 50px;  opacity: 0; top: 100vh; }
+        }
+
+        /* ── EYES ── */
+        .eye {
+            position: fixed;
+            width: 60px;
+            height: 30px;
+            border-radius: 50%;
+            background: #1a0000;
+            border: 2px solid #5c0000;
+            box-shadow: 0 0 15px #ff0000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 1s;
+            pointer-events: none;
+        }
+        .eye::after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle at 40% 40%, #cc0000, #330000);
+            border-radius: 50%;
+            box-shadow: 0 0 8px #ff0000;
+        }
+        .eye.show { opacity: 1; }
+
+        /* ── SPIDER ── */
+        .spider {
+            position: fixed;
+            font-size: 2.5rem;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            animation: spiderSwing 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 6px #5c0000);
+        }
+        .spider.show { opacity: 1; }
+        @keyframes spiderSwing {
+            0%,100% { transform: rotate(-10deg); }
+            50%      { transform: rotate(10deg); }
+        }
+        .spider-thread {
+            position: fixed;
+            width: 1px;
+            background: rgba(180,180,180,0.4);
+            top: 0;
+            pointer-events: none;
+        }
+
+        /* ── SKULL PARTICLES ── */
+        .skull {
+            position: fixed;
+            font-size: 1.5rem;
+            opacity: 0;
+            pointer-events: none;
+            animation: floatSkull linear infinite;
+            filter: drop-shadow(0 0 4px #5c0000);
+        }
+        @keyframes floatSkull {
+            0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10%  { opacity: 0.7; }
+            90%  { opacity: 0.7; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* ── CONTAINER & TITLE ── */
+        .container {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Creepster', cursive;
+            font-size: 7rem;
+            color: #7a0000;
+            text-shadow: 2px 2px 10px var(--glow), 0 0 40px rgba(122,0,0,0.3);
+            margin-bottom: 10px;
+            animation: glitch 2.5s infinite;
+            letter-spacing: 6px;
+            transition: all 1s ease;
+            line-height: 1;
+        }
+
+        .subtitle {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            color: #4a0000;
+            letter-spacing: 8px;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+        .message {
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            height: 40px;
+            font-family: 'Bebas Neue', sans-serif;
+            color: #999;
+        }
+
+        /* ── BUTTONS ── */
+        .btn {
+            margin-top: 35px;
+            padding: 14px 40px;
+            background: transparent;
+            color: #7a0000;
+            border: 1px solid #7a0000;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: #7a0000;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+            z-index: -1;
+        }
+        .btn:hover::before { transform: scaleX(1); }
+        .btn:hover { color: #050505; box-shadow: 0 0 25px #7a0000; }
+
+        /* ── AUDIO CONTROLS ── */
+        #audio-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 200;
+            display: flex;
+            gap: 10px;
+        }
+        .audio-btn {
+            background: rgba(10,0,0,0.8);
+            border: 1px solid #5c0000;
+            color: #999;
+            padding: 8px 14px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+        .audio-btn:hover { background: #5c0000; color: #fff; }
+        #volume-slider {
+            width: 80px;
+            accent-color: #7a0000;
+            cursor: pointer;
+        }
+
+        /* ── GLITCH ── */
+        @keyframes glitch {
+            0%,100% { transform: translate(0); clip-path: none; }
+            4%  { transform: translate(-3px, 2px); }
+            8%  { transform: translate(3px, -2px); clip-path: inset(10% 0 80% 0); color: #ff4444; }
+            12% { transform: translate(-2px, -2px); clip-path: none; color: #7a0000; }
+            16% { transform: translate(2px, 2px); }
+            20% { transform: translate(0); }
+        }
+
+        /* ── HEARTBEAT BAR ── */
+        #heartbeat {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+        #heartbeat.show { opacity: 1; }
+        #heartbeat canvas { width: 100%; height: 100%; }
+
+        /* ── CRACK OVERLAY ── */
+        #crack {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+        #crack.show { opacity: 0.5; }
+
+        /* ── COUNTDOWN ── */
+        #countdown {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            color: #4a0000;
+            letter-spacing: 4px;
+            opacity: 0;
+            transition: opacity 1s;
+            z-index: 100;
+        }
+        #countdown.show { opacity: 1; }
+
+        /* ── JUMP SCARE ── */
+        #jumpscare {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.1s;
+        }
+        #jumpscare.show { opacity: 1; }
+        #jumpscare span {
+            font-size: 12rem;
+            animation: shake 0.1s infinite;
+        }
+        @keyframes shake {
+            0%,100% { transform: translate(0); }
+            25%      { transform: translate(-8px, 5px) rotate(-2deg); }
+            75%      { transform: translate(8px, -5px) rotate(2deg); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Happy overlay -->
+<canvas id="confetti-canvas"></canvas>
+<div id="happy-overlay">
+    <div id="happy-title">🎉 ¡ERA BROMA! 🎉</div>
+    <div id="happy-subtitle">¡Feliz Viernes! 🌈☀️🎊</div>
+    <div style="font-size:4rem; margin-top:20px; animation: bounce 0.4s infinite alternate;">🎈🎈🎈</div>
+</div>
+
+<!-- Horror layer -->
+<div class="fog"></div>
+<svg id="crack" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <polyline points="30,0 35,20 28,25 40,50 32,55 50,100" stroke="#5c0000" stroke-width="0.3" fill="none"/>
+    <polyline points="70,0 65,15 72,20 60,40 68,45 50,100" stroke="#5c0000" stroke-width="0.2" fill="none"/>
+    <polyline points="50,0 48,30 55,35 45,70 52,75 50,100" stroke="#5c0000" stroke-width="0.25" fill="none"/>
+</svg>
+<div id="lightning"></div>
+
+<!-- Eyes -->
+<div class="eye" id="eye1" style="bottom:20%; left:10%;"></div>
+<div class="eye" id="eye2" style="bottom:20%; left:calc(10% + 70px);"></div>
+<div class="eye" id="eye3" style="bottom:15%; right:12%;"></div>
+<div class="eye" id="eye4" style="bottom:15%; right:calc(12% + 70px);"></div>
+
+<!-- Blood drips -->
+<div class="blood-drip" style="left:10%;animation-delay:0s;animation-duration:4s;"></div>
+<div class="blood-drip" style="left:25%;animation-delay:1.5s;animation-duration:6s;"></div>
+<div class="blood-drip" style="left:45%;animation-delay:0.5s;animation-duration:5s;"></div>
+<div class="blood-drip" style="left:65%;animation-delay:2s;animation-duration:4.5s;"></div>
+<div class="blood-drip" style="left:80%;animation-delay:1s;animation-duration:5.5s;"></div>
+<div class="blood-drip" style="left:92%;animation-delay:3s;animation-duration:4s;"></div>
+
+<!-- Spider -->
+<div class="spider-thread" id="spiderThread" style="left:75%;height:0;"></div>
+<div class="spider" id="spider1" style="left:73%;top:-50px;">🕷️</div>
+
+<!-- Skulls -->
+<div class="skull" id="sk1" style="left:5%; animation-duration:12s; animation-delay:2s;">💀</div>
+<div class="skull" id="sk2" style="left:90%;animation-duration:9s; animation-delay:5s;">💀</div>
+<div class="skull" id="sk3" style="left:50%;animation-duration:15s; animation-delay:1s;">💀</div>
+
+<!-- Heartbeat canvas -->
+<div id="heartbeat"><canvas id="hbCanvas"></canvas></div>
+
+<!-- Countdown -->
+<div id="countdown">⚠ MALA SUERTE DETECTADA ⚠</div>
+
+<!-- Jump scare -->
+<div id="jumpscare"><span>👻</span></div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+    <div class="subtitle">EL DÍA MÁS OSCURO</div>
+    <h1 id="title">VIERNES<br>13</h1>
+    <p class="message" id="hiddenMessage">La mala suerte es el menor de tus problemas...</p>
+    <button class="btn" id="mainBtn" onclick="phase1()">⚠ No hacer clic ⚠</button>
+</div>
+
+<!-- Audio controls -->
+<div id="audio-controls">
+    <button class="audio-btn" id="toggleAudio" onclick="toggleAudio()">🔇 SONIDO</button>
+    <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.4" oninput="setVolume(this.value)">
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  WEB AUDIO SYNTHESIZER — música de terror
+// ─────────────────────────────────────────────
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let ctx, masterGain, playing = false;
+let intervals = [], timeouts_audio = [];
+let currentPhase = 0;
+
+function initAudio() {
+    if (ctx) return;
+    ctx = new AudioCtx();
+    masterGain = ctx.createGain();
+    masterGain.gain.value = 0.4;
+    masterGain.connect(ctx.destination);
+}
+
+function playNote(freq, start, duration, type='sine', gain=0.3) {
+    if (!ctx || !playing) return;
+    const osc = ctx.createOscillator();
+    const g   = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+    g.gain.setValueAtTime(0, ctx.currentTime + start);
+    g.gain.linearRampToValueAtTime(gain, ctx.currentTime + start + 0.05);
+    g.gain.linearRampToValueAtTime(0, ctx.currentTime + start + duration);
+    osc.connect(g); g.connect(masterGain);
+    osc.start(ctx.currentTime + start);
+    osc.stop(ctx.currentTime + start + duration + 0.1);
+}
+
+function playReverb(freq, start, gain=0.15) {
+    playNote(freq, start, 2.5, 'sawtooth', gain * 0.5);
+    playNote(freq * 1.002, start + 0.02, 2.5, 'sawtooth', gain * 0.5);
+}
+
+// Melodía de terror — escala menor cromática
+const horrorMelody = [
+    [110, 0], [116.5, 0.5], [110, 1], [103.8, 1.5],
+    [98, 2], [92.5, 2.5], [98, 3], [103.8, 3.5],
+    [87.3, 4], [82.4, 5], [87.3, 6], [98, 7],
+];
+
+function loopHorrorMusic() {
+    if (!playing) return;
+    horrorMelody.forEach(([f, t]) => {
+        playReverb(f, t, 0.2);
+        playNote(f * 2, t, 1.5, 'triangle', 0.12);
+    });
+    playNote(55, 0, 8, 'sawtooth', 0.08);   // bajo oscuro
+    playNote(55.5, 0.5, 8, 'sawtooth', 0.04);
+    const id = setTimeout(loopHorrorMusic, 8000);
+    timeouts_audio.push(id);
+}
+
+function playHeartbeat() {
+    const beat = (t) => {
+        playNote(60, t, 0.08, 'sine', 0.5);
+        playNote(50, t + 0.1, 0.06, 'sine', 0.3);
+    };
+    [0, 0.6, 1.2, 1.8, 2.4].forEach(t => beat(t));
+    const id = setTimeout(playHeartbeat, 2500);
+    timeouts_audio.push(id);
+}
+
+function playJumpScareSound() {
+    if (!ctx) return;
+    for (let i = 0; i < 5; i++) {
+        playNote(200 + i * 80, i * 0.05, 0.4, 'sawtooth', 0.6);
+        playNote(400 + i * 60, i * 0.05 + 0.02, 0.3, 'square', 0.4);
+    }
+}
+
+function playHappyJingle() {
+    const notes = [523, 659, 784, 1047, 784, 659, 523];
+    notes.forEach((f, i) => playNote(f, i * 0.18, 0.4, 'triangle', 0.4));
+    setTimeout(() => {
+        const notes2 = [784, 880, 988, 1047];
+        notes2.forEach((f, i) => playNote(f, i * 0.15, 0.35, 'sine', 0.35));
+    }, 400);
+}
+
+function toggleAudio() {
+    const btn = document.getElementById('toggleAudio');
+    if (!ctx) { initAudio(); }
+    if (!playing) {
+        playing = true;
+        btn.textContent = '🔊 SONIDO';
+        loopHorrorMusic();
+    } else {
+        playing = false;
+        btn.textContent = '🔇 SONIDO';
+        timeouts_audio.forEach(clearTimeout);
+        timeouts_audio = [];
+    }
+}
+
+function setVolume(v) {
+    if (masterGain) masterGain.gain.value = parseFloat(v);
+}
+
+// ─────────────────────────────────────────────
+//  HEARTBEAT VISUALIZER
+// ─────────────────────────────────────────────
+const hbCanvas = document.getElementById('hbCanvas');
+const hbCtx    = hbCanvas.getContext('2d');
+let hbData = [];
+let hbAnimId;
+
+function resizeHB() {
+    hbCanvas.width  = window.innerWidth;
+    hbCanvas.height = 40;
+}
+resizeHB();
+window.addEventListener('resize', resizeHB);
+
+function drawHeartbeat() {
+    hbData.push(Math.sin(Date.now() / 120) * 8 + Math.sin(Date.now() / 40) * 14);
+    if (hbData.length > hbCanvas.width) hbData.shift();
+    hbCtx.clearRect(0, 0, hbCanvas.width, hbCanvas.height);
+    hbCtx.beginPath();
+    hbCtx.strokeStyle = '#ff0000';
+    hbCtx.shadowColor = '#ff0000';
+    hbCtx.shadowBlur  = 6;
+    hbCtx.lineWidth   = 1.5;
+    hbData.forEach((v, i) => {
+        if (i === 0) hbCtx.moveTo(i, 20 + v);
+        else         hbCtx.lineTo(i, 20 + v);
+    });
+    hbCtx.stroke();
+    hbAnimId = requestAnimationFrame(drawHeartbeat);
+}
+
+// ─────────────────────────────────────────────
+//  LIGHTNING
+// ─────────────────────────────────────────────
+function flashLightning() {
+    const l = document.getElementById('lightning');
+    l.style.opacity = '0.85';
+    setTimeout(() => { l.style.opacity = '0'; }, 80);
+    setTimeout(() => { l.style.opacity = '0.6'; }, 150);
+    setTimeout(() => { l.style.opacity = '0'; }, 220);
+}
+
+setInterval(() => {
+    if (Math.random() < 0.3) flashLightning();
+}, 4000);
+
+// ─────────────────────────────────────────────
+//  SPIDER
+// ─────────────────────────────────────────────
+function animateSpider() {
+    const spider = document.getElementById('spider1');
+    const thread = document.getElementById('spiderThread');
+    let y = -50;
+    spider.classList.add('show');
+    const interval = setInterval(() => {
+        y += 1.2;
+        spider.style.top = y + 'px';
+        thread.style.height = (y + 50) + 'px';
+        if (y > window.innerHeight * 0.6) {
+            clearInterval(interval);
+            setTimeout(() => {
+                spider.classList.remove('show');
+                thread.style.height = '0';
+                y = -50;
+                spider.style.top = '-50px';
+            }, 3000);
+        }
+    }, 20);
+}
+
+// ─────────────────────────────────────────────
+//  SKULLS
+// ─────────────────────────────────────────────
+['sk1','sk2','sk3'].forEach(id => {
+    document.getElementById(id).style.opacity = '1';
+    document.getElementById(id).style.animation = `floatSkull ${9 + Math.random()*6}s linear infinite`;
+    document.getElementById(id).style.animationDelay = `${Math.random()*5}s`;
+});
+
+// ─────────────────────────────────────────────
+//  EYES BLINK
+// ─────────────────────────────────────────────
+function showEyes() {
+    ['eye1','eye2','eye3','eye4'].forEach(id => {
+        document.getElementById(id).classList.add('show');
+    });
+    setInterval(() => {
+        document.getElementById('eye1').style.transform = `translateY(${Math.sin(Date.now()/1000)*5}px)`;
+        document.getElementById('eye3').style.transform = `translateY(${Math.cos(Date.now()/900)*5}px)`;
+    }, 50);
+}
+
+// ─────────────────────────────────────────────
+//  CURSOR TRAIL
+// ─────────────────────────────────────────────
+document.addEventListener('mousemove', e => {
+    if (currentPhase < 1) return;
+    const dot = document.createElement('div');
+    dot.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;
+        width:6px;height:6px;background:#5c0000;border-radius:50%;
+        pointer-events:none;z-index:900;transition:opacity 0.8s;opacity:0.8;`;
+    document.body.appendChild(dot);
+    setTimeout(() => { dot.style.opacity = '0'; }, 100);
+    setTimeout(() => dot.remove(), 900);
+});
+
+// ─────────────────────────────────────────────
+//  PHASE 1 — primer clic
+// ─────────────────────────────────────────────
+function phase1() {
+    initAudio();
+    currentPhase = 1;
+    const msg = document.getElementById('hiddenMessage');
+    const btn = document.getElementById('mainBtn');
+    const title = document.getElementById('title');
+
+    msg.style.opacity = '1';
+    msg.style.color = '#999';
+
+    btn.textContent = '⚠ NO SIGAS ⚠';
+    btn.onclick = phase2;
+
+    document.body.style.backgroundColor = '#0d0000';
+    title.style.color = '#cc0000';
+    title.style.textShadow = '0 0 30px #cc0000';
+    title.style.animation  = 'glitch 0.8s infinite';
+
+    document.getElementById('countdown').classList.add('show');
+    showEyes();
+    document.getElementById('crack').classList.add('show');
+
+    if (!playing) toggleAudio();
+    animateSpider();
+}
+
+// ─────────────────────────────────────────────
+//  PHASE 2 — segundo clic
+// ─────────────────────────────────────────────
+function phase2() {
+    currentPhase = 2;
+    const msg = document.getElementById('hiddenMessage');
+    const btn = document.getElementById('mainBtn');
+    const title = document.getElementById('title');
+
+    msg.innerHTML = '¿Por qué no me obedeces?';
+    msg.style.color = '#cc0000';
+
+    btn.textContent = '☠ ÚLTIMA ADVERTENCIA ☠';
+    btn.onclick = phase3;
+    btn.style.borderColor = '#ff0000';
+    btn.style.color = '#ff0000';
+
+    document.body.style.backgroundColor = '#120000';
+    title.style.animation = 'glitch 0.3s infinite';
+    title.style.fontSize = '8rem';
+
+    flashLightning();
+    document.getElementById('heartbeat').classList.add('show');
+    drawHeartbeat();
+    playHeartbeat();
+}
+
+// ─────────────────────────────────────────────
+//  PHASE 3 — susto + transición alegre
+// ─────────────────────────────────────────────
+function phase3() {
+    currentPhase = 3;
+    const btn = document.getElementById('mainBtn');
+    btn.style.display = 'none';
+    document.getElementById('hiddenMessage').innerHTML = 'Mira detrás de ti...';
+
+    flashLightning();
+    playJumpScareSound();
+
+    // Susto
+    setTimeout(() => {
+        const js = document.getElementById('jumpscare');
+        js.classList.add('show');
+        setTimeout(() => {
+            js.classList.remove('show');
+            goHappy();
+        }, 1200);
+    }, 1500);
+}
+
+// ─────────────────────────────────────────────
+//  GO HAPPY 🎉
+// ─────────────────────────────────────────────
+function goHappy() {
+    // Stop horror audio
+    playing = false;
+    timeouts_audio.forEach(clearTimeout);
+    if (masterGain) masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
+
+    // Stop heartbeat
+    cancelAnimationFrame(hbAnimId);
+    document.getElementById('heartbeat').classList.remove('show');
+
+    // Play jingle
+    setTimeout(() => {
+        if (masterGain) masterGain.gain.value = 0.4;
+        playing = true;
+        playHappyJingle();
+        playing = false;
+    }, 300);
+
+    // Show overlay
+    const overlay = document.getElementById('happy-overlay');
+    overlay.classList.add('show');
+
+    // Confetti
+    launchConfetti();
+}
+
+// ─────────────────────────────────────────────
+//  CONFETTI
+// ─────────────────────────────────────────────
+function launchConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const cCtx = canvas.getContext('2d');
+    const colors = ['#ff69b4','#ffd700','#00e5ff','#7fff00','#ff6347','#da70d6','#fff'];
+    const pieces = Array.from({length: 200}, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * -canvas.height,
+        w: 8 + Math.random() * 10,
+        h: 4 + Math.random() * 6,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rot: Math.random() * Math.PI * 2,
+        vx: (Math.random() - 0.5) * 3,
+        vy: 2 + Math.random() * 4,
+        vr: (Math.random() - 0.5) * 0.15,
+    }));
+
+    function drawConfetti() {
+        cCtx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+            p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+            if (p.y > canvas.height) { p.y = -20; p.x = Math.random() * canvas.width; }
+            cCtx.save();
+            cCtx.translate(p.x, p.y);
+            cCtx.rotate(p.rot);
+            cCtx.fillStyle = p.color;
+            cCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+            cCtx.restore();
+        });
+        requestAnimationFrame(drawConfetti);
+    }
+    drawConfetti();
+}
+</script>
+</body>
+</html>
