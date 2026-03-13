@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>No Abras Esta Página</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=UnifrakturMaguntia&family=VT323&display=swap');
+
+:root {
+  --rot: #1a1a0a;
+  --pale: #c8c4b0;
+  --ink: #2a1f0e;
+  --blood: #6b0000;
+  --green: #1a2a0a;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #000;
+  cursor: none;
+}
+
+/* ── CUSTOM CURSOR ── */
+#cursor {
+  position: fixed;
+  width: 20px; height: 20px;
+  border: 1.5px solid rgba(200,196,176,0.6);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width 0.1s, height 0.1s, background 0.2s;
+  mix-blend-mode: difference;
+}
+#cursor-dot {
+  position: fixed;
+  width: 4px; height: 4px;
+  background: #c8c4b0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+}
+
+/* ── FILM GRAIN ── */
+#grain {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 800;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grainAnim 0.15s steps(1) infinite;
+}
+@keyframes grainAnim {
+  0%   { transform: translate(0,0); }
+  10%  { transform: translate(-2%,-3%); }
+  20%  { transform: translate(3%, 2%); }
+  30%  { transform: translate(-1%, 4%); }
+  40%  { transform: translate(2%,-1%); }
+  50%  { transform: translate(-3%, 1%); }
+  60%  { transform: translate(1%, 3%); }
+  70%  { transform: translate(-2%, 2%); }
+  80%  { transform: translate(3%,-2%); }
+  90%  { transform: translate(-1%,-1%); }
+  100% { transform: translate(2%, 3%); }
+}
+
+/* ── VIGNETTE ── */
+#vignette {
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.95) 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ── FLICKER ── */
+#flicker {
+  position: fixed; inset: 0;
+  background: rgba(200,196,176,0.03);
+  pointer-events: none;
+  z-index: 15;
+  animation: flick 0.08s steps(1) infinite;
+}
+@keyframes flick {
+  0%,100% { opacity: 1; }
+  45%     { opacity: 0.85; }
+  50%     { opacity: 1; }
+  55%     { opacity: 0.9; }
+  70%     { opacity: 0.95; }
+}
+
+/* ── MAIN SCENE ── */
+#scene {
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 60%, rgba(40,30,10,0.9) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 40%, rgba(20,30,10,0.7) 0%, transparent 50%),
+    #0a0a05;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+}
+
+/* ── PAPER TEXTURE ── */
+#paper {
+  position: relative;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(40,30,15,0.08) 30px, rgba(40,30,15,0.08) 31px),
+    linear-gradient(135deg, #1c1710 0%, #12100a 50%, #181410 100%);
+  border: 1px solid rgba(200,180,120,0.12);
+  box-shadow:
+    0 0 60px rgba(0,0,0,0.9),
+    inset 0 0 40px rgba(0,0,0,0.5),
+    0 0 2px rgba(200,180,80,0.1);
+  padding: 50px 60px;
+  max-width: 600px;
+  width: 90vw;
+  text-align: center;
+  position: relative;
+}
+#paper::before {
+  content: '';
+  position: absolute; inset: 6px;
+  border: 1px solid rgba(200,180,80,0.06);
+  pointer-events: none;
+}
+
+/* ── TITLE ── */
+#main-title {
+  font-family: 'UnifrakturMaguntia', cursive;
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  color: #c8c4b0;
+  text-shadow:
+    0 0 20px rgba(200,196,176,0.15),
+    2px 2px 4px rgba(0,0,0,0.8);
+  margin-bottom: 8px;
+  line-height: 1.1;
+  animation: titleBreath 4s ease-in-out infinite;
+}
+@keyframes titleBreath {
+  0%,100% { letter-spacing: 2px; }
+  50%      { letter-spacing: 5px; text-shadow: 0 0 30px rgba(200,196,176,0.25), 2px 2px 4px rgba(0,0,0,0.8); }
+}
+
+#subtitle {
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  color: rgba(200,196,176,0.3);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  margin-bottom: 35px;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(200,180,80,0.2), transparent);
+  margin: 20px 0;
+}
+
+/* ── BODY TEXT ── */
+#body-text {
+  font-family: 'Special Elite', cursive;
+  font-size: 0.95rem;
+  color: rgba(200,196,176,0.55);
+  line-height: 1.9;
+  margin-bottom: 30px;
+  text-align: left;
+  min-height: 80px;
+}
+
+/* ── BUTTON ── */
+#main-btn {
+  font-family: 'VT323', monospace;
+  font-size: 1.4rem;
+  letter-spacing: 4px;
+  color: rgba(200,196,176,0.7);
+  background: transparent;
+  border: 1px solid rgba(200,196,176,0.2);
+  padding: 12px 40px;
+  cursor: none;
+  transition: all 0.5s;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+#main-btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(200,196,176,0.05);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s;
+}
+#main-btn:hover::after { transform: scaleX(1); }
+#main-btn:hover {
+  color: #c8c4b0;
+  border-color: rgba(200,196,176,0.5);
+  box-shadow: 0 0 20px rgba(200,196,176,0.1);
+  letter-spacing: 6px;
+}
+
+/* ── STATUS LINE ── */
+#status {
+  font-family: 'VT323', monospace;
+  font-size: 0.85rem;
+  color: rgba(200,196,176,0.2);
+  letter-spacing: 3px;
+  margin-top: 25px;
+  min-height: 20px;
+}
+
+/* ── FACE OVERLAY ── */
+#face {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.05s;
+  background: rgba(0,0,0,0.7);
+}
+#face-emoji {
+  font-size: min(60vw, 60vh);
+  filter: grayscale(1) contrast(2) brightness(0.4);
+  animation: facePulse 0.08s steps(1) infinite;
+}
+@keyframes facePulse {
+  0%,100% { transform: scale(1) rotate(0deg); filter: grayscale(1) contrast(2) brightness(0.4); }
+  33%     { transform: scale(1.05) rotate(-1deg); filter: grayscale(1) contrast(3) brightness(0.3) hue-rotate(20deg); }
+  66%     { transform: scale(0.97) rotate(1deg); filter: grayscale(0.5) contrast(2) brightness(0.35) hue-rotate(-10deg); }
+}
+
+/* ── STATIC ── */
+#static {
+  position: fixed; inset: 0;
+  z-index: 550;
+  opacity: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n2)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  animation: staticAnim 0.05s steps(1) infinite;
+  transition: opacity 0.2s;
+}
+@keyframes staticAnim {
+  0%  { transform: translate(0,0) scale(1.01); }
+  25% { transform: translate(1%,-1%) scale(1); }
+  50% { transform: translate(-1%,1%) scale(1.02); }
+  75% { transform: translate(1%,1%) scale(0.99); }
+  100%{ transform: translate(-1%,-1%) scale(1); }
+}
+
+/* ── BLOOD TEXT (mensajes aparecen) ── */
+.blood-msg {
+  position: fixed;
+  font-family: 'Special Elite', cursive;
+  color: #6b0000;
+  text-shadow: 0 0 10px #6b0000;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0;
+  animation: bloodFade 6s ease forwards;
+}
+@keyframes bloodFade {
+  0%   { opacity: 0; transform: translateY(-10px); }
+  20%  { opacity: 0.8; }
+  80%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(10px); }
+}
+
+/* ── SHADOW FIGURE ── */
+#shadow-fig {
+  position: fixed;
+  bottom: 0;
+  left: -20%;
+  width: 120px;
+  height: 260px;
+  background: #000;
+  clip-path: polygon(40% 0%, 60% 0%, 65% 25%, 80% 30%, 90% 60%, 75% 62%, 78% 100%, 55% 100%, 55% 75%, 45% 75%, 45% 100%, 22% 100%, 25% 62%, 10% 60%, 20% 30%, 35% 25%);
+  filter: blur(2px);
+  opacity: 0;
+  transition: left 8s cubic-bezier(0.1,0,0.3,1), opacity 2s;
+  z-index: 50;
+  pointer-events: none;
+}
+
+/* ── TYPING CURSOR ── */
+.type-cursor {
+  display: inline-block;
+  width: 2px; height: 1em;
+  background: rgba(200,196,176,0.6);
+  margin-left: 2px;
+  vertical-align: middle;
+  animation: blink 0.7s steps(1) infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── HEARTLINE ── */
+#heartline-wrap {
+  position: fixed;
+  bottom: 0; left: 0;
+  width: 100%; height: 50px;
+  opacity: 0;
+  transition: opacity 1.5s;
+  z-index: 20;
+}
+#heartline-wrap.visible { opacity: 1; }
+
+/* ── SCANLINES ── */
+#scanlines {
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 12;
+}
+
+/* ── TIMER BAR ── */
+#timer-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(to right, #6b0000, #ff4444);
+  width: 0%;
+  z-index: 200;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px #6b0000;
+  opacity: 0;
+}
+
+/* ── WARNING CORNER ── */
+#warning {
+  position: fixed;
+  top: 20px; right: 20px;
+  font-family: 'VT323', monospace;
+  font-size: 0.8rem;
+  color: rgba(107,0,0,0.5);
+  letter-spacing: 2px;
+  z-index: 100;
+  text-align: right;
+  line-height: 1.6;
+}
+
+/* ── GLITCH TEXT ── */
+.glitch {
+  position: relative;
+  animation: gltxt 3s infinite;
+}
+.glitch::before, .glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+}
+.glitch::before {
+  color: #0ff;
+  clip-path: inset(30% 0 50% 0);
+  animation: gla 2s infinite;
+  opacity: 0.3;
+}
+.glitch::after {
+  color: #f0f;
+  clip-path: inset(60% 0 10% 0);
+  animation: glb 2.5s infinite;
+  opacity: 0.3;
+}
+@keyframes gla { 0%,100%{transform:translate(0)} 50%{transform:translate(-3px,1px)} }
+@keyframes glb { 0%,100%{transform:translate(0)} 50%{transform:translate(3px,-1px)} }
+@keyframes gltxt {
+  0%,90%,100% { transform: translate(0); }
+  92% { transform: translate(-2px,0); }
+  94% { transform: translate(2px,0); }
+  96% { transform: translate(0,-1px); }
+}
+
+/* ── FINAL SCARE ── */
+#final-scare {
+  position: fixed; inset: 0;
+  background: #000;
+  z-index: 900;
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.06s;
+}
+#final-scare.show { opacity: 1; }
+#scare-text {
+  font-family: 'UnifrakturMaguntia', cursive;
+  font-size: clamp(3rem, 12vw, 8rem);
+  color: #6b0000;
+  text-shadow: 0 0 40px #ff0000, 0 0 80px #6b0000;
+  animation: scarePulse 0.1s steps(1) infinite;
+  text-align: center;
+}
+@keyframes scarePulse {
+  0%,100% { transform: scale(1); filter: brightness(1); }
+  50%     { transform: scale(1.08) rotate(-1deg); filter: brightness(1.3); }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-dot"></div>
+
+<div id="grain"></div>
+<div id="scanlines"></div>
+<div id="vignette"></div>
+<div id="flicker"></div>
+<div id="static"></div>
+<div id="timer-bar"></div>
+
+<div id="warning">
+  SISTEMA: ACTIVO<br>
+  PRESENCIA: DETECTADA<br>
+  SALIDA: BLOQUEADA
+</div>
+
+<div id="shadow-fig"></div>
+
+<canvas id="heartline-canvas" style="position:fixed;bottom:0;left:0;width:100%;height:50px;z-index:20;"></canvas>
+<div id="heartline-wrap"></div>
+
+<div id="face">
+  <div id="face-emoji">👁️</div>
+</div>
+
+<div id="final-scare">
+  <div id="scare-text">ÉL ESTÁ<br>AQUÍ</div>
+</div>
+
+<div id="scene">
+  <div id="paper">
+    <div id="main-title" class="glitch" data-text="EL MANICOMIO">EL MANICOMIO</div>
+    <div id="subtitle">registro № 13 — ala olvidada</div>
+    <div class="divider"></div>
+    <div id="body-text">
+      <span id="typed-text"></span><span class="type-cursor" id="tc"></span>
+    </div>
+    <div class="divider"></div>
+    <button id="main-btn" onclick="nextPhase()">[ CONTINUAR ]</button>
+    <div id="status">esperando entrada...</div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════
+//   CURSOR
+// ══════════════════════════════════
+const cur = document.getElementById('cursor');
+const cdot = document.getElementById('cursor-dot');
+let mx=0, my=0, cx=0, cy=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cdot.style.left=mx+'px'; cdot.style.top=my+'px'; });
+setInterval(() => {
+  cx += (mx-cx)*0.12; cy += (my-cy)*0.12;
+  cur.style.left=cx+'px'; cur.style.top=cy+'px';
+}, 16);
+
+// ══════════════════════════════════
+//   AUDIO
+// ══════════════════════════════════
+let ctx, mg, playing=false;
+function initAudio() {
+  if(ctx) return;
+  ctx = new (window.AudioContext||window.webkitAudioContext)();
+  mg = ctx.createGain(); mg.gain.value=0.35; mg.connect(ctx.destination);
+}
+
+function tone(freq, t, dur, type='sine', vol=0.2, detune=0) {
+  if(!ctx||!playing) return;
+  const o=ctx.createOscillator(), g=ctx.createGain();
+  o.type=type; o.frequency.value=freq; o.detune.value=detune;
+  g.gain.setValueAtTime(0, ctx.currentTime+t);
+  g.gain.linearRampToValueAtTime(vol, ctx.currentTime+t+0.06);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+t+dur);
+  o.connect(g); g.connect(mg);
+  o.start(ctx.currentTime+t); o.stop(ctx.currentTime+t+dur+0.1);
+}
+
+// Ambiente: dron oscuro continuo
+let droneNodes=[];
+function startDrone() {
+  if(!ctx) return;
+  stopDrone();
+  const freqs=[55, 55.3, 82.5, 110.1];
+  freqs.forEach(f => {
+    const o=ctx.createOscillator(), g=ctx.createGain(), flt=ctx.createBiquadFilter();
+    o.type='sawtooth'; o.frequency.value=f;
+    flt.type='lowpass'; flt.frequency.value=400;
+    g.gain.value=0.06;
+    o.connect(flt); flt.connect(g); g.connect(mg);
+    o.start(); droneNodes.push(o,g);
+  });
+  // LFO tremolo
+  const lfo=ctx.createOscillator(), lg=ctx.createGain();
+  lfo.frequency.value=0.3; lg.gain.value=0.04;
+  lfo.connect(lg); lg.connect(mg.gain);
+  lfo.start(); droneNodes.push(lfo);
+}
+function stopDrone() { droneNodes.forEach(n=>{try{n.stop&&n.stop();}catch(e){}}); droneNodes=[]; }
+
+// Melodía de caja de música perturbada
+const boxMelody=[[220,0],[246.9,0.5],[261.6,1],[220,1.5],[196,2],[174.6,2.5],[196,3],[220,3.5],[246.9,4.5],[220,5],[196,6]];
+function playMusicBox(loop=false) {
+  if(!playing) return;
+  boxMelody.forEach(([f,t]) => { tone(f,t,1.2,'triangle',0.18); tone(f*2,t+0.02,0.6,'sine',0.06); });
+  if(loop) setTimeout(()=>playMusicBox(true), 7500);
+}
+
+// Whispers (ruido blanco corto)
+function playWhisper() {
+  if(!ctx||!playing) return;
+  const buf=ctx.createBuffer(1,ctx.sampleRate*0.4,ctx.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*0.3;
+  const src=ctx.createBufferSource(), g=ctx.createGain(), flt=ctx.createBiquadFilter();
+  flt.type='bandpass'; flt.frequency.value=2000+Math.random()*2000; flt.Q.value=0.5;
+  g.gain.setValueAtTime(0, ctx.currentTime);
+  g.gain.linearRampToValueAtTime(0.25, ctx.currentTime+0.1);
+  g.gain.linearRampToValueAtTime(0, ctx.currentTime+0.4);
+  src.buffer=buf; src.connect(flt); flt.connect(g); g.connect(mg);
+  src.start();
+}
+
+function playScareSound() {
+  if(!ctx) return;
+  playing=true;
+  for(let i=0;i<8;i++) { tone(80+i*30, i*0.04, 0.5, 'sawtooth', 0.5); tone(300+i*50, i*0.04+0.01, 0.3, 'square', 0.35); }
+  tone(40, 0, 1.5, 'sine', 0.6);
+}
+
+// Pasos (graves rítmicos)
+function playFootsteps() {
+  [0,0.8,1.6,2.4,3.2].forEach(t => { tone(60,t,0.15,'sine',0.4); tone(58,t+0.05,0.1,'sine',0.2); });
+}
+
+// ══════════════════════════════════
+//   TYPING
+// ══════════════════════════════════
+let typeInt;
+function typeText(text, cb) {
+  const el=document.getElementById('typed-text');
+  el.textContent='';
+  let i=0;
+  clearInterval(typeInt);
+  typeInt=setInterval(()=>{
+    el.textContent+=text[i++];
+    if(i>=text.length){ clearInterval(typeInt); setTimeout(()=>{document.getElementById('tc').style.display='none'; if(cb)cb();},400); }
+  }, 38);
+}
+
+// ══════════════════════════════════
+//   BLOOD MESSAGES (random)
+// ══════════════════════════════════
+const bloodTexts=['No salgas.','Te veo.','Están aquí.','Corre.','Muy tarde.','¿Lo escuchas?','Detrás.','¡HUYE!'];
+function spawnBloodMsg() {
+  const d=document.createElement('div');
+  d.className='blood-msg';
+  d.textContent=bloodTexts[Math.floor(Math.random()*bloodTexts.length)];
+  d.style.cssText=`font-size:${0.8+Math.random()*1.4}rem; left:${5+Math.random()*80}%; top:${10+Math.random()*70}%; transform:rotate(${(Math.random()-0.5)*20}deg);`;
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(), 6200);
+}
+
+// ══════════════════════════════════
+//   HEARTLINE
+// ══════════════════════════════════
+const hlc=document.getElementById('heartline-canvas');
+const hlx=hlc.getContext('2d');
+let hlData=[], hlAnim, hlVisible=false;
+function resizeHL(){ hlc.width=window.innerWidth; hlc.height=50; }
+resizeHL(); window.addEventListener('resize',resizeHL);
+
+function drawHL() {
+  const t=Date.now()/1000;
+  const beat = Math.pow(Math.max(0, Math.sin(t*2.2*Math.PI)), 12) * 22;
+  hlData.push(25 - beat + (Math.random()-0.5)*2);
+  if(hlData.length>hlc.width) hlData.shift();
+  hlx.clearRect(0,0,hlc.width,hlc.height);
+  hlx.beginPath();
+  hlx.strokeStyle='rgba(107,0,0,0.8)';
+  hlx.shadowColor='#6b0000'; hlx.shadowBlur=6;
+  hlx.lineWidth=1.5;
+  hlData.forEach((v,i)=>{ i===0?hlx.moveTo(i,v):hlx.lineTo(i,v); });
+  hlx.stroke();
+  hlAnim=requestAnimationFrame(drawHL);
+}
+
+// ══════════════════════════════════
+//   STATIC EFFECT
+// ══════════════════════════════════
+function showStatic(dur=400) {
+  const s=document.getElementById('static');
+  s.style.opacity='0.4';
+  setTimeout(()=>s.style.opacity='0', dur);
+}
+
+// ══════════════════════════════════
+//   SHADOW FIGURE
+// ══════════════════════════════════
+function moveShadow() {
+  const sf=document.getElementById('shadow-fig');
+  sf.style.opacity='0.7';
+  sf.style.left='-5%';
+  setTimeout(()=>{ sf.style.left='-20%'; sf.style.opacity='0'; }, 8000);
+}
+
+// ══════════════════════════════════
+//   TIMER BAR
+// ══════════════════════════════════
+let timerPct=0, timerInt;
+function startTimer() {
+  const tb=document.getElementById('timer-bar');
+  tb.style.opacity='1';
+  timerInt=setInterval(()=>{
+    timerPct+=0.3;
+    tb.style.width=timerPct+'%';
+    if(timerPct>=100){ clearInterval(timerInt); }
+  }, 100);
+}
+
+// ══════════════════════════════════
+//   PHASES
+// ══════════════════════════════════
+let phase=0;
+const phases=[
+  {
+    text:'Encontré este diario en el Ala 7. Nadie entra allí desde 1987. Las paredes tienen marcas de uñas. Hay algo escrito con sangre que dice solo: "TODAVÍA AQUÍ."',
+    btn:'[ LEER MÁS ]',
+    status:'página 1 de ∞',
+    fx: ()=>{ initAudio(); playing=true; startDrone(); playMusicBox(true); startTimer(); setTimeout(moveShadow,3000); }
+  },
+  {
+    text:'Los médicos desaparecieron uno a uno. El último dejó una nota: "No apaguen las luces. Si las apagan, salen." Esta mañana alguien apagó las luces.',
+    btn:'[ SEGUIR LEYENDO ]',
+    status:'los muros respiran',
+    fx: ()=>{ showStatic(); spawnBloodMsg(); setTimeout(playWhisper,800); setTimeout(playWhisper,1800); setTimeout(playFootsteps,2500); }
+  },
+  {
+    text:'Escucho pasos. Son demasiado lentos para ser humanos. Se detienen frente a mi puerta. Llevan tres horas ahí. No respiran. Solo... esperan.',
+    btn:'[ NO ABRIR LA PUERTA ]',
+    status:'⚠ actividad paranormal',
+    fx: ()=>{ showStatic(800); spawnBloodMsg(); setTimeout(spawnBloodMsg,2000); playFootsteps(); setTimeout(()=>{ document.getElementById('shadow-fig').style.opacity='0.9'; document.getElementById('shadow-fig').style.left='5%'; }, 1000); document.getElementById('heartline-wrap').classList.add('visible'); drawHL(); }
+  },
+  {
+    text:'La puerta se está abriendo sola. La cerradura no funciona. Detrás hay algo que no tiene forma definida, que cambia, que me mira con ojos que no debería tener. No puedo gritar. No puedo—',
+    btn:'[ VER QUÉ HAY DETRÁS ]',
+    status:'❌ NO CONTINÚES',
+    fx: ()=>{ showStatic(1200); for(let i=0;i<4;i++) setTimeout(spawnBloodMsg, i*600); ['eye1','eye2'].forEach(id=>{ const e=document.createElement('div'); e.style.cssText=`position:fixed;font-size:4rem;opacity:0;transition:opacity 1s;pointer-events:none;z-index:90;`; e.textContent='👁'; e.style.left=Math.random()*80+'%'; e.style.top=Math.random()*80+'%'; document.body.appendChild(e); setTimeout(()=>e.style.opacity='0.7',100); setTimeout(()=>e.remove(),4000); }); }
+  },
+  {
+    text: null, // jump scare
+    btn: null,
+    fx: ()=>{
+      stopDrone(); playing=false;
+      cancelAnimationFrame(hlAnim);
+      showStatic(200);
+      playScareSound();
+      setTimeout(()=>{
+        const fs=document.getElementById('final-scare');
+        fs.classList.add('show');
+        setTimeout(()=>{
+          document.getElementById('scare-text').innerHTML='👁️<br>TE VIO';
+          document.getElementById('face').style.opacity='1';
+          document.getElementById('face').style.pointerEvents='all';
+        }, 600);
+        setTimeout(()=>{
+          fs.classList.remove('show');
+          document.getElementById('face').style.opacity='0';
+          showEnding();
+        }, 3000);
+      }, 300);
+    }
+  }
+];
+
+function nextPhase() {
+  if(phase >= phases.length) return;
+  const p = phases[phase];
+  const btn=document.getElementById('main-btn');
+  const status=document.getElementById('status');
+  document.getElementById('tc').style.display='inline-block';
+
+  if(p.text) {
+    btn.style.opacity='0.3'; btn.style.pointerEvents='none';
+    typeText(p.text, ()=>{ btn.textContent=p.btn; btn.style.opacity='1'; btn.style.pointerEvents='auto'; });
+  }
+  if(p.btn) btn.textContent='...';
+  if(p.status) status.textContent=p.status;
+  if(p.fx) p.fx();
+  phase++;
+  if(phase === phases.length) {
+    setTimeout(()=>nextPhase(), 100);
+  }
+}
+
+function showEnding() {
+  const scene=document.getElementById('scene');
+  scene.innerHTML=`
+    <div id="paper" style="text-align:center;">
+      <div style="font-family:'UnifrakturMaguntia',cursive;font-size:3rem;color:#c8c4b0;margin-bottom:20px;text-shadow:0 0 20px rgba(200,196,176,0.3);">FIN DEL REGISTRO</div>
+      <div class="divider" style="width:100%;height:1px;background:linear-gradient(to right,transparent,rgba(200,180,80,0.2),transparent);margin:20px 0;"></div>
+      <p style="font-family:'Special Elite',cursive;color:rgba(200,196,176,0.5);line-height:2;font-size:0.9rem;">
+        El paciente №13 nunca fue encontrado.<br>
+        El Ala 7 fue sellada esa misma noche.<br>
+        El diario desapareció de la evidencia.<br><br>
+        <span style="color:#6b0000;font-size:1.1rem;">Alguien sigue escribiendo en él.</span>
+      </p>
+      <div class="divider" style="width:100%;height:1px;background:linear-gradient(to right,transparent,rgba(200,180,80,0.2),transparent);margin:20px 0;"></div>
+      <button onclick="location.reload()" style="font-family:'VT323',monospace;font-size:1.2rem;letter-spacing:4px;color:rgba(200,196,176,0.4);background:transparent;border:1px solid rgba(200,196,176,0.15);padding:10px 30px;cursor:pointer;transition:all 0.4s;">[ LEER DE NUEVO ]</button>
+    </div>`;
+
+  // Ambient finale
+  initAudio(); playing=true; startDrone();
+  playMusicBox(false);
+}
+
+// ══════════════════════════════════
+//   INIT
+// ══════════════════════════════════
+document.addEventListener('DOMContentLoaded', ()=>{
+  typeText('Esta página no debería existir. Si la estás leyendo, ya es demasiado tarde para cerrarla.');
+  // Random whispers/blood on idle
+  setInterval(()=>{ if(phase>0&&Math.random()<0.3) spawnBloodMsg(); }, 8000);
+  setInterval(()=>{ if(phase>1&&Math.random()<0.4&&playing) playWhisper(); }, 5000);
+  setInterval(()=>{ if(phase>0) showStatic(150); }, 12000);
+});
+</script>
+</body>
+</html>
