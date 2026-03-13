@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIERNES 13 — El Día Maldito</title>
+<link href="https://fonts.googleapis.com/css2?family=Nosifer&family=Creepster&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --blood:#cc0000;--blood-dark:#880000;--ghost:rgba(200,200,255,0.15);
+  --gold:#c8a820;--dark:#000;--surface:#0a0010;
+}
+html,body{width:100%;height:100%;overflow-x:hidden;background:#000;cursor:crosshair;}
+body{font-family:'Special Elite',serif;}
+
+/* ===== CURSOR CUSTOM ===== */
+*{cursor:crosshair;}
+button,a,[onclick]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 L18 20 L16 18 L14 20 Z' fill='%23cc0000' stroke='%23880000' stroke-width='1'/%3E%3C/svg%3E") 8 2,pointer;}
+
+/* ===== SCENE ===== */
+#scene{
+  position:relative;width:100%;min-height:100vh;
+  background:radial-gradient(ellipse at 50% 0%,#1a0020 0%,#0a0010 40%,#000 100%);
+  overflow:hidden;
+}
+
+/* ===== STARS ===== */
+#stars-layer{position:absolute;inset:0;pointer-events:none;z-index:1;}
+
+/* ===== MOON ===== */
+#moon{
+  position:absolute;top:40px;right:10%;width:100px;height:100px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff9e6,#c8a820 50%,#7a5c00);
+  box-shadow:0 0 40px 15px rgba(200,168,32,.4),0 0 100px 40px rgba(200,168,32,.15);
+  z-index:5;animation:moonPulse 4s ease-in-out infinite;
+}
+@keyframes moonPulse{
+  0%,100%{box-shadow:0 0 40px 15px rgba(200,168,32,.4),0 0 100px 40px rgba(200,168,32,.15);}
+  50%{box-shadow:0 0 70px 30px rgba(200,168,32,.6),0 0 150px 60px rgba(200,168,32,.25);}
+}
+
+/* ===== BLOOD DRIPS TOP ===== */
+#blood-top{
+  position:fixed;top:0;left:0;right:0;height:90px;
+  pointer-events:none;z-index:200;display:flex;justify-content:space-around;align-items:flex-start;
+}
+.drip-col{display:flex;flex-direction:column;align-items:center;}
+.drip-body{
+  width:7px;border-radius:0 0 4px 4px;
+  background:linear-gradient(to bottom,#cc0000,#880000);
+  animation:dripAnim linear infinite;
+}
+@keyframes dripAnim{0%{height:0;opacity:1;}80%{opacity:1;}100%{height:90px;opacity:0;}}
+.drip-drop{
+  width:10px;height:12px;border-radius:50% 50% 60% 60%;
+  background:#cc0000;margin-top:-2px;
+  animation:dropFall linear infinite;opacity:0;
+}
+@keyframes dropFall{0%,79%{opacity:0;transform:translateY(0);}80%{opacity:1;}100%{opacity:0;transform:translateY(30px);}}
+
+/* ===== TITLE ===== */
+#title-section{
+  position:relative;z-index:10;text-align:center;
+  padding:130px 20px 40px;
+}
+#title-main{
+  font-family:'Nosifer',cursive;
+  font-size:clamp(36px,8vw,88px);
+  color:#cc0000;
+  text-shadow:0 0 20px #ff0000,0 0 50px #990000,4px 4px 0 #000,-2px -2px 0 #550000;
+  animation:titleFlicker 6s ease-in-out infinite;
+  letter-spacing:6px;line-height:1.1;
+}
+@keyframes titleFlicker{
+  0%,95%,100%{opacity:1;}
+  96%{opacity:.6;}97%{opacity:1;}98%{opacity:.4;}99%{opacity:1;}
+}
+#title-sub{
+  font-family:'Creepster',cursive;
+  font-size:clamp(16px,3vw,28px);
+  color:#888;letter-spacing:10px;margin-top:8px;
+  text-shadow:0 0 20px rgba(136,136,136,.5);
+}
+#date-badge{
+  display:inline-block;margin-top:16px;
+  font-family:'Creepster',cursive;font-size:20px;
+  color:#cc0000;border:2px solid #cc0000;
+  padding:6px 24px;border-radius:4px;
+  text-shadow:0 0 10px #ff0000;
+  box-shadow:0 0 20px rgba(200,0,0,.3),inset 0 0 20px rgba(200,0,0,.1);
+  background:rgba(0,0,0,.8);letter-spacing:4px;
+}
+
+/* ===== SOUL COUNTER ===== */
+#counter{
+  position:fixed;top:20px;right:20px;z-index:300;
+  font-family:'Creepster',cursive;text-align:right;
+}
+#skull-count{font-size:26px;color:#cc0000;text-shadow:0 0 10px #ff0000;}
+#counter-label{font-size:11px;color:#555;letter-spacing:2px;margin-top:2px;}
+
+/* ===== CLOUDS ===== */
+.cloud{
+  position:absolute;border-radius:50px;
+  background:rgba(15,0,25,.75);
+  animation:cloudDrift linear infinite;z-index:4;
+}
+@keyframes cloudDrift{from{transform:translateX(-300px);}to{transform:translateX(110vw);}}
+
+/* ===== SCENE SVG ===== */
+#main-scene{position:relative;z-index:10;width:100%;margin-top:20px;}
+#main-scene svg{display:block;width:100%;max-width:1000px;margin:0 auto;}
+
+/* ===== INTERACTIVE ELEMENTS ===== */
+.clickable{cursor:pointer;transition:filter .2s;}
+.clickable:hover{filter:brightness(1.4) drop-shadow(0 0 8px #cc0000);}
+
+/* ===== BATS ===== */
+.bat{
+  position:absolute;font-size:22px;pointer-events:none;z-index:15;
+  animation:batMove ease-in-out infinite;
+}
+@keyframes batMove{
+  0%{transform:translate(0,0) scaleX(1);}
+  25%{transform:translate(40px,-25px) scaleX(1);}
+  50%{transform:translate(80px,8px) scaleX(-1);}
+  75%{transform:translate(40px,-18px) scaleX(-1);}
+  100%{transform:translate(0,0) scaleX(1);}
+}
+
+/* ===== GHOST ===== */
+#ghost{
+  position:absolute;z-index:20;font-size:48px;
+  animation:ghostFloat 6s ease-in-out infinite;
+  pointer-events:none;opacity:.7;
+  filter:drop-shadow(0 0 15px rgba(200,200,255,.6));
+}
+@keyframes ghostFloat{
+  0%,100%{transform:translate(0,0);}
+  50%{transform:translate(30px,-30px);}
+}
+
+/* ===== LIGHTNING OVERLAY ===== */
+#lightning{
+  position:fixed;inset:0;background:rgba(210,230,255,0);
+  pointer-events:none;z-index:500;transition:background .05s;
+}
+
+/* ===== MESSAGE BOX ===== */
+#msgbox{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);
+  background:rgba(0,0,0,.97);border:2px solid #cc0000;border-radius:6px;
+  padding:28px 36px;z-index:600;text-align:center;
+  min-width:280px;max-width:400px;width:90%;
+  box-shadow:0 0 50px rgba(200,0,0,.5),inset 0 0 30px rgba(200,0,0,.05);
+  display:none;animation:msgAppear .3s ease forwards;
+}
+@keyframes msgAppear{to{transform:translate(-50%,-50%) scale(1);}}
+#msgbox h3{font-family:'Nosifer',cursive;color:#cc0000;font-size:20px;margin-bottom:12px;text-shadow:0 0 15px #ff0000;}
+#msgbox p{color:#aaa;font-size:15px;font-family:'Special Elite',serif;line-height:1.6;}
+#msgbox button{
+  margin-top:18px;background:rgba(120,0,0,.8);color:#ff4444;
+  border:1.5px solid #cc0000;padding:10px 28px;border-radius:4px;
+  font-family:'Creepster',cursive;font-size:18px;letter-spacing:2px;
+  box-shadow:0 0 15px rgba(200,0,0,.3);transition:all .2s;
+}
+#msgbox button:hover{background:#cc0000;color:#fff;box-shadow:0 0 30px rgba(255,0,0,.6);}
+
+/* ===== FLOATING ICONS ===== */
+.float-icon{
+  position:fixed;pointer-events:none;z-index:550;font-size:28px;
+  animation:floatUp 1.8s ease-out forwards;
+}
+@keyframes floatUp{
+  0%{opacity:1;transform:translateY(0) scale(1) rotate(0deg);}
+  100%{opacity:0;transform:translateY(-140px) scale(.3) rotate(20deg);}
+}
+
+/* ===== FOOTER BUTTONS ===== */
+#controls{
+  position:relative;z-index:20;text-align:center;
+  padding:30px 20px 40px;display:flex;flex-wrap:wrap;gap:14px;justify-content:center;
+}
+.ctrl-btn{
+  background:rgba(80,0,0,.7);color:#ff4444;
+  border:1.5px solid #cc0000;padding:12px 26px;border-radius:5px;
+  font-family:'Creepster',cursive;font-size:18px;letter-spacing:2px;
+  box-shadow:0 0 15px rgba(200,0,0,.25);transition:all .25s;
+}
+.ctrl-btn:hover{background:#cc0000;color:#fff;box-shadow:0 0 30px rgba(255,0,0,.6);transform:scale(1.05);}
+
+/* ===== FOG ===== */
+#fog{
+  position:absolute;bottom:0;left:0;right:0;height:180px;
+  background:linear-gradient(to top,rgba(20,15,30,.85) 0%,transparent 100%);
+  pointer-events:none;z-index:12;animation:fogPulse 8s ease-in-out infinite;
+}
+@keyframes fogPulse{0%,100%{opacity:.85;}50%{opacity:.5;}}
+
+/* ===== BLOOD POOL ===== */
+.blood-pool{
+  position:absolute;border-radius:50%;
+  background:radial-gradient(ellipse,#660000,#330000,transparent);
+  pointer-events:none;opacity:.6;z-index:11;
+  animation:poolPulse 3s ease-in-out infinite;
+}
+@keyframes poolPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+
+/* ===== SPIDERWEB ===== */
+#web-area{position:absolute;top:60px;left:0;z-index:8;pointer-events:none;}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:600px){
+  #title-main{letter-spacing:2px;}
+  #date-badge{font-size:15px;letter-spacing:2px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Lightning overlay -->
+<div id="lightning"></div>
+
+<!-- Blood drips top -->
+<div id="blood-top"></div>
+
+<!-- Soul counter -->
+<div id="counter">
+  <div id="skull-count">💀 0</div>
+  <div id="counter-label">ALMAS PERDIDAS</div>
+</div>
+
+<!-- Scene -->
+<div id="scene">
+  <canvas id="stars-layer"></canvas>
+  <div id="moon"></div>
+
+  <!-- Clouds -->
+  <div class="cloud" style="top:50px;width:200px;height:45px;animation-duration:40s;animation-delay:-8s;"></div>
+  <div class="cloud" style="top:90px;width:140px;height:32px;animation-duration:60s;animation-delay:-30s;"></div>
+  <div class="cloud" style="top:35px;width:110px;height:25px;animation-duration:45s;animation-delay:-20s;"></div>
+
+  <!-- Title -->
+  <div id="title-section">
+    <div id="title-main">VIERNES 13</div>
+    <div id="title-sub">EL DÍA MALDITO</div>
+    <div id="date-badge">13 · MARZO · 2026</div>
+  </div>
+
+  <!-- Bats -->
+  <div class="bat" style="top:120px;left:12%;animation-duration:3.4s;animation-delay:-1.2s;">🦇</div>
+  <div class="bat" style="top:155px;left:55%;animation-duration:2.9s;animation-delay:-2.1s;">🦇</div>
+  <div class="bat" style="top:100px;left:35%;animation-duration:3.8s;animation-delay:-.6s;">🦇</div>
+  <div class="bat" style="top:180px;left:75%;animation-duration:3.1s;animation-delay:-1.8s;">🦇</div>
+
+  <!-- Ghost -->
+  <div id="ghost" style="top:220px;left:5%;">👻</div>
+
+  <!-- Main SVG Scene -->
+  <div id="main-scene">
+    <svg viewBox="0 0 1000 320" xmlns="http://www.w3.org/2000/svg" id="mainsvg">
+      <defs>
+        <radialGradient id="bloodGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#cc0000" stop-opacity=".6"/>
+          <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Hills -->
+      <ellipse cx="500" cy="340" rx="700" ry="100" fill="#080e04"/>
+      <ellipse cx="100" cy="330" rx="250" ry="80" fill="#0a1205"/>
+      <ellipse cx="900" cy="330" rx="250" ry="80" fill="#0a1205"/>
+
+      <!-- SPIDERWEB top-left -->
+      <g opacity=".7">
+        <line x1="40" y1="20" x2="40" y2="100" stroke="#444" stroke-width=".8"/>
+        <line x1="40" y1="20" x2="0" y2="80" stroke="#444" stroke-width=".8"/>
+        <line x1="40" y1="20" x2="80" y2="80" stroke="#444" stroke-width=".8"/>
+        <line x1="40" y1="20" x2="10" y2="50" stroke="#444" stroke-width=".8"/>
+        <line x1="40" y1="20" x2="70" y2="50" stroke="#444" stroke-width=".8"/>
+        <path d="M20,45 Q40,38 60,45" fill="none" stroke="#555" stroke-width=".7"/>
+        <path d="M10,65 Q40,55 70,65" fill="none" stroke="#555" stroke-width=".7"/>
+        <path d="M5,85 Q40,72 75,85" fill="none" stroke="#555" stroke-width=".7"/>
+        <ellipse cx="40" cy="100" rx="6" ry="5" fill="#111" stroke="#888" stroke-width="1"/>
+        <line x1="34" y1="96" x2="26" y2="104" stroke="#888" stroke-width=".8"/>
+        <line x1="46" y1="96" x2="54" y2="104" stroke="#888" stroke-width=".8"/>
+        <line x1="33" y1="102" x2="23" y2="100" stroke="#888" stroke-width=".8"/>
+        <line x1="47" y1="102" x2="57" y2="100" stroke="#888" stroke-width=".8"/>
+        <circle cx="40" cy="108" r="1.5" fill="#cc0000" opacity=".8">
+          <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+
+      <!-- Tombstone 1 - classic arch -->
+      <g class="clickable" onclick="tombClick(0)" id="t1">
+        <rect x="60" y="155" width="65" height="95" rx="32" fill="#141428" stroke="#3a3a5a" stroke-width="1.5"/>
+        <rect x="60" y="200" width="65" height="50" rx="3" fill="#141428" stroke="#3a3a5a" stroke-width="1.5"/>
+        <text x="92" y="235" text-anchor="middle" fill="#cc0000" font-size="14" font-family="Nosifer,cursive">RIP</text>
+        <text x="92" y="248" text-anchor="middle" fill="#555" font-size="9" font-family="monospace">VIERNES XIII</text>
+        <text x="92" y="260" text-anchor="middle" fill="#444" font-size="8" font-family="monospace">NUNCA MÁS</text>
+      </g>
+
+      <!-- Tombstone 2 - cross -->
+      <g class="clickable" onclick="tombClick(1)" id="t2">
+        <rect x="190" y="170" width="12" height="80" rx="3" fill="#1c1c30" stroke="#444" stroke-width="1.5"/>
+        <rect x="174" y="188" width="44" height="13" rx="3" fill="#1c1c30" stroke="#444" stroke-width="1.5"/>
+        <text x="196" y="265" text-anchor="middle" fill="#660000" font-size="9" font-family="monospace">1984 - OLVIDADO</text>
+        <circle cx="196" cy="185" r="4" fill="#cc0000" opacity=".6">
+          <animate attributeName="opacity" values="0.6;0.1;0.6" dur="3s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+
+      <!-- Tombstone 3 - broken -->
+      <g class="clickable" onclick="tombClick(2)" id="t3">
+        <polygon points="280,150 345,150 358,250 267,250" fill="#181830" stroke="#3a3a5a" stroke-width="1.5"/>
+        <line x1="305" y1="150" x2="298" y2="190" stroke="#cc0000" stroke-width="2.5"/>
+        <text x="313" y="200" text-anchor="middle" fill="#cc0000" font-size="13" font-family="Nosifer,cursive">XIII</text>
+        <text x="313" y="218" text-anchor="middle" fill="#555" font-size="9" font-family="monospace">EL MALDITO</text>
+        <text x="313" y="232" text-anchor="middle" fill="#444" font-size="8" font-family="monospace">DESCANSA... O NO</text>
+      </g>
+
+      <!-- JASON - center hero -->
+      <g class="clickable" id="jason" onclick="jasonClick()" style="cursor:pointer;">
+        <!-- Shadow -->
+        <ellipse cx="470" cy="305" rx="35" ry="8" fill="#000" opacity=".7"/>
+        <!-- Legs -->
+        <rect x="448" y="250" width="16" height="55" rx="5" fill="#152015"/>
+        <rect x="466" y="250" width="16" height="55" rx="5" fill="#152015"/>
+        <!-- Boots -->
+        <rect x="444" y="295" width="22" height="14" rx="4" fill="#0a0a0a" stroke="#333" stroke-width="1"/>
+        <rect x="463" y="295" width="22" height="14" rx="4" fill="#0a0a0a" stroke="#333" stroke-width="1"/>
+        <!-- Body / jacket -->
+        <rect x="440" y="185" width="50" height="70" rx="6" fill="#152015" stroke="#1e301e" stroke-width="1.5"/>
+        <!-- Shoulders -->
+        <rect x="432" y="190" width="14" height="35" rx="5" fill="#152015"/>
+        <rect x="484" y="190" width="14" height="35" rx="5" fill="#152015"/>
+        <!-- Arms -->
+        <rect x="420" y="220" width="14" height="40" rx="5" fill="#152015"/>
+        <rect x="496" y="220" width="14" height="40" rx="5" fill="#152015"/>
+        <!-- Gloves -->
+        <rect x="418" y="256" width="18" height="12" rx="4" fill="#0a1a0a"/>
+        <rect x="494" y="256" width="18" height="12" rx="4" fill="#0a1a0a"/>
+        <!-- Machete -->
+        <rect x="510" y="195" width="6" height="32" rx="1" fill="#999" stroke="#666" stroke-width=".8"/>
+        <polygon points="510,195 516,195 520,175 512,178" fill="#bbb" stroke="#777" stroke-width=".8"/>
+        <rect x="507" y="224" width="12" height="7" rx="2" fill="#5a3a10"/>
+        <!-- Blood on machete -->
+        <ellipse cx="518" cy="178" rx="3" ry="4" fill="#cc0000"/>
+        <path d="M518 182 L517 198" stroke="#cc0000" stroke-width="2"/>
+        <!-- Head -->
+        <ellipse cx="465" cy="172" rx="26" ry="28" fill="#e8d8a8" stroke="#b09050" stroke-width="1.5"/>
+        <!-- Hockey mask -->
+        <rect x="442" y="155" width="46" height="38" rx="10" fill="#ddd5b5" stroke="#b09060" stroke-width="2"/>
+        <!-- Mask holes for eyes -->
+        <ellipse cx="455" cy="167" rx="7" ry="8" fill="#bba868" stroke="#8a7030" stroke-width="1.5"/>
+        <ellipse cx="475" cy="167" rx="7" ry="8" fill="#bba868" stroke="#8a7030" stroke-width="1.5"/>
+        <!-- Eyes through holes -->
+        <circle cx="455" cy="167" r="4" fill="#0a0000">
+          <animate attributeName="fill" values="#0a0000;#cc0000;#0a0000" dur="6s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="475" cy="167" r="4" fill="#0a0000">
+          <animate attributeName="fill" values="#cc0000;#0a0000;#cc0000" dur="6s" repeatCount="indefinite"/>
+        </circle>
+        <!-- Mask cracks & details -->
+        <line x1="462" y1="155" x2="458" y2="190" stroke="#8a7030" stroke-width="1"/>
+        <path d="M450 180 Q465 186 480 180" stroke="#8a7030" stroke-width="1" fill="none"/>
+        <line x1="456" y1="160" x2="448" y2="158" stroke="#8a7030" stroke-width=".8"/>
+        <line x1="474" y1="160" x2="482" y2="158" stroke="#8a7030" stroke-width=".8"/>
+        <!-- Blood streak on mask -->
+        <path d="M460 157 Q458 168 462 180" stroke="#cc0000" stroke-width="1.5" fill="none" opacity=".7"/>
+        <!-- Hat/head top -->
+        <ellipse cx="465" cy="145" rx="20" ry="8" fill="#1a2a1a"/>
+      </g>
+
+      <!-- Tombstone 4 -->
+      <g class="clickable" onclick="tombClick(3)" id="t4">
+        <rect x="575" y="160" width="70" height="100" rx="35" fill="#141428" stroke="#3a3a5a" stroke-width="1.5"/>
+        <rect x="575" y="215" width="70" height="45" rx="3" fill="#141428" stroke="#3a3a5a" stroke-width="1.5"/>
+        <text x="610" y="245" text-anchor="middle" fill="#cc0000" font-size="13" font-family="Nosifer,cursive">RIP</text>
+        <text x="610" y="258" text-anchor="middle" fill="#555" font-size="9" font-family="monospace">SIN NOMBRE</text>
+        <!-- Eye in tombstone -->
+        <ellipse cx="610" cy="195" rx="8" ry="10" fill="#050510" stroke="#3a3a5a" stroke-width="1"/>
+        <circle cx="610" cy="195" r="4" fill="#cc0000" opacity=".8">
+          <animate attributeName="opacity" values="0.8;0.1;0.8" dur="2.5s" repeatCount="indefinite"/>
+          <animate attributeName="r" values="4;2;4" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+
+      <!-- Haunted house -->
+      <g class="clickable" onclick="houseClick()" id="house">
+        <!-- Main building -->
+        <rect x="700" y="120" width="120" height="150" fill="#0a0a18" stroke="#2a2a3a" stroke-width="1.5"/>
+        <!-- Roof -->
+        <polygon points="688,120 832,120 760,55" fill="#0d0d20" stroke="#2a2a3a" stroke-width="1.5"/>
+        <!-- Attic window -->
+        <ellipse cx="760" cy="90" rx="18" ry="20" fill="#0a0a18" stroke="#2a2a3a" stroke-width="1.5"/>
+        <ellipse cx="760" cy="90" rx="12" ry="14" fill="#1a1000">
+          <animate attributeName="fill" values="#1a1000;#3a2800;#1a1000" dur="4s" repeatCount="indefinite"/>
+        </ellipse>
+        <circle cx="756" cy="87" r="3.5" fill="#ff6600" opacity=".8">
+          <animate attributeName="opacity" values="0.8;0.1;0.8" dur="2.3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="765" cy="87" r="3.5" fill="#ff6600" opacity=".3">
+          <animate attributeName="opacity" values="0.1;0.9;0.1" dur="2.7s" repeatCount="indefinite"/>
+        </circle>
+        <!-- Side tower -->
+        <rect x="810" y="90" width="40" height="180" fill="#090910" stroke="#2a2a3a" stroke-width="1.5"/>
+        <polygon points="808,90 852,90 830,55" fill="#0b0b1c" stroke="#2a2a3a" stroke-width="1.5"/>
+        <!-- Windows -->
+        <rect x="715" y="140" width="32" height="32" rx="3" fill="#0d0800" stroke="#3a2a00" stroke-width="1"/>
+        <rect x="773" y="140" width="32" height="32" rx="3" fill="#0d0800" stroke="#3a2a00" stroke-width="1"/>
+        <rect x="715" y="195" width="32" height="28" rx="3" fill="#0d0800" stroke="#3a2a00" stroke-width="1"/>
+        <rect x="773" y="195" width="32" height="28" rx="3" fill="#0d0800" stroke="#3a2a00" stroke-width="1"/>
+        <!-- Glow in windows -->
+        <rect x="716" y="141" width="30" height="30" rx="2" fill="#2a1500" opacity=".7">
+          <animate attributeName="opacity" values="0.7;0.2;0.7" dur="3.1s" repeatCount="indefinite"/>
+        </rect>
+        <rect x="774" y="141" width="30" height="30" rx="2" fill="#2a1500" opacity=".3">
+          <animate attributeName="opacity" values="0.2;0.8;0.2" dur="2.8s" repeatCount="indefinite"/>
+        </rect>
+        <!-- Door -->
+        <rect x="735" y="225" width="30" height="45" rx="3" fill="#080808" stroke="#333" stroke-width="1.5"/>
+        <circle cx="762" cy="248" r="2.5" fill="#555"/>
+        <!-- Chimney -->
+        <rect x="790" y="55" width="16" height="28" fill="#0a0a18" stroke="#2a2a3a" stroke-width="1"/>
+        <!-- Smoke -->
+        <ellipse cx="798" cy="48" rx="8" ry="5" fill="#1a1a2a" opacity=".6">
+          <animate attributeName="cy" values="48;40;48" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3s" repeatCount="indefinite"/>
+        </ellipse>
+        <!-- Tower window -->
+        <rect x="820" y="110" width="20" height="24" rx="3" fill="#1a1000" stroke="#3a2a00" stroke-width="1">
+          <animate attributeName="fill" values="#1a1000;#3a2800;#1a1000" dur="1.5s" repeatCount="indefinite"/>
+        </rect>
+      </g>
+
+      <!-- Floating ghost (SVG) -->
+      <g id="svghost" opacity=".5">
+        <ellipse cx="530" cy="120" rx="22" ry="28" fill="rgba(210,210,255,0.18)" stroke="rgba(180,180,255,0.5)" stroke-width="1"/>
+        <circle cx="522" cy="112" r="3.5" fill="rgba(0,0,80,0.6)"/>
+        <circle cx="538" cy="112" r="3.5" fill="rgba(0,0,80,0.6)"/>
+        <path d="M520 122 Q530 128 540 122" stroke="rgba(0,0,80,0.5)" stroke-width="1.2" fill="none"/>
+        <animate attributeName="transform" type="translate" values="0,0;5,-15;-5,-5;0,0" dur="5s" repeatCount="indefinite"/>
+      </g>
+
+      <!-- Dead tree left -->
+      <g class="clickable" onclick="treeClick()" id="tree1">
+        <rect x="140" y="80" width="12" height="170" rx="4" fill="#111" stroke="#2a1a00" stroke-width="1"/>
+        <line x1="146" y1="120" x2="100" y2="90" stroke="#111" stroke-width="8" stroke-linecap="round"/>
+        <line x1="100" y1="90" x2="78" y2="70" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+        <line x1="100" y1="90" x2="88" y2="105" stroke="#111" stroke-width="4" stroke-linecap="round"/>
+        <line x1="146" y1="150" x2="175" y2="120" stroke="#111" stroke-width="8" stroke-linecap="round"/>
+        <line x1="175" y1="120" x2="192" y2="100" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+        <line x1="146" y1="180" x2="118" y2="165" stroke="#111" stroke-width="6" stroke-linecap="round"/>
+      </g>
+
+      <!-- Dead tree right -->
+      <g class="clickable" onclick="treeClick()" id="tree2">
+        <rect x="650" y="90" width="11" height="165" rx="4" fill="#111" stroke="#2a1a00" stroke-width="1"/>
+        <line x1="655" y1="130" x2="690" y2="100" stroke="#111" stroke-width="7" stroke-linecap="round"/>
+        <line x1="690" y1="100" x2="708" y2="82" stroke="#111" stroke-width="4" stroke-linecap="round"/>
+        <line x1="655" y1="160" x2="622" y2="130" stroke="#111" stroke-width="7" stroke-linecap="round"/>
+        <line x1="622" y1="130" x2="605" y2="115" stroke="#111" stroke-width="4" stroke-linecap="round"/>
+      </g>
+
+      <!-- Raven on tree -->
+      <g class="clickable" onclick="ravenClick()" id="raven">
+        <ellipse cx="192" cy="96" rx="10" ry="7" fill="#111" stroke="#333" stroke-width="1"/>
+        <ellipse cx="200" cy="91" rx="7" ry="6" fill="#111" stroke="#333" stroke-width="1"/>
+        <polygon points="205,90 212,93 205,95" fill="#333"/>
+        <circle cx="203" cy="89" r="1.5" fill="#cc0000">
+          <animate attributeName="fill" values="#cc0000;#ff0000;#cc0000" dur="1s" repeatCount="indefinite"/>
+        </circle>
+        <line x1="195" y1="103" x2="193" y2="115" stroke="#222" stroke-width="1.5"/>
+        <line x1="198" y1="103" x2="196" y2="115" stroke="#222" stroke-width="1.5"/>
+      </g>
+
+      <!-- Grass tufts -->
+      <g fill="#0d2208" stroke="#0d2208">
+        <rect x="50" y="258" width="4" height="16" rx="2"/>
+        <rect x="57" y="262" width="3" height="12" rx="2"/>
+        <rect x="240" y="256" width="4" height="15" rx="2"/>
+        <rect x="247" y="260" width="3" height="11" rx="2"/>
+        <rect x="400" y="254" width="4" height="16" rx="2"/>
+        <rect x="407" y="258" width="3" height="12" rx="2"/>
+        <rect x="545" y="256" width="4" height="15" rx="2"/>
+        <rect x="680" y="258" width="4" height="16" rx="2"/>
+      </g>
+
+      <!-- Blood pool under Jason -->
+      <ellipse cx="470" cy="308" rx="50" ry="10" fill="url(#bloodGlow)" opacity=".5">
+        <animate attributeName="rx" values="50;55;50" dur="3s" repeatCount="indefinite"/>
+      </ellipse>
+
+      <!-- Fog layer in SVG -->
+      <rect x="0" y="250" width="1000" height="70" fill="url(#fogGrad)" opacity=".4"/>
+    </svg>
+  </div>
+
+  <div id="fog"></div>
+
+  <!-- Blood pools on page -->
+  <div class="blood-pool" style="width:120px;height:40px;bottom:5%;left:10%;"></div>
+  <div class="blood-pool" style="width:80px;height:30px;bottom:8%;right:15%;"></div>
+
+  <!-- Controls -->
+  <div id="controls">
+    <button class="ctrl-btn" onclick="playKiKiKi()">🎵 KI KI KI... MA MA MA...</button>
+    <button class="ctrl-btn" onclick="triggerLightningStorm()">⚡ TORMENTA ELÉCTRICA</button>
+    <button class="ctrl-btn" onclick="summonAll()">☠ INVOCAR TODO EL TERROR ☠</button>
+    <button class="ctrl-btn" onclick="playHeartbeat()">🫀 LATIDO MALDITO</button>
+    <button class="ctrl-btn" onclick="playScream()">😱 GRITO DE TERROR</button>
+  </div>
+</div>
+
+<!-- Message box -->
+<div id="msgbox">
+  <h3 id="msg-title">MENSAJE</h3>
+  <p id="msg-text">...</p>
+  <button onclick="closeMsg()">⛧ ESCAPAR ⛧</button>
+</div>
+
+<script>
+// ===== WEB AUDIO ENGINE =====
+const AC = new (window.AudioContext || window.webkitAudioContext)();
+
+function resumeAC(){if(AC.state==='suspended')AC.resume();}
+
+function playTone(freq,type,dur,vol,decay){
+  resumeAC();
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.connect(g);g.connect(AC.destination);
+  o.type=type||'sine';o.frequency.setValueAtTime(freq,AC.currentTime);
+  g.gain.setValueAtTime(vol||0.3,AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+(dur||1));
+  o.start();o.stop(AC.currentTime+(dur||1)+(decay||0));
+}
+
+function playNoise(dur,vol,filterFreq){
+  resumeAC();
+  const buf=AC.createBuffer(1,AC.sampleRate*dur,AC.sampleRate);
+  const data=buf.getChannelData(0);
+  for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1);
+  const src=AC.createBufferSource();
+  src.buffer=buf;
+  const filt=AC.createBiquadFilter();
+  filt.type='lowpass';filt.frequency.value=filterFreq||800;
+  const g=AC.createGain();
+  g.gain.setValueAtTime(vol||0.4,AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+dur);
+  src.connect(filt);filt.connect(g);g.connect(AC.destination);
+  src.start();src.stop(AC.currentTime+dur+0.1);
+}
+
+function playKiKiKi(){
+  resumeAC();
+  const pattern=[1,0,1,0,1,0,0,0,1,0,1,0];
+  pattern.forEach((v,i)=>{
+    if(!v)return;
+    setTimeout(()=>{
+      playTone(3200+Math.random()*200,'square',.08,.15);
+      playNoise(.08,.08,5000);
+    },i*180);
+  });
+  setTimeout(()=>{
+    const mamaPattern=[1,0,1,0,1,0,0,0,1,0,1,0];
+    mamaPattern.forEach((v,i)=>{
+      if(!v)return;
+      setTimeout(()=>{
+        playTone(180+Math.random()*20,'sawtooth',.12,.18);
+        playNoise(.1,.06,300);
+      },i*200);
+    });
+  },2500);
+  showMsg({title:'KI KI KI... MA MA MA...',text:'Él está cerca. Puedes sentirlo. La laguna de Crystal Lake nunca olvida.'});
+}
+
+function playHeartbeat(){
+  resumeAC();
+  function beat(t,vol){
+    const o=AC.createOscillator(),g=AC.createGain();
+    const o2=AC.createOscillator(),g2=AC.createGain();
+    o.connect(g);g.connect(AC.destination);
+    o2.connect(g2);g2.connect(AC.destination);
+    o.type='sine';o.frequency.setValueAtTime(60,t);
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(vol,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.001,t+0.18);
+    o2.type='sine';o2.frequency.setValueAtTime(50,t+0.1);
+    g2.gain.setValueAtTime(0,t+0.1);
+    g2.gain.linearRampToValueAtTime(vol*.7,t+0.12);
+    g2.gain.exponentialRampToValueAtTime(0.001,t+0.28);
+    o.start(t);o.stop(t+0.3);
+    o2.start(t+0.1);o2.stop(t+0.4);
+  }
+  let bpm=60,now=AC.currentTime;
+  for(let i=0;i<12;i++){
+    const t=now+i*(60/bpm);
+    const vol=0.3+i*0.04;
+    beat(t,Math.min(vol,0.8));
+    if(i>6)bpm+=8;
+  }
+  addSoul(3);
+  showMsg({title:'LATIDO MALDITO',text:'Tu corazón late cada vez más rápido... igual que el de sus víctimas.'});
+}
+
+function playScream(){
+  resumeAC();
+  const o=AC.createOscillator(),g=AC.createGain();
+  const dist=AC.createWaveShaper();
+  function makeDistCurve(amount){
+    const n=256,curve=new Float32Array(n);
+    for(let i=0;i<n;i++){const x=i*2/n-1;curve[i]=(Math.PI+amount)*x/(Math.PI+amount*Math.abs(x));}
+    return curve;
+  }
+  dist.curve=makeDistCurve(400);
+  o.connect(dist);dist.connect(g);g.connect(AC.destination);
+  o.type='sawtooth';
+  o.frequency.setValueAtTime(400,AC.currentTime);
+  o.frequency.exponentialRampToValueAtTime(900,AC.currentTime+0.3);
+  o.frequency.setValueAtTime(700,AC.currentTime+0.3);
+  o.frequency.exponentialRampToValueAtTime(200,AC.currentTime+1.5);
+  g.gain.setValueAtTime(0.4,AC.currentTime);
+  g.gain.setValueAtTime(0.5,AC.currentTime+0.3);
+  g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+1.6);
+  o.start();o.stop(AC.currentTime+1.7);
+  lightningFlash(3);addSoul(5);
+  showMsg({title:'¡¡AAAHHHH!!',text:'El grito resuena por el bosque oscuro. Nadie puede escucharte aquí.'});
+}
+
+function playCrunch(){
+  resumeAC();
+  playNoise(.12,.5,1200);
+  playTone(80,'sawtooth',.2,.3);
+  setTimeout(()=>playNoise(.08,.3,800),100);
+}
+
+function playCreak(){
+  resumeAC();
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.connect(g);g.connect(AC.destination);
+  o.type='sawtooth';
+  o.frequency.setValueAtTime(200,AC.currentTime);
+  o.frequency.linearRampToValueAtTime(80,AC.currentTime+0.8);
+  o.frequency.linearRampToValueAtTime(150,AC.currentTime+1.2);
+  g.gain.setValueAtTime(0.15,AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+1.3);
+  o.start();o.stop(AC.currentTime+1.4);
+}
+
+function playThunder(){
+  resumeAC();
+  playNoise(2,.6,300);
+  setTimeout(()=>playNoise(1.5,.4,500),200);
+  playTone(40,'sawtooth',1,.3);
+}
+
+function playHowl(){
+  resumeAC();
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.connect(g);g.connect(AC.destination);
+  o.type='sine';
+  o.frequency.setValueAtTime(300,AC.currentTime);
+  o.frequency.exponentialRampToValueAtTime(800,AC.currentTime+1);
+  o.frequency.exponentialRampToValueAtTime(400,AC.currentTime+2);
+  o.frequency.exponentialRampToValueAtTime(600,AC.currentTime+2.8);
+  g.gain.setValueAtTime(0.25,AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+3);
+  o.start();o.stop(AC.currentTime+3.1);
+}
+
+function playDoor(){
+  resumeAC();
+  playCreak();
+  setTimeout(()=>playNoise(.05,.3,2000),1200);
+}
+
+function playRaven(){
+  resumeAC();
+  for(let i=0;i<3;i++){
+    setTimeout(()=>{
+      const o=AC.createOscillator(),g=AC.createGain();
+      o.connect(g);g.connect(AC.destination);
+      o.type='sawtooth';
+      o.frequency.setValueAtTime(500,AC.currentTime);
+      o.frequency.exponentialRampToValueAtTime(300,AC.currentTime+0.3);
+      g.gain.setValueAtTime(0.2,AC.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+0.35);
+      o.start();o.stop(AC.currentTime+0.4);
+    },i*400);
+  }
+}
+
+// ===== LIGHTNING =====
+let stormInterval=null;
+function lightningFlash(times){
+  const ov=document.getElementById('lightning');
+  let t=times||1,i=0;
+  function flash(){
+    if(i>=t)return;
+    ov.style.background='rgba(210,230,255,0.75)';
+    setTimeout(()=>{ov.style.background='rgba(210,230,255,0)';i++;
+      setTimeout(flash,80+Math.random()*150);
+    },60+Math.random()*80);
+  }
+  flash();
+}
+function triggerLightningStorm(){
+  resumeAC();
+  lightningFlash(5);
+  playThunder();
+  addSoul(3);
+  showMsg({title:'¡TORMENTA MALDITA!',text:'Los rayos iluminan siluetas que no deberían estar ahí. Cuentas las sombras... hay una de más.'});
+}
+
+// Random lightning
+setInterval(()=>{if(Math.random()<.12){lightningFlash(1);if(Math.random()<.4)playThunder();}},6000);
+
+// ===== STARS =====
+const sc=document.getElementById('stars-layer');
+const sctx=sc.getContext('2d');
+function resizeStar(){sc.width=window.innerWidth;sc.height=window.innerHeight;}
+resizeStar();window.addEventListener('resize',resizeStar);
+function drawStars(){
+  sctx.clearRect(0,0,sc.width,sc.height);
+  for(let i=0;i<150;i++){
+    const x=(Math.sin(i*37.3)*.5+.5)*sc.width;
+    const y=(Math.sin(i*17.7)*.5+.5)*sc.height*.55;
+    const r=Math.random()*1.5+.3;
+    const a=.3+Math.sin(Date.now()*.001+i)*.4;
+    sctx.beginPath();sctx.arc(x,y,r,0,Math.PI*2);
+    sctx.fillStyle=`rgba(255,255,220,${Math.max(0,a)})`;sctx.fill();
+  }
+}
+setInterval(drawStars,120);
+
+// ===== BLOOD DRIPS =====
+const dripCont=document.getElementById('blood-top');
+for(let i=0;i<14;i++){
+  const col=document.createElement('div');col.className='drip-col';
+  const body=document.createElement('div');body.className='drip-body';
+  const drop=document.createElement('div');drop.className='drip-drop';
+  const dur=(2+Math.random()*5)+'s';
+  const del=(-Math.random()*6)+'s';
+  body.style.cssText=`animation-duration:${dur};animation-delay:${del};`;
+  drop.style.cssText=`animation-duration:${dur};animation-delay:${del};`;
+  col.appendChild(body);col.appendChild(drop);
+  dripCont.appendChild(col);
+}
+
+// ===== MESSAGES =====
+const tombMsgs=[
+  {title:'TUMBA ABIERTA',text:'La tierra está removida desde adentro. Algo salió anoche.'},
+  {title:'LA CRUZ MALDITA',text:'Esta cruz fue hecha con los huesos de sus víctimas. Puedes escucharlos lamentarse.'},
+  {title:'LÁPIDA ROTA',text:'La rajadura en esta lápida no es de la edad. Algo la golpeó desde adentro.'},
+  {title:'SIN NOMBRE',text:'No tiene nombre porque nadie sobrevivió para contarlo. Nadie, excepto él.'},
+];
+let msgActive=false;
+function showMsg(m){
+  document.getElementById('msg-title').textContent=m.title;
+  document.getElementById('msg-text').textContent=m.text;
+  document.getElementById('msgbox').style.display='block';
+  msgActive=true;
+}
+function closeMsg(){
+  document.getElementById('msgbox').style.display='none';
+  msgActive=false;
+}
+
+// ===== SOULS =====
+let souls=0;
+function addSoul(n){
+  souls+=(n||1);
+  document.getElementById('skull-count').textContent='💀 '+souls;
+  spawnIcons(n||1);
+}
+const icons=['💀','🩸','👁️','🔪','⛧','🕯️','🩻'];
+function spawnIcons(n){
+  for(let i=0;i<n;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');el.className='float-icon';
+      el.textContent=icons[Math.floor(Math.random()*icons.length)];
+      el.style.left=(10+Math.random()*80)+'vw';
+      el.style.top=(20+Math.random()*60)+'vh';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),2000);
+    },i*200);
+  }
+}
+
+// ===== INTERACTIVE CLICKS =====
+function tombClick(i){
+  resumeAC();playCrunch();lightningFlash(2);addSoul(2);
+  setTimeout(()=>showMsg(tombMsgs[i]),300);
+}
+function jasonClick(){
+  resumeAC();playKiKiKi();lightningFlash(3);addSoul(5);spawnIcons(3);
+}
+function houseClick(){
+  resumeAC();playDoor();lightningFlash(2);addSoul(3);
+  showMsg({title:'LA CASA MALDITA',text:'Hay luz en el ático pero nadie ha vivido aquí desde 1980. La puerta... acaba de abrirse sola.'});
+}
+function treeClick(){
+  resumeAC();playHowl();addSoul(1);
+  showMsg({title:'EL ÁRBOL SUSURRA',text:'Las ramas no se mueven por el viento. Se mueven solas, buscándote.'});
+}
+function ravenClick(){
+  resumeAC();playRaven();addSoul(1);
+  showMsg({title:'EL CUERVO',text:'Los cuervos solo se posan donde huele a muerte. Este lleva tres días aquí.'});
+}
+
+function summonAll(){
+  resumeAC();
+  lightningFlash(6);
+  playScream();
+  setTimeout(()=>playKiKiKi(),2000);
+  setTimeout(()=>playHeartbeat(),5000);
+  addSoul(13);
+  spawnIcons(13);
+  showMsg({title:'⛧ EL TERROR SUPREMO ⛧',text:'El Viernes 13 ha sido invocado. Jason camina. Los muertos se levantan. No hay escapatoria.'});
+}
+
+// ===== CLICK ANYWHERE =====
+document.getElementById('scene').addEventListener('click',(e)=>{
+  if(e.target.closest('#msgbox')||e.target.closest('#controls'))return;
+  resumeAC();
+  const rand=Math.random();
+  if(rand<.3)playCrunch();
+  else if(rand<.6)playTone(120+Math.random()*80,'sawtooth',.3,.15);
+  addSoul(1);
+  const el=document.createElement('div');el.className='float-icon';
+  el.textContent=icons[Math.floor(Math.random()*icons.length)];
+  el.style.left=e.clientX+'px';el.style.top=e.clientY+'px';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),2000);
+});
+
+// ===== BAT ANIMATION =====
+(function moveBats(){
+  const bats=document.querySelectorAll('.bat');
+  let t=0;
+  setInterval(()=>{
+    t+=0.025;
+    bats.forEach((b,i)=>{
+      const ox=Math.sin(t+i*2.1)*50;
+      const oy=Math.cos(t*.8+i)*20;
+      b.style.transform=`translate(${ox}px,${oy}px) scaleX(${Math.sin(t+i)>0?1:-1})`;
+    });
+  },50);
+})();
+
+// ===== AMBIENT SOUNDS =====
+let ambientRunning=false;
+function startAmbient(){
+  if(ambientRunning)return;
+  ambientRunning=true;
+  function loop(){
+    if(!ambientRunning)return;
+    playNoise(.3,.04,200);
+    setTimeout(loop,8000+Math.random()*12000);
+  }
+  setTimeout(loop,10000);
+  setInterval(()=>{if(Math.random()<.15)playHowl();},20000);
+}
+
+// Start ambient after first interaction
+document.body.addEventListener('click',()=>{resumeAC();startAmbient();},{once:true});
+
+// ===== GHOST FLOAT =====
+let ghostDir=1,ghostX=5;
+setInterval(()=>{
+  ghostX+=ghostDir*.3;
+  if(ghostX>25||ghostX<3)ghostDir*=-1;
+  document.getElementById('ghost').style.left=ghostX+'%';
+},100);
+</script>
+</body>
+</html>
