@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestro Tiempo Juntos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(to bottom, #ffe4e6, #fecdd3, #fbcfe8);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+
+        .app-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(18px) scale(0.99);
+            transition: opacity .65s ease, transform .65s ease;
+        }
+
+        .app-content.unlocked { display: block; }
+        .app-content.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .lock-screen {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: #fdf2f5;
+            padding: 20px;
+            opacity: 1;
+            transition: opacity .55s ease, transform .55s ease, filter .55s ease;
+        }
+
+        .lock-screen.fade-out {
+            opacity: 0;
+            transform: scale(1.03);
+            filter: blur(3px);
+            pointer-events: none;
+        }
+
+        .lock-bokeh-1,
+        .lock-bokeh-2,
+        .lock-bokeh-3 {
+            position: absolute;
+            border-radius: 999px;
+            pointer-events: none;
+            filter: blur(80px);
+            mix-blend-mode: multiply;
+        }
+
+        .lock-bokeh-1 { top: -15%; left: -10%; width: 60%; height: 60%; background: rgba(251, 182, 206, 0.6); }
+        .lock-bokeh-2 { bottom: -10%; right: -10%; width: 50%; height: 50%; background: rgba(249, 168, 212, 0.45); }
+        .lock-bokeh-3 { top: 20%; right: 10%; width: 40%; height: 40%; background: rgba(254, 205, 211, 0.55); }
+
+        .lock-card {
+            position: relative;
+            z-index: 3;
+            width: 90%;
+            max-width: 340px;
+            background: #fff;
+            border-radius: 2rem;
+            border: 3px dashed #ea2055;
+            padding: 32px 20px 24px;
+            box-shadow: 0 10px 40px rgba(234, 32, 85, 0.1);
+            text-align: center;
+        }
+
+        .lock-title {
+            color: #ea2055;
+            font-size: 22px;
+            line-height: 1.3;
+            font-weight: 700;
+            margin-bottom: 22px;
+        }
+
+        .lock-input {
+            width: 100%;
+            max-width: 260px;
+            text-align: center;
+            color: #4b5563;
+            border: 1px solid #e2a8b5;
+            border-radius: 999px;
+            padding: 12px 16px;
+            font-size: 15px;
+            font-weight: 600;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            outline: none;
+            margin-bottom: 22px;
+        }
+
+        .lock-input:focus {
+            border-color: #ea2055;
+            box-shadow: 0 0 0 2px rgba(234,32,85,0.15);
+        }
+
+        .lock-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.18s ease;
+            margin-bottom: 20px;
+        }
+
+        .lock-btn:hover { transform: scale(1.05); }
+        .lock-btn:active { transform: scale(0.96); }
+
+        .lock-hint {
+            margin-top: 12px;
+            color: #6d6d6d;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .lock-message {
+            margin-top: 12px;
+            min-height: 24px;
+        }
+
+        .lock-message span {
+            display: inline-block;
+            background: #ea2055;
+            color: #fff;
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            box-shadow: 0 8px 16px rgba(234, 32, 85, 0.25);
+            opacity: 0;
+            transform: translateY(5px);
+            transition: opacity .2s ease, transform .2s ease;
+        }
+
+        .lock-message span.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(8px);
+            border: 3px dashed #f472b6;
+            border-radius: 40px;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(244, 114, 182, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-family: 'Pacifico', cursive;
+            color: #db2777;
+            font-size: 2.2rem;
+            line-height: 1.2;
+            margin-bottom: 30px;
+        }
+
+        .image-container-circle {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 40px;
+            border-radius: 50%;
+            border: 6px solid white;
+            overflow: hidden;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            background-color: #eee;
+            position: relative;
+        }
+
+        .image-container-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Estilos del reproductor */
+        .song-title {
+            color: #db2777;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 15px;
+        }
+
+        .song-artist {
+            color: #f472b6;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .progress-container {
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #ffffff;
+            border-radius: 5px;
+            outline: none;
+            margin: 10px 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #db2777;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #be185d;
+            font-weight: 700;
+            padding: 0 5px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .control-btn {
+            color: #db2777;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(219, 39, 119, 0.2);
+            color: #db2777;
+        }
+
+        /* Estilos de Recuerdos (3D) */
+        .memories-stack {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 250px;
+            perspective: 1000px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .memory-photo {
+            width: 150px;
+            height: 200px;
+            background: white;
+            border-radius: 15px;
+            padding: 5px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            position: absolute;
+            transition: transform 0.5s ease;
+            overflow: hidden;
+        }
+
+        .memory-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .photo-left {
+            transform: translateX(-80px) rotateY(35deg) scale(0.85);
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        .photo-center {
+            z-index: 3;
+            transform: translateZ(50px);
+        }
+
+        .photo-right {
+            transform: translateX(80px) rotateY(-35deg) scale(0.85);
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.4));
+            cursor: pointer;
+        }
+
+        /* Estilos de la Carta de Amor (decorada) */
+        .love-letter-card {
+            background: linear-gradient(180deg, #fff 0%, #fff8fb 100%);
+            border-radius: 18px;
+            padding: 28px 22px;
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(219,39,119,0.06);
+            line-height: 1.7;
+            color: #3f3f3f;
+            font-size: 1rem;
+            border-left: 6px solid var(--accent-2);
+            position: relative;
+        }
+
+        .love-letter-card p { margin-bottom: 1.15rem; }
+        .love-letter-card strong { color: var(--accent); font-weight:800 }
+        .love-letter-card em { color: #7a3a57; font-style:italic }
+        .love-letter-card .signature { margin-top:14px; text-align:right; font-weight:700; color:var(--accent-2) }
+
+        /* Grid del contador */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .time-box {
+            background: white;
+            border-radius: 20px;
+            padding: 12px 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .time-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #be185d;
+            line-height: 1;
+        }
+
+        .time-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #db2777;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .heart-float {
+            position: absolute;
+            color: #f472b6;
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: -1;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.6; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .tap-heart {
+            position: fixed;
+            left: 0;
+            top: 0;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 12000;
+            font-size: 16px;
+            opacity: 0;
+            animation: tapHeartUp .95s ease-out forwards;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
+        }
+
+        @keyframes tapHeartUp {
+            0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
+            15%  { opacity: 1; }
+            100% { opacity: 0; transform: translate(calc(-50% + var(--x, 0px)), calc(-50% + var(--y, -90px))) scale(1.18); }
+        }
+
+    </style>
+    <style>
+        /* Animaciones y posiciones del carrusel (adicional) */
+        .memory-photo{ transition: transform .7s cubic-bezier(.2,.9,.2,1), opacity .5s }
+        .photo-pos-0{ transform: translateX(-220px) rotateY(35deg) scale(.78); z-index:1; opacity:.5 }
+        .photo-pos-1{ transform: translateX(-80px) rotateY(18deg) scale(.92); z-index:2; opacity:.85 }
+        .photo-pos-2{ transform: translateX(0px) translateZ(80px) scale(1); z-index:4; opacity:1 }
+        .photo-pos-3{ transform: translateX(120px) rotateY(-18deg) scale(.92); z-index:2; opacity:.85 }
+        .carousel-controls{ pointer-events:none }
+        .carousel-btn{ pointer-events:auto }
+    </style>
+    <style>
+        /* Estilos para el botón de música */
+        .music-toggle{
+            position:fixed;
+            right:18px;
+            bottom:18px;
+            width:48px;
+            height:48px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#fff 0%, #ffe6ef 100%);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:var(--accent-2, #f472b6);
+            box-shadow:0 8px 24px rgba(0,0,0,0.12);
+            cursor:pointer;
+            z-index:9999;
+            font-weight:700;
+        }
+        .music-toggle.paused{ opacity:0.85 }
+    </style>
+    <style>
+        /* Lightbox para ampliar imágenes */
+        .lightbox{
+            position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+            background:rgba(0,0,0,0.75); z-index:10000; padding:24px;
+        }
+        .lightbox.show{ display:flex; animation: fadeIn .18s ease; }
+        .lightbox img{ max-width:92%; max-height:92%; border-radius:12px; box-shadow:0 18px 50px rgba(0,0,0,0.6); transform:translateY(8px); transition:transform .25s ease }
+        .lightbox.show img{ transform:translateY(0) }
+        .lightbox-close{ position:absolute; top:18px; right:18px; color:#fff; background:rgba(0,0,0,0.35); width:40px; height:40px; border-radius:999px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px }
+        @keyframes fadeIn{ from{ opacity:0 } to{ opacity:1 } }
+
+        /* Ajustes táctiles para el carrusel (mejor área de toque) */
+        .memories-stack{ touch-action: pan-y; -webkit-user-select: none; user-select:none }
+    </style>
+</head>
+<body>
+
+    <div id="lock-screen" class="lock-screen">
+        <div class="lock-bokeh-1"></div>
+        <div class="lock-bokeh-2"></div>
+        <div class="lock-bokeh-3"></div>
+
+        <div class="lock-card">
+            <h1 class="lock-title">Ingresa nuestra<br>contraseña...</h1>
+
+            <form id="lock-form">
+                <input id="lock-password" class="lock-input" type="password" placeholder="Ingresa aquí..." autocomplete="off">
+                <br>
+                <button class="lock-btn" type="submit" aria-label="Validar contraseña">
+                    <svg viewBox="0 0 24 24" width="76" height="76" fill="#ea2055" style="filter: drop-shadow(0 4px 8px rgba(234,32,85,0.25));">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </button>
+            </form>
+
+            <div class="lock-hint">Pista: Nuestra canción favorita</div>
+            <div class="lock-message"><span id="lock-message"></span></div>
+        </div>
+    </div>
+
+    <div id="app-content" class="app-content">
+
+    <div class="bg-bokeh"></div>
+
+    <!-- Reproductor global (oculto) -->
+    <audio id="bg-audio" src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Carla%20Morrison%20-%20Disfruto%20(letra).mp3" loop preload="auto"></audio>
+
+    <!-- Botón fijo para controlar música -->
+    <div class="music-toggle" id="music-toggle" title="Reproducir / Pausar música">♪</div>
+
+    <!-- Lightbox (oculto por defecto) -->
+    <div id="lightbox" class="lightbox" aria-hidden="true">
+        <div id="lightbox-close" class="lightbox-close">✕</div>
+        <img id="lightbox-img" src="" alt="Ampliación">
+    </div>
+
+    <!-- Sección 1: Contador -->
+    <div class="main-card">
+        <h1 class="title">Nuestro tiempo juntos</h1>
+
+        <div class="image-container-circle">
+            <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1000&auto=format&fit=crop" alt="Corazón en el atardecer">
+        </div>
+
+        <div class="grid-container">
+            <div class="time-box">
+                <span class="time-value" id="years">0</span>
+                <span class="time-label">Años</span>
+            </div>
+            <div class="time-box">
+                <span class="time-value" id="months">0</span>
+                <span class="time-label">Meses</span>
+            </div>
+            <div class="time-box">
+                <span class="time-value" id="days">0</span>
+                <span class="time-label">Días</span>
+            </div>
+            <div class="time-box">
+                <span class="time-value" id="hours">0</span>
+                <span class="time-label">Horas</span>
+            </div>
+            <div class="time-box">
+                <span class="time-value" id="minutes">0</span>
+                <span class="time-label">Minutos</span>
+            </div>
+            <div class="time-box">
+                <span class="time-value" id="seconds">0</span>
+                <span class="time-label">Segs</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 2: Nuestras canciones -->
+    <div class="main-card">
+        <h2 class="title">Nuestra cancion</h2>
+
+        <div class="image-container-circle" style="margin-bottom: 20px;">
+            <img id="album-art" src="https://i.postimg.cc/sD68ZPzf/videoframe-1206.png" alt="Album Art - Carla Morrison">
+            <button id="song-play" class="absolute inset-0 flex items-center justify-center" aria-label="Play canción" title="Reproducir">
+                <svg id="song-play-icon" xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 10px rgba(0,0,0,0.3))">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+            </button>
+        </div>
+
+        <div id="song-title" class="song-title">Carla Morrison - Disfruto</div>
+        <div id="song-artist" class="song-artist">Carla Morrison</div>
+
+        <div class="progress-container">
+            <input id="song-range" type="range" value="0" min="0" max="0">
+            <div class="time-info">
+                <span id="song-current">0:00</span>
+                <span id="song-duration">0:00</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg></div>
+            <div class="control-btn"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line></svg></div>
+            <div id="song-control-btn" class="play-btn control-btn" aria-label="Play/Pause">
+                <svg id="song-control-icon" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><polygon id="play-shape" points="5 3 19 12 5 21 5 3"></polygon></svg>
+            </div>
+            <div class="control-btn"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line></svg></div>
+            <div class="control-btn"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg></div>
+        </div>
+    </div>
+
+    <!-- Sección 3: Nuestros recuerdos (carrusel de 4 fotos) -->
+    <div class="main-card">
+        <h2 class="title">Nuestros recuerdos</h2>
+
+        <div class="memories-stack" aria-label="Carrusel de recuerdos">
+
+            <div class="memory-photo" data-index="0">
+                <img src="https://i.postimg.cc/DztbMNKt/Whats_App_Image_2026_03_21_at_9_44_09_PM.jpg" alt="Recuerdo 1">
+            </div>
+            <div class="memory-photo" data-index="1">
+                <img src="https://i.postimg.cc/KYdgHWyV/Whats_App_Image_2026_03_21_at_9_44_09_PM_(1).jpg" alt="Recuerdo 2">
+            </div>
+            <div class="memory-photo" data-index="2">
+                <img src="https://i.postimg.cc/d0zTxfKp/Whats_App_Image_2026_03_21_at_9_44_09_PM_(2).jpg" alt="Recuerdo 3">
+            </div>
+            <div class="memory-photo" data-index="3">
+                <img src="https://i.postimg.cc/hGH75Yqk/Whats_App_Image_2026_03_21_at_9_44_09_PM_(3).jpg" alt="Recuerdo 4">
+            </div>
+
+            <div class="carousel-controls">
+                <div class="carousel-btn" id="carousel-prev" aria-label="Anterior">‹</div>
+                <div class="carousel-btn" id="carousel-next" aria-label="Siguiente">›</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 4: Mensaje de amor -->
+    <div class="main-card">
+        <h2 class="title">Mensaje de amor</h2>
+        
+        <div class="love-letter-card">
+            <p><strong>Mi vida,</strong> lo que siento por ti no me cabe en palabras… pero aún así lo intento, porque <strong>te lo mereces</strong>. ❤️</p>
+
+            <p>No llegaste a mi vida haciendo ruido, pero <strong>terminaste siendo todo</strong>. Te metiste en mis pensamientos sin pedir permiso, en mis planes sin darme cuenta, y ahora estás en cada parte de mí donde antes no había nada. ✨</p>
+
+            <p>Hay algo en ti que no puedo explicar… algo que <strong>me calma</strong>, que <strong>me llena</strong>, que me hace sentir en casa aunque estemos en cualquier lugar. Y eso no es fácil de encontrar. 🏡💫</p>
+
+            <p>No eres solo la mujer que amo… eres <strong>mi lugar seguro</strong>, mi paz en medio del caos, la razón por la que sonrío sin motivo. Eres esa persona que llegó sin prometer nada, pero terminó significándolo todo. 🌹😊</p>
+
+            <p>Y si el mundo se pone difícil, si algún día todo se complica, quiero que recuerdes algo: <strong>aquí tienes a alguien que no se rinde contigo</strong>, que no se cansa de ti, que no te cambia por nada. 🔒</p>
+
+            <p>Porque amarte no es una opción… es lo más natural que me ha pasado en la vida. 💛</p>
+
+            <p class="signature"><strong>Te amo con toda mi alma, mi amor. ❤️</strong></p>
+        </div>
+    </div>
+
+    </div>
+
+    <script>
+        // Pantalla de contraseña inicial
+        const lockForm = document.getElementById('lock-form');
+        const lockInput = document.getElementById('lock-password');
+        const lockMessage = document.getElementById('lock-message');
+        const lockScreen = document.getElementById('lock-screen');
+        const appContent = document.getElementById('app-content');
+
+        function normalizePassword(value) {
+            return (value || '').toLowerCase().replace(/\s+/g, '');
+        }
+
+        function showLockMessage(text) {
+            if (!lockMessage) return;
+            lockMessage.textContent = text;
+            lockMessage.classList.add('show');
+            setTimeout(() => {
+                lockMessage.classList.remove('show');
+                lockMessage.textContent = '';
+            }, 3000);
+        }
+
+        function unlockPage() {
+            if (lockScreen) lockScreen.classList.add('fade-out');
+
+            setTimeout(() => {
+                if (lockScreen) lockScreen.style.display = 'none';
+                if (appContent) {
+                    appContent.classList.add('unlocked');
+                    requestAnimationFrame(() => appContent.classList.add('visible'));
+                }
+                initMainFeatures();
+                if (typeof window.__startMusicAfterUnlock === 'function') {
+                    window.__startMusicAfterUnlock();
+                }
+            }, 520);
+        }
+
+        if (lockForm) {
+            lockForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const normalized = normalizePassword(lockInput ? lockInput.value : '');
+                if (!normalized) {
+                    showLockMessage('¡Escribe algo primero! 💖');
+                    return;
+                }
+
+                if (normalized === 'cosiri') {
+                    showLockMessage('¡Validando contraseña...! ✨');
+                    setTimeout(unlockPage, 450);
+                } else {
+                    showLockMessage('Contraseña incorrecta 💔');
+                }
+            });
+        }
+
+        // Inicio del contador: 21 de octubre de 2024
+        const startDate = new Date(2024, 9, 21, 0, 0, 0);
+
+        function pad(n){ return String(n).padStart(2,'0') }
+
+        function updateCounter() {
+            const now = new Date();
+            const diffMs = now - startDate;
+
+            if (now < startDate) {
+                document.getElementById('years').textContent = 0;
+                document.getElementById('months').textContent = 0;
+                document.getElementById('days').textContent = 0;
+                document.getElementById('hours').textContent = pad(0);
+                document.getElementById('minutes').textContent = pad(0);
+                document.getElementById('seconds').textContent = pad(0);
+                return;
+            }
+
+            let years = now.getFullYear() - startDate.getFullYear();
+            let months = now.getMonth() - startDate.getMonth();
+            let days = now.getDate() - startDate.getDate();
+            let hours = now.getHours() - startDate.getHours();
+            let minutes = now.getMinutes() - startDate.getMinutes();
+            let seconds = now.getSeconds() - startDate.getSeconds();
+
+            if (seconds < 0) {
+                seconds += 60;
+                minutes -= 1;
+            }
+            if (minutes < 0) {
+                minutes += 60;
+                hours -= 1;
+            }
+            if (hours < 0) {
+                hours += 24;
+                days -= 1;
+            }
+            if (days < 0) {
+                months -= 1;
+                const prevMonthDays = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+                days += prevMonthDays;
+            }
+            if (months < 0) {
+                months += 12;
+                years -= 1;
+            }
+
+            const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+            document.getElementById('years').textContent = years;
+            document.getElementById('months').textContent = months;
+            document.getElementById('days').textContent = totalDays;
+            document.getElementById('hours').textContent = pad(hours);
+            document.getElementById('minutes').textContent = pad(minutes);
+            document.getElementById('seconds').textContent = pad(seconds);
+        }
+
+        function createHearts() {
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-float';
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = (Math.random() * 100 + 100) + 'vh';
+                heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                heart.style.animationDelay = (Math.random() * 5) + 's';
+                document.body.appendChild(heart);
+            }
+        }
+
+        // Establece retrasos por tarjeta para entrada escalonada
+        function staggerCards(){
+            const cards = document.querySelectorAll('.main-card');
+            cards.forEach((c,i)=> c.style.setProperty('--delay', `${i*0.12}s`));
+        }
+
+        // Carrusel de recuerdos (4 fotos)
+        (function initCarousel(){
+            const photos = Array.from(document.querySelectorAll('.memory-photo'));
+            if (!photos.length) return;
+            const total = photos.length; // esperar 4
+            let center = 1 % total; // empezar con la segunda como centro
+
+            function clearPosClasses(el){
+                el.classList.remove('photo-pos-0','photo-pos-1','photo-pos-2','photo-pos-3');
+            }
+
+            function applyPositions(centerIdx){
+                for(let k=-1;k<=2;k++){
+                    const idx = (centerIdx + k + total) % total;
+                    const cls = `photo-pos-${k+1}`;
+                    clearPosClasses(photos[idx]);
+                    photos[idx].classList.add(cls);
+                }
+            }
+
+            // Controls
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+
+            function next(){ center = (center + 1) % total; applyPositions(center); }
+            function prev(){ center = (center - 1 + total) % total; applyPositions(center); }
+
+            if (nextBtn) nextBtn.addEventListener('click', ()=>{ next(); resetAuto(); });
+            if (prevBtn) prevBtn.addEventListener('click', ()=>{ prev(); resetAuto(); });
+
+            // Auto-rotación
+            let auto = setInterval(next, 3200);
+            function resetAuto(){ clearInterval(auto); auto = setInterval(next, 3200); }
+
+            // Pause on hover
+            const container = document.querySelector('.memories-stack');
+            if (container){
+                container.addEventListener('mouseenter', ()=> clearInterval(auto));
+                container.addEventListener('mouseleave', ()=> { clearInterval(auto); auto = setInterval(next, 3200); });
+            }
+
+            // Inicializar
+            applyPositions(center);
+        })();
+
+        // Inicialización general (se activa al desbloquear)
+        let mainInitialized = false;
+        function initMainFeatures() {
+            if (mainInitialized) return;
+            mainInitialized = true;
+            createHearts();
+            staggerCards();
+            updateCounter();
+            setInterval(updateCounter, 1000);
+        }
+
+        // Control de música global
+        (function musicControl(){
+            const audio = document.getElementById('bg-audio');
+            const btn = document.getElementById('music-toggle');
+            if (!audio || !btn) return;
+            audio.volume = 0.28;
+            const START_AT = 15;
+            let startApplied = false;
+
+            function applyStartOffset(){
+                if (startApplied) return;
+                if (Number.isFinite(audio.duration) && audio.duration > START_AT) {
+                    audio.currentTime = START_AT;
+                    startApplied = true;
+                }
+            }
+
+            audio.addEventListener('loadedmetadata', applyStartOffset);
+
+            function updateButton(){
+                btn.textContent = audio.paused ? '♪' : '▮▮';
+            }
+
+            function tryPlay() {
+                applyStartOffset();
+                audio.play().catch(()=>{
+                    audio.pause();
+                }).finally(updateButton);
+            }
+
+            // Exponer inicio de música para dispararlo tras desbloquear
+            window.__startMusicAfterUnlock = tryPlay;
+
+            btn.addEventListener('click', ()=>{
+                if (audio.paused) audio.play().catch(()=>{});
+                else audio.pause();
+                updateButton();
+            });
+
+            updateButton();
+        })();
+
+        // Sincronizar controles de la sección "Nuestras canciones" con el audio global
+        (function songSectionSync(){
+            const audio = document.getElementById('bg-audio');
+            if (!audio) return;
+            const playBtn = document.getElementById('song-play');
+            const controlBtn = document.getElementById('song-control-btn');
+            const playIcon = document.getElementById('song-play-icon');
+            const controlIcon = document.getElementById('song-control-icon');
+            const range = document.getElementById('song-range');
+            const cur = document.getElementById('song-current');
+            const dur = document.getElementById('song-duration');
+
+            function fmt(t){
+                const m = Math.floor(t/60); const s = Math.floor(t%60); return `${m}:${String(s).padStart(2,'0')}`;
+            }
+
+            // actualizar UI cuando cambia audio
+            audio.addEventListener('loadedmetadata', ()=>{
+                range.max = Math.floor(audio.duration || 0);
+                dur.textContent = fmt(audio.duration || 0);
+            });
+            audio.addEventListener('timeupdate', ()=>{
+                range.value = Math.floor(audio.currentTime || 0);
+                cur.textContent = fmt(audio.currentTime || 0);
+            });
+            audio.addEventListener('play', updatePlayIcons);
+            audio.addEventListener('pause', updatePlayIcons);
+
+            function updatePlayIcons(){
+                const playing = !audio.paused;
+                // central big button icon (swap play/pause shapes)
+                if (playIcon){
+                    if (playing) playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+                    else playIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+                }
+                if (controlIcon){
+                    controlIcon.innerHTML = playing ? '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>' : '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+                }
+            }
+
+            // click en la imagen grande
+            if (playBtn) playBtn.addEventListener('click', ()=>{
+                if (audio.paused) audio.play().catch(()=>{}); else audio.pause();
+            });
+
+            // click en el control pequeño
+            if (controlBtn) controlBtn.addEventListener('click', ()=>{
+                if (audio.paused) audio.play().catch(()=>{}); else audio.pause();
+            });
+
+            // seek
+            if (range){
+                let seeking = false;
+                range.addEventListener('input', ()=>{
+                    cur.textContent = fmt(range.value);
+                });
+                range.addEventListener('change', ()=>{
+                    audio.currentTime = Number(range.value);
+                });
+            }
+
+            // inicializar estado visual
+            updatePlayIcons();
+        })();
+
+        // --- Soporte táctil para deslizar y lightbox para ampliar imagenes ---
+        (function touchAndLightbox(){
+            const container = document.querySelector('.memories-stack');
+            const photos = Array.from(document.querySelectorAll('.memory-photo'));
+            if (!container || !photos.length) return;
+
+            // Swipe touch
+            let startX = 0, deltaX = 0, isTouch = false;
+            const threshold = 40; // mínimo px para considerar swipe
+
+            container.addEventListener('touchstart', (e)=>{
+                if (e.touches && e.touches.length === 1){
+                    isTouch = true;
+                    startX = e.touches[0].clientX;
+                    deltaX = 0;
+                }
+            }, {passive:true});
+
+            container.addEventListener('touchmove', (e)=>{
+                if (!isTouch) return;
+                deltaX = e.touches[0].clientX - startX;
+            }, {passive:true});
+
+            container.addEventListener('touchend', (e)=>{
+                if (!isTouch) return; isTouch = false;
+                if (Math.abs(deltaX) > threshold){
+                    // encontrar y usar las funciones next/prev definidas por el carrusel
+                    const nextBtn = document.getElementById('carousel-next');
+                    const prevBtn = document.getElementById('carousel-prev');
+                    if (deltaX < 0){ // swipe left -> next
+                        nextBtn && nextBtn.click();
+                    } else { // swipe right -> prev
+                        prevBtn && prevBtn.click();
+                    }
+                }
+                startX = deltaX = 0;
+            }, {passive:true});
+
+            // Lightbox
+            const lightbox = document.getElementById('lightbox');
+            const limg = document.getElementById('lightbox-img');
+            const lclose = document.getElementById('lightbox-close');
+
+            function openLightbox(src, alt){
+                limg.src = src; limg.alt = alt || '';
+                lightbox.classList.add('show');
+                lightbox.setAttribute('aria-hidden','false');
+                // prevent background scrolling
+                document.body.style.overflow = 'hidden';
+            }
+            function closeLightbox(){
+                lightbox.classList.remove('show');
+                lightbox.setAttribute('aria-hidden','true');
+                limg.src = '';
+                document.body.style.overflow = '';
+            }
+
+            photos.forEach(p=>{
+                // click to open (also allow double tap if desired)
+                p.addEventListener('click', (ev)=>{
+                    // if was a touchmove, avoid opening
+                    if (Math.abs(deltaX) > 10) return;
+                    const img = p.querySelector('img');
+                    if (img && img.src) openLightbox(img.src, img.alt || '');
+                });
+            });
+
+            lightbox.addEventListener('click', (e)=>{ if (e.target === lightbox || e.target === lclose) closeLightbox(); });
+            document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeLightbox(); });
+        })();
+
+        // Particulas de corazones al tocar / hacer click en pantalla
+        (function tapHeartParticles(){
+            function spawnHearts(x, y) {
+                for (let i = 0; i < 9; i++) {
+                    const heart = document.createElement('span');
+                    heart.className = 'tap-heart';
+                    heart.textContent = Math.random() > 0.2 ? '❤' : '💖';
+                    heart.style.left = `${x}px`;
+                    heart.style.top = `${y}px`;
+                    heart.style.setProperty('--x', `${(Math.random() * 90) - 45}px`);
+                    heart.style.setProperty('--y', `${-40 - Math.random() * 90}px`);
+                    heart.style.fontSize = `${12 + Math.random() * 12}px`;
+                    heart.style.color = Math.random() > 0.5 ? '#f472b6' : '#ec4899';
+                    document.body.appendChild(heart);
+                    setTimeout(() => heart.remove(), 1000);
+                }
+            }
+
+            document.addEventListener('pointerdown', (e) => {
+                if (e.pointerType === 'mouse' && e.button !== 0) return;
+                spawnHearts(e.clientX, e.clientY);
+            });
+        })();
+    </script>
+</body>
+</html>
