@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para ella — Desamor</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --crema: #F5EDE0;
+    --arena: #E8D5BE;
+    --naranja: #C4622D;
+    --terracota: #A0432A;
+    --texto: #2C1608;
+    --gris: #8C7060;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--crema);
+    color: var(--texto);
+    font-family: 'Crimson Pro', serif;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(196,98,45,0.04) 28px, rgba(196,98,45,0.04) 29px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .mancha {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(70px);
+  }
+  .m1 { width:500px; height:500px; background:radial-gradient(circle,#C4622D,#E8924A); top:-100px; right:-100px; opacity:0.2; }
+  .m2 { width:380px; height:380px; background:radial-gradient(circle,#8B3A2A,#C4622D); bottom:80px; left:-120px; opacity:0.1; }
+
+  .contenedor {
+    position: relative;
+    z-index: 1;
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* PORTADA */
+  .portada {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr auto 1fr;
+    padding: 4rem 0;
+  }
+
+  .sello {
+    justify-self: end;
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gris);
+    padding-top: 2rem;
+    opacity: 0;
+    animation: subir 1.2s ease-out 0.3s forwards;
+  }
+
+  .portada-centro { align-self: center; }
+
+  .dedicatoria {
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--naranja);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: subir 1.2s ease-out 0.5s forwards;
+  }
+
+  .titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 13vw, 10rem);
+    font-weight: 400;
+    line-height: 0.9;
+    color: var(--texto);
+    opacity: 0;
+    animation: subir 1.4s ease-out 0.7s forwards;
+  }
+  .titulo span {
+    font-style: italic;
+    color: var(--terracota);
+    display: block;
+    margin-left: 2.5rem;
+  }
+
+  .intro {
+    margin-top: 3rem;
+    font-size: 1.15rem;
+    font-weight: 300;
+    line-height: 1.85;
+    color: var(--gris);
+    font-style: italic;
+    max-width: 380px;
+    opacity: 0;
+    animation: subir 1.4s ease-out 1s forwards;
+  }
+
+  .scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: end;
+    padding-bottom: 2rem;
+    opacity: 0;
+    animation: subir 1.2s ease-out 1.5s forwards;
+  }
+  .scroll-hint span { font-size:0.7rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--gris); }
+  .scroll-hint i { width:1px; height:50px; background:linear-gradient(to bottom, var(--naranja), transparent); display:block; animation: parpadear 2s ease-in-out infinite; }
+
+  @keyframes subir { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes parpadear { 0%,100%{opacity:0.4;} 50%{opacity:1;} }
+
+  /* SEPARADOR */
+  .sep { display:flex; align-items:center; gap:1.2rem; margin:2rem 0; }
+  .sep-l { flex:1; height:1px; background:var(--arena); }
+  .sep-o { font-size:0.7rem; color:var(--naranja); letter-spacing:0.4em; }
+
+  /* CARTA */
+  .carta { padding: 5rem 0 8rem; }
+
+  .intro-carta {
+    font-size: 1.05rem;
+    color: var(--gris);
+    font-style: italic;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+
+  /* BLOQUES */
+  .bloque {
+    margin-bottom: 5rem;
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  .bloque.vis { opacity:1; transform:translateY(0); }
+
+  .etiqueta {
+    font-size: 0.68rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--naranja);
+    margin-bottom: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .etiqueta::before { content:''; width:20px; height:1px; background:var(--naranja); flex-shrink:0; }
+
+  .v { font-family:'Playfair Display',serif; font-size:clamp(1.35rem,3vw,1.85rem); font-weight:400; line-height:1.65; color:var(--texto); display:block; }
+  .v.i { font-style:italic; color:var(--gris); font-size:clamp(1.2rem,2.5vw,1.6rem); }
+  .v.a { color:var(--terracota); font-style:italic; }
+  .v.s { font-family:'Crimson Pro',serif; font-size:clamp(1rem,2vw,1.3rem); font-weight:300; color:var(--gris); font-style:italic; }
+  .esp { display:block; height:1.1rem; }
+
+  .nota {
+    border-left: 2px solid var(--arena);
+    padding-left: 1.5rem;
+    margin: 2rem 0 2rem 2rem;
+  }
+  .nota p { font-size:1rem; font-style:italic; color:var(--gris); line-height:1.7; }
+
+  .cita-bloque {
+    background: var(--arena);
+    border-radius: 2px;
+    padding: 3rem 2.5rem;
+    margin: 4rem 0;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  .cita-bloque.vis { opacity:1; transform:translateY(0); }
+  .cita-bloque::before {
+    content: '❝';
+    position: absolute;
+    top:-1rem; left:1.5rem;
+    font-size:6rem;
+    color:rgba(196,98,45,0.1);
+    font-family:'Playfair Display',serif;
+    line-height:1;
+  }
+  .cita-bloque p { font-family:'Playfair Display',serif; font-style:italic; font-size:clamp(1.3rem,3vw,1.9rem); line-height:1.55; color:var(--texto); position:relative; z-index:1; }
+  .cita-pie { margin-top:1.2rem !important; font-family:'Crimson Pro',serif !important; font-size:0.78rem !important; letter-spacing:0.3em; text-transform:uppercase; color:var(--naranja) !important; font-style:normal !important; }
+
+  .firma {
+    padding: 6rem 0 8rem;
+    text-align: right;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1.2s ease, transform 1.2s ease;
+  }
+  .firma.vis { opacity:1; transform:translateY(0); }
+  .firma .ln { width:80px; height:1px; background:var(--naranja); margin-left:auto; margin-bottom:1.5rem; }
+  .firma .nm { font-family:'Playfair Display',serif; font-style:italic; font-size:1.5rem; color:var(--texto); display:block; }
+  .firma .sub { font-size:0.78rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--gris); margin-top:0.5rem; display:block; }
+
+  .num { position:fixed; bottom:2rem; right:2rem; font-size:0.7rem; letter-spacing:0.3em; color:var(--arena); z-index:10; writing-mode:vertical-rl; }
+</style>
+</head>
+<body>
+
+<div class="mancha m1"></div>
+<div class="mancha m2"></div>
+<p class="num">DESAMOR · I</p>
+
+<div class="contenedor">
+
+  <!-- PORTADA -->
+  <section class="portada">
+    <p class="sello">Para ella — sin fecha exacta</p>
+
+    <div class="portada-centro">
+      <p class="dedicatoria">Una carta que nunca envié</p>
+      <h1 class="titulo">
+        Te
+        <span>perdí.</span>
+      </h1>
+      <p class="intro">
+        No de golpe. Poco a poco,<br>
+        como se apaga una vela en un cuarto<br>
+        donde ya nadie entra.
+      </p>
+    </div>
+
+    <div class="scroll-hint">
+      <span>leer</span>
+      <i></i>
+    </div>
+  </section>
+
+  <!-- CARTA -->
+  <article class="carta">
+
+    <p class="intro-carta bloque" data-ob>
+      Hay cosas que no dije a tiempo.<br>
+      Estas son algunas.
+    </p>
+
+    <div class="sep"><div class="sep-l"></div><span class="sep-o">✦</span><div class="sep-l"></div></div>
+
+    <!-- I -->
+    <div class="bloque" data-ob>
+      <div class="etiqueta">I — Lo que noté primero</div>
+      <span class="v">Tenías la costumbre de reírte</span>
+      <span class="v">antes de terminar el chiste.</span>
+      <span class="esp"></span>
+      <span class="v i">Yo aprendí a reírme de eso.</span>
+      <span class="v i">Y luego aprendí a extrañarlo.</span>
+      <span class="esp"></span>
+      <span class="v s">Nadie me avisó que esas dos cosas</span>
+      <span class="v s">podían doler igual.</span>
+    </div>
+
+    <!-- II -->
+    <div class="bloque" data-ob>
+      <div class="etiqueta">II — El momento en que supe</div>
+      <span class="v">No fue cuando te fuiste.</span>
+      <span class="esp"></span>
+      <span class="v">Fue cuando me di cuenta</span>
+      <span class="v">de que ya no te esperaba</span>
+      <span class="v a">en ninguna parte.</span>
+      <span class="esp"></span>
+      <span class="v i">Eso es lo que más duele del desamor:</span>
+      <span class="v i">no que te vayas,</span>
+      <span class="v i">sino que yo deje de mirarte llegar.</span>
+    </div>
+
+    <!-- CITA -->
+    <div class="cita-bloque" data-ob>
+      <p>Quise decirte que me gustabas<br>
+      con la misma urgencia con que ahora<br>
+      quiero olvidarte.</p>
+      <p class="cita-pie">— una confesión tardía</p>
+    </div>
+
+    <!-- III -->
+    <div class="bloque" data-ob>
+      <div class="etiqueta">III — Lo que guardé</div>
+      <span class="v">Una foto borrosa.</span>
+      <span class="v">La última conversación</span>
+      <span class="v">que terminó bien.</span>
+      <span class="esp"></span>
+      <span class="v i">El recuerdo de tus manos</span>
+      <span class="v i">moviéndose cuando hablas —</span>
+      <span class="v i">como si las palabras</span>
+      <span class="v i">necesitaran ayuda para salir.</span>
+      <span class="esp"></span>
+      <div class="nota">
+        <p>Guardo todo eso como si algún día<br>
+        fuera a servirme de algo.<br>
+        Todavía no sé para qué.</p>
+      </div>
+    </div>
+
+    <!-- IV -->
+    <div class="bloque" data-ob>
+      <div class="etiqueta">IV — Lo que fallé</div>
+      <span class="v">Tendría que haber dicho</span>
+      <span class="v a">te veo</span>
+      <span class="v">más seguido.</span>
+      <span class="esp"></span>
+      <span class="v">No como cumplido.</span>
+      <span class="v">Como lo que era:</span>
+      <span class="v i">la verdad más simple que tuve</span>
+      <span class="v i">y nunca supe cómo entregar.</span>
+    </div>
+
+    <!-- V -->
+    <div class="bloque" data-ob>
+      <div class="etiqueta">V — Lo que sigue</div>
+      <span class="v">El mundo siguió girando.</span>
+      <span class="v">Tú seguiste viviendo.</span>
+      <span class="v">Yo aprendí a vivir</span>
+      <span class="v a">sin ser parte de tu historia.</span>
+      <span class="esp"></span>
+      <span class="v i">Y aunque duele —</span>
+      <span class="v i">y aunque duele mucho —</span>
+      <span class="esp"></span>
+      <span class="v">espero que estés bien.</span>
+      <span class="v s">Eso no cambia.</span>
+      <span class="v s">Eso nunca cambia.</span>
+    </div>
+
+    <div class="sep"><div class="sep-l"></div><span class="sep-o">✦</span><div class="sep-l"></div></div>
+
+    <!-- FIRMA -->
+    <div class="firma" data-ob>
+      <div class="ln"></div>
+      <span class="nm">él</span>
+      <span class="sub">que todavía recuerda · mmxxvi</span>
+    </div>
+
+  </article>
+</div>
+
+<script>
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('[data-ob]').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
