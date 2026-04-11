@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>amor💖</title>
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #ec456f, #1b0209);
+    overflow: hidden;
+}
+
+/* PANTALLAS */
+.screen {
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* OCULTAR */
+.hidden {
+    display: none;
+}
+
+/* Imagen conejo */
+img {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    filter: drop-shadow(4px 8px 9px #620303);
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+img:hover {
+    transform: scale(1.1);
+}
+
+/* Texto tocar */
+.mensaje {
+    margin-top: 20px;
+    font-size: 22px;
+    color: #a10d0d;
+    font-weight: bold;
+    animation: latido 1s infinite;
+}
+
+@keyframes latido {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* VIDEO */
+.video-container {
+    width: 90%;
+    max-width: 560px;
+    aspect-ratio: 16/9;
+    margin-top: 20px;
+}
+
+.video-container iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+}
+
+/* TEXTO */
+#dedication-text {
+    width: 90%;
+    max-width: 500px;
+    margin-top: 20px;
+    background-color: rgba(255, 182, 193, 0.95);
+    padding: 20px;
+    border-radius: 15px;
+    color: #d90d0d;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    white-space: pre-wrap;
+}
+
+/* CORAZONES */
+@keyframes float {
+    to {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- 💖 PANTALLA 1 -->
+<div id="pantalla1" class="screen">
+    <img src="https://img.freepik.com/fotos-premium/ilustracion-kawaii-conejos-lindos_1158260-7633.jpg" onclick="cambiarPantalla()">
+    <div class="mensaje">💖 tócame para ver algo especial 💖</div>
+</div>
+
+<!-- 💌 PANTALLA 2 -->
+<div id="pantalla2" class="screen hidden">
+
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/IkcuShU9_nk" allowfullscreen></iframe>
+    </div>
+
+    <div id="dedication-text"></div>
+
+</div>
+
+<script>
+// CAMBIAR PANTALLA
+function cambiarPantalla() {
+    document.getElementById("pantalla1").classList.add("hidden");
+    document.getElementById("pantalla2").classList.remove("hidden");
+    escribirTexto();
+}
+
+// TEXTO ANIMADO
+function escribirTexto() {
+let text = `amor… 💕
+desde que llegaste a mi vida 🌎✨
+todo es más bonito 🌷,
+las noches brillan más 🌙⭐
+y mi corazón late solo por ti ❤️‍🔥💓
+
+Tu sonrisa 😊 es mi lugar favorito 🏡
+tu voz 🎶 es mi canción preferida 🎧
+y tu abrazo 🤗 es donde quiero quedarme siempre 🥰💞
+
+Te quiero hoy, mañana
+y por toda la eternidad 💞🌹✨`;
+
+let i = 0;
+const container = document.getElementById("dedication-text");
+
+function type() {
+    if (i < text.length) {
+        container.textContent += text.charAt(i);
+        i++;
+        setTimeout(type, 40);
+    }
+}
+
+container.textContent = "";
+type();
+}
+
+// CORAZONES
+setInterval(() => {
+    const heart = document.createElement("div");
+    heart.innerHTML = "💖";
+    heart.style.position = "fixed";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.bottom = "0";
+    heart.style.fontSize = "20px";
+    heart.style.animation = "float 4s linear";
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 4000);
+}, 500);
+</script>
+
+</body>
+</html>
