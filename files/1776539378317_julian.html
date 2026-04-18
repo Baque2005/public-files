@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAHILY MARISOL 🩵</title>
+
+<style>
+body{
+margin:0;
+background:black;
+color:white;
+font-family:Arial;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+overflow:hidden;
+}
+
+/* TEXTO INICIO */
+#intro{
+font-size:50px;
+letter-spacing:4px;
+text-align:center;
+}
+
+/* CARTA */
+#carta{
+display:none;
+position:absolute;
+text-align:center;
+background:white;
+color:black;
+padding:20px;
+border-radius:12px;
+width:300px;
+box-shadow:0 0 30px #4bbcff;
+}
+
+img{
+width:100%;
+border-radius:10px;
+margin-top:10px;
+}
+
+button{
+margin-top:10px;
+padding:10px 20px;
+border:none;
+background:#4bbcff;
+color:white;
+border-radius:10px;
+cursor:pointer;
+}
+
+/* MENSAJE */
+#mensaje{
+display:none;
+color:#4bbcff;
+font-weight:bold;
+margin-top:10px;
+}
+
+/* corazones */
+.heart{
+position:absolute;
+animation:flotar 4s linear infinite;
+}
+
+@keyframes flotar{
+from{transform:translateY(0);opacity:1;}
+to{transform:translateY(-600px);opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<div id="intro"></div>
+
+<div id="carta">
+
+<h2>Para MAHILY MARISOL 🩵</h2>
+
+<img src="MAHILY">
+
+<p>
+Feliz cumpleaños 🌻✨<br>
+Quería hacer algo especial para ti,
+porque eres alguien muy importante
+en mi vida 🩵
+</p>
+
+<button onclick="mensaje()">💌 Mensaje secreto</button>
+
+<div id="mensaje">
+Me gustas muchísimo 🩵<br>
+y espero seguir creando recuerdos contigo ✨
+</div>
+
+</div>
+
+<!-- 🎵 MUSICA AUTOMATICA -->
+<audio id="bgmusic" autoplay loop>
+<source src="Como Yotas - Penyair letra.mp3" type="audio/mp3">
+</audio>
+
+<script>
+
+/* escribir nombre tipo pelicula */
+let texto="MAHILY MARISOL...";
+let i=0;
+
+function escribir(){
+if(i < texto.length){
+document.getElementById("intro").innerHTML += texto.charAt(i);
+i++;
+setTimeout(escribir,120);
+}else{
+setTimeout(mostrarCarta,1500);
+}
+}
+
+function mostrarCarta(){
+document.getElementById("intro").style.display="none";
+document.getElementById("carta").style.display="block";
+corazones();
+}
+
+/* mensaje secreto */
+function mensaje(){
+document.getElementById("mensaje").style.display="block";
+}
+
+/* lluvia de corazones 🩵 */
+function corazones(){
+setInterval(()=>{
+let h=document.createElement("div");
+h.className="heart";
+h.innerHTML="🩵";
+h.style.left=Math.random()*100+"vw";
+h.style.top="90vh";
+h.style.fontSize="22px";
+document.body.appendChild(h);
+setTimeout(()=>h.remove(),4000);
+},600);
+}
+
+escribir();
+
+</script>
+
+</body>
+</html>
