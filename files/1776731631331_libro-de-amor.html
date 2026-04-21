@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Libro💖</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at top left, #ffe6f0, #fff0f5, #fefefe);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    user-select: none;
+    touch-action: none;
+  }
+
+  /* CUADERNO CERRADO */
+  #cuadernoCerrado {
+    width: 180px;
+    height: 240px;
+    background: url('https://i.postimg.cc/J7ZZbttx/IMG-20251016-WA0029.jpg') center/cover no-repeat;
+    border: 3px solid #c8a2c8;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    color: #0004ff;
+    text-shadow: 1px 1px 3px rgba(255,255,255,0.6);
+    text-align: center;
+    font-size: 1em;
+    cursor: pointer;
+    padding-bottom: 15px;
+    animation: aparecer 1.5s ease;
+  }
+
+  #cuadernoCerrado small {
+    font-size: 0.75em;
+    color: #ff0000;
+  }
+
+  @keyframes aparecer {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* CUADERNO ABIERTO */
+  .cuaderno {
+    width: 90%;
+    max-width: 300px;
+    height: 65vh;
+    position: relative;
+    perspective: 2000px;
+    display: none;
+  }
+
+  .pagina {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #fffafc url('https://i.postimg.cc/vBRcPFm9/223f2d762d77845f83571d717e7db14a.jpg') center/cover no-repeat;
+    border-left: 5px solid #d5b3ff;
+    border-right: 5px solid #d5b3ff;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    transform-origin: left center;
+    transition: transform 1s cubic-bezier(0.4, 0.2, 0.3, 1);
+    overflow: hidden;
+    padding: 18px;
+    color: #2d1b3a;
+    font-size: 0.9em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    backface-visibility: hidden;
+  }
+
+  .pagina h2 {
+    color: #8a2be2;
+    font-size: 1em;
+    margin-bottom: 8px;
+  }
+
+  .pagina p {
+    line-height: 1.4em;
+    font-size: 0.9em;
+    color: #2c1f3d;
+    text-align: center;
+  }
+
+  .pagina.inicial {
+    font-size: 1.3em;
+    color: #7a215e;
+    font-weight: bold;
+  }
+
+  .pasada { transform: rotateY(-180deg); }
+  .pagina:nth-child(1) { z-index: 7; }
+  .pagina:nth-child(2) { z-index: 6; }
+  .pagina:nth-child(3) { z-index: 5; }
+  .pagina:nth-child(4) { z-index: 4; }
+  .pagina:nth-child(5) { z-index: 3; }
+  .pagina:nth-child(6) { z-index: 2; }
+  .pagina:nth-child(7) { z-index: 1; }
+
+  /* BOTONES */
+  .btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    margin: 6px;
+    font-size: 0.85em;
+    cursor: pointer;
+  }
+  .btn-si { background-color: #ff69b4; color: white; }
+  .btn-no { background-color: #ccc; color: #333; }
+
+  /* MODAL */
+  #modal {
+    display: none;
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.6);
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+  }
+  #modal .contenido {
+    background:#ffffff;
+    padding:15px;
+    border-radius:10px;
+    text-align:center;
+    max-width:260px;
+    width:85%;
+    font-size:0.95em;
+    color:#800080;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  }
+  #modal .cerrarModal {
+    margin-top:10px;
+    padding:5px 10px;
+    border:none;
+    border-radius:8px;
+    background:#ff69b4;
+    color:hsl(0, 0%, 100%);
+    cursor:pointer;
+  }
+
+  /* CORAZONES */
+  @keyframes corazones {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-800px) rotate(360deg); opacity: 0; }
+  }
+  .corazon {
+    position: fixed;
+    bottom: -10px;
+    color: #ffb6c1;
+    font-size: 14px;
+    animation: corazones 9s linear infinite;
+    z-index: 0;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 400px) {
+    .pagina p { font-size: 0.85em; }
+    .pagina h2 { font-size: 0.9em; }
+    .cuaderno { height: 60vh; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MÚSICA -->
+<audio id="musica" loop>
+  <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Carla%20Morrison%20-%20Eres%20t%C3%BA%20(letra).mp3" type="audio/mp3">
+</audio>
+
+<!-- CUADERNO CERRADO -->
+<div id="cuadernoCerrado">
+  📖 Este libro pertenece a <br> 💖 TI AMOR 💖
+  <br><br>
+  <small>Toca para abrir</small>
+</div>
+
+<!-- CUADERNO ABIERTO -->
+<div id="cuaderno" class="cuaderno">
+  <div class="pagina inicial">PARA TI AMOR 💕</div>
+  <div class="pagina"><h2>💞 Mis Sentimientos 💞</h2><p>Cada palabra aquí tiene un pedacito de mi corazón. Eres la razón por la que sonrío cada día. 💓</p></div>
+  <div class="pagina"><h2>🌹 Pensar en ti 🌹</h2><p>Desde que llegaste, todo cambió. Mi mente y mi alma solo te buscan a ti. 🌙</p></div>
+  <div class="pagina"><h2>✨ Nuestro destino ✨</h2><p>No fue casualidad, fue el universo conspirando para que nos encontráramos. 💫</p></div>
+  <div class="pagina"><h2>💌 Mi promesa 💌</h2><p>Prometo estar contigo incluso en los días nublados, y regalarte mi amor sin medida. 💋</p></div>
+  <div class="pagina"><h2>🌈 Cada día contigo 🌈</h2><p>Tu voz calma mi alma, tu sonrisa ilumina mis días. 💕</p></div>
+  <div class="pagina"><h2>💖 Mi pregunta final 💖</h2><p>¿Quieres ser la historia más bonita de mi vida? 💞</p>
+    <div class="final">
+      <button class="btn btn-si" id="btnSi">Sí 💕</button>
+      <button class="btn btn-no" id="btnNo">No 😢</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="contenido">
+    Te haré la persona más feliz del universo 💖✨  
+    <button class="cerrarModal" onclick="cerrarModal()">Cerrar</button>
+  </div>
+</div>
+
+<script>
+/* CORAZONES */
+function crearCorazones() {
+  const corazon = document.createElement("div");
+  corazon.classList.add("corazon");
+  corazon.innerHTML = "💗";
+  corazon.style.left = Math.random() * window.innerWidth + "px";
+  corazon.style.animationDuration = 8 + Math.random() * 4 + "s";
+  document.body.appendChild(corazon);
+  setTimeout(()=> corazon.remove(), 10000);
+}
+setInterval(crearCorazones, 500);
+
+/* AUDIO */
+const musica = document.getElementById("musica");
+
+/* ABRIR CUADERNO */
+const cuadernoCerrado = document.getElementById("cuadernoCerrado");
+const cuaderno = document.getElementById("cuaderno");
+
+cuadernoCerrado.addEventListener("click", ()=>{
+  cuadernoCerrado.style.display = "none";
+  cuaderno.style.display = "block";
+  const iniciarMusica = () => {
+    musica.currentTime = 21;
+    musica.play().catch(()=>{});
+  };
+
+  if (musica.readyState >= 1) iniciarMusica();
+  else musica.addEventListener("loadedmetadata", iniciarMusica, { once: true });
+});
+
+/* PASAR PÁGINAS */
+const paginas = document.querySelectorAll(".pagina");
+let paginaActual = 0;
+let bloqueado = false;
+
+function pasarPagina() {
+  if (bloqueado || paginaActual >= paginas.length - 1) return;
+  bloqueado = true;
+  paginas[paginaActual].classList.add("pasada");
+  paginaActual++;
+  setTimeout(()=> bloqueado = false, 1000);
+}
+
+function retrocederPagina() {
+  if (bloqueado || paginaActual <= 0) return;
+  bloqueado = true;
+  paginaActual--;
+  paginas[paginaActual].classList.remove("pasada");
+  setTimeout(()=> bloqueado = false, 1000);
+}
+
+/* TOQUES O CLICS */
+let startX = 0;
+cuaderno.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+cuaderno.addEventListener("touchend", e => {
+  const endX = e.changedTouches[0].clientX;
+  if (endX - startX > 60) retrocederPagina();
+  else if (startX - endX > 60) pasarPagina();
+});
+
+cuaderno.addEventListener("click", pasarPagina);
+
+/* BOTONES */
+document.getElementById("btnSi").addEventListener("click", ()=>{
+  document.getElementById("modal").style.display = "flex";
+});
+function cerrarModal(){ document.getElementById("modal").style.display = "none"; }
+
+const btnNo = document.getElementById("btnNo");
+btnNo.addEventListener("mouseenter", ()=>{
+  const parent = btnNo.parentElement;
+  const maxX = parent.offsetWidth - btnNo.offsetWidth;
+  const maxY = parent.offsetHeight - btnNo.offsetHeight;
+  btnNo.style.position = "absolute";
+  btnNo.style.left = Math.random()*maxX + "px";
+  btnNo.style.top = Math.random()*maxY + "px";
+});
+</script>
+</body>
+</html>         
