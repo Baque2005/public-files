@@ -1,0 +1,475 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Galaxy de Amor</title>
+<link rel="icon" href="data:,">
+<style>
+  * { margin: 0; padding: 0; }
+  html, body { overflow: hidden; height: 100%; background: black; }
+  .webgl { position: fixed; top: 0; left: 0; outline: none; }
+    #titulo-corazon {
+        position: fixed;
+        top: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #ffd7ef;
+        font-family: Arial, sans-serif;
+        font-size: clamp(1.2rem, 2.8vw, 2rem);
+        font-weight: bold;
+        text-shadow: 0 0 10px #ff3ea5, 0 0 24px #ff3ea5;
+        z-index: 20;
+        pointer-events: none;
+    }
+    #modal-carta {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(3px);
+        z-index: 30;
+    }
+    #modal-carta.visible {
+        display: flex;
+    }
+    .carta {
+        width: min(86vw, 420px);
+        background: linear-gradient(160deg, #fff8fb 0%, #ffe9f4 100%);
+        border: 2px solid #ffc7e4;
+        border-radius: 18px;
+        padding: 22px 20px 16px;
+        box-shadow: 0 12px 36px rgba(255, 20, 147, 0.4);
+        color: #8a235f;
+        font-family: 'Georgia', serif;
+        text-align: center;
+        position: relative;
+        animation: cartaAparece 0.28s ease-out;
+    }
+    .carta h3 {
+        font-size: 1.15rem;
+        margin-bottom: 10px;
+    }
+    #mensaje-romantico {
+        font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+        line-height: 1.5;
+        color: #b01867;
+        text-shadow: 0 0 10px rgba(255, 70, 150, 0.2);
+    }
+    #cerrar-carta {
+        margin-top: 14px;
+        border: none;
+        border-radius: 999px;
+        background: #ff4da6;
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: bold;
+        padding: 8px 16px;
+        cursor: pointer;
+    }
+    @keyframes cartaAparece {
+        from { opacity: 0; transform: scale(0.9) translateY(12px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+</style>
+</head>
+<body>
+<canvas class="webgl"></canvas>
+<div id="titulo-corazon">Apreta el corazon</div>
+<div id="modal-carta">
+    <div class="carta">
+        <h3>Para ti</h3>
+        <p id="mensaje-romantico"></p>
+        <button id="cerrar-carta">Cerrar</button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+<script>
+/* =================== ESCENA =================== */
+const scene = new THREE.Scene();
+const ORBIT_SYNC_SPEED = 0.003;
+
+/* =================== ESTRELLAS DE FONDO =================== */
+function crearEstrellasFondo() {
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 5000; // ⭐ MUCHAS ESTRELLAS
+
+    const positions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount * 3; i++) {
+        positions[i] = (Math.random() - 0.5) * 500; // Las coloca en todo el universo
+    }
+
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const starMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.7,
+        transparent: true
+    });
+
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+}
+
+crearEstrellasFondo();
+
+/* =================== GALAXIA =================== */
+let galaxy;
+const parameters = {
+    count: 80000,
+    size: 0.01,
+    radius: 6,
+    branches: 4,
+    spin: 1,
+    randomness: 0.2,
+    randomnessPower: 3,
+    insideColor: "#ff1b6b",
+    outsideColor: "#3000ff"
+};
+
+function generateGalaxy() {
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(parameters.count * 3);
+    const colors = new Float32Array(parameters.count * 3);
+
+    const colorInside = new THREE.Color(parameters.insideColor);
+    const colorOutside = new THREE.Color(parameters.outsideColor);
+
+    for (let i = 0; i < parameters.count; i++) {
+        const i3 = i * 3;
+
+        const radius = Math.random() * parameters.radius;
+        const spinAngle = radius * parameters.spin;
+        const branchAngle = ((i % parameters.branches) / parameters.branches) * Math.PI * 2;
+
+        const randomX = (Math.random() - 0.5) * parameters.randomness * radius;
+        const randomY = (Math.random() - 0.5) * parameters.randomness * radius;
+        const randomZ = (Math.random() - 0.5) * parameters.randomness * radius;
+
+        positions[i3]     = Math.cos(branchAngle + spinAngle) * radius + randomX;
+        positions[i3 + 1] = randomY;
+        positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
+
+        const mixed = colorInside.clone().lerp(colorOutside, radius / parameters.radius);
+        colors[i3]     = mixed.r;
+        colors[i3 + 1] = mixed.g;
+        colors[i3 + 2] = mixed.b;
+    }
+
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+    const material = new THREE.PointsMaterial({
+        size: parameters.size,
+        vertexColors: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+
+    galaxy = new THREE.Points(geometry, material);
+    scene.add(galaxy);
+}
+
+generateGalaxy();
+
+/* =================== CORAZÓN 3D =================== */
+const heartGeometry = new THREE.BufferGeometry();
+const hPos = [], hCol = [];
+
+for (let i = 0; i < 3500; i++) {
+    const t = Math.random() * Math.PI * 2;
+    const s = Math.random() * 0.6 + 0.4;
+
+    let x = 17 * Math.pow(Math.sin(t), 3);
+    let y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+    let z = (Math.random() - 0.5) * 1;
+
+    x *= s * 0.15;
+    y *= s * 0.15;
+    z *= s * 0.15;
+
+    hPos.push(x, y + 2.2, z);
+
+    let c = new THREE.Color();
+    c.setHSL(0.95 + Math.random() * 0.05, 1, 0.65);
+    hCol.push(c.r, c.g, c.b);
+}
+
+heartGeometry.setAttribute("position", new THREE.Float32BufferAttribute(hPos, 3));
+heartGeometry.setAttribute("color", new THREE.Float32BufferAttribute(hCol, 3));
+
+const heartMaterial = new THREE.PointsMaterial({ size: 0.12, vertexColors: true });
+const heart = new THREE.Points(heartGeometry, heartMaterial);
+scene.add(heart);
+
+/* =================== CORAZON GLB 3D AL CENTRO =================== */
+let heartModel = null;
+const gltfLoader = new THREE.GLTFLoader();
+const matcapLoader = new THREE.TextureLoader();
+
+gltfLoader.load(
+    'https://assets.codepen.io/74321/heart.glb',
+    (gltf) => {
+        heartModel = gltf.scene;
+        heartModel.position.set(0, 3.2, 0);
+        heartModel.scale.set(1.2, 1.2, 1.2);
+
+        const matcap = matcapLoader.load('https://assets.codepen.io/74321/3.png');
+        heartModel.traverse((child) => {
+            if (child.isMesh) {
+                child.material = new THREE.MeshMatcapMaterial({
+                    matcap,
+                    color: new THREE.Color('#ff3366')
+                });
+            }
+        });
+
+        scene.add(heartModel);
+    },
+    undefined,
+    () => {
+        // Si el modelo no carga, la escena sigue funcionando sin romperse.
+    }
+);
+
+/* =================== FRASES POR TODO EL UNIVERSO =================== */
+const frases = [
+    "Te amo 💖", "Te quiero 💘", "Eres mi todo ", "Mi cielo ", "Mi amor 💞",
+    "Te adoro ", "Te extraño ", "Mi todo 💫", "Mi reina 👑", "Mi universo ",
+    "Guapa 😍", "Bella ", "Preciosa 💕", "Princesa "
+];
+
+function crearTexto(msg, size=1.8) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 512;
+    canvas.height = 128;
+    const ctx = canvas.getContext("2d");
+
+    ctx.font = "bold 50px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#ff1493";
+    ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+    const sprite = new THREE.Sprite(material);
+    sprite.scale.set(size * 4, size, 1);
+    return sprite;
+}
+
+let textoSprites = [];
+for (let i = 0; i < 90; i++) {
+    let t = crearTexto(frases[Math.floor(Math.random() * frases.length)], 1 + Math.random());
+    let x = (Math.random() - 0.5) * 40;
+    let y = (Math.random() - 0.5) * 25;
+    let z = (Math.random() - 0.5) * 40;
+
+    if (Math.abs(x) < 5 && Math.abs(y) < 5) y += 7;
+
+    t.position.set(x, y, z);
+        t.userData = {
+            baseY: y,
+            orbitRadius: Math.sqrt(x * x + z * z),
+            orbitAngle: Math.atan2(z, x),
+            orbitSpeed: ORBIT_SYNC_SPEED,
+            floatAmp: Math.random() * 0.6 + 0.2,
+            floatSpeed: Math.random() * 0.8 + 0.6,
+            phase: Math.random() * Math.PI * 2,
+            baseSize: 1 + Math.random()
+        };
+        t.scale.set(t.userData.baseSize * 4, t.userData.baseSize, 1);
+    scene.add(t);
+    textoSprites.push(t);
+}
+
+/* FOTOS PEQUEÑAS =================== */
+const photoTextureLoader = new THREE.TextureLoader();
+const urls = [
+ "https://i.postimg.cc/N01gCC2B/pin-1.jpg",
+ "https://i.postimg.cc/5twxKKQf/pin-2.jpg",
+ "https://i.postimg.cc/g0vYttL9/pin-3.jpg"
+];
+
+let fotoSprites = [];
+
+for (let i = 0; i < 30; i++) {  // 30 fotos alrededor
+    const texture = photoTextureLoader.load(urls[i % urls.length]);
+    const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+    const sprite = new THREE.Sprite(material);
+
+    const scale = 1 + Math.random();  // tamaño variable
+    sprite.scale.set(scale, scale, 1);
+
+    // posición aleatoria alrededor de la galaxia
+    let x = (Math.random() - 0.5) * 40;
+    let y = (Math.random() - 0.5) * 25;
+    let z = (Math.random() - 0.5) * 40;
+
+    if (Math.abs(x) < 5 && Math.abs(y) < 5) y += 7;  // evitar choque con el corazón
+    sprite.position.set(x, y, z);
+        sprite.userData = {
+            baseY: y,
+            orbitRadius: Math.sqrt(x * x + z * z),
+            orbitAngle: Math.atan2(z, x),
+            orbitSpeed: ORBIT_SYNC_SPEED,
+            floatAmp: Math.random() * 0.5 + 0.15,
+            floatSpeed: Math.random() * 0.9 + 0.5,
+            phase: Math.random() * Math.PI * 2,
+            baseScale: scale
+        };
+
+    scene.add(sprite);
+    fotoSprites.push(sprite);
+}
+
+/* =================== CÁMARA Y RENDER =================== */
+const sizes = { width: window.innerWidth, height: window.innerHeight };
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 600);
+camera.position.set(10, 12, 20);
+scene.add(camera);
+
+const canvasEl = document.querySelector('.webgl');
+const renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true });
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+const clock = new THREE.Clock();
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const modalCarta = document.getElementById('modal-carta');
+const mensajeRomantico = document.getElementById('mensaje-romantico');
+const cerrarCarta = document.getElementById('cerrar-carta');
+const frasesRomanticas = [
+    'Desde que llegaste a mi vida, siento que el universo encontró una forma perfecta de ordenarse dentro de mí. Eres como una galaxia entera, llena de misterios hermosos que quiero descubrir poco a poco, como estrellas que brillan incluso en mis noches más oscuras. A veces pienso que, entre millones de mundos, tuve la suerte de encontrarte justo a ti, como si el destino hubiera trazado nuestra historia desde el inicio del tiempo. Y es que amarte se siente así, infinito, profundo y brillante, como el cielo cuando lo miro y pienso en todo lo que significas para mí. ✨'
+];
+
+function mostrarMensajeRomantico() {
+    const mensaje = frasesRomanticas[Math.floor(Math.random() * frasesRomanticas.length)];
+    mensajeRomantico.textContent = mensaje;
+    modalCarta.classList.add('visible');
+}
+
+cerrarCarta.addEventListener('click', () => {
+    modalCarta.classList.remove('visible');
+});
+
+modalCarta.addEventListener('click', (event) => {
+    if (event.target === modalCarta) {
+        modalCarta.classList.remove('visible');
+    }
+});
+
+canvasEl.addEventListener('pointerdown', (event) => {
+    if (!heartModel) return;
+
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const impactos = raycaster.intersectObject(heartModel, true);
+
+    if (impactos.length > 0) {
+        mostrarMensajeRomantico();
+    }
+});
+
+/* =================== ANIMACIÓN =================== */
+function tick() {
+    const elapsed = clock.getElapsedTime();
+
+  galaxy.rotation.y += 0.001;
+  heart.rotation.y += ORBIT_SYNC_SPEED;
+    heart.rotation.z = Math.sin(elapsed * 1.7) * 0.08;
+
+    if (heartModel) {
+        heartModel.rotation.y += 0.01;
+        heartModel.rotation.x = Math.sin(elapsed * 1.8) * 0.1;
+        heartModel.position.y = 3.2 + Math.sin(elapsed * 2.2) * 0.25;
+    }
+
+    textoSprites.forEach(t => {
+        const d = t.userData;
+        d.orbitAngle += d.orbitSpeed;
+        t.position.x = Math.cos(d.orbitAngle) * d.orbitRadius;
+        t.position.z = Math.sin(d.orbitAngle) * d.orbitRadius;
+        t.position.y = d.baseY + Math.sin(elapsed * d.floatSpeed + d.phase) * d.floatAmp;
+
+        const pulse = 1 + Math.sin(elapsed * 2.4 + d.phase) * 0.1;
+        t.scale.set(d.baseSize * 4 * pulse, d.baseSize * pulse, 1);
+        t.material.opacity = 0.72 + Math.sin(elapsed * 1.9 + d.phase) * 0.2;
+        t.lookAt(camera.position);
+    });
+
+    fotoSprites.forEach(s => {
+        const d = s.userData;
+        d.orbitAngle += d.orbitSpeed;
+        s.position.x = Math.cos(d.orbitAngle) * d.orbitRadius;
+        s.position.z = Math.sin(d.orbitAngle) * d.orbitRadius;
+        s.position.y = d.baseY + Math.sin(elapsed * d.floatSpeed + d.phase) * d.floatAmp;
+
+        const pulse = 1 + Math.sin(elapsed * 1.7 + d.phase) * 0.08;
+        s.scale.set(d.baseScale * pulse, d.baseScale * pulse, 1);
+        s.material.rotation += 0.0015;
+        s.material.opacity = 0.7 + Math.sin(elapsed * 1.5 + d.phase) * 0.25;
+        s.lookAt(camera.position);
+    });
+
+  controls.update();
+  renderer.render(scene, camera);
+  requestAnimationFrame(tick);
+}
+tick();
+
+/* =================== RESPONSIVE =================== */
+window.addEventListener('resize', () => {
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+  renderer.setSize(sizes.width, sizes.height);
+});
+</script>
+<audio id="musica-fondo" loop>
+    <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/PUBLIC%20-%20Make%20You%20Mine%20%20Sub%20espa%C3%B1ol%20(lyrics).mp3" type="audio/mpeg">
+</audio>
+<!--Pantalla de inicio -->
+<div id="inicio" style="
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.9);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  color:white;
+  font-family:'Pacifico',cursive;
+  font-size:2.5em;
+  text-shadow:0 0 15px #ff00ff;
+  cursor:pointer;
+  z-index:999;
+">
+    <p>toca Aqui </p>
+</div>
+<script>
+    const musica = document.getElementById("musica-fondo");
+    const inicio = document.getElementById("inicio");
+
+    // Cuando se hace clic en la pantalla de inicio
+    inicio.addEventListener("click", () => {
+      inicio.style.display = "none"; // Oculta la pantalla de inicio
+      musica.play(); // Reproduce la música
+    });
+</script>
+</body>
+</html>
+
