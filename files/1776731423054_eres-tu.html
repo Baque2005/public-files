@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eres tu</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-image:
+                linear-gradient(rgba(7, 10, 25, 0.62), rgba(7, 10, 25, 0.62)),
+                url('https://i.pinimg.com/236x/ba/7b/0a/ba7b0a4b7b5df094b5466eec86632b65.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .glow-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.18), transparent 45%),
+                radial-gradient(circle at 80% 70%, rgba(148, 163, 255, 0.2), transparent 50%);
+            z-index: 0;
+        }
+
+        .main {
+            position: relative;
+            z-index: 2;
+            width: min(92vw, 980px);
+            padding: 24px;
+            text-align: center;
+        }
+
+        #particles-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        #lyrics-container {
+            font-size: clamp(2rem, 8vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.2;
+            letter-spacing: 0.02em;
+            min-height: 1.3em;
+            color: #ffffff;
+            text-shadow:
+                0 0 10px rgba(255, 255, 255, 0.85),
+                0 0 22px rgba(255, 255, 255, 0.75),
+                0 0 42px rgba(255, 255, 255, 0.55),
+                0 12px 28px rgba(0, 0, 0, 0.65);
+            filter: saturate(1.06);
+        }
+
+        .lyric-word {
+            display: inline-block;
+            white-space: nowrap;
+            margin-right: 0.28em;
+        }
+
+        .letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(18px) rotateX(-88deg);
+            filter: blur(4px);
+            animation: revealLetter 0.5s cubic-bezier(0.2, 0.6, 0.2, 1) forwards;
+        }
+
+        .fade-out {
+            animation: fadeOutLine 0.35s ease-in forwards;
+        }
+
+        .start-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(4, 7, 18, 0.82);
+            backdrop-filter: blur(4px);
+        }
+
+        .start-card {
+            width: min(88vw, 380px);
+            border-radius: 18px;
+            padding: 28px 22px;
+            text-align: center;
+            background: linear-gradient(150deg, rgba(26, 34, 65, 0.9), rgba(10, 14, 30, 0.9));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow:
+                0 20px 55px rgba(0, 0, 0, 0.55),
+                0 0 40px rgba(255, 255, 255, 0.12);
+        }
+
+        .start-title {
+            font-size: clamp(1.25rem, 4.5vw, 1.8rem);
+            font-weight: 900;
+            letter-spacing: 0.03em;
+            color: #ffffff;
+            text-shadow: 0 0 16px rgba(255, 255, 255, 0.45);
+            margin-bottom: 18px;
+        }
+
+        .start-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0e1228;
+            background: linear-gradient(120deg, #ffffff, #dbe8ff);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 10px 26px rgba(168, 188, 255, 0.35);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-1px) scale(1.02);
+            box-shadow: 0 14px 30px rgba(168, 188, 255, 0.45);
+        }
+
+        .start-btn:active {
+            transform: translateY(1px) scale(0.99);
+        }
+
+        .particle {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: var(--size, 6px);
+            height: var(--size, 6px);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow:
+                0 0 10px rgba(255, 255, 255, 0.9),
+                0 0 20px rgba(255, 255, 255, 0.6);
+            transform: translate(-50%, -50%) translate(0, 0) scale(1);
+            animation: explode var(--duration, 1200ms) ease-out forwards;
+        }
+
+        @keyframes revealLetter {
+            from {
+                opacity: 0;
+                transform: translateY(18px) rotateX(-88deg);
+                filter: blur(4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes fadeOutLine {
+            to {
+                opacity: 0;
+                transform: translateY(-18px);
+                filter: blur(8px);
+            }
+        }
+
+        @keyframes explode {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(0.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <audio id="song" preload="auto">
+        <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Eres%20t%C3%BA.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="glow-bg"></div>
+    <div id="particles-layer"></div>
+
+    <div id="startModal" class="start-modal">
+        <div class="start-card">
+            <div class="start-title">Apreta aqui</div>
+            <button id="startBtn" class="start-btn">Para ti!</button>
+        </div>
+    </div>
+
+    <main class="main" id="mainView" aria-live="polite">
+        <h1 id="lyrics-container"></h1>
+    </main>
+
+    <script>
+        const END_TIME = 173;
+        const COMMA_PAUSE = 1.5;
+
+        const lyricsData = [
+            { time: 0, text: "Eres tu," },
+            { time: 4, text: "tu-ru-ru" },
+            { time: 8, text: "Eres tu, y tu, y tu," },
+            { time: 13, text: "tu-ru-ru-ru" },
+            { time: 15, text: "Mmmmmm" },
+            { time: 18, text: "oh, oh oh" },
+            { time: 23, text: "Eres tu, yeah" },
+            { time: 26, text: "tu-ru-ru-ru" },
+            { time: 31, text: "..." },
+            { time: 33, text: "La que me fascina" },
+            { time: 37, text: "La que me domina" },
+            { time: 40, text: "Mi mente se alinea cuando caminas" },
+            { time: 45, text: "Eres tu, la calma y la ruina" },
+            { time: 53, text: "La voz que suena" },
+            { time: 55, text: "Cuando el alma suspira" },
+            { time: 61, text: "Tus ojos son fuego en, la neblina" },
+            { time: 64, text: "Tu risa me quema, me ilumina" },
+            { time: 68, text: "Y si no estas, el mundo gira" },
+            { time: 72, text: "Pero sin rumbo, sin salida" },
+            { time: 76, text: "..." },
+            { time: 79, text: "Eres tu (tu, y tu, y tu)" },
+            { time: 82, text: "Tu-ru-ru-ru (tu, y tu, y tu)" },
+            { time: 87, text: "Eres tu (tu, y tu, y tu)" },
+            { time: 90, text: "Tu-ru-ru-ru" },
+            { time: 93, text: "Eres tu (tu, y tu, y tu)" },
+            { time: 97, text: "Tu-ru-ru-ru (tu, y tu, y tu)" },
+            { time: 102, text: "Eres tu (tu, y tu, y tu)" },
+            { time: 105, text: "Tu-ru-ru-ru" },
+            { time: 107, text: "..." },
+            { time: 109, text: "Eres tan perfecta" },
+            { time: 112, text: "Tan sincera, tan real, que me desespera" },
+            { time: 118, text: "Eres la razon por la que aun espero" },
+            { time: 121, text: "La voz que suena cuando muero" },
+            { time: 125, text: "Eres tu, la que me enciende por dentro" },
+            { time: 133, text: "Eres tu, mi mejor pensamiento" },
+            { time: 140, text: "Tus besos saben a calma y a miedo" },
+            { time: 144, text: "A promesas que aun no entiendo" },
+            { time: 147, text: "Tus abrazos detienen el tiempo" },
+            { time: 151, text: "Y en tus brazos, todo tiene sentido" },
+            { time: 155, text: "Tu mirada tan profunda y clara" },
+            { time: 159, text: "Rompe el ruido, calla el alma" },
+            { time: 162, text: "Y tu sonrisa, mi desgracia" },
+            { time: 166, text: "Mi adiccion, mi esperanza" },
+            { time: 171.5, text: "..." }
+        ];
+
+        const song = document.getElementById('song');
+        const lyricsContainer = document.getElementById('lyrics-container');
+        const particlesLayer = document.getElementById('particles-layer');
+        const startModal = document.getElementById('startModal');
+        const startBtn = document.getElementById('startBtn');
+
+        let currentLineIndex = -1;
+        let animationFrameId;
+        let explosionIntervalId;
+
+        function showFinalMessage() {
+            lyricsContainer.innerHTML = '';
+            renderLyric('te amo');
+        }
+
+        function renderLyric(text) {
+            if (lyricsContainer.innerText.trim() !== '') {
+                lyricsContainer.classList.add('fade-out');
+            }
+
+            setTimeout(() => {
+                lyricsContainer.innerHTML = '';
+                lyricsContainer.classList.remove('fade-out');
+
+                const words = text.split(' ');
+                let accumulatedDelay = 0;
+
+                words.forEach((word) => {
+                    const wordSpan = document.createElement('span');
+                    wordSpan.className = 'lyric-word';
+
+                    word.split('').forEach((char) => {
+                        const letterSpan = document.createElement('span');
+                        letterSpan.className = 'letter';
+                        letterSpan.textContent = char;
+                        letterSpan.style.animationDelay = `${accumulatedDelay.toFixed(2)}s`;
+
+                        accumulatedDelay += 0.04;
+                        if (char === ',') {
+                            accumulatedDelay += COMMA_PAUSE;
+                        }
+
+                        wordSpan.appendChild(letterSpan);
+                    });
+
+                    lyricsContainer.appendChild(wordSpan);
+                });
+            }, 180);
+        }
+
+        function stopAtEnd() {
+            if (song.currentTime >= END_TIME) {
+                song.pause();
+                song.currentTime = END_TIME;
+                cancelAnimationFrame(animationFrameId);
+                stopExplosions();
+                showFinalMessage();
+                return true;
+            }
+            return false;
+        }
+
+        function updateLyricsFromAudio() {
+            if (stopAtEnd()) return;
+
+            const currentTime = song.currentTime;
+            let activeIndex = -1;
+
+            for (let i = 0; i < lyricsData.length; i++) {
+                if (currentTime >= lyricsData[i].time) {
+                    activeIndex = i;
+                } else {
+                    break;
+                }
+            }
+
+            if (activeIndex !== currentLineIndex && activeIndex !== -1) {
+                currentLineIndex = activeIndex;
+                renderLyric(lyricsData[currentLineIndex].text);
+            }
+
+            animationFrameId = requestAnimationFrame(updateLyricsFromAudio);
+        }
+
+        function createParticleExplosion() {
+            const centerX = Math.random() * window.innerWidth;
+            const centerY = Math.random() * window.innerHeight;
+            const count = 16 + Math.floor(Math.random() * 10);
+
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('span');
+                particle.className = 'particle';
+                particle.style.left = `${centerX}px`;
+                particle.style.top = `${centerY}px`;
+
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 110;
+                const dx = Math.cos(angle) * distance;
+                const dy = Math.sin(angle) * distance;
+
+                particle.style.setProperty('--dx', `${dx.toFixed(1)}px`);
+                particle.style.setProperty('--dy', `${dy.toFixed(1)}px`);
+                particle.style.setProperty('--size', `${(3 + Math.random() * 6).toFixed(1)}px`);
+                particle.style.setProperty('--duration', `${900 + Math.floor(Math.random() * 600)}ms`);
+
+                particlesLayer.appendChild(particle);
+                setTimeout(() => particle.remove(), 1800);
+            }
+        }
+
+        function startExplosions() {
+            clearInterval(explosionIntervalId);
+            createParticleExplosion();
+            explosionIntervalId = setInterval(createParticleExplosion, 2400);
+        }
+
+        function stopExplosions() {
+            clearInterval(explosionIntervalId);
+        }
+
+        startBtn.addEventListener('click', async () => {
+            startModal.style.display = 'none';
+            currentLineIndex = -1;
+            lyricsContainer.innerHTML = '';
+            song.currentTime = 0;
+
+            cancelAnimationFrame(animationFrameId);
+
+            try {
+                await song.play();
+                startExplosions();
+                updateLyricsFromAudio();
+            } catch (e) {
+                startModal.style.display = 'flex';
+            }
+        });
+
+        song.addEventListener('ended', () => {
+            cancelAnimationFrame(animationFrameId);
+            stopExplosions();
+            showFinalMessage();
+        });
+    </script>
+</body>
+</html>
