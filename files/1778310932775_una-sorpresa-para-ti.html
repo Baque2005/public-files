@@ -1,0 +1,2379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Cubo 3D Rebotante</title>
+  <style>
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      touch-action: pan-y;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #000 url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/fondo.jpg') no-repeat center center;
+      background-size: cover;
+    }
+
+    .scene {
+      position: absolute;
+      perspective: 1000px;
+      width: 85vmin;
+      height: 85vmin;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      transition: all 0.5s ease-out;
+    }
+
+    .double-tap-indicator {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 11;
+      padding: 8px 14px;
+      border-radius: 999px;
+      color: white;
+      background: rgba(20, 20, 20, 0.72);
+      border: 1px solid rgba(255, 105, 180, 0.55);
+      box-shadow: 0 0 14px rgba(255, 105, 180, 0.35);
+      font-size: 14px;
+      letter-spacing: 0.4px;
+      animation: indicatorPulse 1.8s ease-in-out infinite;
+      pointer-events: none;
+      backdrop-filter: blur(6px);
+    }
+
+    .double-tap-indicator.is-hidden {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-10px) scale(0.96);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .cube {
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.5s ease-out;
+      transform: scale(0.65) rotateX(-15deg) rotateY(15deg);
+      will-change: transform;
+    }
+
+    .cube.exploding {
+      transition: transform 0.95s cubic-bezier(0.12, 0.85, 0.18, 1), opacity 1.1s ease-out, filter 1.1s ease-out;
+      filter: blur(1.5px) brightness(1.4);
+      opacity: 1;
+    }
+
+    .face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border: 3px solid;
+      box-shadow: 0 0 15px rgba(255, 105, 180, 0.8),
+                  0 0 30px rgba(255, 105, 180, 0.6),
+                  0 0 45px rgba(255, 105, 180, 0.4);
+      animation: borderPulse 0s infinite alternate, 
+                 colorChange 0s infinite alternate;
+      backface-visibility: visible;
+      filter: brightness(1);
+    }
+
+    @keyframes colorChange {
+      0%, 100% {
+        border-color: rgba(255, 105, 180, 0.9); /* Rosa */
+        box-shadow: 0 0 15px rgba(255, 105, 180, 0.9),
+                    0 0 30px rgba(255, 105, 180, 0.7),
+                    0 0 45px rgba(255, 105, 180, 0.5);
+      }
+      50% {
+        border-color: rgba(0, 0, 0, 0.9); /* Negro */
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.9),
+                    0 0 30px rgba(0, 0, 0, 0.7),
+                    0 0 45px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    @keyframes borderPulse {
+      0%, 100% {
+        border-color: rgba(255, 105, 180, 0.9); /* Rosa */
+        box-shadow: 0 0 20px rgba(255, 105, 180, 0.9),
+                    0 0 40px rgba(255, 105, 180, 0.7),
+                    0 0 60px rgba(255, 105, 180, 0.5);
+      }
+      50% {
+        border-color: rgba(0, 0, 0, 0.9); /* Negro */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.9),
+                    0 0 40px rgba(0, 0, 0, 0.7),
+                    0 0 60px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    .front  { transform: translateZ(42.5vmin); }
+    .back   { transform: rotateY(180deg) translateZ(42.5vmin); }
+    .right  { transform: rotateY(90deg) translateZ(42.5vmin); }
+    .left   { transform: rotateY(-90deg) translateZ(42.5vmin); }
+    .top    { transform: rotateX(90deg) translateZ(42.5vmin); }
+    .bottom { transform: rotateX(-90deg) translateZ(42.5vmin); }
+
+    .rain-symbol {
+      position: absolute;
+      top: -50px;
+      font-size: 4.5vmin;
+      color: rgba(255, 105, 180, 0.7); /* Rosa */
+      text-shadow: 0 0 5px rgba(255, 105, 180, 0.7);
+      z-index: 2003;
+      animation: fall linear forwards;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    body.text-modal-open .rain-symbol {
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+
+    .explosion-particle {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 4;
+      will-change: transform, opacity;
+      box-shadow: 0 0 14px rgba(255, 105, 180, 0.9);
+    }
+
+    .explosion-shockwave {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 3;
+      border: 2px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 24px rgba(255, 105, 180, 0.65);
+      will-change: transform, opacity;
+    }
+
+    .tulip-bouquet {
+      position: fixed;
+      left: 50%;
+      bottom: 3vh;
+      transform: translateX(-50%) scale(0.9);
+      z-index: 3;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 1.4vmin;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease, transform 1s ease;
+      filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.16));
+    }
+
+    .tulip-bouquet.is-visible {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
+    .tulip-frame-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 12;
+      opacity: 0;
+      pointer-events: none;
+      background: #000;
+      transition: opacity 1s ease;
+    }
+
+    .tulip-frame-overlay.is-visible {
+      opacity: 1;
+    }
+
+    .tulip-frame-overlay iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #000;
+    }
+
+    .text-launcher {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 2002;
+      border: none;
+      border-radius: 999px;
+      padding: 11px 18px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 228, 240, 0.95));
+      color: #b0124d;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(194, 24, 91, 0.14);
+      cursor: pointer;
+      display: none;
+      will-change: transform, top, left;
+      animation: launcherFloat 24s ease-in-out infinite alternate;
+    }
+
+    .text-launcher.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      animation-play-state: paused;
+    }
+
+    .text-launcher.is-visible {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .text-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 35%),
+        rgba(19, 4, 12, 0.52);
+      backdrop-filter: blur(10px) saturate(1.15);
+      pointer-events: auto;
+    }
+
+    .text-modal.is-visible {
+      display: flex;
+    }
+
+    .text-modal__card {
+      position: relative;
+      width: min(92vw, 760px);
+      max-height: min(84vh, 760px);
+      overflow-y: auto;
+      border-radius: 30px;
+      padding: 30px 24px 24px;
+      background:
+        linear-gradient(180deg, rgba(255, 252, 254, 0.98) 0%, rgba(255, 228, 238, 0.98) 45%, rgba(255, 214, 232, 0.98) 100%);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(194, 24, 91, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(194, 24, 91, 0.16);
+      pointer-events: auto;
+    }
+
+    .text-modal__card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.55), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.18), transparent 35%);
+      pointer-events: none;
+    }
+
+    .text-modal__close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 220, 234, 0.96));
+      color: #b0124d;
+      font-size: 22px;
+      font-weight: 800;
+      box-shadow: 0 10px 22px rgba(177, 18, 77, 0.22), 0 0 0 1px rgba(177, 18, 77, 0.14);
+      cursor: pointer;
+      z-index: 2;
+      pointer-events: auto;
+      touch-action: manipulation;
+    }
+
+    .text-modal__title {
+      margin: 8px 0 16px;
+      color: #a3154d;
+      font-size: clamp(1.45rem, 2.2vw, 2.2rem);
+      font-weight: 800;
+      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
+      position: relative;
+      z-index: 1;
+    }
+
+    .text-modal__title::after {
+      content: '';
+      display: block;
+      width: 92px;
+      height: 4px;
+      margin: 12px auto 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(177, 18, 77, 0), rgba(177, 18, 77, 0.85), rgba(177, 18, 77, 0));
+    }
+
+    .text-modal__body {
+      color: #5e1534;
+      font-size: clamp(1rem, 1.5vw, 1.16rem);
+      line-height: 1.9;
+      white-space: pre-line;
+      padding: 4px 6px 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .text-modal__card::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .text-modal__card::-webkit-scrollbar-thumb {
+      background: rgba(194, 24, 91, 0.25);
+      border-radius: 999px;
+    }
+
+    @media (max-width: 640px) {
+      .text-launcher {
+        top: 12px;
+        right: 12px;
+        padding: 9px 14px;
+        font-size: 0.95rem;
+      }
+
+      .text-modal {
+        padding: 12px;
+      }
+
+      .text-modal__card {
+        width: 100%;
+        max-height: 88vh;
+        border-radius: 22px;
+        padding: 20px 14px 16px;
+      }
+
+      .text-modal__close {
+        top: 10px;
+        right: 10px;
+        width: 38px;
+        height: 38px;
+      }
+    }
+
+    .tulip {
+      position: relative;
+      width: 12vmin;
+      height: 16vmin;
+      transform-origin: bottom center;
+      animation: tulipSway 4.6s ease-in-out infinite;
+    }
+
+    .tulip:nth-child(2) {
+      transform: translateY(-1.2vmin) scale(1.06);
+      animation-delay: 0.2s;
+    }
+
+    .tulip:nth-child(3) {
+      transform: translateY(-0.4vmin) scale(0.98);
+      animation-delay: 0.4s;
+    }
+
+    .tulip:nth-child(4) {
+      transform: translateY(-1.5vmin) scale(1.05);
+      animation-delay: 0.15s;
+    }
+
+    .tulip:nth-child(5) {
+      transform: translateY(-0.7vmin) scale(1.01);
+      animation-delay: 0.3s;
+    }
+
+    .tulip__petal {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 5.2vmin;
+      height: 9.6vmin;
+      border-radius: 60% 60% 42% 42% / 70% 70% 30% 30%;
+      transform-origin: bottom center;
+      box-shadow: inset 0 -1.4vmin 1.8vmin rgba(0, 0, 0, 0.18), 0 0 1.1vmin rgba(255, 255, 255, 0.18);
+    }
+
+    .tulip__petal--left {
+      transform: translateX(-50%) rotate(-22deg);
+      background: linear-gradient(to top, #7a0f46 0%, #d63f8d 36%, #ff9fcb 100%);
+    }
+
+    .tulip__petal--center {
+      width: 5.8vmin;
+      transform: translateX(-50%) translateY(-0.6vmin) rotate(0deg);
+      background: linear-gradient(to top, #6c0d40 0%, #c22f79 42%, #ffb3db 100%);
+      z-index: 2;
+    }
+
+    .tulip__petal--right {
+      transform: translateX(-50%) rotate(22deg);
+      background: linear-gradient(to top, #7a0f46 0%, #d63f8d 36%, #ff9fcb 100%);
+    }
+
+    .tulip__petal--inner {
+      width: 4.2vmin;
+      height: 7.8vmin;
+      transform: translateX(-50%) translateY(0.9vmin);
+      background: linear-gradient(to top, #fff0f8 0%, #ffb9dd 30%, #f07ab5 68%, #b41e66 100%);
+      z-index: 3;
+      filter: saturate(1.05);
+    }
+
+    .tulip__highlight {
+      position: absolute;
+      left: 50%;
+      top: 1.6vmin;
+      width: 1.1vmin;
+      height: 3.2vmin;
+      border-radius: 999px;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.32);
+      filter: blur(0.4vmin);
+      z-index: 4;
+    }
+
+    .tulip__glow {
+      position: absolute;
+      left: 50%;
+      bottom: 1.2vmin;
+      width: 8vmin;
+      height: 8vmin;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.08) 35%, rgba(255, 255, 255, 0) 72%);
+      filter: blur(0.5vmin);
+      z-index: 1;
+    }
+
+    @keyframes tulipSway {
+      0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+      50% { transform: translateY(-0.5vmin) rotate(1.7deg); }
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(120vh);
+        opacity: 0;
+      }
+    }
+
+    @keyframes indicatorPulse {
+      0%, 100% {
+        transform: translateX(-50%) translateY(0) scale(1);
+        opacity: 0.85;
+      }
+      50% {
+        transform: translateX(-50%) translateY(-2px) scale(1.03);
+        opacity: 1;
+      }
+    }
+
+    @keyframes launcherFloat {
+      0% { top: 18px; left: 18px; transform: translate3d(0, 0, 0) rotate(-4deg); }
+      20% { top: 14%; left: calc(100% - 150px); transform: translate3d(0, 0, 0) rotate(5deg); }
+      40% { top: 44%; left: 70%; transform: translate3d(0, 0, 0) rotate(-6deg); }
+      60% { top: calc(100% - 120px); left: 48%; transform: translate3d(0, 0, 0) rotate(4deg); }
+      80% { top: 62%; left: 8%; transform: translate3d(0, 0, 0) rotate(-3deg); }
+      100% { top: 18px; left: 18px; transform: translate3d(0, 0, 0) rotate(0deg); }
+    }
+
+    #audioPlayer {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      max-width: 320px;
+      z-index: 1000;
+      background-color: rgba(20, 20, 20, 0.8);
+      border-radius: 12px;
+      padding: 8px;
+      border: 1px solid rgba(255, 105, 180, 0.5); /* Rosa */
+      box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+    }
+
+    /* Ajustes para pantallas muy pequeñas */
+    @media (max-height: 600px) {
+      .scene {
+        width: 75vmin;
+        height: 75vmin;
+      }
+      
+      #audioPlayer {
+        bottom: 5px;
+        padding: 6px;
+        max-width: 280px;
+      }
+    }
+
+    /* Estilos específicos para PC */
+    @media (min-width: 1024px) {
+      .scene {
+        width: 60vmin;
+        height: 60vmin;
+        perspective: 1200px;
+      }
+
+      .cube {
+        transform: scale(0.8) rotateX(-15deg) rotateY(15deg);
+      }
+
+      .front, .back, .right, .left, .top, .bottom {
+        transform: translateZ(30vmin);
+      }
+
+      .front  { transform: translateZ(30vmin); }
+      .back   { transform: rotateY(180deg) translateZ(30vmin); }
+      .right  { transform: rotateY(90deg) translateZ(30vmin); }
+      .left   { transform: rotateY(-90deg) translateZ(30vmin); }
+      .top    { transform: rotateX(90deg) translateZ(30vmin); }
+      .bottom { transform: rotateX(-90deg) translateZ(30vmin); }
+
+      #audioPlayer {
+        max-width: 400px;
+        bottom: 30px;
+      }
+
+      .rain-symbol {
+        font-size: 24px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="double-tap-indicator" id="doubleTapIndicator">apreta 2 veces rapido la cajita</div>
+
+  <div class="scene">
+    <div class="cube" id="cube">
+      <div class="face front"  style="background-image: url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/cara1.jpg')"></div>
+      <div class="face back"   style="background-image: url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/cara2.jpg')"></div>
+      <div class="face right"  style="background-image: url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/cara3.jpg')"></div>
+      <div class="face left"   style="background-image: url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/cara4.jpg')"></div>
+      <div class="face top"    style="background-image: url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/cara5.jpg')"></div>
+      <div class="face bottom" style="background-image: url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/cara6.jpg')"></div>
+    </div>
+  </div>
+
+  <div class="tulip-frame-overlay" id="tulipFrameOverlay" aria-hidden="true">
+    <iframe id="tulipFrame" title="Tulipanes rosados"></iframe>
+  </div>
+
+  <textarea id="tulipTemplate" hidden>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramo de Tulipanes Rosados</title>
+    <style>
+        *,
+        *::after,
+        *::before {
+          padding: 0;
+          margin: 0;
+          box-sizing: border-box;
+        }
+
+        :root {
+          --dark-color: #000;
+          --fl-speed: 0.8s;
+          --speed-leaf: 2s;
+        }
+
+        body {
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+          min-height: 100vh;
+          background: #000 url('https://raw.githubusercontent.com/Gon-p/Galery/refs/heads/main/fondo.jpg') no-repeat center center;
+          background-size: cover;
+          overflow: hidden;
+          perspective: 1000px;
+        }
+
+        .particles {
+          position: fixed;
+          left: 0;
+          bottom: 0;
+          width: 100vw;
+          height: 100vh;
+          pointer-events: none;
+          z-index: 3;
+        }
+
+        .particle {
+          position: absolute;
+          bottom: 0;
+          width: 0.7vmin;
+          height: 0.7vmin;
+          background: white;
+          border-radius: 50%;
+          opacity: 0.7;
+          animation: particle-up linear infinite;
+        }
+
+        @keyframes particle-up {
+          0% {
+            transform: translateY(0) scale(1);
+            opacity: 0.7;
+          }
+          80% {
+            opacity: 0.7;
+          }
+          100% {
+            transform: translateY(-100vh) scale(0.7);
+            opacity: 0;
+          }
+        }
+
+        .ramo {
+          position: absolute;
+          left: 50%;
+          bottom: -2vmin;
+          transform: translateX(-50%);
+          z-index: 1;
+          pointer-events: none;
+        }
+
+        .ramo img {
+          width: 62vmin;
+          height: auto;
+          display: block;
+        }
+
+        .flowers {
+          position: relative;
+          transform: scale(0.7) translateY(-7vmin);
+          z-index: 2;
+        }
+
+        .flower {
+          position: absolute;
+          bottom: 22vmin;
+          transform-origin: bottom center;
+          z-index: 50;
+        }
+
+        .flower--1 {
+          animation: moving-flower-1 4s linear infinite;
+        }
+
+        .flower--1 .flower__line {
+          height: 70vmin;
+          animation-delay: 0.3s;
+        }
+
+        .flower--1 .flower__line__leaf--1 {
+          animation: blooming-leaf-right var(--fl-speed) 1.6s backwards;
+        }
+
+        .flower--1 .flower__line__leaf--2 {
+          animation: blooming-leaf-right var(--fl-speed) 1.4s backwards;
+        }
+
+        .flower--1 .flower__line__leaf--3 {
+          animation: blooming-leaf-left var(--fl-speed) 1.2s backwards;
+        }
+
+        .flower--1 .flower__line__leaf--4 {
+          animation: blooming-leaf-left var(--fl-speed) 1s backwards;
+        }
+
+        .flower--2 {
+          left: 50%;
+          transform: rotate(20deg);
+          animation: moving-flower-2 4s linear infinite;
+        }
+
+        .flower--2 .flower__line {
+          height: 60vmin;
+          animation-delay: 0.6s;
+        }
+
+        .flower--2 .flower__line__leaf--1 {
+          animation: blooming-leaf-right var(--fl-speed) 1.9s backwards;
+        }
+
+        .flower--2 .flower__line__leaf--2 {
+          animation: blooming-leaf-right var(--fl-speed) 1.7s backwards;
+        }
+
+        .flower--2 .flower__line__leaf--3 {
+          animation: blooming-leaf-left var(--fl-speed) 1.5s backwards;
+        }
+
+        .flower--2 .flower__line__leaf--4 {
+          animation: blooming-leaf-left var(--fl-speed) 1.3s backwards;
+        }
+
+        .flower--3 {
+          left: 50%;
+          transform: rotate(-15deg);
+          animation: moving-flower-3 4s linear infinite;
+        }
+
+        .flower--3 .flower__line {
+          animation-delay: 0.9s;
+        }
+
+        .flower--3 .flower__line__leaf--1 {
+          animation: blooming-leaf-right var(--fl-speed) 2.5s backwards;
+        }
+
+        .flower--3 .flower__line__leaf--2 {
+          animation: blooming-leaf-right var(--fl-speed) 2.3s backwards;
+        }
+
+        .flower--3 .flower__line__leaf--3 {
+          animation: blooming-leaf-left var(--fl-speed) 2.1s backwards;
+        }
+
+        .flower--3 .flower__line__leaf--4 {
+          animation: blooming-leaf-left var(--fl-speed) 1.9s backwards;
+        }
+
+        .flower--4 {
+          left: -25%;
+          z-index: -6;
+          transform: rotate(10deg);
+          animation: moving-flower-4 3.5s linear infinite;
+        }
+
+        .flower--4 .flower__line {
+          height: 90vmin;
+          animation-delay: 1.2s;
+        }
+
+        .flower--4 .flower__line__leaf--1 {
+          animation: blooming-leaf-right var(--fl-speed) 2.8s backwards;
+        }
+
+        .flower--4 .flower__line__leaf--2 {
+          animation: blooming-leaf-right var(--fl-speed) 2.6s backwards;
+        }
+
+        .flower--4 .flower__line__leaf--3 {
+          animation: blooming-leaf-left var(--fl-speed) 2.4s backwards;
+        }
+
+        .flower--4 .flower__line__leaf--4 {
+          animation: blooming-leaf-left var(--fl-speed) 2.2s backwards;
+        }
+
+        .flower--5 {
+          left: 75%;
+          z-index: -7;
+          transform: rotate(-25deg);
+          animation: moving-flower-5 4.5s linear infinite;
+        }
+
+        .flower--5 .flower__line {
+          height: 85vmin;
+          animation-delay: 1.9s;
+        }
+
+        .flower--5 .flower__line__leaf--1 {
+          animation: blooming-leaf-right var(--fl-speed) 2.7s backwards;
+        }
+
+        .flower--5 .flower__line__leaf--2 {
+          animation: blooming-leaf-right var(--fl-speed) 2.5s backwards;
+        }
+
+        .flower--5 .flower__line__leaf--3 {
+          animation: blooming-leaf-left var(--fl-speed) 2.3s backwards;
+        }
+
+        .flower--5 .flower__line__leaf--4 {
+          animation: blooming-leaf-left var(--fl-speed) 2.1s backwards;
+        }
+
+        .flower__leafs {
+          position: relative;
+          animation: blooming-flower 2s backwards;
+        }
+
+        .flower__leafs--1 {
+          animation-delay: 1.1s;
+        }
+
+        .flower__leafs--2 {
+          animation-delay: 1.4s;
+        }
+
+        .flower__leafs--3 {
+          animation-delay: 1.7s;
+        }
+
+        .flower__leafs--4 {
+          animation-delay: 2.0s;
+        }
+
+        .flower__leafs--5 {
+          animation-delay: 2.0s;
+        }
+
+        .flower__leafs::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 0;
+          transform: translate(-50%, -100%);
+          width: 8vmin;
+          height: 8vmin;
+          background-color: #ffdd00;
+          filter: blur(10vmin);
+        }
+
+        .flower__leaf {
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          width: 9vmin;
+          height: 15vmin;
+          background: radial-gradient(circle at 50% 20%, #ffe0f0 0%, #ff8fcf 30%, #e75480 60%, #c2185b 80%, #880e4f 100%);
+          border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
+          transform-origin: bottom center;
+          opacity: 0.97;
+          z-index: 2;
+          border: 1.5px solid #c2185b;
+          box-shadow:
+            0 0 1vmin #ffb3de,
+            0 0 0.5vmin #ffe0f0,
+            inset 0 0 1.5vmin #c2185b;
+        }
+
+        .flower__leaf--1 { transform: translate(-50%, -5%) rotate(-22deg); z-index: 1; }
+        .flower__leaf--2 { transform: translate(-50%, -5%) rotate(22deg);  z-index: 1; }
+        .flower__leaf--3 { transform: translate(-50%, -10%) rotate(0deg);  z-index: 2; }
+
+        .flower__leaf--4,
+        .flower__leaf--5,
+        .flower__leaf--6 {
+          width: 7vmin;
+          height: 12vmin;
+          background: radial-gradient(circle at 50% 20%, #fff0fa 0%, #ffb3de 30%, #ff8fcf 55%, #e75480 80%, #c2185b 100%);
+          opacity: 0.96;
+          border: 1px solid #c2185b;
+          border-radius: 50% 50% 45% 45% / 65% 65% 35% 35%;
+          box-shadow:
+            0 0 0.8vmin #ffb3de,
+            inset 0 0 1vmin #ff8fcf;
+          z-index: 3;
+        }
+
+        .flower__leaf--4 { transform: translate(-50%, -8%) rotate(-10deg); }
+        .flower__leaf--5 { transform: translate(-50%, -8%) rotate(10deg); }
+        .flower__leaf--6 { transform: translate(-50%, -12%) rotate(0deg); }
+
+        .flower__center {
+          position: absolute;
+          left: -2vmin;
+          top: -2vmin;
+          width: 4vmin;
+          height: 4vmin;
+          border-radius: 50%;
+          background:
+            radial-gradient(circle at 30% 30%, #e0b3ff 0%, #a259e6 80%, #4b0066 100%);
+          border: 2px solid #a259e6;
+          box-shadow:
+            0 0 1vmin #e0b3ff,
+            0 0 0.5vmin #a259e6,
+            inset 0 0 1vmin #4b0066;
+        }
+
+        .flower__line {
+          height: 55vmin;
+          width: 2vmin;
+          background-image: linear-gradient(
+              to left,
+              rgb(0, 0, 0, 0.3),
+              transparent,
+              rgba(255, 255, 255, 0.2)
+            ),
+            linear-gradient(to top, transparent 10%, #2d5016, #4a7c23, #6b8e23);
+          box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.7);
+          animation: grow-flower-tree 4s backwards;
+        }
+
+        .flower__line__leaf {
+          --w: 8vmin;
+          --h: calc(var(--w) + 3vmin);
+          position: absolute;
+          top: 20%;
+          left: 90%;
+          width: var(--w);
+          height: var(--h);
+          border-top-right-radius: var(--h);
+          border-bottom-left-radius: var(--h);
+          background-image: linear-gradient(
+            to top,
+            rgba(45, 80, 22, 0.6),
+            #4a7c23,
+            #6b8e23
+          );
+          box-shadow: inset 0 0 1vmin rgba(0, 0, 0, 0.3);
+        }
+
+        .flower__line__leaf--1 {
+          transform: rotate(70deg) rotateY(30deg);
+        }
+
+        .flower__line__leaf--2 {
+          top: 45%;
+          transform: rotate(70deg) rotateY(30deg);
+        }
+
+        .flower__line__leaf--3,
+        .flower__line__leaf--4{
+          border-top-right-radius: 0;
+          border-bottom-left-radius: 0;
+          border-top-left-radius: var(--h);
+          border-bottom-right-radius: var(--h);
+          left: -460%;
+          top: 12%;
+          transform: rotate(-70deg) rotateY(30deg);
+        }
+
+        .flower__line__leaf--4 {
+          top: 40%;
+        }
+
+        .flower__light {
+          position: absolute;
+          bottom: 0vmin;
+          width: 0.8vmin;
+          height: 0.8vmin;
+          background-color: #fff;
+          border-radius: 50%;
+          filter: blur(0.1vmin);
+          animation: tulip-light 6s linear infinite backwards;
+          box-shadow: 0 0 1vmin rgba(255,255,255,0.8);
+        }
+
+        .flower__light:nth-child(odd) {
+          background-color: #fff;
+        }
+
+        .flower__light--1 { left: -2vmin; animation-delay: 1s; }
+        .flower__light--2 { left: 3vmin; animation-delay: 0.5s; }
+        .flower__light--3 { left: -6vmin; animation-delay: 0.3s; }
+        .flower__light--4 { left: 6vmin; animation-delay: 0.9s; }
+        .flower__light--5 { left: -1vmin; animation-delay: 1.5s; }
+        .flower__light--6 { left: -4vmin; animation-delay: 3s; }
+        .flower__light--7 { left: 3vmin; animation-delay: 2s; }
+        .flower__light--8 { left: -6vmin; animation-delay: 3.5s; }
+
+        .flower__grass {
+          --c: #4a7c23;
+          --line-w: 2vmin;
+          position: absolute;
+          bottom: 12vmin;
+          left: -7vmin;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          z-index: 20;
+          transform-origin: bottom center;
+          transform: rotate(-48deg) rotateY(40deg);
+        }
+
+        .flower__grass--1 {
+          animation: moving-grass 2s linear infinite;
+        }
+
+        .flower__grass--2 {
+          left: 2vmin;
+          bottom: 10vmin;
+          transform: scale(0.5) rotate(75deg) rotateX(10deg) rotateY(-200deg);
+          opacity: 0.8;
+          z-index: 0;
+          animation: moving-grass--2 1.5s linear infinite;
+        }
+
+        .flower__grass--3 {
+          left: -25vmin;
+          bottom: 8vmin;
+          transform: scale(0.7) rotate(-30deg) rotateY(45deg);
+          opacity: 0.9;
+          z-index: 15;
+          animation: moving-grass--3 2.2s linear infinite;
+        }
+
+        .flower__grass--4 {
+          left: -35vmin;
+          bottom: 15vmin;
+          transform: scale(0.4) rotate(60deg) rotateX(15deg) rotateY(-180deg);
+          opacity: 0.7;
+          z-index: 5;
+          animation: moving-grass--4 1.8s linear infinite;
+        }
+
+        .flower__grass--5 {
+          left: -18vmin;
+          bottom: 6vmin;
+          transform: scale(0.6) rotate(-60deg) rotateY(60deg);
+          opacity: 0.85;
+          z-index: 12;
+          animation: moving-grass--5 2.5s linear infinite;
+        }
+
+        .flower__grass--6 {
+          left: 25vmin;
+          bottom: 9vmin;
+          transform: scale(0.65) rotate(35deg) rotateY(-45deg);
+          opacity: 0.9;
+          z-index: 15;
+          animation: moving-grass--6 2.3s linear infinite;
+        }
+
+        .flower__grass--7 {
+          left: 35vmin;
+          bottom: 14vmin;
+          transform: scale(0.45) rotate(-70deg) rotateX(20deg) rotateY(170deg);
+          opacity: 0.75;
+          z-index: 8;
+          animation: moving-grass--7 1.9s linear infinite;
+        }
+
+        .flower__grass--8 {
+          left: 18vmin;
+          bottom: 5vmin;
+          transform: scale(0.55) rotate(50deg) rotateY(-70deg);
+          opacity: 0.8;
+          z-index: 10;
+          animation: moving-grass--8 2.1s linear infinite;
+        }
+
+        .flower__grass--9 {
+          left: -45vmin;
+          bottom: 20vmin;
+          transform: scale(0.3) rotate(20deg) rotateY(90deg);
+          opacity: 0.6;
+          z-index: 2;
+          animation: moving-grass--9 1.6s linear infinite;
+        }
+
+        .flower__grass--10 {
+          left: 42vmin;
+          bottom: 18vmin;
+          transform: scale(0.35) rotate(-45deg) rotateY(-120deg);
+          opacity: 0.65;
+          z-index: 3;
+          animation: moving-grass--10 2.0s linear infinite;
+        }
+
+        .flower__grass--top {
+          width: 7vmin;
+          height: 10vmin;
+          border-top-right-radius: 100%;
+          border-right: var(--line-w) solid var(--c);
+          transform-origin: bottom center;
+          transform: rotate(-2deg);
+        }
+
+        .flower__grass--bottom {
+          margin-top: -2px;
+          width: var(--line-w);
+          height: 25vmin;
+          background-image: linear-gradient(to top, transparent, var(--c));
+        }
+
+        .flower__grass__leaf {
+          --size: 10vmin;
+          position: absolute;
+          width: calc(var(--size) * 2.1);
+          height: var(--size);
+          border-top-left-radius: var(--size);
+          border-top-right-radius: var(--size);
+          background-image: linear-gradient(
+            to top,
+            transparent,
+            transparent 30%,
+            var(--c)
+          );
+          z-index: 100;
+        }
+
+        .flower__grass__leaf--1 {
+          top: -6%;
+          left: 30%;
+          --size: 6vmin;
+          transform: rotate(-20deg);
+          animation: growing-grass-ans--1 var(--speed-leaf) 2.6s backwards;
+        }
+
+        .flower__grass__leaf--2 {
+          top: -5%;
+          left: -110%;
+          --size: 6vmin;
+          transform: rotate(10deg);
+          animation: growing-grass-ans--2 var(--speed-leaf) 2.4s linear backwards;
+        }
+
+        .flower__grass__leaf--3 {
+          top: 5%;
+          left: 60%;
+          --size: 8vmin;
+          transform: rotate(-18deg) rotateX(-20deg);
+          animation: growing-grass-ans--3 var(--speed-leaf) 2.2s linear backwards;
+        }
+
+        .flower__grass__leaf--4 {
+          top: 6%;
+          left: -135%;
+          --size: 8vmin;
+          transform: rotate(2deg);
+          animation: growing-grass-ans--4 var(--speed-leaf) 2s linear backwards;
+        }
+
+        .flower__grass__leaf--5 {
+          top: 20%;
+          left: 60%;
+          --size: 10vmin;
+          transform: rotate(-24deg) rotateX(-20deg);
+          animation: growing-grass-ans--5 var(--speed-leaf) 1.8s linear backwards;
+        }
+
+        .flower__grass__leaf--6 {
+          top: 22%;
+          left: -180%;
+          --size: 10vmin;
+          transform: rotate(10deg);
+          animation: growing-grass-ans--6 var(--speed-leaf) 1.6s linear backwards;
+        }
+
+        .flower__grass__leaf--7 {
+          top: 39%;
+          left: 70%;
+          --size: 10vmin;
+          transform: rotate(-10deg);
+          animation: growing-grass-ans--7 var(--speed-leaf) 1.4s linear backwards;
+        }
+
+        .flower__grass__leaf--8 {
+          top: 40%;
+          left: -215%;
+          --size: 11vmin;
+          transform: rotate(10deg);
+          animation: growing-grass-ans--8 var(--speed-leaf) 1.2s linear backwards;
+        }
+
+        .flower__grass__overlay {
+          position: absolute;
+          top: -10%;
+          right: 0%;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.6);
+          filter: blur(1.5vmin);
+          z-index: 100;
+        }
+
+        .text-launcher {
+          position: fixed;
+          top: 18px;
+          right: 18px;
+          z-index: 2002;
+          border: none;
+          border-radius: 999px;
+          padding: 11px 18px;
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 228, 240, 0.95));
+          color: #b0124d;
+          font-weight: 800;
+          letter-spacing: 0.02em;
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(194, 24, 91, 0.14);
+          cursor: pointer;
+          display: none !important;
+          pointer-events: none;
+        }
+
+        .text-launcher.is-visible {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .text-modal {
+          position: fixed;
+          inset: 0;
+          z-index: 2000;
+          display: none !important;
+          align-items: center;
+          justify-content: center;
+          padding: 18px;
+          background:
+            radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 35%),
+            rgba(19, 4, 12, 0.52);
+          backdrop-filter: blur(10px) saturate(1.15);
+          pointer-events: auto;
+        }
+
+        .text-modal.is-visible {
+          display: none !important;
+        }
+
+        .text-modal__card {
+          position: relative;
+          width: min(92vw, 760px);
+          max-height: min(84vh, 760px);
+          overflow-y: auto;
+          border-radius: 30px;
+          padding: 30px 24px 24px;
+          background:
+            linear-gradient(180deg, rgba(255, 252, 254, 0.98) 0%, rgba(255, 228, 238, 0.98) 45%, rgba(255, 214, 232, 0.98) 100%);
+          box-shadow: 0 28px 80px rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(194, 24, 91, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+          border: 1px solid rgba(194, 24, 91, 0.16);
+          pointer-events: auto;
+        }
+
+        .text-modal__card::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          background:
+            radial-gradient(circle at top left, rgba(255, 255, 255, 0.55), transparent 28%),
+            radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.18), transparent 35%);
+          pointer-events: none;
+        }
+
+        .text-modal__close {
+          position: absolute;
+          top: 14px;
+          right: 14px;
+          margin-left: auto;
+          display: grid;
+          place-items: center;
+          width: 40px;
+          height: 40px;
+          border: none;
+          border-radius: 50%;
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 220, 234, 0.96));
+          color: #b0124d;
+          font-size: 22px;
+          font-weight: 800;
+          box-shadow: 0 10px 22px rgba(177, 18, 77, 0.22), 0 0 0 1px rgba(177, 18, 77, 0.14);
+          cursor: pointer;
+          z-index: 2;
+          pointer-events: auto;
+          touch-action: manipulation;
+        }
+
+        .text-modal__title {
+          margin: 8px 0 16px;
+          color: #a3154d;
+          font-size: clamp(1.45rem, 2.2vw, 2.2rem);
+          font-weight: 800;
+          text-align: center;
+          font-family: 'Segoe UI', sans-serif;
+          position: relative;
+          z-index: 1;
+        }
+
+        .text-modal__title::after {
+          content: '';
+          display: block;
+          width: 92px;
+          height: 4px;
+          margin: 12px auto 0;
+          border-radius: 999px;
+          background: linear-gradient(90deg, rgba(177, 18, 77, 0), rgba(177, 18, 77, 0.85), rgba(177, 18, 77, 0));
+        }
+
+        .text-modal__body {
+          color: #5e1534;
+          font-size: clamp(1rem, 1.5vw, 1.16rem);
+          line-height: 1.9;
+          white-space: pre-line;
+          padding: 4px 6px 6px;
+          position: relative;
+          z-index: 1;
+        }
+
+        .text-modal__card::-webkit-scrollbar {
+          width: 10px;
+        }
+
+        .text-modal__card::-webkit-scrollbar-thumb {
+          background: rgba(194, 24, 91, 0.25);
+          border-radius: 999px;
+        }
+
+        @media (max-width: 640px) {
+          .text-launcher {
+            top: 12px;
+            right: 12px;
+            padding: 9px 14px;
+            font-size: 0.95rem;
+          }
+
+          .text-modal {
+            padding: 12px;
+          }
+
+          .text-modal__card {
+            width: 100%;
+            max-height: 88vh;
+            border-radius: 22px;
+            padding: 20px 14px 16px;
+          }
+
+          .text-modal__close {
+            top: 10px;
+            right: 10px;
+            width: 38px;
+            height: 38px;
+          }
+        }
+
+        /* KEYFRAMES */
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes tulip-light {
+          0% {
+            opacity: 0;
+            transform: translateY(0vmin) rotate(0deg);
+          }
+          20% {
+            opacity: 1;
+            transform: translateY(-3vmin) translateX(-1vmin) rotate(45deg);
+          }
+          40% {
+            opacity: 1;
+            transform: translateY(-8vmin) translateX(1vmin) rotate(90deg);
+          }
+          60% {
+            transform: translateY(-12vmin) translateX(-1vmin) rotate(135deg);
+          }
+          80% {
+            transform: translateY(-16vmin) translateX(2vmin) rotate(180deg);
+            opacity: 0.5;
+          }
+          100% {
+            transform: translateY(-25vmin) rotate(225deg);
+            opacity: 0;
+          }
+        }
+
+        @keyframes moving-flower-1 {
+          0%, 100% { transform: rotate(2deg); }
+          50% { transform: rotate(-2deg); }
+        }
+
+        @keyframes moving-flower-2 {
+          0%, 100% { transform: rotate(18deg); }
+          50% { transform: rotate(14deg); }
+        }
+
+        @keyframes moving-flower-3 {
+          0%, 100% { transform: rotate(-18deg); }
+          50% { transform: rotate(-20deg) rotateY(-10deg); }
+        }
+
+        @keyframes moving-flower-4 {
+          0%, 100% { transform: rotate(9deg); }
+          50% { transform: rotate(12deg) rotateY(9deg); }
+        }
+
+        @keyframes moving-flower-5 {
+          0%, 100% { transform: rotate(-5deg); }
+          50% { transform: rotate(-11deg) rotateY(5deg); }
+        }
+
+        @keyframes blooming-leaf-right {
+          0% {
+            transform-origin: left;
+            transform: rotate(70deg) rotateY(30deg) scale(0);
+          }
+        }
+
+        @keyframes blooming-leaf-left {
+          0% {
+            transform-origin: right;
+            transform: rotate(-70deg) rotateY(30deg) scale(0);
+          }
+        }
+
+        @keyframes grow-flower-tree {
+          0% {
+            height: 0;
+            border-radius: 1vmin;
+          }
+        }
+
+        @keyframes blooming-flower {
+          0% {
+            transform: scale(0);
+          }
+        }
+
+        @keyframes moving-grass {
+          0%, 100% { transform: rotate(-48deg) rotateY(40deg); }
+          50% { transform: rotate(-50deg) rotateY(40deg); }
+        }
+
+        @keyframes moving-grass--2 {
+          0%, 100% { transform: scale(0.5) rotate(75deg) rotateX(10deg) rotateY(-200deg); }
+          50% { transform: scale(0.5) rotate(79deg) rotateX(10deg) rotateY(-200deg); }
+        }
+
+        @keyframes moving-grass--3 {
+          0%, 100% { transform: scale(0.7) rotate(-30deg) rotateY(45deg); }
+          50% { transform: scale(0.7) rotate(-33deg) rotateY(50deg); }
+        }
+
+        @keyframes moving-grass--4 {
+          0%, 100% { transform: scale(0.4) rotate(60deg) rotateX(15deg) rotateY(-180deg); }
+          50% { transform: scale(0.4) rotate(63deg) rotateX(18deg) rotateY(-175deg); }
+        }
+
+        @keyframes moving-grass--5 {
+          0%, 100% { transform: scale(0.6) rotate(-60deg) rotateY(60deg); }
+          50% { transform: scale(0.6) rotate(-57deg) rotateY(65deg); }
+        }
+
+        @keyframes moving-grass--6 {
+          0%, 100% { transform: scale(0.65) rotate(35deg) rotateY(-45deg); }
+          50% { transform: scale(0.65) rotate(38deg) rotateY(-40deg); }
+        }
+
+        @keyframes moving-grass--7 {
+          0%, 100% { transform: scale(0.45) rotate(-70deg) rotateX(20deg) rotateY(170deg); }
+          50% { transform: scale(0.45) rotate(-67deg) rotateX(23deg) rotateY(175deg); }
+        }
+
+        @keyframes moving-grass--8 {
+          0%, 100% { transform: scale(0.55) rotate(50deg) rotateY(-70deg); }
+          50% { transform: scale(0.55) rotate(53deg) rotateY(-65deg); }
+        }
+
+        @keyframes moving-grass--9 {
+          0%, 100% { transform: scale(0.3) rotate(20deg) rotateY(90deg); }
+          50% { transform: scale(0.3) rotate(23deg) rotateY(95deg); }
+        }
+
+        @keyframes moving-grass--10 {
+          0%, 100% { transform: scale(0.35) rotate(-45deg) rotateY(-120deg); }
+          50% { transform: scale(0.35) rotate(-42deg) rotateY(-115deg); }
+        }
+
+    </style>
+</head>
+<body>
+  <div class="particles"></div>
+  <button class="text-launcher" id="textLauncher" type="button">Ver texto</button>
+  <div class="text-modal" id="textModal" aria-hidden="true">
+    <div class="text-modal__card" role="dialog" aria-modal="true" aria-labelledby="textModalTitle">
+      <button class="text-modal__close" id="textModalClose" type="button" aria-label="Cerrar" onclick="tulipCloseTextModal(event)">×</button>
+      <div class="text-modal__title" id="textModalTitle">Para ti</div>
+      <div class="text-modal__body" id="textModalBody">Gracias por sacarme tantas sonrisas, por hacer cada momento único y especial, por siempre estar ahí en los momentos donde más te necesito. Quiero decirte también que te amo demasiado, que cada día que pasa te sigo amando mucho más y te sigo eligiendo y es algo que haré por el resto de mi vida, sabes perfectamente que por ti estoy dispuesto a todo y que quiero todo contigo. Me encantas, me encanta todo de ti y desde el primer instante en que te conocí... jamás he dejado de pensar en ti.
+
+Quiero que sepas y que jamás olvides que siempre estaré para ti, que en cualquier momento que tu me necesites yo estaré ahí contigo a tu lado y siempre te estaré apoyando. Te amo mucho mi niña, con todo mi corazón y con toda mi alma únicamente solo a ti. 💖😌</div>
+    </div>
+  </div>
+  <div id="contenido-principal">
+    <div class="ramo">
+      <img src="https://github.com/Baque2005/Organizador/blob/master/unnamed%20(1).png?raw=true" alt="Ramo de flores">
+    </div>
+    <div class="flowers">
+    <div class="flower flower--1">
+      <div class="flower__leafs flower__leafs--1">
+        <div class="flower__leaf flower__leaf--1"></div>
+        <div class="flower__leaf flower__leaf--2"></div>
+        <div class="flower__leaf flower__leaf--3"></div>
+        <div class="flower__leaf flower__leaf--4"></div>
+        <div class="flower__leaf flower__leaf--5"></div>
+        <div class="flower__leaf flower__leaf--6"></div>
+        <div class="flower__center"></div>
+
+        <div class="flower__light flower__light--1"></div>
+        <div class="flower__light flower__light--2"></div>
+        <div class="flower__light flower__light--3"></div>
+        <div class="flower__light flower__light--4"></div>
+        <div class="flower__light flower__light--5"></div>
+        <div class="flower__light flower__light--6"></div>
+        <div class="flower__light flower__light--7"></div>
+        <div class="flower__light flower__light--8"></div>
+      </div>
+      <div class="flower__line">
+        <div class="flower__line__leaf flower__line__leaf--1"></div>
+        <div class="flower__line__leaf flower__line__leaf--2"></div>
+        <div class="flower__line__leaf flower__line__leaf--3"></div>
+        <div class="flower__line__leaf flower__line__leaf--4"></div>
+      </div>
+    </div>
+
+    <div class="flower flower--2">
+      <div class="flower__leafs flower__leafs--2">
+        <div class="flower__leaf flower__leaf--1"></div>
+        <div class="flower__leaf flower__leaf--2"></div>
+        <div class="flower__leaf flower__leaf--3"></div>
+        <div class="flower__leaf flower__leaf--4"></div>
+        <div class="flower__leaf flower__leaf--5"></div>
+        <div class="flower__leaf flower__leaf--6"></div>
+        <div class="flower__center"></div>
+
+        <div class="flower__light flower__light--1"></div>
+        <div class="flower__light flower__light--2"></div>
+        <div class="flower__light flower__light--3"></div>
+        <div class="flower__light flower__light--4"></div>
+        <div class="flower__light flower__light--5"></div>
+        <div class="flower__light flower__light--6"></div>
+        <div class="flower__light flower__light--7"></div>
+        <div class="flower__light flower__light--8"></div>
+      </div>
+      <div class="flower__line">
+        <div class="flower__line__leaf flower__line__leaf--1"></div>
+        <div class="flower__line__leaf flower__line__leaf--2"></div>
+        <div class="flower__line__leaf flower__line__leaf--3"></div>
+        <div class="flower__line__leaf flower__line__leaf--4"></div>
+      </div>
+    </div>
+
+    <div class="flower flower--3">
+      <div class="flower__leafs flower__leafs--3">
+        <div class="flower__leaf flower__leaf--1"></div>
+        <div class="flower__leaf flower__leaf--2"></div>
+        <div class="flower__leaf flower__leaf--3"></div>
+        <div class="flower__leaf flower__leaf--4"></div>
+        <div class="flower__leaf flower__leaf--5"></div>
+        <div class="flower__leaf flower__leaf--6"></div>
+        <div class="flower__center"></div>
+
+        <div class="flower__light flower__light--1"></div>
+        <div class="flower__light flower__light--2"></div>
+        <div class="flower__light flower__light--3"></div>
+        <div class="flower__light flower__light--4"></div>
+        <div class="flower__light flower__light--5"></div>
+        <div class="flower__light flower__light--6"></div>
+        <div class="flower__light flower__light--7"></div>
+        <div class="flower__light flower__light--8"></div>
+      </div>
+      <div class="flower__line">
+        <div class="flower__line__leaf flower__line__leaf--1"></div>
+        <div class="flower__line__leaf flower__line__leaf--2"></div>
+        <div class="flower__line__leaf flower__line__leaf--3"></div>
+        <div class="flower__line__leaf flower__line__leaf--4"></div>
+      </div>
+    </div>
+
+    <div class="flower flower--4">
+      <div class="flower__leafs flower__leafs--4">
+        <div class="flower__leaf flower__leaf--1"></div>
+        <div class="flower__leaf flower__leaf--2"></div>
+        <div class="flower__leaf flower__leaf--3"></div>
+        <div class="flower__leaf flower__leaf--4"></div>
+        <div class="flower__leaf flower__leaf--5"></div>
+        <div class="flower__leaf flower__leaf--6"></div>
+        <div class="flower__center"></div>
+
+        <div class="flower__light flower__light--1"></div>
+        <div class="flower__light flower__light--2"></div>
+        <div class="flower__light flower__light--3"></div>
+        <div class="flower__light flower__light--4"></div>
+        <div class="flower__light flower__light--5"></div>
+        <div class="flower__light flower__light--6"></div>
+        <div class="flower__light flower__light--7"></div>
+        <div class="flower__light flower__light--8"></div>
+      </div>
+      <div class="flower__line">
+        <div class="flower__line__leaf flower__line__leaf--1"></div>
+        <div class="flower__line__leaf flower__line__leaf--2"></div>
+        <div class="flower__line__leaf flower__line__leaf--3"></div>
+        <div class="flower__line__leaf flower__line__leaf--4"></div>
+      </div>
+    </div>
+
+    <div class="flower flower--5">
+      <div class="flower__leafs flower__leafs--5">
+        <div class="flower__leaf flower__leaf--1"></div>
+        <div class="flower__leaf flower__leaf--2"></div>
+        <div class="flower__leaf flower__leaf--3"></div>
+        <div class="flower__leaf flower__leaf--4"></div>
+        <div class="flower__leaf flower__leaf--5"></div>
+        <div class="flower__leaf flower__leaf--6"></div>
+        <div class="flower__center"></div>
+
+        <div class="flower__light flower__light--1"></div>
+        <div class="flower__light flower__light--2"></div>
+        <div class="flower__light flower__light--3"></div>
+        <div class="flower__light flower__light--4"></div>
+        <div class="flower__light flower__light--5"></div>
+        <div class="flower__light flower__light--6"></div>
+        <div class="flower__light flower__light--7"></div>
+        <div class="flower__light flower__light--8"></div>
+      </div>
+      <div class="flower__line">
+        <div class="flower__line__leaf flower__line__leaf--1"></div>
+        <div class="flower__line__leaf flower__line__leaf--2"></div>
+        <div class="flower__line__leaf flower__line__leaf--3"></div>
+        <div class="flower__line__leaf flower__line__leaf--4"></div>
+      </div>
+    </div>
+    <div class="flower flower--6" style="left:20%;transform:rotate(-10deg);z-index:40;">
+      <div class="flower__leafs flower__leafs--6">
+        <div class="flower__leaf flower__leaf--1"></div>
+        <div class="flower__leaf flower__leaf--2"></div>
+        <div class="flower__leaf flower__leaf--3"></div>
+        <div class="flower__leaf flower__leaf--4"></div>
+        <div class="flower__leaf flower__leaf--5"></div>
+        <div class="flower__leaf flower__leaf--6"></div>
+        <div class="flower__center"></div>
+      </div>
+      <div class="flower__line"></div>
+    </div>
+    <div class="flower flower--7" style="left:80%;transform:rotate(15deg);z-index:40;">
+      <div class="flower__leafs flower__leafs--7">
+        <div class="flower__leaf flower__leaf--1"></div>
+        <div class="flower__leaf flower__leaf--2"></div>
+        <div class="flower__leaf flower__leaf--3"></div>
+        <div class="flower__leaf flower__leaf--4"></div>
+        <div class="flower__leaf flower__leaf--5"></div>
+        <div class="flower__leaf flower__leaf--6"></div>
+        <div class="flower__center"></div>
+      </div>
+      <div class="flower__line"></div>
+    </div>
+    <div class="flower flower--8" style="left:35%;transform:rotate(-25deg);z-index:30;">
+      <div class="flower__leafs flower__leafs--8">
+        <div class="flower__leaf flower__leaf--1"></div>
+        <div class="flower__leaf flower__leaf--2"></div>
+        <div class="flower__leaf flower__leaf--3"></div>
+        <div class="flower__leaf flower__leaf--4"></div>
+        <div class="flower__leaf flower__leaf--5"></div>
+        <div class="flower__leaf flower__leaf--6"></div>
+        <div class="flower__center"></div>
+      </div>
+      <div class="flower__line"></div>
+    </div>
+    <div class="flower flower--9" style="left:65%;transform:rotate(25deg);z-index:30;">
+      <div class="flower__leafs flower__leafs--9">
+        <div class="flower__leaf flower__leaf--1"></div>
+        <div class="flower__leaf flower__leaf--2"></div>
+        <div class="flower__leaf flower__leaf--3"></div>
+        <div class="flower__leaf flower__leaf--4"></div>
+        <div class="flower__leaf flower__leaf--5"></div>
+        <div class="flower__leaf flower__leaf--6"></div>
+        <div class="flower__center"></div>
+      </div>
+      <div class="flower__line"></div>
+    </div>
+  </div>
+
+  <script>
+    function tulipRandomBetween(a, b) {
+      return Math.random() * (b - a) + a;
+    }
+
+    function tulipCreateParticles() {
+      const particlesContainer = document.querySelector('.particles');
+      const numParticles = 40;
+
+      for (let i = 0; i < numParticles; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = tulipRandomBetween(0, 100) + 'vw';
+        const size = tulipRandomBetween(0.5, 1.5);
+        particle.style.width = size + 'vmin';
+        particle.style.height = size + 'vmin';
+        particle.style.animationDuration = tulipRandomBetween(3, 7) + 's';
+        particle.style.animationDelay = tulipRandomBetween(0, 5) + 's';
+        particle.style.opacity = tulipRandomBetween(0.4, 0.9);
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    tulipCreateParticles();
+
+    const tulipTextModal = document.getElementById('textModal');
+    const tulipTextModalClose = document.getElementById('textModalClose');
+    const tulipTextLauncher = document.getElementById('textLauncher');
+    let tulipTextModalTimeoutId = null;
+
+    function tulipOpenTextModal() {
+      tulipTextModal.classList.add('is-visible');
+      tulipTextModal.setAttribute('aria-hidden', 'false');
+      tulipTextLauncher.classList.add('is-visible');
+    }
+
+    function tulipCloseTextModal(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      tulipTextModal.classList.remove('is-visible');
+      tulipTextModal.setAttribute('aria-hidden', 'true');
+      tulipTextLauncher.classList.add('is-visible');
+    }
+
+    tulipTextModalClose.addEventListener('pointerdown', tulipCloseTextModal);
+    tulipTextModalClose.addEventListener('click', tulipCloseTextModal);
+    tulipTextLauncher.addEventListener('click', tulipOpenTextModal);
+    const tulipTextModalCard = tulipTextModal.querySelector('.text-modal__card');
+
+    tulipTextModalCard.addEventListener('pointerdown', event => {
+      event.stopPropagation();
+    });
+    tulipTextModalCard.addEventListener('click', event => {
+      event.stopPropagation();
+    });
+
+    tulipTextModal.addEventListener('pointerdown', event => {
+      if (event.target === tulipTextModal) {
+        tulipCloseTextModal(event);
+      }
+    });
+    tulipTextModal.addEventListener('click', event => {
+      if (event.target === tulipTextModal) {
+        tulipCloseTextModal(event);
+      }
+    });
+
+    if (tulipTextModalTimeoutId) {
+      clearTimeout(tulipTextModalTimeoutId);
+    }
+
+    tulipTextModalTimeoutId = setTimeout(() => {
+      tulipTextLauncher.classList.add('is-visible');
+      tulipOpenTextModal();
+    }, 9000);
+  </script>
+</body>
+</html>
+  </textarea>
+
+  <button class="text-launcher" id="textLauncher" type="button">apreta aqui</button>
+  <div class="text-modal" id="textModal" aria-hidden="true">
+    <div class="text-modal__card" role="dialog" aria-modal="true" aria-labelledby="textModalTitle">
+      <button class="text-modal__close" id="textModalClose" type="button" aria-label="Cerrar">×</button>
+      <div class="text-modal__title" id="textModalTitle">Para ti</div>
+      <div class="text-modal__body" id="textModalBody">Gracias por sacarme tantas sonrisas, por hacer cada momento único y especial, por siempre estar ahí en los momentos donde más te necesito. Quiero decirte también que te amo demasiado, que cada día que pasa te sigo amando mucho más y te sigo eligiendo y es algo que haré por el resto de mi vida, sabes perfectamente que por ti estoy dispuesto a todo y que quiero todo contigo. Me encantas, me encanta todo de ti y desde el primer instante en que te conocí... jamás he dejado de pensar en ti.
+
+Quiero que sepas y que jamás olvides que siempre estaré para ti, que en cualquier momento que tu me necesites yo estaré ahí contigo a tu lado y siempre te estaré apoyando. Te amo mucho mi niña, con todo mi corazón y con toda mi alma únicamente solo a ti. 💖😌</div>
+    </div>
+  </div>
+
+  <audio id="audioPlayer" controls>
+    <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Michael%20Jackson%20-%20You%20Rock%20My%20World%20(Official%20Video)%20%5B1-7ABIM2qjU%5D.mp3" type="audio/mpeg">
+    Tu navegador no soporta el elemento de audio.
+  </audio>
+
+  <script>
+    // Detección de dispositivo
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isPC = !isMobile;
+    const cube = document.getElementById('cube');
+    const scene = document.querySelector('.scene');
+    const audio = document.getElementById('audioPlayer');
+    const tulipFrameOverlay = document.getElementById('tulipFrameOverlay');
+    const textModal = document.getElementById('textModal');
+    const textModalClose = document.getElementById('textModalClose');
+    const textLauncher = document.getElementById('textLauncher');
+    const symbols = [
+      "I Love You, Francisca",
+      "My Princess",
+      "My Girl",
+      "My World",
+      "My Life",
+      "My White Girl",
+      "You Are Everything I Want",
+      "I Will Always Love You",
+      "My Woman",
+      "My Queen",
+      "My Theodora",
+      "My Grumpy One",
+      "My Babe",
+      "💛",
+      "💛",
+      "💛",
+      "💛",
+      "💛",
+      "💜",
+      "💜",
+      "💜",
+      "💜",
+      "💜",
+      "💖",
+      "💖",
+      "💖",
+      "💖",
+      "💖",
+      "💗",
+      "💗",
+      "💗",
+      "💗",
+      "💗",
+      "Te Amo"
+    ];
+
+    // Configuración inicial
+    let rotateX = -15;
+    let rotateY = 15;
+    let startX, startY, isDragging = false;
+    let lluviaInterval = null;
+    let lastTapTime = 0;
+    let isBouncing = false;
+    let isExploding = false;
+    let bounceAnimationId = null;
+    let autoRotateId = null;
+    let isAutoRotating = false;
+    let revealTulipTimeoutId = null;
+    const musicStartSeconds = 184;
+    const tulipFrame = document.getElementById('tulipFrame');
+    const tulipTemplate = document.getElementById('tulipTemplate');
+
+    function hideDoubleTapIndicator() {
+      const indicator = document.getElementById('doubleTapIndicator');
+      if (!indicator) return;
+      indicator.classList.add('is-hidden');
+      setTimeout(() => {
+        indicator.style.display = 'none';
+      }, 650);
+    }
+
+    function showTulipFrame() {
+      if (!tulipFrameOverlay) return;
+      tulipFrameOverlay.classList.add('is-visible');
+      tulipFrameOverlay.setAttribute('aria-hidden', 'false');
+      iniciarLluvia();
+      if (tulipFrame && tulipTemplate) {
+        tulipFrame.srcdoc = tulipTemplate.value;
+      }
+    }
+
+    function hideTulipFrame() {
+      if (!tulipFrameOverlay) return;
+      tulipFrameOverlay.classList.remove('is-visible');
+      tulipFrameOverlay.setAttribute('aria-hidden', 'true');
+    }
+
+    function openTextModal() {
+      textLauncher.classList.add('is-hidden');
+      document.body.classList.add('text-modal-open');
+      textModal.classList.add('is-visible');
+      textModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeTextModal(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      textModal.classList.remove('is-visible');
+      textModal.setAttribute('aria-hidden', 'true');
+      textLauncher.classList.add('is-visible');
+      textLauncher.classList.remove('is-hidden');
+      document.body.classList.remove('text-modal-open');
+    }
+
+    function syncAudioStartPoint() {
+      if (audio.readyState < 1) return;
+      if (audio.currentTime < musicStartSeconds - 0.5) {
+        audio.currentTime = musicStartSeconds;
+      }
+    }
+
+    function isInteractiveTarget(target) {
+      return Boolean(target && target.closest('button, audio, input, textarea, select, option, label, a, [role="button"]'));
+    }
+
+    function startAudioFromGesture() {
+      syncAudioStartPoint();
+      audio.play().catch(() => {});
+    }
+
+    function updateRotation() {
+      cube.style.transform = `scale(${isPC ? 0.8 : 0.65}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    }
+
+    // Control para dispositivos táctiles
+    function handleStart(x, y) {
+      if (isBouncing || isAutoRotating) return;
+      
+      isDragging = true;
+      startX = x;
+      startY = y;
+      cube.style.transition = 'none';
+      scene.style.transition = 'none';
+    }
+
+    function handleMove(x, y) {
+      if (!isDragging || isBouncing || isAutoRotating) return;
+      
+      const sensitivity = isPC ? 0.5 : 0.8;
+      rotateY += (x - startX) * sensitivity;
+      rotateX -= (y - startY) * sensitivity;
+      
+      startX = x;
+      startY = y;
+      updateRotation();
+    }
+
+    function handleEnd() {
+      isDragging = false;
+      if (!isBouncing && !isAutoRotating) {
+        cube.style.transition = 'transform 0.1s linear';
+        scene.style.transition = 'all 0.1s linear';
+      }
+    }
+
+    // Eventos táctiles para móviles
+    document.addEventListener('touchstart', e => {
+      if (isInteractiveTarget(e.target) || !e.target.closest('.scene, #cube')) return;
+      e.preventDefault();
+      handleStart(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+    
+    document.addEventListener('touchmove', e => {
+      if (!isDragging) return;
+      e.preventDefault();
+      handleMove(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+    
+    document.addEventListener('touchend', e => {
+      if (!isDragging) return;
+      e.preventDefault();
+      handleEnd();
+    });
+
+    // Eventos de ratón para PC
+    if (isPC) {
+      document.addEventListener('mousedown', e => {
+        if (e.target.closest('.controls-panel')) return;
+        handleStart(e.clientX, e.clientY);
+      });
+      
+      document.addEventListener('mousemove', e => {
+        handleMove(e.clientX, e.clientY);
+      });
+      
+      document.addEventListener('mouseup', e => {
+        handleEnd();
+      });
+
+      // Rueda del ratón para zoom
+      document.addEventListener('wheel', e => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.05 : 0.05;
+        const currentScale = parseFloat(cube.style.transform.match(/scale\(([^)]+)\)/)[1]) || (isPC ? 0.8 : 0.65);
+        const newScale = Math.min(Math.max(currentScale + delta, 0.4), 1.2);
+        
+        cube.style.transition = 'transform 0.2s ease-out';
+        cube.style.transform = `scale(${newScale}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      }, { passive: false });
+    }
+
+    // Efecto de lluvia optimizado
+    function crearSimbolo() {
+      const el = document.createElement('div');
+      el.className = 'rain-symbol';
+      el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.animationDuration = (3 + Math.random() * 4) + 's';
+      document.body.appendChild(el);
+      
+      // Limpieza de elementos
+      setTimeout(() => {
+        if (el.parentNode) {
+          el.parentNode.removeChild(el);
+        }
+      }, 7000);
+    }
+
+    function iniciarLluvia() {
+      clearInterval(lluviaInterval);
+      lluviaInterval = setInterval(crearSimbolo, isPC ? 300 : 400);
+    }
+
+    function detenerLluvia() {
+      clearInterval(lluviaInterval);
+      lluviaInterval = null;
+    }
+
+    // Animación de rebote con física
+    function bounceCube() {
+      if (isExploding) return;
+
+      if (isBouncing) {
+        resetPosition();
+        return;
+      }
+      
+      // Detener rotación automática si está activa
+      if (isAutoRotating) {
+        toggleAutoRotate();
+      }
+      
+      isBouncing = true;
+      cube.style.transition = 'none';
+      scene.style.transition = 'none';
+      
+      // Parámetros de física
+      const gravity = 0.2;
+      const damping = 0.7;
+      const bounceRandomness = 0.3;
+      
+      let posX = window.innerWidth / 2;
+      let posY = window.innerHeight / 2;
+      let velX = (Math.random() - 0.5) * 15;
+      let velY = -12 - Math.random() * 5;
+      let scale = isPC ? 0.8 : 0.65;
+      
+      const sceneRect = scene.getBoundingClientRect();
+      const cubeSize = sceneRect.width;
+      
+      // Cancelar animación previa si existe
+      if (bounceAnimationId) {
+        cancelAnimationFrame(bounceAnimationId);
+      }
+      
+      function animate() {
+        // Aplicar gravedad
+        velY += gravity;
+        
+        // Actualizar posición
+        posX += velX;
+        posY += velY;
+        
+        // Detección de colisión con bordes
+        const leftBound = cubeSize / 2;
+        const rightBound = window.innerWidth - cubeSize / 2;
+        const topBound = cubeSize / 2;
+        const bottomBound = window.innerHeight - cubeSize / 2;
+        
+        // Rebote en los bordes
+        if (posX < leftBound) {
+          posX = leftBound;
+          velX = -velX * damping * (0.9 + Math.random() * bounceRandomness);
+          velY *= 0.95;
+        } else if (posX > rightBound) {
+          posX = rightBound;
+          velX = -velX * damping * (0.9 + Math.random() * bounceRandomness);
+          velY *= 0.95;
+        }
+        
+        if (posY < topBound) {
+          posY = topBound;
+          velY = -velY * damping;
+        } else if (posY > bottomBound) {
+          posY = bottomBound;
+          velY = -velY * damping * (0.8 + Math.random() * bounceRandomness);
+          velX *= 0.9;
+          
+          // Reducir escala cuando toca el fondo para efecto de "aplastamiento"
+          scale = (isPC ? 0.7 : 0.55) + Math.random() * 0.1;
+        } else {
+          // Restaurar escala gradualmente
+          scale = Math.min(isPC ? 0.8 : 0.65, scale + 0.01);
+        }
+        
+        // Rotación basada en la velocidad
+        rotateY += velX * 0.5;
+        rotateX += velY * 0.3;
+        
+        // Aplicar transformaciones
+        scene.style.left = `${posX - cubeSize / 2}px`;
+        scene.style.top = `${posY - cubeSize / 2}px`;
+        scene.style.transform = 'none';
+        cube.style.transform = `scale(${scale}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        
+        // Continuar animación
+        bounceAnimationId = requestAnimationFrame(animate);
+      }
+      
+      // Iniciar animación
+      bounceAnimationId = requestAnimationFrame(animate);
+    }
+
+    function createExplosionParticles() {
+      const cubeRect = cube.getBoundingClientRect();
+      const originX = cubeRect.left + cubeRect.width / 2;
+      const originY = cubeRect.top + cubeRect.height / 2;
+      const particleCount = isPC ? 48 : 34;
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('span');
+        particle.className = 'explosion-particle';
+
+        const size = 4 + Math.random() * 12;
+        const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.55;
+        const distance = 180 + Math.random() * 280;
+        const duration = 1400 + Math.random() * 800;
+        const hue = 330 + Math.random() * 30;
+
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${originX - size / 2}px`;
+        particle.style.top = `${originY - size / 2}px`;
+        particle.style.background = `radial-gradient(circle, rgba(255,255,255,0.95) 0%, hsla(${hue}, 100%, 70%, 0.95) 35%, hsla(${hue}, 100%, 55%, 0.12) 75%)`;
+        particle.style.transition = `transform ${duration}ms cubic-bezier(.1,.8,.2,1), opacity ${duration}ms ease-out`;
+
+        document.body.appendChild(particle);
+
+        requestAnimationFrame(() => {
+          particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0.2) rotate(${Math.random() * 360}deg)`;
+          particle.style.opacity = '0';
+        });
+
+        setTimeout(() => {
+          if (particle.parentNode) {
+            particle.parentNode.removeChild(particle);
+          }
+        }, duration + 120);
+      }
+    }
+
+    function createExplosionShockwave() {
+      const cubeRect = cube.getBoundingClientRect();
+      const originX = cubeRect.left + cubeRect.width / 2;
+      const originY = cubeRect.top + cubeRect.height / 2;
+      const shockwave = document.createElement('span');
+      shockwave.className = 'explosion-shockwave';
+      shockwave.style.left = `${originX}px`;
+      shockwave.style.top = `${originY}px`;
+
+      document.body.appendChild(shockwave);
+
+      requestAnimationFrame(() => {
+        shockwave.style.transition = 'transform 1.2s ease-out, opacity 1.2s ease-out';
+        shockwave.style.transform = 'translate(-50%, -50%) scale(20)';
+        shockwave.style.opacity = '0';
+      });
+
+      setTimeout(() => {
+        if (shockwave.parentNode) {
+          shockwave.parentNode.removeChild(shockwave);
+        }
+      }, 1350);
+    }
+
+    function explodeCube() {
+      if (isExploding) return;
+
+      isExploding = true;
+      isBouncing = false;
+      isDragging = false;
+
+      if (bounceAnimationId) {
+        cancelAnimationFrame(bounceAnimationId);
+        bounceAnimationId = null;
+      }
+
+      if (isAutoRotating && autoRotateId) {
+        cancelAnimationFrame(autoRotateId);
+        autoRotateId = null;
+      }
+
+      isAutoRotating = false;
+
+      cube.classList.add('exploding');
+      cube.style.pointerEvents = 'none';
+      cube.style.transition = 'transform 0.95s cubic-bezier(0.12, 0.85, 0.18, 1), opacity 1.1s ease-out, filter 1.1s ease-out';
+      cube.style.opacity = '1';
+      cube.style.transform = `scale(1.05) rotateX(${rotateX + 8}deg) rotateY(${rotateY + 14}deg)`;
+      scene.style.opacity = '0';
+
+      createExplosionShockwave();
+
+      setTimeout(() => {
+        cube.style.transform = `scale(1.42) rotateX(${rotateX + 42}deg) rotateY(${rotateY + 72}deg)`;
+        cube.style.opacity = '0';
+      }, 180);
+
+      setTimeout(() => {
+        createExplosionParticles();
+      }, 140);
+
+      setTimeout(() => {
+        createExplosionParticles();
+      }, 420);
+
+      if (revealTulipTimeoutId) {
+        clearTimeout(revealTulipTimeoutId);
+      }
+
+      revealTulipTimeoutId = setTimeout(() => {
+        hideDoubleTapIndicator();
+        showTulipFrame();
+
+        textLauncher.classList.add('is-visible');
+        iniciarLluvia();
+      }, 1450);
+    }
+
+    function resetPosition() {
+      // Cancelar animación de rebote si está activa
+      if (bounceAnimationId) {
+        cancelAnimationFrame(bounceAnimationId);
+        bounceAnimationId = null;
+      }
+      
+      isBouncing = false;
+      isExploding = false;
+
+      cube.classList.remove('exploding');
+      cube.style.pointerEvents = 'auto';
+      cube.style.opacity = '1';
+      cube.style.filter = 'none';
+      scene.style.opacity = '1';
+
+      if (revealTulipTimeoutId) {
+        clearTimeout(revealTulipTimeoutId);
+        revealTulipTimeoutId = null;
+      }
+
+      hideTulipFrame();
+      closeTextModal();
+      
+      // Restaurar posición y rotación original
+      scene.style.transition = 'all 0.5s ease-out';
+      scene.style.left = '50%';
+      scene.style.top = '50%';
+      scene.style.transform = 'translate(-50%, -50%)';
+      
+      cube.style.transition = 'transform 0.5s ease-out';
+      rotateX = -15;
+      rotateY = 15;
+      updateRotation();
+    }
+
+    // Rotación automática
+    function toggleAutoRotate() {
+      if (isBouncing) return;
+      
+      isAutoRotating = !isAutoRotating;
+      
+      if (isAutoRotating) {
+        cube.style.transition = 'transform 0.1s linear';
+        
+        function autoRotate() {
+          if (!isAutoRotating) return;
+          rotateY += 0.5;
+          updateRotation();
+          autoRotateId = requestAnimationFrame(autoRotate);
+        }
+        
+        autoRotateId = requestAnimationFrame(autoRotate);
+      } else {
+        if (autoRotateId) {
+          cancelAnimationFrame(autoRotateId);
+          autoRotateId = null;
+        }
+      }
+    }
+
+    // Detección de doble tap/clic
+    function handleDoubleTap() {
+      const now = Date.now();
+      const doubleTapDelay = isPC ? 500 : 300;
+      
+      if (now - lastTapTime < doubleTapDelay) {
+        // Doble tap/clic detectado
+        explodeCube();
+      }
+      
+      lastTapTime = now;
+    }
+
+    textModalClose.addEventListener('pointerdown', closeTextModal);
+    textModalClose.addEventListener('click', closeTextModal);
+    textLauncher.addEventListener('click', openTextModal);
+
+    const textModalCard = textModal.querySelector('.text-modal__card');
+    textModalCard.addEventListener('pointerdown', event => {
+      event.stopPropagation();
+    });
+    textModalCard.addEventListener('click', event => {
+      event.stopPropagation();
+    });
+
+    textModal.addEventListener('pointerdown', event => {
+      if (event.target === textModal) {
+        closeTextModal(event);
+      }
+    });
+    textModal.addEventListener('click', event => {
+      if (event.target === textModal) {
+        closeTextModal(event);
+      }
+    });
+
+    // Event listeners para el cubo
+    if (isPC) {
+      cube.addEventListener('dblclick', e => {
+        e.preventDefault();
+        explodeCube();
+      });
+    }
+    
+    cube.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleDoubleTap();
+    });
+
+    // Reproducir música de fondo automáticamente
+    audio.addEventListener('loadedmetadata', syncAudioStartPoint);
+    audio.addEventListener('play', syncAudioStartPoint);
+    audio.addEventListener('play', iniciarLluvia);
+    audio.addEventListener('pause', detenerLluvia);
+    audio.addEventListener('ended', () => {
+      audio.currentTime = musicStartSeconds;
+      audio.play().catch(() => {});
+      iniciarLluvia();
+    });
+
+    // Solución para autoplay
+    document.addEventListener('pointerdown', startAudioFromGesture, { once: true });
+    document.addEventListener('touchend', startAudioFromGesture, { once: true, passive: true });
+    document.addEventListener('click', startAudioFromGesture, { once: true });
+
+    // Ajustar al cambiar tamaño
+    window.addEventListener('resize', () => {
+      if (!isBouncing) {
+        scene.style.left = '50%';
+        scene.style.top = '50%';
+        scene.style.transform = 'translate(-50%, -50%)';
+      }
+    });
+
+    // Inicializar
+    updateRotation();
+  </script>
+</body>
+</html>
