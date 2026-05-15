@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Love ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS GENERALES Y FONDO --- */
+        *, ::before, ::after { box-sizing: border-box; }
+        
+        body {
+            font-family: "Quicksand", sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: #fce4ec;
+        }
+
+        .bg-gif-fijo {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image: url('https://i.pinimg.com/736x/4f/6f/2b/4f6f2ba0171645fa2dfd806dbd41d324.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.9);
+        }
+
+        /* --- SOBRE (ENVELOPE) --- */
+        .envelope {
+            --width: 300px;
+            --height: 175px;
+            position: relative;
+            width: var(--width);
+            height: var(--height);
+            perspective: 1000px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        @media (min-width: 720px) {
+            .envelope { --width: 500px; --height: 290px; }
+        }
+
+        .envelope-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s ease-in-out;
+            transform-style: preserve-3d;
+        }
+
+        .envelope.open .envelope-inner { transform: rotateY(180deg); }
+
+        .envelope-front, .envelope-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .envelope-front {
+            background: #d1c4e9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .envelope-front img.stamp {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 60px;
+            height: 70px;
+            border-radius: 4px;
+            border: 2px dashed #7e57c2;
+        }
+
+        .envelope-back {
+            background: #9575cd;
+            transform: rotateY(180deg);
+        }
+
+        .envelope-back::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: conic-gradient(transparent 60deg, #7e57c2 60deg 120deg, #ede7f6 120deg 240deg, #7e57c2 240deg 300deg, transparent 300deg);
+            z-index: 2;
+        }
+
+        .top-fold {
+            position: absolute;
+            inset: 0;
+            background: #9575cd;
+            clip-path: polygon(0% 0%, 50% 55%, 100% 0%);
+            z-index: 10;
+            transform-origin: top;
+            transition: transform 0.4s ease 0.4s;
+        }
+
+        .envelope.open .top-fold { transform: rotateX(180deg); z-index: 0; }
+
+        .letter-preview {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            width: 90%;
+            height: 80%;
+            background: white;
+            transform: translateX(-50%);
+            z-index: 1;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.4s ease 0.6s;
+        }
+
+        .envelope.open .letter-preview { transform: translate(-50%, -40%); }
+
+        /* --- MODAL MEJORADO --- */
+        .modal-carta {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+        }
+
+        .modal-carta.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-carta-content {
+            background: transparent;
+            width: 100%;
+            max-width: 520px;
+            max-height: calc(100vh - 80px);
+            border-radius: 22px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.18);
+            overflow: hidden; /* el scroll lo gestionará el body interno */
+            padding: 10px; /* espacio para que el borde interno no se pegue al contenedor */
+            box-sizing: border-box;
+        }
+
+        .modal-carta-content::-webkit-scrollbar { display: none; }
+
+        /* Contenido interno que crece con el scroll: aquí va el borde morado */
+        .modal-carta-body {
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            padding: 26px 20px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            box-sizing: border-box;
+            border: 0; /* sin borde por defecto, usamos box-shadow para el marco */
+            box-shadow: inset 0 0 0 4px rgba(126,87,194,0.95);
+        }
+
+        .modal-carta-body::-webkit-scrollbar { display: none; }
+
+        /* GIF del modal (Nuevo) */
+        .modal-footer-gif {
+            width: 100%;
+            max-width: 250px;
+            display: block;
+            margin: 20px auto 0;
+            border-radius: 15px;
+            opacity: 0.9;
+        }
+
+        .modal-carta-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #7e57c2;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .modal-carta-close:hover { transform: scale(1.1) rotate(90deg); }
+
+        .letra-flotante-badge {
+            display: inline-block;
+            background: #6a1b9a;
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            animation: float 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes float {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        /* Ajustes responsivos para el modal en móviles */
+        @media (max-width: 420px) {
+            .modal-carta { padding: 12px; }
+            .modal-carta-content {
+                padding: 18px 14px;
+                border: 4px solid #fff;
+                max-width: 96vw;
+                max-height: calc(100vh - 40px);
+                border-radius: 16px;
+            }
+            .modal-carta-content::before { box-shadow: inset 0 0 0 3px rgba(126,87,194,0.95); }
+            .modal-footer-gif { max-width: 200px; }
+        }
+
+        .texto-carta {
+            font-size: 1.2rem;
+            line-height: 1.6;
+                color: #6b1aa9;
+            text-align: center;
+            margin-bottom: 20px;
+                font-weight: 600;
+        }
+
+            .texto-carta .resaltado {
+                font-weight: 800;
+                color: #4a148c;
+                background: rgba(126,87,194,0.08);
+                padding: 6px 8px;
+                border-radius: 8px;
+                display: inline-block;
+            }
+
+        .img-polaroid {
+            width: 180px;
+            height: 180px;
+            background: white;
+            padding: 10px 10px 30px 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            transform: rotate(-3deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+            display: block;
+            cursor: zoom-in;
+        }
+
+        .img-polaroid.visible {
+            opacity: 1;
+            transform: rotate(2deg) scale(1.1);
+        }
+
+        .img-polaroid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        /* --- MODAL IMAGEN AMPLIADA --- */
+        .modal-imagen-flotante {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 3000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        
+        .modal-imagen-flotante img {
+            max-width: 90%;
+            max-height: 80%;
+            border: 10px solid white;
+            border-radius: 5px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* --- BARRA INFERIOR DE MÚSICA --- */
+        .music-bar {
+            position: fixed;
+            left: 50%;
+            bottom: 16px;
+            transform: translateX(-50%);
+            z-index: 2500;
+            width: min(92vw, 560px);
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(126, 87, 194, 0.45);
+            border-radius: 999px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .music-bar__button {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6a1b9a, #b39ddb);
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            flex: 0 0 auto;
+            box-shadow: 0 6px 14px rgba(106, 27, 154, 0.25);
+        }
+
+        .music-bar__meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .music-bar__title {
+            display: block;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #5e35b1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .music-bar__status {
+            display: block;
+            font-size: 0.78rem;
+            color: #7e57c2;
+            margin-top: 2px;
+        }
+
+        .music-bar__track {
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(126, 87, 194, 0.18);
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .music-bar__track-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6a1b9a, #b39ddb);
+            border-radius: inherit;
+            transition: width 0.1s linear;
+        }
+
+        @media (max-width: 420px) {
+            .music-bar {
+                bottom: 10px;
+                padding: 9px 12px;
+            }
+
+            .music-bar__button {
+                width: 38px;
+                height: 38px;
+                font-size: 16px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-gif-fijo"></div>
+
+    <!-- Audio Oculto -->
+    <audio id="audioCarta" loop>
+        <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/CUCO%20-%20Amor%20de%20Siempre%20(Official%20Instrumental).mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="music-bar" id="musicBar" aria-label="Controles de música">
+        <button class="music-bar__button" id="musicToggle" type="button" aria-label="Reproducir música">▶</button>
+        <div class="music-bar__meta">
+            <span class="music-bar__title">CUCO - Amor de Siempre</span>
+            <span class="music-bar__status" id="musicStatus">Pausada</span>
+            <div class="music-bar__track" aria-hidden="true">
+                <div class="music-bar__track-fill" id="musicProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sobre -->
+    <div class="envelope" id="envelope">
+        <div class="envelope-inner">
+            <div class="envelope-front">
+                <img src="https://i.pinimg.com/1200x/5e/74/2d/5e742ddbda9fae201369444e5222a8ba.jpg" class="stamp" alt="stamp">
+                <div style="text-align: left; color: white;">
+                    <p><b>Para:</b> Mon ❤️</p>
+                    <p><b>De:</b> Parkher</p>
+                </div>
+            </div>
+            <div class="envelope-back">
+                <div class="top-fold"></div>
+                <div class="letter-preview">
+                    <img src="https://img.freepik.com/vector-premium/pulgar-dedos-imprimir-marca-huella-dactilar-amor-corazon_53500-1839.jpg" style="width: 50px;" alt="">
+                    <p style="color: #7e57c2; font-weight: bold; font-size: 0.9rem;">Ábreme...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de la Carta -->
+    <div class="modal-carta" id="modalCarta">
+        <div class="modal-carta-content">
+            <button class="modal-carta-close" id="closeModalCarta">&times;</button>
+            
+            <div class="modal-carta-body">
+                <div style="text-align: center;">
+                    <div class="letra-flotante-badge">¡Te Amo!</div>
+                    
+                    <div class="img-polaroid" id="imgPrincipal">
+                        <img src="https://i.postimg.cc/4dM7XXgm/Whats-App-Image-2026-05-15-at-9-39-22-AM.jpg" alt="nuestro momento">
+                    </div>
+
+                    <div class="texto-carta">
+                        <strong class="resaltado">Feliz Cumpleaños Brillitoss</strong>recuerdo como si fuera ayer el día que interactuamos por primera vez. Yo estaba en un canal solitario, escuchando música un tanto triste de uno de tus artistas favoritos "BadBunny". Estuve rato ahí, después fue cuando entraste al rato, <strong class="resaltado">eras tu Mon</strong>, tuviste esa iniciativa de entrar sin saber nada de mi, la verdad no me esperaba que entraras, no esperaba que entrara nadie la verdad, yo que te hacia tímida, que hablabas poco eso tenia en mente eso de ti jaja, pero aun así entraste a donde estaba y me sorprendí la verdad.<br><br>
+                        <strong class="resaltado">Ese día fue mágico</strong> la verdad, notaste que estaba mal por las canciones que tenia escuchando en aquel entonces, y fue cuando la curiosidad, el saber que ocurría te invadió y decidiste preguntarme si estaba todo bien. Mon soy de las personas que todo lo de mi vida, todo lo personal lo que tenga que ver conmigo me lo resguardo profundamente sin necesidad ni intención de contar a absolutamente a nadie, pero contigo Mon no lo sentí así, al contrario, sentía que si debía sabes, sentía esa seguridad de contarte lo que estaba ocurriendo y es algo extraño un poco porque sin conocerte de nada, unos completos extraños ahí en un canal, talvez fue por tu voz que la escuche según yo con intención de escucharme y dar tu opinión sincera o talvez fue algo diferente, lo único que se si se Mon es que fue obra de la vida, el destino quiso que nos encontráramos así, y fue que sentí muy profundamente que debía contarte todo, y cuando lo hice Mon me sentí bien sabes, sentí que todo ese peso se iba desapareciendo porque el hablar contigo se sintió así ese día.<br><br>
+                        Desde entonces poco a poco fuimos hablando mas y mas, generando confianza, convirtiendo y formando algo bonito entre nosotros sabes, la conexión que tenemos desde entonces, muchas cosas en común tenemos y se que aun tendríamos, <strong class="resaltado">gustos musicales bien similares</strong>saber que te gustan ese tipo de canciones bien bonitas acústicas, créeme que sentí bien bonito el saber que has estado pasando por cosas similares a las mías, el saber que la pasabas mal, que estabas siendo lastimada, el saber todo eso me hizo creer mas que el destino nos puso mutuamente en nuestros caminos, llegue en el momento justo para estar para ti y así tu lo hiciste en el momento perfecto para estar para mi.<br><br>
+                        Poco a poco a medida que pasan los días, los meses, te voy agarrando cariño, te voy apreciando mas y mas. Quien lo iba a imaginar jaja que una chica de 16 añitos me aconsejara, hablara conmigo con las palabras correctas, lo que si se es que me sienta bien que lo hagas sabes, quien habría imaginado que una chica de casi 17 añitos fuera incluso mas madura que yo jaja. <strong class="resaltado">Mon eres una chica fabulosa</strong>eres hermosa, simpática, perfecta, con un carisma único, y sabes lo que me gusta de ti? que eres a pesar de ser menor de edad, eres completamente de mente madura, de mente progresiva y eso te hace diferente y única a las demás, tú Mon eres alguien valiosa, una mujer encantadora, eres fuerte, luchadora, no te das por vencido, sigues y miras para adelante, sin mirar atrás. Son de las muchas cosas que admiro de ti, me siento realmente orgulloso de como eres, de como ah pesar de todo no recaes, no te das por vencido y eso Mon es algo que admiro muchísimo de ti.<br><br>
+                        <strong class="resaltado">Te has convertido en alguien muy importante en mi vida</strong>, siento muchas cosas bonita, muchas cosas únicas y sinceras hacia ti la verdad,me preocupo mucho por ti y lo mas importante de todo es que te respeto muchísimo, jamás me permitiría el dañarte, el hacerte sentir mal y nunca pero nunca tendría malas intenciones hacia ti. Quiero que sepas que desde que te eh agarrado cariño, desde ese entonces eh sido Jesús, contigo siento que puedo ser esa persona cariñosa, detallista, respetuosa, atenta, un hombre bueno sabes, siento que contigo puedo ser así y la verdad serlo contigo se siente bien, me siento bien siendo así contigo.<br><br>
+                        Se que te pueda resultar extraño el que te de detalles, lo entiendo, pero es mi manera de agradecerte por todo lo que has hecho por mi. Se que sin dar algo material o algún detalle puedo hacerte feliz, se que con solo estar contigo pasando tiempo es mas que suficiente. Pero me gusta ser así sabes, darte detalles, cosas que te gusten que te encanten, siento que podría hacerte aun mas feliz y si lose, se perfectamente que no eres de esas personas interesadas, que solo con estar para ti sobra y basta, pero esta en mi ser así sabes, se siente bien bonito ser así. <strong class="resaltado">Espero de todo corazon Mon seguir estando</strong>, seguir permaneciendo como alguien importante en tu vida, deseo conocerte mas poco a poco, y convertirme en alguien importante y especial para ti porque yo si quiero estar aquí para ti siempre, hasta donde tu me lo permitas estaré Mon.<br><br>
+                        Deseo tanto también el momento de conocernos en persona, se que es pronto lose pero se que llegara el momento y lo espero con muchas ganas. Desde que empecé a quererte me decidí a hacer lo posible y lo hasta imposible por sacarte de ese mundo lleno de problemas, quitarte el peso que llevases encima y hacerte sentir bien, hacerte sentir completamente feliz, despejada de todo lo malo que ah estado ocurriendo, porque tu Mon me haces sentir así, escucharte reír, hablar mutuamente, nos entendemos en todo, me ayudas a librarme de todo, estando contigo todo se siente bien bonito, que lo demás no importa, quiero siempre escuchar y ver esa hermosa sonrisa que tienes, porque siento que al escucharla incluso con verla haces que el peso que llevo encima, todo los problemas que tenga se valla fácilmente y se siente como algo mágico y único escucharte Mon. <strong class="resaltado">Siempre estaré eternamente agradecido contigo</strong>.<br><br>
+                        Desde que llegaste a mi vida todo ah sido risas, momentos únicos y algo bien lindo de ti "brillos" que por todo te apode así "Brillitos" porque hiciste que todo lo que vea con brillos, me haga recordarte. Con el corazon en la mano te hago este detalle, esta carta, me hubiese encantado mas dártela escrita en hoja con toque antiguo como se que te gusta, pero as circunstancias impiden que haga esas cosas por ahora, a veces pienso que ojala hubiese estado mas cerca de ti sabes no tan lejos, pero si así debe ser por ahora es por algo, siempre positivos con el pensamiento de que algún día sucederá.<br><br>
+                        Espero que este día tan especial para ti sea inolvidable, me hubiese encantado también estar sabes, me imagino yo en tu cumple bien feliz de verte, pero no todo esta tan mal sabes, lo bueno y lo que importa es que la pasaras con esas personas que mas amas en esta vida, personas que significan mucho para ti, espero de corazon que nunca cambien Mon, nunca lo hagas ok? se tu misma siempre, siempre con tu corazon noble y fuerte lleno de amor y sinceridad, nunca dejes que ese brillo tan hermoso en tus ojos se apague y por favor no permitas que apaguen esa bonita sonrisa que tienes y si llega a pasar, espero estar y quiero estar siempre para lograr que pase.<br><br>
+                        <strong class="resaltado">Con lagrimas en los ojos finalizo esta carta</strong>, preguntaras porque lloro, y es porque me siento tan afortunado de haberte conocido y se siente bien bonito, y así con todo eso bonito que siento redacto estas hermosas palabras que nunca te faltaran para ti. <strong class="resaltado">Felices 17 Monserrat, te quiero - Parkher</strong>.
+                    </div>
+
+                    <!-- Nuevo GIF solicitado -->
+                    <img src="https://i.pinimg.com/originals/9b/1f/f0/9b1ff0a4ea9d3461331afceeea910029.gif" class="modal-footer-gif" alt="gif amor">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Bloqueo de seguridad básico
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        const envelope = document.getElementById('envelope');
+        const modal = document.getElementById('modalCarta');
+        const closeBtn = document.getElementById('closeModalCarta');
+        const audio = document.getElementById('audioCarta');
+        const imgPolaroid = document.getElementById('imgPrincipal');
+        const musicToggle = document.getElementById('musicToggle');
+        const musicStatus = document.getElementById('musicStatus');
+        const musicProgress = document.getElementById('musicProgress');
+
+        function updateMusicUI() {
+            const isPlaying = !audio.paused;
+            musicToggle.textContent = isPlaying ? '❚❚' : '▶';
+            musicToggle.setAttribute('aria-label', isPlaying ? 'Pausar música' : 'Reproducir música');
+            musicStatus.textContent = isPlaying ? 'Reproduciendo' : 'Pausada';
+
+            const duration = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 0;
+            const progress = duration ? (audio.currentTime / duration) * 100 : 0;
+            musicProgress.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+        }
+
+        musicToggle.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play().catch(() => console.log("Se requiere interacción para iniciar audio"));
+            } else {
+                audio.pause();
+            }
+        });
+
+        audio.addEventListener('play', updateMusicUI);
+        audio.addEventListener('pause', updateMusicUI);
+        audio.addEventListener('loadedmetadata', updateMusicUI);
+        audio.addEventListener('timeupdate', updateMusicUI);
+        audio.addEventListener('ended', updateMusicUI);
+        updateMusicUI();
+
+        // Función para abrir la carta
+        envelope.addEventListener('click', () => {
+            const isOpening = !envelope.classList.contains('open');
+            envelope.classList.toggle('open');
+
+            if (isOpening) {
+                // Iniciar música solo si no se está reproduciendo ya
+                if (audio.paused) {
+                    audio.currentTime = 29; 
+                    audio.play().catch(() => console.log("Se requiere interacción para iniciar audio"));
+                }
+
+                // Abrir modal tras la animación del sobre
+                setTimeout(() => {
+                    modal.classList.add('active');
+                    setTimeout(() => {
+                        imgPolaroid.classList.add('visible');
+                    }, 500);
+                }, 1200);
+            }
+        });
+
+        // Cerrar modal
+        function closeModal() {
+            modal.classList.remove('active');
+            imgPolaroid.classList.remove('visible');
+            setTimeout(() => {
+                envelope.classList.remove('open');
+            }, 300);
+            // La música sigue sonando
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if(e.target === modal) closeModal();
+        });
+
+        // Click en la imagen para ampliar
+        imgPolaroid.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const fullImg = document.createElement('div');
+            fullImg.className = 'modal-imagen-flotante';
+            fullImg.innerHTML = `<img src="${imgPolaroid.querySelector('img').src}">`;
+            fullImg.onclick = () => document.body.removeChild(fullImg);
+            document.body.appendChild(fullImg);
+        });
+    </script>
+</body>
+</html>
