@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miamor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Mali&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      background: transparent;
+      overflow: hidden;
+      transition: background 1.2s ease;
+      isolation: isolate;
+    }
+
+    #bg-video {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    #bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 192, 203, 0.08);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Pantalla inicial */
+    #start-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border: 2px solid #e6e6e6;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      border-radius: 20px;
+      padding: 25px 30px;
+      animation: glowBox 2s ease-in-out infinite alternate;
+      position: relative;
+      z-index: 1;
+    }
+
+    .start-image {
+      width: 180px;
+      max-width: 100%;
+      height: auto;
+      border-radius: 16px;
+      object-fit: cover;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    @keyframes glowBox {
+      0% { box-shadow: 0 10px 24px rgba(0, 0, 0, 0.10); }
+      100% { box-shadow: 0 14px 36px rgba(0, 0, 0, 0.16); }
+    }
+
+    #start-text {
+      font-size: 24px;
+      color: #ff1f4d;
+      font-weight: bold;
+      margin-bottom: 12px;
+      text-shadow: none;
+      animation: pulse 2s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.9; }
+      100% { opacity: 1; }
+    }
+
+    #start-btn {
+      background: #ffffff;
+      border: 1px solid #ff1f4d;
+      color: #ff1f4d;
+      padding: 8px 16px;
+      font-size: 15px;
+      border-radius: 18px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(255, 31, 77, 0.22);
+      transition: all 0.3s ease;
+    }
+
+    #start-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(255, 31, 77, 0.28);
+    }
+
+    /* Texto cayendo */
+    .falling-text {
+      position: fixed;
+      top: 0;
+      font-family: 'Mali', cursive;
+      white-space: nowrap;
+      color: #ffffff;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.75), 0 0 18px rgba(255, 255, 255, 0.35);
+      transform: translate3d(0, -12vh, 0);
+      will-change: transform, opacity;
+      animation: fall linear forwards;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .falling-image {
+      position: fixed;
+      top: 0;
+      width: 92px;
+      height: 92px;
+      object-fit: cover;
+      border-radius: 14px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.18);
+      transform: translate3d(0, -12vh, 0);
+      will-change: transform, opacity;
+      animation: fall linear forwards;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    @keyframes fall {
+      0% { transform: translate3d(0, -12vh, 0); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translate3d(0, 110vh, 0); opacity: 0.85; }
+    }
+
+    @keyframes starBlink {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <video id="bg-video" autoplay muted loop playsinline>
+    <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/From%20KlickPin%20CF%20Cute%20date%20night%20thoughts%20with%20easy%20charm%20designed%20for%20beautiful%20Pinterest%20saves%20for%20cozy%20hearts%20%F0%9F%92%96%20-%20Pin-1688918605802526.mp4" type="video/mp4">
+  </video>
+
+  <div id="bg-overlay"></div>
+
+  <div id="start-screen">
+    <img class="start-image" src="https://i.pinimg.com/736x/e2/9e/84/e29e84795ab9a58090a8acb778de6ded.jpg" alt="Imagen decorativa">
+    <div id="start-text">Para ti! ❤</div>
+    <button id="start-btn">Toca aquí</button>
+  </div>
+
+  <audio id="audio-eres-tu" src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Never%20Shout%20Never%20-%20Can't%20Stand%20ItLetra%20en%20espa%C3%B1ol.mp3" preload="auto"></audio>
+
+  <script>
+    const startBtn = document.getElementById('start-btn');
+    const startScreen = document.getElementById('start-screen');
+    const audioEresTu = document.getElementById('audio-eres-tu');
+    const audioStartTimeByUrl = {
+      "https://github.com/Baque2005/Organizador/raw/refs/heads/master/Never%20Shout%20Never%20-%20Can't%20Stand%20ItLetra%20en%20espa%C3%B1ol.mp3": 3
+    };
+
+    startBtn.addEventListener('click', () => {
+      // Reproducir música
+      audioEresTu.currentTime = 3;
+      audioEresTu.volume = 0.7;
+      audioEresTu.play();
+
+      // Fondo con video, estrellas encima
+      startScreen.style.display = 'none';
+
+      // Cielo estrellado (optimizado)
+      const starContainer = document.createElement("div");
+      Object.assign(starContainer.style, {
+        position: "fixed",
+        top: 0, left: 0,
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+        zIndex: "-1",
+        pointerEvents: "none"
+      });
+      document.body.appendChild(starContainer);
+
+      for (let i = 0; i < 50; i++) {
+        const star = document.createElement("div");
+        const size = Math.random() * 2 + "px";
+        star.style.cssText = `
+          position: absolute;
+          width: ${size};
+          height: ${size};
+          border-radius: 50%;
+          background: white;
+          opacity: 0;
+          top: ${Math.random() * 100}vh;
+          left: ${Math.random() * 100}vw;
+          animation: starBlink ${1 + Math.random() * 2}s infinite;
+          box-shadow: 0 0 10px #fff;
+        `;
+        starContainer.appendChild(star);
+      }
+
+      // Letras cayendo (más livianas)
+      let activeFallingTexts = 0;
+      const maxFallingTexts = 20;
+      const imagenes = [
+        "https://i.pinimg.com/736x/c1/f8/1e/c1f81e6181dbed59d1a95179569cd02d.jpg",
+        "https://i.pinimg.com/736x/ae/40/8a/ae408a7900ba2de4f58a36067611f28b.jpg",
+        "https://i.pinimg.com/736x/18/5e/a5/185ea57715c486266c9fdc1a26a371b4.jpg",
+        "https://i.pinimg.com/736x/e5/34/ed/e534edd2c4277ec592c5ea94c880a4bc.jpg"
+      ];
+      const frases = [
+        "Te amo",
+        "Eres mi vida",
+        "Mi amor eterno",
+        "❤",
+        "Contigo siempre",
+        "Siempre juntos",
+        "Mi cielo",
+        "Eres única",
+        "Por siempre tú",
+        "Mi felicidad"
+      ];
+      setInterval(() => {
+        if (activeFallingTexts >= maxFallingTexts) {
+          return;
+        }
+
+        const useImage = Math.random() < 0.35;
+        const leftPosition = Math.random() * 88 + "vw";
+        const duration = (4.5 + Math.random() * 1.8) + "s";
+
+        let fallingElement;
+
+        if (useImage) {
+          fallingElement = document.createElement("img");
+          fallingElement.className = "falling-image";
+          fallingElement.src = imagenes[Math.floor(Math.random() * imagenes.length)];
+          fallingElement.alt = "Imagen flotando";
+          fallingElement.style.left = leftPosition;
+          fallingElement.style.animationDuration = duration;
+          fallingElement.style.width = (84 + Math.random() * 28) + "px";
+          fallingElement.style.height = fallingElement.style.width;
+        } else {
+          fallingElement = document.createElement("span");
+          fallingElement.className = "falling-text";
+          fallingElement.textContent = frases[Math.floor(Math.random() * frases.length)];
+          fallingElement.style.left = leftPosition;
+          fallingElement.style.fontSize = (20 + Math.random() * 14) + "px";
+          fallingElement.style.animationDuration = duration;
+        }
+
+        document.body.appendChild(fallingElement);
+        activeFallingTexts++;
+
+        setTimeout(() => {
+          fallingElement.remove();
+          activeFallingTexts--;
+        }, 5800);
+      }, 450);
+    });
+  </script>
+
+</body>
+</html>
