@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>20 de Mayo — Día de la Carta de Amor</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --rose:       #B83060;
+  --rose-light: #E07090;
+  --rose-pale:  #F5D0DC;
+  --rose-deep:  #6A1535;
+  --rose-blush: #FAE8EE;
+  --cream:      #FDF4ED;
+  --parchment:  #F7E8CE;
+  --parch-dark: #EDD9A8;
+  --ink:        #281520;
+  --gold:       #B8882A;
+  --gold-light: #E0BC6A;
+  --burgundy:   #8B1A3A;
+  --lilac:      #9B6B8A;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cream);
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ── Fondo animado ── */
+.bg-canvas {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse at 15% 15%, rgba(184,48,96,0.07) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 85%, rgba(184,48,96,0.07) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 100%, rgba(247,232,206,0.5) 0%, transparent 60%),
+    linear-gradient(160deg, #FDF4ED 0%, #FAE8EE 50%, #FDF4ED 100%);
+  pointer-events: none;
+}
+
+/* ── Pétalos SVG flotantes ── */
+.petals-layer {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.petal {
+  position: absolute;
+  opacity: 0;
+  animation: petalFall linear infinite;
+}
+@keyframes petalFall {
+  0%   { transform: translateY(-40px) rotate(0deg) scale(0.8); opacity: 0; }
+  5%   { opacity: 0.7; }
+  90%  { opacity: 0.4; }
+  100% { transform: translateY(110vh) rotate(720deg) scale(1.1); opacity: 0; }
+}
+
+/* ── Wrapper principal ── */
+.page {
+  position: relative; z-index: 1;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+}
+
+/* ── Header ── */
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: fadeDown 1s ease both;
+}
+.header .ornament {
+  font-size: 13px;
+  letter-spacing: 6px;
+  color: var(--gold);
+  margin-bottom: 0.6rem;
+  font-family: 'Cormorant Garamond', serif;
+}
+.header h1 {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(38px, 8vw, 56px);
+  color: var(--rose-deep);
+  line-height: 1.1;
+  margin-bottom: 0.3rem;
+}
+.header .tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--rose-light);
+  letter-spacing: 1px;
+}
+.header .date-badge {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 5px 20px;
+  border: 0.5px solid var(--gold-light);
+  border-radius: 20px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+/* ── Divisor ornamental ── */
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 1.5rem 0;
+  color: var(--rose-pale);
+  font-size: 18px;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 0.5px;
+  background: linear-gradient(90deg, transparent, var(--rose-pale), transparent);
+}
+
+/* ── Corazones animados ── */
+.hearts-constellation {
+  display: flex; justify-content: center; align-items: center;
+  gap: 1rem; margin: 0.5rem 0 2.5rem;
+}
+.hc {
+  display: inline-block;
+  animation: heartbeat 2.4s ease-in-out infinite;
+  color: var(--rose);
+  transform-origin: center bottom;
+}
+.hc:nth-child(1) { font-size: 12px; color: var(--rose-pale); animation-delay: 0s; }
+.hc:nth-child(2) { font-size: 20px; animation-delay: 0.3s; }
+.hc:nth-child(3) { font-size: 30px; animation-delay: 0.6s; color: var(--burgundy); }
+.hc:nth-child(4) { font-size: 20px; animation-delay: 0.9s; }
+.hc:nth-child(5) { font-size: 12px; color: var(--rose-pale); animation-delay: 1.2s; }
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.22); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.15); }
+  70% { transform: scale(1); }
+}
+
+/* ═══════════════════════════════
+   PANTALLA: SOBRE
+   ═══════════════════════════════ */
+#screen-envelope { text-align: center; animation: fadeUp 0.8s ease both; }
+
+.envelope-wrap {
+  display: inline-block;
+  position: relative;
+  width: 320px; height: 230px;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  filter: drop-shadow(0 8px 24px rgba(184,48,96,0.18));
+  transition: filter 0.3s, transform 0.3s;
+}
+.envelope-wrap:hover {
+  filter: drop-shadow(0 12px 32px rgba(184,48,96,0.28));
+  transform: translateY(-3px);
+}
+
+.env-body {
+  position: absolute; bottom: 0; left: 0;
+  width: 320px; height: 190px;
+  background: var(--parchment);
+  border: 1.5px solid var(--rose-pale);
+  border-radius: 4px 4px 14px 14px;
+  overflow: hidden;
+}
+.env-body::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 24px,
+    rgba(184,48,96,0.04) 24px, rgba(184,48,96,0.04) 25px
+  );
+}
+/* triángulos de esquina */
+.env-tri-l {
+  position: absolute; bottom: 0; left: 0;
+  width: 0; height: 0;
+  border-left: 160px solid rgba(184,48,96,0.06);
+  border-right: 160px solid transparent;
+  border-bottom: 100px solid transparent;
+}
+.env-tri-r {
+  position: absolute; bottom: 0; right: 0;
+  width: 0; height: 0;
+  border-right: 160px solid rgba(184,48,96,0.06);
+  border-left: 160px solid transparent;
+  border-bottom: 100px solid transparent;
+}
+
+.env-flap-wrap {
+  position: absolute; top: 40px; left: 0;
+  width: 320px; perspective: 700px;
+}
+.env-flap {
+  width: 0; height: 0;
+  border-left: 160px solid transparent;
+  border-right: 160px solid transparent;
+  border-top: 105px solid var(--rose-pale);
+  transform-origin: top center;
+  transition: transform 1s cubic-bezier(0.4,0,0.2,1);
+  transform-style: preserve-3d;
+  position: relative;
+}
+.env-flap::after {
+  content: '';
+  position: absolute;
+  top: -100px; left: -155px;
+  width: 310px; height: 95px;
+  background: linear-gradient(180deg, rgba(184,48,96,0.05) 0%, transparent 100%);
+}
+.env-flap.open { transform: rotateX(-172deg); }
+
+/* sello lacre */
+.env-wax {
+  position: absolute;
+  bottom: 55px; left: 50%; transform: translateX(-50%);
+  width: 52px; height: 52px;
+  background: var(--burgundy);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 6;
+  border: 2px solid var(--rose-pale);
+  transition: transform 0.3s;
+}
+.envelope-wrap:hover .env-wax { transform: translateX(-50%) scale(1.1) rotate(12deg); }
+.env-wax svg { width: 26px; height: 26px; fill: var(--rose-pale); opacity: 0.9; }
+
+/* estampilla */
+.env-stamp {
+  position: absolute; top: 12px; right: 18px; z-index: 7;
+  width: 44px; height: 54px;
+  border: 2px dashed var(--rose-light);
+  border-radius: 3px;
+  background: var(--rose-blush);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 2px;
+  font-family: 'Cormorant Garamond', serif;
+}
+.env-stamp .s-heart { font-size: 20px; color: var(--rose); }
+.env-stamp .s-text  { font-size: 6.5px; letter-spacing: 1.5px; color: var(--rose-deep); text-transform: uppercase; }
+
+/* dirección */
+.env-addr {
+  position: absolute; bottom: 30px; left: 24px; z-index: 6;
+  text-align: left;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 11px; color: var(--lilac);
+  line-height: 1.5;
+}
+
+.open-hint {
+  font-size: 13px; font-style: italic; color: var(--rose-light);
+  margin-bottom: 1.5rem; animation: blink 2.5s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ═══════════════════════════════
+   PANTALLA: FORMULARIO
+   ═══════════════════════════════ */
+#screen-form { display: none; }
+
+.form-shell {
+  background: white;
+  border: 0.5px solid var(--rose-pale);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.5s ease both;
+}
+.form-header {
+  background: var(--rose-blush);
+  border-bottom: 0.5px solid var(--rose-pale);
+  padding: 1.25rem 1.75rem;
+  display: flex; align-items: center; gap: 10px;
+}
+.form-header-icon { font-size: 22px; color: var(--rose); }
+.form-header-text h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-style: italic;
+  color: var(--rose-deep); font-weight: 400;
+}
+.form-header-text p {
+  font-size: 12px; color: var(--rose-light);
+  font-style: italic; margin-top: 2px;
+}
+.form-body { padding: 1.5rem 1.75rem; }
+
+.field { margin-bottom: 1.25rem; }
+.field label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10px; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 7px; font-weight: 500;
+}
+.field label span { font-size: 14px; }
+.field input, .field textarea, .field select {
+  width: 100%; border: 0.5px solid var(--rose-pale);
+  border-radius: 10px; padding: 11px 14px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; color: var(--ink);
+  background: var(--cream); transition: border-color 0.25s, box-shadow 0.25s;
+  outline: none; appearance: none;
+}
+.field input:focus, .field textarea:focus, .field select:focus {
+  border-color: var(--rose);
+  box-shadow: 0 0 0 3px rgba(184,48,96,0.08);
+}
+.field textarea { min-height: 120px; resize: vertical; line-height: 1.8; }
+.field select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23B83060' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+
+/* Chips de frases */
+.frases-label {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--lilac); margin-bottom: 8px;
+}
+.frases-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  margin-bottom: 1.25rem;
+}
+.frase-chip {
+  font-size: 12px; font-style: italic;
+  color: var(--rose-deep);
+  border: 0.5px solid var(--rose-pale);
+  border-radius: 8px; padding: 8px 10px;
+  cursor: pointer; transition: background 0.2s, border-color 0.2s;
+  font-family: 'Cormorant Garamond', serif;
+  line-height: 1.4; text-align: left;
+  background: var(--cream);
+}
+.frase-chip:hover { background: var(--rose-blush); border-color: var(--rose-light); }
+.frase-chip .chip-icon { font-size: 14px; display: block; margin-bottom: 3px; }
+
+/* Selector de estilo de carta */
+.style-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  margin-bottom: 1.25rem;
+}
+.style-opt {
+  border: 0.5px solid var(--rose-pale);
+  border-radius: 10px; padding: 10px 8px;
+  text-align: center; cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  background: var(--cream);
+}
+.style-opt:hover { background: var(--rose-blush); }
+.style-opt.active { border-color: var(--rose); background: var(--rose-blush); }
+.style-opt .so-emoji { font-size: 18px; display: block; margin-bottom: 4px; }
+.style-opt .so-label { font-size: 11px; color: var(--rose-deep); font-style: italic; }
+
+/* contador chars */
+.char-count {
+  text-align: right; font-size: 11px;
+  color: var(--rose-light); margin-top: 4px;
+  font-style: italic;
+}
+
+/* ═══════════════════════════════
+   PANTALLA: CARTA
+   ═══════════════════════════════ */
+#screen-letter { display: none; }
+
+.letter-outer {
+  position: relative; margin-bottom: 1.5rem;
+  animation: fadeUp 0.6s ease both;
+}
+
+/* sombras de capas de papel */
+.letter-outer::before {
+  content: '';
+  position: absolute; inset: 8px -4px -6px 4px;
+  background: var(--parch-dark);
+  border-radius: 5px; z-index: -1; opacity: 0.6;
+}
+.letter-outer::after {
+  content: '';
+  position: absolute; inset: 4px -2px -3px 2px;
+  background: var(--parchment);
+  border-radius: 5px; z-index: -1;
+}
+
+.letter-paper {
+  background: var(--parchment);
+  border: 0.5px solid rgba(184,136,42,0.35);
+  border-radius: 4px;
+  padding: 3rem 2.5rem 2.5rem;
+  position: relative; z-index: 1;
+}
+
+/* renglones */
+.letter-paper::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 3rem; right: 3rem; bottom: 0;
+  background: repeating-linear-gradient(
+    transparent, transparent 28px,
+    rgba(184,48,96,0.07) 28px, rgba(184,48,96,0.07) 29px
+  );
+  pointer-events: none; border-radius: 4px;
+}
+
+/* margen rojo izq */
+.letter-paper::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 3.8rem; bottom: 0;
+  width: 1px;
+  background: rgba(184,48,96,0.12);
+  pointer-events: none;
+}
+
+.letter-top-ornament {
+  text-align: center;
+  font-family: 'Great Vibes', cursive;
+  font-size: 28px;
+  color: var(--rose-light);
+  margin-bottom: 1.2rem;
+  position: relative;
+}
+.letter-date-loc {
+  display: flex; justify-content: space-between;
+  font-size: 12px; font-style: italic;
+  color: var(--gold); margin-bottom: 1.8rem;
+  position: relative;
+}
+.letter-to {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; color: var(--rose-deep);
+  margin-bottom: 1.5rem; position: relative;
+}
+.letter-saludo {
+  font-size: 15px; font-style: italic;
+  color: var(--lilac); margin-bottom: 0.8rem;
+  position: relative;
+}
+.letter-body {
+  font-size: 16px; line-height: 2;
+  color: var(--ink); white-space: pre-wrap;
+  position: relative;
+}
+.letter-despedida {
+  margin-top: 2rem; position: relative;
+  display: flex; justify-content: space-between; align-items: flex-end;
+}
+.letter-despedida-left { font-size: 13px; font-style: italic; color: var(--lilac); }
+.letter-despedida-right { text-align: right; }
+.letter-firma {
+  font-family: 'Great Vibes', cursive;
+  font-size: 32px; color: var(--rose-deep);
+  line-height: 1;
+}
+.letter-posdata {
+  margin-top: 1.5rem; padding-top: 1rem;
+  border-top: 0.5px dashed var(--rose-pale);
+  font-size: 13px; font-style: italic;
+  color: var(--lilac); position: relative;
+}
+.letter-wax-seal {
+  text-align: center; margin-top: 1.5rem;
+  position: relative;
+}
+.wax-circle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 56px; height: 56px;
+  background: var(--burgundy);
+  border-radius: 50%;
+  border: 3px solid var(--rose-pale);
+  font-size: 24px; color: rgba(245,208,220,0.9);
+}
+
+/* ─── Cita romántica flotante ─── */
+.quote-box {
+  background: var(--rose-blush);
+  border-left: 3px solid var(--rose-light);
+  border-radius: 0 10px 10px 0;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--rose-deep);
+  line-height: 1.6;
+  position: relative;
+}
+.quote-box::before {
+  content: '\201C';
+  font-family: 'Great Vibes', cursive;
+  font-size: 52px;
+  color: var(--rose-pale);
+  position: absolute;
+  top: -8px; left: 8px;
+  line-height: 1;
+}
+.quote-box .quote-author {
+  display: block; text-align: right;
+  font-size: 12px; font-style: normal;
+  color: var(--rose-light); margin-top: 6px;
+  font-family: 'Cormorant Garamond', serif;
+  letter-spacing: 1px;
+}
+
+/* ─── Tarjetas de frase del día ─── */
+.frase-dia-card {
+  border: 0.5px solid var(--rose-pale);
+  border-radius: 14px;
+  background: white;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  animation: fadeUp 0.6s ease both;
+}
+.frase-dia-title {
+  font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 0.8rem;
+}
+.frase-dia-text {
+  font-family: 'Playfair Display', serif;
+  font-style: italic; font-size: 17px;
+  color: var(--rose-deep); line-height: 1.6;
+  margin-bottom: 0.6rem;
+}
+.frase-dia-author {
+  font-size: 12px; color: var(--lilac);
+  font-style: italic;
+}
+.frase-nav {
+  display: flex; align-items: center;
+  justify-content: center; gap: 12px;
+  margin-top: 0.8rem;
+}
+.frase-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--rose-pale); cursor: pointer;
+  transition: background 0.2s;
+}
+.frase-dot.active { background: var(--rose); }
+
+/* ═══════════════════════════════
+   BOTONES
+   ═══════════════════════════════ */
+.btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+
+.btn-primary {
+  background: var(--rose); color: white;
+  border: none; border-radius: 30px;
+  padding: 12px 32px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  letter-spacing: 0.5px;
+}
+.btn-primary:hover { background: var(--rose-deep); }
+.btn-primary:active { transform: scale(0.97); }
+
+.btn-secondary {
+  background: transparent; color: var(--rose);
+  border: 0.5px solid var(--rose);
+  border-radius: 30px; padding: 11px 26px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-secondary:hover { background: var(--rose-blush); }
+
+.btn-icon {
+  background: transparent; color: var(--rose);
+  border: 0.5px solid var(--rose-pale);
+  border-radius: 50%; width: 42px; height: 42px;
+  font-size: 18px; cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.btn-icon:hover { background: var(--rose-blush); border-color: var(--rose); }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--rose-deep); color: var(--rose-blush);
+  padding: 10px 24px; border-radius: 30px;
+  font-size: 14px; font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+  opacity: 0; transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none; z-index: 200;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Confeti */
+.confetti-layer { position: fixed; inset: 0; pointer-events: none; z-index: 150; overflow: hidden; }
+.conf {
+  position: absolute; top: -14px;
+  animation: confFall linear forwards;
+}
+@keyframes confFall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(108vh) rotate(600deg); opacity: 0; }
+}
+
+/* Animaciones */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-canvas"></div>
+<div class="petals-layer" id="petalsLayer"></div>
+<div class="confetti-layer" id="confLayer"></div>
+<div class="toast" id="toast"></div>
+
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <header class="header">
+    <p class="ornament">✦ &nbsp; Una celebración del corazón &nbsp; ✦</p>
+    <h1>Día de la Carta de Amor</h1>
+    <p class="tagline">Porque algunas palabras merecen tinta y papel</p>
+    <span class="date-badge">20 · Mayo · 2026</span>
+  </header>
+
+  <div class="hearts-constellation">
+    <span class="hc">♥</span>
+    <span class="hc">♥</span>
+    <span class="hc">♥</span>
+    <span class="hc">♥</span>
+    <span class="hc">♥</span>
+  </div>
+
+  <!-- ══ CITA DEL DÍA ══ -->
+  <div class="frase-dia-card" id="quoteDayCard">
+    <p class="frase-dia-title">✦ Cita de amor del día ✦</p>
+    <p class="frase-dia-text" id="quoteDayText"></p>
+    <p class="frase-dia-author" id="quoteDayAuthor"></p>
+    <div class="frase-nav" id="quoteNav"></div>
+  </div>
+
+  <div class="divider">♥</div>
+
+  <!-- ══ SOBRE ══ -->
+  <div id="screen-envelope">
+    <div style="text-align:center;">
+      <div class="envelope-wrap" onclick="openEnvelope()" id="envWrap">
+        <div class="env-body">
+          <div class="env-tri-l"></div>
+          <div class="env-tri-r"></div>
+        </div>
+        <div class="env-flap-wrap">
+          <div class="env-flap" id="envFlap"></div>
+        </div>
+        <div class="env-wax">
+          <svg viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
+        </div>
+        <div class="env-stamp">
+          <span class="s-heart">♥</span>
+          <span class="s-text">Amor</span>
+        </div>
+        <div class="env-addr">
+          Para ti,<br>con todo mi corazón
+        </div>
+      </div>
+      <p class="open-hint">— Toca el sobre para abrir tu carta —</p>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="openEnvelope()">Abrir carta ♥</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FORMULARIO ══ -->
+  <div id="screen-form">
+    <div class="form-shell">
+      <div class="form-header">
+        <span class="form-header-icon">✉</span>
+        <div class="form-header-text">
+          <h2>Escribe tu carta de amor</h2>
+          <p>Cada palabra es un pétalo que entregas</p>
+        </div>
+      </div>
+      <div class="form-body">
+
+        <div class="field">
+          <label><span>♥</span> Para</label>
+          <input type="text" id="inputPara" placeholder="El nombre de tu amor...">
+        </div>
+
+        <div class="field">
+          <label><span>✦</span> De</label>
+          <input type="text" id="inputDe" placeholder="Tu nombre...">
+        </div>
+
+        <div class="field">
+          <label><span>♣</span> Estilo de carta</label>
+          <div class="style-grid">
+            <div class="style-opt active" data-style="romantico" onclick="selectStyle(this)">
+              <span class="so-emoji">🌹</span>
+              <span class="so-label">Romántico</span>
+            </div>
+            <div class="style-opt" data-style="poetico" onclick="selectStyle(this)">
+              <span class="so-emoji">🌙</span>
+              <span class="so-label">Poético</span>
+            </div>
+            <div class="style-opt" data-style="tierno" onclick="selectStyle(this)">
+              <span class="so-emoji">🦋</span>
+              <span class="so-label">Tierno</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label><span>✍</span> Tu mensaje</label>
+          <textarea id="inputMsg" placeholder="Escribe aquí lo que sientes desde el corazón..." oninput="updateCharCount()"></textarea>
+          <p class="char-count"><span id="charCount">0</span> caracteres</p>
+        </div>
+
+        <div class="field">
+          <p class="frases-label">✦ Frases para inspirarte — toca para agregar</p>
+          <div class="frases-grid" id="frasesGrid"></div>
+        </div>
+
+        <div class="field">
+          <label><span>🌸</span> Posdata</label>
+          <input type="text" id="inputPD" placeholder="P.D. (opcional) — un último suspiro...">
+        </div>
+
+        <div class="field">
+          <label><span>📍</span> Lugar</label>
+          <input type="text" id="inputLugar" placeholder="Desde dónde escribes (opcional)...">
+        </div>
+
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="showScreen('envelope')">← Volver</button>
+      <button class="btn-primary" onclick="createLetter()">Crear mi carta ♥</button>
+    </div>
+  </div>
+
+  <!-- ══ CARTA FINAL ══ -->
+  <div id="screen-letter">
+    <div class="letter-outer">
+      <div class="letter-paper">
+        <div class="letter-top-ornament" id="letterOrnament">Con amor, para siempre</div>
+        <div class="letter-date-loc">
+          <span id="letterLugar"></span>
+          <span>20 de mayo de 2026</span>
+        </div>
+        <div class="letter-to" id="letterTo"></div>
+        <div class="letter-saludo" id="letterSaludo"></div>
+        <div class="letter-body" id="letterBody"></div>
+        <div class="letter-despedida">
+          <div class="letter-despedida-left" id="letterDespedida"></div>
+          <div class="letter-despedida-right">
+            <div class="letter-firma" id="letterFirma"></div>
+          </div>
+        </div>
+        <div class="letter-posdata" id="letterPD" style="display:none;"></div>
+        <div class="letter-wax-seal">
+          <div class="wax-circle">♥</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="quoteOnLetter" class="quote-box" style="margin:0 0 1.5rem;"></div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="showScreen('form')">← Editar</button>
+      <button class="btn-primary" onclick="copyLetter()">Copiar carta ♥</button>
+      <button class="btn-secondary" onclick="printLetter()">Imprimir</button>
+      <button class="btn-secondary" onclick="resetAll()">Nueva carta</button>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+/* ── Citas románticas ── */
+const QUOTES = [
+  { text: "Amar no es mirarse el uno al otro; es mirar juntos en la misma dirección.", author: "— Antoine de Saint-Exupéry" },
+  { text: "El amor es la única flor que crece y florece sin necesidad de las estaciones del año.", author: "— Khalil Gibrán" },
+  { text: "No te amo como si fueras rosa de sal, topacio o flecha de claveles que propagan el fuego: te amo como se aman ciertas cosas oscuras, secretamente, entre la sombra y el alma.", author: "— Pablo Neruda" },
+  { text: "Donde mora el amor, no hay oscuridad.", author: "— Proverbio africano" },
+  { text: "El amor es un lienzo que la Naturaleza da y la imaginación borda.", author: "— Voltaire" },
+  { text: "Eres la última persona que pienso cuando cierro los ojos y la primera cuando los abro.", author: "— Anónimo" },
+  { text: "Quien viaja en el amor no siente el cansancio del camino.", author: "— Proverbio árabe" },
+  { text: "Tu amor es el sol que ilumina todos los días de mi vida.", author: "— Anónimo" },
+];
+
+let currentQuote = 0;
+
+function renderQuotes() {
+  const nav = document.getElementById('quoteNav');
+  nav.innerHTML = '';
+  QUOTES.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'frase-dot' + (i === currentQuote ? ' active' : '');
+    d.onclick = () => { currentQuote = i; showQuote(); };
+    nav.appendChild(d);
+  });
+  document.getElementById('quoteDayText').textContent = QUOTES[currentQuote].text;
+  document.getElementById('quoteDayAuthor').textContent = QUOTES[currentQuote].author;
+}
+function showQuote() { renderQuotes(); }
+
+/* Auto-rotación de citas */
+setInterval(() => {
+  currentQuote = (currentQuote + 1) % QUOTES.length;
+  showQuote();
+}, 7000);
+
+/* ── Frases de inspiración (por estilo) ── */
+const FRASES = {
+  romantico: [
+    { icon: "🌹", short: "Eres mi lugar...", full: "Eres mi lugar favorito en todo el universo." },
+    { icon: "💫", short: "Tu sonrisa...", full: "Tu sonrisa es lo primero que pienso al despertar y lo último antes de dormir." },
+    { icon: "🌙", short: "Cada noche...", full: "Cada noche antes de dormir, sonrío porque sé que eres mío/a." },
+    { icon: "🌺", short: "Desde el día...", full: "Desde el día que llegaste a mi vida, el mundo tiene más colores." },
+    { icon: "✨", short: "Contigo aprendí...", full: "Contigo aprendí que el amor no se cuenta en días, sino en momentos." },
+    { icon: "💌", short: "Cada día...", full: "Cada día a tu lado es un regalo que atesoro para siempre." },
+  ],
+  poetico: [
+    { icon: "🌊", short: "Eres la marea...", full: "Eres la marea que regresa siempre a la misma orilla: mi corazón." },
+    { icon: "🌟", short: "En el cielo...", full: "En el cielo estrellado de mi vida, tú eres la constelación más brillante." },
+    { icon: "🍂", short: "Como el otoño...", full: "Como el otoño tiñe las hojas, tu amor ha llenado de color mis días." },
+    { icon: "🌙", short: "Eres la luna...", full: "Eres la luna que ilumina mis noches más oscuras." },
+    { icon: "🌸", short: "Floreces en mí...", full: "Floreces en mí como la primavera: lenta, hermosa e inevitable." },
+    { icon: "🦋", short: "Eres el vuelo...", full: "Eres el vuelo que no busqué y sin embargo cambió mi dirección para siempre." },
+  ],
+  tierno: [
+    { icon: "🐾", short: "Me gusta cómo...", full: "Me gusta cómo ríes, cómo piensas, cómo eres tú en todo momento." },
+    { icon: "☕", short: "Eres mi café...", full: "Eres mi café de las mañanas: lo primero que necesito cada día." },
+    { icon: "🧸", short: "Contigo todo...", full: "Contigo todo parece más fácil, más bonito y más nuestro." },
+    { icon: "🌻", short: "Tu risa es...", full: "Tu risa es mi canción favorita, esa que nunca me canso de escuchar." },
+    { icon: "🤍", short: "Gracias por...", full: "Gracias por elegirme cada día, incluso cuando no soy fácil de querer." },
+    { icon: "🌈", short: "Eres mi calma...", full: "Eres mi calma favorita en medio del caos del mundo." },
+  ]
+};
+
+let selectedStyle = 'romantico';
+
+function selectStyle(el) {
+  document.querySelectorAll('.style-opt').forEach(o => o.classList.remove('active'));
+  el.classList.add('active');
+  selectedStyle = el.dataset.style;
+  renderFrases();
+}
+
+function renderFrases() {
+  const grid = document.getElementById('frasesGrid');
+  grid.innerHTML = '';
+  FRASES[selectedStyle].forEach(f => {
+    const chip = document.createElement('div');
+    chip.className = 'frase-chip';
+    chip.innerHTML = `<span class="chip-icon">${f.icon}</span>${f.short}`;
+    chip.title = f.full;
+    chip.onclick = () => addFrase(f.full);
+    grid.appendChild(chip);
+  });
+}
+
+function addFrase(text) {
+  const ta = document.getElementById('inputMsg');
+  ta.value = ta.value ? ta.value.trimEnd() + ' ' + text : text;
+  updateCharCount();
+  ta.focus();
+}
+
+function updateCharCount() {
+  document.getElementById('charCount').textContent = document.getElementById('inputMsg').value.length;
+}
+
+/* ── Sobre ── */
+function openEnvelope() {
+  document.getElementById('envFlap').classList.add('open');
+  setTimeout(() => showScreen('form'), 900);
+}
+
+/* ── Pantallas ── */
+function showScreen(name) {
+  ['envelope','form','letter'].forEach(s => {
+    document.getElementById('screen-' + s).style.display = 'none';
+  });
+  const el = document.getElementById('screen-' + name);
+  el.style.display = 'block';
+  el.style.animation = 'none';
+  void el.offsetWidth;
+  el.style.animation = 'fadeUp 0.55s ease both';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── Saludos por estilo ── */
+const SALUDOS = {
+  romantico: ["Mi amor eterno,", "Luz de mi vida,", "Corazón mío,"],
+  poetico:   ["Alma que amo,", "Verso de mi vida,", "Estrella mía,"],
+  tierno:    ["Mi persona favorita,", "Mi vida,", "Amor mío,"],
+};
+const DESPEDIDAS = {
+  romantico: ["Tuyo/a para siempre,", "Con todo mi amor,", "Eternamente tuyo/a,"],
+  poetico:   ["Desde lo más profundo de mi alma,", "Con amor sin fronteras,", "Tu eterno admirador/a,"],
+  tierno:    ["Con todo mi cariño,", "Siempre tuyo/a,", "Con amor infinito,"],
+};
+
+function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+/* ── Crear carta ── */
+function createLetter() {
+  const para   = document.getElementById('inputPara').value.trim()  || 'Mi amor';
+  const de     = document.getElementById('inputDe').value.trim()    || 'Quien te ama';
+  const msg    = document.getElementById('inputMsg').value.trim()   || 'Las palabras que guarda mi corazón solo para ti, hoy las escribo con amor infinito. Eres lo más especial que tengo.';
+  const pd     = document.getElementById('inputPD').value.trim();
+  const lugar  = document.getElementById('inputLugar').value.trim();
+
+  document.getElementById('letterTo').textContent        = 'Para ' + para + ':';
+  document.getElementById('letterSaludo').textContent    = rand(SALUDOS[selectedStyle]);
+  document.getElementById('letterBody').textContent      = msg;
+  document.getElementById('letterFirma').textContent     = de;
+  document.getElementById('letterDespedida').textContent = rand(DESPEDIDAS[selectedStyle]);
+  document.getElementById('letterLugar').textContent     = lugar || '';
+
+  const pdEl = document.getElementById('letterPD');
+  if (pd) {
+    pdEl.textContent = 'P.D. ' + pd;
+    pdEl.style.display = 'block';
+  } else {
+    pdEl.style.display = 'none';
+  }
+
+  /* Cita aleatoria en la carta */
+  const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  document.getElementById('quoteOnLetter').innerHTML =
+    `${q.text}<span class="quote-author">${q.author}</span>`;
+
+  showScreen('letter');
+  launchConfetti();
+  showToast('¡Tu carta de amor está lista! ♥');
+}
+
+/* ── Confeti ── */
+function launchConfetti() {
+  const layer = document.getElementById('confLayer');
+  layer.innerHTML = '';
+  const shapes = ['♥', '✦', '🌸', '·'];
+  const colors = ['#B83060','#E07090','#F5D0DC','#B8882A','#8B1A3A','#9B6B8A'];
+  for (let i = 0; i < 60; i++) {
+    const p = document.createElement('div');
+    p.className = 'conf';
+    const isHeart = Math.random() > 0.5;
+    if (isHeart) {
+      p.textContent = shapes[Math.floor(Math.random() * 2)];
+      p.style.fontSize = (10 + Math.random() * 14) + 'px';
+      p.style.color = colors[Math.floor(Math.random() * colors.length)];
+    } else {
+      p.style.width  = (5 + Math.random() * 8) + 'px';
+      p.style.height = (5 + Math.random() * 8) + 'px';
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    }
+    p.style.left            = Math.random() * 100 + '%';
+    p.style.animationDelay    = (Math.random() * 1.4) + 's';
+    p.style.animationDuration = (1.6 + Math.random() * 1.4) + 's';
+    layer.appendChild(p);
+  }
+  setTimeout(() => { layer.innerHTML = ''; }, 4000);
+}
+
+/* ── Copiar ── */
+function copyLetter() {
+  const to     = document.getElementById('letterTo').textContent;
+  const sal    = document.getElementById('letterSaludo').textContent;
+  const body   = document.getElementById('letterBody').textContent;
+  const desp   = document.getElementById('letterDespedida').textContent;
+  const firma  = document.getElementById('letterFirma').textContent;
+  const pdEl   = document.getElementById('letterPD');
+  const lugar  = document.getElementById('letterLugar').textContent;
+  const pd     = pdEl.style.display !== 'none' ? '\n\n' + pdEl.textContent : '';
+  const lugarStr = lugar ? lugar + ' — ' : '';
+
+  const text = `💌 20 de Mayo — Día de la Carta de Amor\n\n${lugarStr}20 de mayo de 2026\n\n${to}\n${sal}\n\n${body}${pd}\n\n${desp}\n${firma}`;
+  navigator.clipboard.writeText(text).then(() => showToast('¡Copiado al portapapeles! ♥'));
+}
+
+/* ── Imprimir ── */
+function printLetter() {
+  window.print();
+}
+
+/* ── Reset ── */
+function resetAll() {
+  document.getElementById('envFlap').classList.remove('open');
+  ['inputPara','inputDe','inputMsg','inputPD','inputLugar'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  updateCharCount();
+  showScreen('envelope');
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ── Pétalos flotantes ── */
+function createPetals() {
+  const layer = document.getElementById('petalsLayer');
+  const symbols = ['🌸', '🌺', '🌷', '✿', '❀'];
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    p.style.left   = Math.random() * 100 + '%';
+    p.style.fontSize = (10 + Math.random() * 12) + 'px';
+    p.style.animationDuration  = (18 + Math.random() * 22) + 's';
+    p.style.animationDelay     = (Math.random() * 25) + 's';
+    layer.appendChild(p);
+  }
+}
+
+/* ── Init ── */
+renderQuotes();
+renderFrases();
+createPetals();
+</script>
+</body>
+</html>
