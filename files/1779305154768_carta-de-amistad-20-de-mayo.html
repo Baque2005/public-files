@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Carta de Amistad — De Brayan para Greisy</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --rose:      #B83060;
+  --rose-md:   #C94078;
+  --rose-lt:   #E07090;
+  --rose-pale: #F0C0D0;
+  --rose-blsh: #FBEAF0;
+  --deep:      #6A1535;
+  --cream:     #FDF6E8;
+  --parch:     #F7E8CE;
+  --parch-dk:  #E8D0B8;
+  --ink:       #2A1A2E;
+  --gold:      #B8882A;
+  --lilac:     #9B6B8A;
+  --burg:      #8B1A4A;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cream);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse at 10% 10%, rgba(184,48,96,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 90%, rgba(184,48,96,0.08) 0%, transparent 50%),
+    linear-gradient(160deg, #FDF6E8 0%, #FBEAF0 50%, #FDF6E8 100%);
+  pointer-events: none;
+}
+
+.petals { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.petal  { position: absolute; opacity: 0; animation: petalFall linear infinite; font-size: 14px; }
+@keyframes petalFall {
+  0%   { transform: translateY(-40px) rotate(0deg); opacity: 0; }
+  5%   { opacity: .5; }
+  90%  { opacity: .25; }
+  100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
+}
+
+/* ── PÁGINA ── */
+.page {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 480px;
+  margin: 0 auto;
+  padding: 1.8rem 1rem 4rem;
+}
+
+/* ── HEADER ── */
+.header { text-align: center; margin-bottom: 2rem; }
+.header .badge {
+  display: inline-block; font-size: 9px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--lilac);
+  border: 0.5px solid var(--rose-pale); border-radius: 20px;
+  padding: 5px 16px; margin-bottom: .9rem;
+}
+.header h1 {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(36px, 11vw, 54px);
+  color: var(--burg); line-height: 1.1; margin-bottom: 6px;
+}
+.header .sub {
+  font-size: 13px; font-style: italic; color: var(--rose-lt); letter-spacing: .5px;
+}
+.header .names {
+  margin-top: .9rem;
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(22px, 7vw, 32px);
+  color: var(--rose-md);
+}
+.header .date-tag {
+  display: inline-block; margin-top: .7rem;
+  padding: 4px 16px; border: 0.5px solid #E0BC6A;
+  border-radius: 20px; font-size: 10px; letter-spacing: 2px; color: var(--gold);
+  text-transform: uppercase;
+}
+
+/* ── CORAZONES ── */
+.hearts { display: flex; justify-content: center; align-items: center; gap: 12px; margin: 0 0 2rem; }
+.hc { display: inline-block; color: var(--rose-md); animation: hbeat 2.5s ease-in-out infinite; transform-origin: center bottom; }
+.hc:nth-child(1){ font-size: 10px; color: var(--rose-pale); animation-delay: 0s; }
+.hc:nth-child(2){ font-size: 16px; animation-delay: .35s; }
+.hc:nth-child(3){ font-size: 26px; color: var(--burg); animation-delay: .7s; }
+.hc:nth-child(4){ font-size: 16px; animation-delay: 1.05s; }
+.hc:nth-child(5){ font-size: 10px; color: var(--rose-pale); animation-delay: 1.4s; }
+@keyframes hbeat {
+  0%,100%{ transform: scale(1); }
+  14%{ transform: scale(1.28); }
+  28%{ transform: scale(1); }
+  42%{ transform: scale(1.15); }
+}
+
+/* divisor */
+.divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 1.2rem 0; color: var(--rose-pale); font-size: 14px;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 0.5px;
+  background: linear-gradient(90deg, transparent, var(--rose-pale), transparent);
+}
+
+/* ════════════════
+   SOBRE
+   ════════════════ */
+#sEnvelope { text-align: center; }
+
+.env-scene {
+  display: inline-block; position: relative;
+  width: min(280px, 90vw); height: min(200px, 64vw);
+  cursor: pointer;
+  filter: drop-shadow(0 6px 18px rgba(180,60,100,.2));
+  transition: filter .3s, transform .3s;
+}
+.env-scene:hover, .env-scene:active {
+  filter: drop-shadow(0 10px 26px rgba(180,60,100,.3));
+  transform: translateY(-3px);
+}
+.env-body {
+  position: absolute; bottom: 0; left: 0;
+  width: 100%; height: 85%;
+  background: var(--parch); border: 1.5px solid var(--rose-pale);
+  border-radius: 4px 4px 12px 12px; overflow: hidden;
+}
+.env-body::after {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(180,60,100,.04) 20px, rgba(180,60,100,.04) 21px);
+}
+.env-flap-wrap { position: absolute; top: 18%; left: 0; width: 100%; perspective: 600px; }
+.env-flap {
+  width: 0; height: 0;
+  border-left: 50% solid transparent;
+  border-right: 50% solid transparent;
+  border-top: min(90px, 28vw) solid var(--rose-pale);
+  transform-origin: top center;
+  transition: transform 1s cubic-bezier(.4,0,.2,1);
+  transform-style: preserve-3d;
+}
+.env-flap.open { transform: rotateX(-172deg); }
+.env-wax {
+  position: absolute; bottom: 22%; left: 50%; transform: translateX(-50%);
+  width: min(46px,13vw); height: min(46px,13vw);
+  background: var(--burg); border-radius: 50%; border: 2px solid var(--rose-pale);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 6; font-size: min(18px,5vw); color: rgba(255,230,240,.9);
+  transition: transform .3s;
+}
+.env-scene:hover .env-wax, .env-scene:active .env-wax { transform: translateX(-50%) scale(1.12) rotate(10deg); }
+.env-stamp {
+  position: absolute; top: 8px; right: 12px; z-index: 7;
+  width: min(38px,10vw); height: min(46px,13vw);
+  border: 1.5px dashed var(--rose-lt); border-radius: 3px; background: var(--rose-blsh);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+}
+.env-stamp .se { font-size: min(17px,5vw); color: var(--rose-md); }
+.env-stamp .st { font-size: 6px; letter-spacing: 1px; color: var(--deep); text-transform: uppercase; font-family: 'Cormorant Garamond'; }
+.env-addr {
+  position: absolute; bottom: 14px; left: 16px; z-index: 6;
+  font-style: italic; font-size: min(11px, 3vw); color: var(--lilac); line-height: 1.5;
+}
+.open-hint {
+  font-size: 12px; font-style: italic; color: var(--rose-lt);
+  margin: .5rem 0 1.2rem; animation: blink 2.5s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+/* ════════════════
+   FORMULARIO
+   ════════════════ */
+#sForm { display: none; }
+
+.form-shell {
+  background: white; border: 0.5px solid var(--rose-pale);
+  border-radius: 18px; overflow: hidden; margin-bottom: 1.3rem;
+}
+.form-top {
+  background: var(--rose-blsh); border-bottom: 0.5px solid var(--rose-pale);
+  padding: 1rem 1.3rem; display: flex; align-items: center; gap: 10px;
+}
+.form-top-icon { font-size: 22px; }
+.form-top h2 {
+  font-family: 'Playfair Display', serif; font-size: 16px;
+  font-style: italic; color: var(--deep); font-weight: 400;
+}
+.form-top p { font-size: 11px; color: var(--rose-lt); font-style: italic; margin-top: 2px; }
+.form-body { padding: 1.2rem 1.3rem; }
+
+.field { margin-bottom: 1.1rem; }
+.field label {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px; font-weight: 500;
+}
+.field input, .field textarea {
+  width: 100%; border: 0.5px solid var(--rose-pale);
+  border-radius: 10px; padding: 11px 13px;
+  font-family: 'Cormorant Garamond', serif; font-size: 16px;
+  color: var(--ink); background: var(--cream);
+  outline: none; transition: border-color .2s, box-shadow .2s;
+  -webkit-appearance: none;
+}
+.field input:focus, .field textarea:focus {
+  border-color: var(--rose-md);
+  box-shadow: 0 0 0 3px rgba(201,64,120,.08);
+}
+.field textarea { min-height: 120px; resize: vertical; line-height: 1.8; }
+.char-count { text-align: right; font-size: 11px; color: var(--rose-lt); font-style: italic; margin-top: 4px; }
+
+.frases-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--lilac); margin-bottom: 7px; }
+.frases-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 1.1rem; }
+.chip {
+  font-size: 12px; font-style: italic; color: var(--deep);
+  border: 0.5px solid var(--rose-pale); border-radius: 8px;
+  padding: 8px 9px; cursor: pointer; background: var(--cream);
+  font-family: 'Cormorant Garamond', serif; line-height: 1.4;
+  transition: background .2s, border-color .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.chip:active { background: var(--rose-blsh); border-color: var(--rose-lt); }
+.chip .ci { font-size: 14px; display: block; margin-bottom: 3px; }
+
+/* ════════════════
+   CARTA
+   ════════════════ */
+#sLetter { display: none; }
+
+.paper-wrap { position: relative; margin-bottom: 1.5rem; }
+.paper-shadow  { position: absolute; inset: 6px -3px -5px 3px; background: var(--parch-dk); border-radius: 5px; z-index: 0; opacity: .55; }
+.paper-shadow2 { position: absolute; inset: 3px -1px -2px 1px; background: var(--parch); border-radius: 5px; z-index: 1; }
+
+.paper {
+  position: relative; z-index: 2;
+  background: var(--parch);
+  border: 0.5px solid rgba(184,136,42,.35);
+  border-radius: 4px; padding: 2.2rem 1.6rem 2rem; overflow: hidden;
+}
+.paper::before {
+  content: ''; position: absolute;
+  top: 0; left: 2.2rem; right: 2.2rem; bottom: 0;
+  background: repeating-linear-gradient(transparent, transparent 28px, rgba(180,60,100,.07) 28px, rgba(180,60,100,.07) 29px);
+  pointer-events: none; border-radius: 4px;
+}
+.paper::after {
+  content: ''; position: absolute;
+  top: 0; left: 3rem; bottom: 0; width: 1px;
+  background: rgba(180,60,100,.12); pointer-events: none;
+}
+.paper-wm {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%) rotate(-30deg);
+  font-family: 'Great Vibes', cursive; font-size: 60px;
+  color: rgba(184,48,96,.04); pointer-events: none; white-space: nowrap; z-index: 1;
+}
+
+.l-date   { display: flex; justify-content: space-between; font-size: 11px; font-style: italic; color: var(--gold); margin-bottom: 1.5rem; position: relative; z-index: 2; }
+.l-to     { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--deep); margin-bottom: .7rem; position: relative; z-index: 2; }
+.l-sal    { font-size: 14px; font-style: italic; color: var(--lilac); margin-bottom: 1rem; position: relative; z-index: 2; }
+.l-body   { font-size: 15px; line-height: 2; color: var(--ink); white-space: pre-wrap; position: relative; z-index: 2; }
+.l-sign   { margin-top: 1.8rem; display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 2; }
+.l-cier   { font-size: 12px; font-style: italic; color: var(--lilac); }
+.l-firma  { font-family: 'Great Vibes', cursive; font-size: 30px; color: var(--burg); line-height: 1.1; text-align: right; }
+.l-pd     { margin-top: 1.3rem; padding-top: .9rem; border-top: 0.5px dashed var(--rose-pale); font-size: 12px; font-style: italic; color: var(--lilac); position: relative; z-index: 2; }
+.wax      { text-align: center; margin-top: 1.3rem; position: relative; z-index: 2; }
+.wax-c    { display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; background: var(--burg); border-radius: 50%; border: 3px solid var(--rose-pale); font-size: 20px; color: rgba(255,230,240,.9); }
+
+.quote-box {
+  background: var(--rose-blsh); border-left: 3px solid var(--rose-lt);
+  border-radius: 0 10px 10px 0; padding: .9rem 1.1rem;
+  margin-bottom: 1.3rem; position: relative;
+}
+.quote-box .qq { font-family: 'Great Vibes', cursive; font-size: 44px; color: var(--rose-pale); position: absolute; top: -6px; left: 6px; line-height: 1; }
+.quote-box .qt { font-family: 'Playfair Display', serif; font-style: italic; font-size: 14px; color: var(--deep); line-height: 1.6; }
+.quote-box .qa { display: block; text-align: right; font-size: 11px; color: var(--rose-lt); margin-top: 5px; font-family: 'Cormorant Garamond', serif; letter-spacing: 1px; }
+
+/* ════════════════
+   BOTONES
+   ════════════════ */
+.btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: .9rem; }
+.btn-p {
+  background: var(--rose-md); color: white; border: none;
+  border-radius: 30px; padding: 13px 26px;
+  font-family: 'Cormorant Garamond', serif; font-size: 15px;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: background .2s, transform .1s;
+}
+.btn-p:active { background: var(--deep); transform: scale(.97); }
+.btn-s {
+  background: transparent; color: var(--rose-md);
+  border: 0.5px solid var(--rose-md); border-radius: 30px;
+  padding: 12px 22px; font-family: 'Cormorant Garamond', serif;
+  font-size: 14px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .2s;
+}
+.btn-s:active { background: var(--rose-blsh); }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 1.5rem; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--burg); color: var(--rose-blsh);
+  padding: 10px 24px; border-radius: 30px;
+  font-size: 14px; font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+  opacity: 0; transition: opacity .3s, transform .3s;
+  pointer-events: none; z-index: 300; white-space: nowrap;
+  max-width: 90vw; text-align: center;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Confeti */
+.conf-layer { position: fixed; inset: 0; pointer-events: none; z-index: 200; overflow: hidden; }
+.conf { position: absolute; top: -14px; animation: cfFall linear forwards; }
+@keyframes cfFall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(600deg); opacity: 0; }
+}
+
+@keyframes fadeDown { from{opacity:0;transform:translateY(-18px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp   { from{opacity:0;transform:translateY(20px)}  to{opacity:1;transform:translateY(0)} }
+.fade-in { animation: fadeUp .5s ease both; }
+
+@media print {
+  body { background: white; }
+  .petals,.conf-layer,.toast,#sEnvelope,#sForm,.btn-row,.quote-box { display: none !important; }
+  #sLetter { display: block !important; }
+  .page { padding: 0; max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="petals" id="petals"></div>
+<div class="conf-layer" id="confLayer"></div>
+<div class="toast" id="toast"></div>
+
+<div class="page">
+
+  <header class="header fade-in">
+    <p class="badge">✦ &nbsp; Para siempre &nbsp; ✦</p>
+    <h1>Carta de Amistad</h1>
+    <p class="sub">Para mi mejor amiga, mi hogar favorito</p>
+    <p class="names">De Brayan para Greisy 🌸</p>
+    <span class="date-tag">20 · Mayo · 2026</span>
+  </header>
+
+  <div class="hearts">
+    <span class="hc">♥</span><span class="hc">♥</span><span class="hc">♥</span>
+    <span class="hc">♥</span><span class="hc">♥</span>
+  </div>
+
+  <!-- ══ SOBRE ══ -->
+  <div id="sEnvelope" class="fade-in">
+    <div class="env-scene" onclick="openEnv()" title="Abrir carta">
+      <div class="env-body"></div>
+      <div class="env-flap-wrap"><div class="env-flap" id="envFlap"></div></div>
+      <div class="env-wax">🌸</div>
+      <div class="env-stamp"><span class="se">♥</span><span class="st">Amistad</span></div>
+      <div class="env-addr">Para Greisy,<br>mi mejor amiga</div>
+    </div>
+    <p class="open-hint">— Toca el sobre para abrir —</p>
+    <div class="btn-row">
+      <button class="btn-p" onclick="openEnv()">Abrir carta 🌸</button>
+    </div>
+  </div>
+
+  <!-- ══ FORMULARIO ══ -->
+  <div id="sForm">
+    <div class="form-shell">
+      <div class="form-top">
+        <span class="form-top-icon">💌</span>
+        <div>
+          <h2>Personaliza tu carta</h2>
+          <p>Cada palabra es un abrazo</p>
+        </div>
+      </div>
+      <div class="form-body">
+
+        <div class="field">
+          <label>🌸 Para</label>
+          <input type="text" id="fPara" value="Greisy" placeholder="Nombre de tu amiga">
+        </div>
+
+        <div class="field">
+          <label>✦ De</label>
+          <input type="text" id="fDe" value="Brayan" placeholder="Tu nombre">
+        </div>
+
+        <div class="field">
+          <label>✍ Tu mensaje</label>
+          <textarea id="fMsg" placeholder="Escribe lo que sientes..." oninput="updateCount()"></textarea>
+          <p class="char-count"><span id="cnt">0</span> caracteres</p>
+        </div>
+
+        <div style="margin-bottom:1.1rem;">
+          <p class="frases-label">🌷 Toca una frase para agregarla</p>
+          <div class="frases-grid" id="chips"></div>
+        </div>
+
+        <div class="field">
+          <label>🌙 Posdata (opcional)</label>
+          <input type="text" id="fPD" placeholder="P.D. un último secreto...">
+        </div>
+
+        <div class="field">
+          <label>📍 Lugar (opcional)</label>
+          <input type="text" id="fLugar" placeholder="Desde dónde escribes...">
+        </div>
+
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-s" onclick="goTo('sEnvelope')">← Volver</button>
+      <button class="btn-p" onclick="buildLetter()">Crear carta 🌸</button>
+    </div>
+  </div>
+
+  <!-- ══ CARTA ══ -->
+  <div id="sLetter">
+    <div class="paper-wrap">
+      <div class="paper-shadow"></div>
+      <div class="paper-shadow2"></div>
+      <div class="paper">
+        <div class="paper-wm">amistad</div>
+
+        <div class="l-date">
+          <span id="lLugar"></span>
+          <span>20 de mayo de 2026</span>
+        </div>
+        <div class="l-to"  id="lTo"></div>
+        <div class="l-sal" id="lSal"></div>
+        <div class="l-body" id="lBody"></div>
+
+        <div class="l-sign">
+          <div class="l-cier"  id="lCier"></div>
+          <div class="l-firma" id="lFirma"></div>
+        </div>
+
+        <div class="l-pd" id="lPD" style="display:none;"></div>
+        <div class="wax"><div class="wax-c">🌸</div></div>
+      </div>
+    </div>
+
+    <div class="quote-box">
+      <div class="qq">"</div>
+      <div class="qt" id="lQt"></div>
+      <span class="qa" id="lQa"></span>
+    </div>
+
+    <div class="divider">🌸</div>
+
+    <div class="btn-row">
+      <button class="btn-s" onclick="goTo('sForm')">← Editar</button>
+      <button class="btn-p" onclick="copyLetter()">Copiar 💌</button>
+      <button class="btn-s" onclick="window.print()">Imprimir</button>
+      <button class="btn-s" onclick="reset()">Nueva</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const FRASES = [
+  { icon:"🌸", s:"Eres mi hogar...",      f:"Eres el hogar al que siempre quiero regresar, sin importar dónde esté." },
+  { icon:"🌙", s:"Mis noches...",          f:"Gracias por quedarte en mis noches más largas y oscuras sin pedir nada a cambio." },
+  { icon:"💫", s:"Te elegí...",            f:"La familia se elige con el corazón, y yo te elegí a ti para siempre." },
+  { icon:"🌺", s:"Contigo reí...",         f:"Contigo aprendí que reír hasta llorar es la mejor medicina para el alma." },
+  { icon:"🤍", s:"Gracias por verme...",   f:"Gracias por verme cuando yo misma no podía verme, y seguir creyendo en mí." },
+  { icon:"🦋", s:"Crecimos juntos...",     f:"Crecimos juntos, nos equivocamos juntos, y nos levantamos juntos. Eso nos hace invencibles." },
+  { icon:"🌻", s:"Tu risa...",             f:"Tu risa es mi canción favorita, esa que me alegra el día sin esfuerzo." },
+  { icon:"🌈", s:"Eres mi calma...",       f:"Eres la calma en mi caos y la locura en mi calma. El equilibrio perfecto." },
+  { icon:"⭐", s:"Mi estrella...",         f:"Eres la estrella más brillante en el cielo de mi vida, siempre guiando mi camino." },
+  { icon:"🕊️", s:"Amistad real...",       f:"Contigo aprendí que la amistad verdadera no necesita explicaciones, solo presencia." },
+  { icon:"🌊", s:"Siempre vuelvo...",      f:"Como la marea que vuelve a la misma orilla, siempre vuelvo a ti, Greisy." },
+  { icon:"🫂", s:"Gracias por todo...",    f:"Gracias por cada momento, cada abrazo y cada vez que estuviste cuando más te necesité." },
+];
+
+const QUOTES = [
+  { t:"Una amiga es aquella que conoce la canción de tu corazón y puede cantarla cuando tú has olvidado la letra.", a:"— Anónimo" },
+  { t:"La verdadera amistad no se mide por el tiempo que llevan juntos, sino por lo que viven en ese tiempo.", a:"— Anónimo" },
+  { t:"Hay personas que llegan a tu vida como una bendición y se quedan como un hogar.", a:"— Anónimo" },
+  { t:"Una amiga sabe todo de ti y aun así te quiere.", a:"— Elbert Hubbard" },
+  { t:"El amor de una amiga deja huella en el alma para siempre.", a:"— Anónimo" },
+  { t:"La amistad duplica las alegrías y divide las angustias por la mitad.", a:"— Francis Bacon" },
+];
+
+const SALUDOS = ["Mi niña hermosa,","Amor de mi vida,","Mi compañera de alma,","Mi persona favorita,","Mi luz favorita,","Mi cómplice eterna,"];
+const CIERRES  = ["Tuyo/a para siempre,","Con todo mi cariño,","Tu cómplice de siempre,","Con amor eterno,","Por siempre juntos,","Con el cariño más puro,"];
+
+function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function initChips(){
+  const g=document.getElementById('chips'); g.innerHTML='';
+  FRASES.forEach(f=>{
+    const d=document.createElement('div'); d.className='chip';
+    d.innerHTML=`<span class="ci">${f.icon}</span>${f.s}`;
+    d.title=f.f; d.onclick=()=>addFrase(f.f); g.appendChild(d);
+  });
+}
+
+function addFrase(t){
+  const ta=document.getElementById('fMsg');
+  ta.value=ta.value?ta.value.trimEnd()+' '+t:t;
+  updateCount(); ta.focus();
+}
+
+function updateCount(){ document.getElementById('cnt').textContent=document.getElementById('fMsg').value.length; }
+
+function openEnv(){
+  document.getElementById('envFlap').classList.add('open');
+  setTimeout(()=>goTo('sForm'),900);
+}
+
+function goTo(id){
+  ['sEnvelope','sForm','sLetter'].forEach(s=>{ document.getElementById(s).style.display='none'; });
+  const el=document.getElementById(id);
+  el.style.display='block';
+  el.classList.remove('fade-in'); void el.offsetWidth; el.classList.add('fade-in');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildLetter(){
+  const para  = document.getElementById('fPara').value.trim()  || 'Greisy';
+  const de    = document.getElementById('fDe').value.trim()    || 'Brayan';
+  const msg   = document.getElementById('fMsg').value.trim()
+    || 'Eres lo más bonito que la vida puso en mi camino, Greisy. Gracias por estar, por quedarte y por ser exactamente quien eres. No imagino mis días sin tu risa, tu presencia y ese amor tan tuyo que me llena el alma. Eres mi mejor amiga y lo serás para siempre.';
+  const pd    = document.getElementById('fPD').value.trim();
+  const lugar = document.getElementById('fLugar').value.trim();
+
+  document.getElementById('lTo').textContent    = 'Para '+para+':';
+  document.getElementById('lSal').textContent   = rand(SALUDOS);
+  document.getElementById('lBody').textContent  = msg;
+  document.getElementById('lFirma').textContent = de;
+  document.getElementById('lCier').textContent  = rand(CIERRES);
+  document.getElementById('lLugar').textContent = lugar||'';
+
+  const pdEl=document.getElementById('lPD');
+  if(pd){ pdEl.textContent='P.D. '+pd; pdEl.style.display='block'; }
+  else   { pdEl.style.display='none'; }
+
+  const q=rand(QUOTES);
+  document.getElementById('lQt').textContent=q.t;
+  document.getElementById('lQa').textContent=q.a;
+
+  goTo('sLetter'); launchConfetti(); showToast('¡Tu carta es preciosa! 🌸');
+}
+
+function launchConfetti(){
+  const layer=document.getElementById('confLayer'); layer.innerHTML='';
+  const syms=['♥','🌸','✦','·','🌷'];
+  const cols=['#C94078','#E07090','#F0C0D0','#B8882A','#8B1A4A','#9B6B8A'];
+  for(let i=0;i<65;i++){
+    const p=document.createElement('div'); p.className='conf';
+    if(Math.random()>.4){
+      p.textContent=syms[Math.floor(Math.random()*syms.length)];
+      p.style.fontSize=(10+Math.random()*14)+'px';
+      p.style.color=cols[Math.floor(Math.random()*cols.length)];
+    } else {
+      p.style.width=(5+Math.random()*7)+'px'; p.style.height=p.style.width;
+      p.style.background=cols[Math.floor(Math.random()*cols.length)];
+      p.style.borderRadius=Math.random()>.5?'50%':'2px';
+    }
+    p.style.left=Math.random()*100+'%';
+    p.style.animationDelay=(Math.random()*1.4)+'s';
+    p.style.animationDuration=(1.5+Math.random()*1.5)+'s';
+    layer.appendChild(p);
+  }
+  setTimeout(()=>{ layer.innerHTML=''; },4500);
+}
+
+function copyLetter(){
+  const to=document.getElementById('lTo').textContent;
+  const sal=document.getElementById('lSal').textContent;
+  const body=document.getElementById('lBody').textContent;
+  const cier=document.getElementById('lCier').textContent;
+  const firma=document.getElementById('lFirma').textContent;
+  const pdEl=document.getElementById('lPD');
+  const lugar=document.getElementById('lLugar').textContent;
+  const pd=pdEl.style.display!=='none'?'\n\n'+pdEl.textContent:'';
+  const loc=lugar?lugar+' — ':'';
+  const text=`🌸 Carta de Amistad — De Brayan para Greisy\n\n${loc}20 de mayo de 2026\n\n${to}\n${sal}\n\n${body}${pd}\n\n${cier}\n${firma}`;
+  navigator.clipboard.writeText(text).then(()=>showToast('¡Copiado! 💌')).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta); showToast('¡Copiado! 💌');
+  });
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+function reset(){
+  document.getElementById('envFlap').classList.remove('open');
+  document.getElementById('fPara').value='Greisy';
+  document.getElementById('fDe').value='Brayan';
+  ['fMsg','fPD','fLugar'].forEach(id=>{document.getElementById(id).value='';});
+  updateCount(); goTo('sEnvelope');
+}
+
+function createPetals(){
+  const layer=document.getElementById('petals');
+  const syms=['🌸','🌷','✿','❀'];
+  for(let i=0;i<14;i++){
+    const p=document.createElement('div'); p.className='petal';
+    p.textContent=syms[Math.floor(Math.random()*syms.length)];
+    p.style.left=Math.random()*100+'%';
+    p.style.fontSize=(10+Math.random()*10)+'px';
+    p.style.animationDuration=(18+Math.random()*22)+'s';
+    p.style.animationDelay=(Math.random()*24)+'s';
+    layer.appendChild(p);
+  }
+}
+
+initChips();
+createPetals();
+</script>
+</body>
+</html>
