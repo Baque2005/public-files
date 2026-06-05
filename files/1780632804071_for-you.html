@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Ti ❤️</title>
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    text-align:center;
+}
+.contenedor{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 0 20px rgba(0,0,0,.2);
+    max-width:500px;
+}
+h1{color:#e91e63;}
+button{
+    background:#e91e63;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    border-radius:30px;
+    cursor:pointer;
+    font-size:16px;
+}
+#mensaje{
+    margin-top:20px;
+    display:none;
+    font-size:18px;
+}
+</style>
+</head>
+<body>
+<div class="contenedor">
+    <h1>Hola, Zel ❤️</h1>
+    <p>Tengo algo que decirte...</p>
+    <button onclick="mostrarMensaje()">Haz clic aquí</button>
+    <div id="mensaje">
+        <p>
+            Gracias por formar parte de mis días.
+            Tu sonrisa, tus mensajes y los momentos que compartimos
+            significan mucho para mí. ❤️
+        </p>
+        <h3>🌹 Eres alguien muy especial 🌹</h3>
+    </div>
+</div>
+<script>
+function mostrarMensaje(){
+    document.getElementById("mensaje").style.display="block";
+}
+</script>
+</body>
+</html>
