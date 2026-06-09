@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TE AMO❤️</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      display:flex; flex-direction:column;
+      justify-content:center; align-items:center;
+      height:100vh; overflow:hidden; position:relative;
+      font-family: Georgia, serif;
+      cursor: pointer;
+      background-image: url('https://i.pinimg.com/736x/16/51/d7/1651d74094b5096b81281529f3d4c4b5.jpg');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    #canvas-bg {
+      position:fixed; top:0; left:0; width:100%; height:100%; z-index:0;
+    }
+
+    .message {
+      position:relative; z-index:20;
+      background: rgba(255,255,255,0.92);
+      padding: 22px 36px; border-radius: 20px;
+      box-shadow: 0 6px 28px rgba(214,51,132,0.25);
+      font-size: 28px; color: #d63384;
+      font-family: Georgia, serif; font-weight: bold;
+      margin-bottom: 20px;
+      animation: bounce 2s ease-in-out infinite;
+      text-align: center;
+    }
+    @keyframes bounce {
+      0%,100%{ transform:translateY(0); }
+      50%    { transform:translateY(-12px); }
+    }
+
+    /* ── Burbujas ── */
+    #bubbles-text {
+      position:fixed; width:100%; height:100%;
+      pointer-events:none; overflow:hidden; z-index:15;
+      top:0; left:0;
+    }
+
+    .text-bubble {
+      position:absolute;
+      font-family: Georgia, serif;
+      border-radius: 26px;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      animation: floatBubble 6.5s ease-in-out forwards;
+    }
+
+    /* Tamaño pequeño */
+    .bbl-sm {
+      font-size:15px; padding:9px 18px;
+      color:#880e4f;
+      background: rgba(255,255,255,0.96);
+      border: 2px solid rgba(214,51,132,0.40);
+      box-shadow: 0 4px 14px rgba(214,51,132,0.22);
+    }
+    /* Tamaño mediano */
+    .bbl-md {
+      font-size:18px; padding:12px 24px;
+      color:#ad1457;
+      background: rgba(255,255,255,0.96);
+      border: 2.5px solid rgba(214,51,132,0.50);
+      box-shadow: 0 5px 18px rgba(214,51,132,0.28);
+    }
+    /* Tamaño grande — muy visible */
+    .bbl-lg {
+      font-size:22px; padding:15px 30px;
+      color:#c2185b;
+      font-weight: bold;
+      background: rgba(255,255,255,0.97);
+      border: 3px solid rgba(214,51,132,0.60);
+      box-shadow: 0 6px 24px rgba(214,51,132,0.35);
+    }
+    /* Estilo alternativo — fondo rosado */
+    .bbl-pink {
+      font-size:17px; padding:11px 22px;
+      color:#fff;
+      font-weight: bold;
+      background: rgba(248, 85, 167, 0.88);
+      border: 2px solid rgba(255,255,255,0.50);
+      box-shadow: 0 5px 18px rgba(214,51,132,0.40);
+    }
+
+    @keyframes floatBubble {
+      0%   { opacity:0; transform:scale(0.55) translateY(25px); }
+      15%  { opacity:1; transform:scale(1) translateY(0); }
+      78%  { opacity:1; transform:scale(1) translateY(-45px); }
+      100% { opacity:0; transform:scale(0.92) translateY(-85px); }
+    }
+
+    /* ── Pétalos ── */
+    .petal {
+      position:fixed; font-size:20px;
+      animation: petalFall linear forwards;
+      pointer-events:none; z-index:3;
+    }
+    @keyframes petalFall {
+      0%  { transform:translateY(-20px) rotate(0deg); opacity:1; }
+      100%{ transform:translateY(110vh) rotate(420deg); opacity:0; }
+    }
+
+    /* ── Botón música ── */
+    .music-wrap {
+      position:relative; z-index:20;
+      display:flex; align-items:center; justify-content:center;
+      width:130px; height:130px;
+    }
+    .music-btn {
+      width:60px; height:60px; border-radius:50%;
+      border: 2.5px solid rgba(214,51,132,0.65);
+      background: rgba(255,255,255,0.90);
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:transform 0.2s, border-color 0.3s;
+      box-shadow: 0 4px 16px rgba(214,51,132,0.25);
+    }
+    .music-btn:hover { transform:scale(1.1); border-color:#d63384; }
+    .music-btn svg { width:26px; height:26px; }
+
+    .ripple {
+      position:absolute; border-radius:50%;
+      border:1.5px solid rgba(214,51,132,0.30);
+      animation: rippleOut 2s ease-out infinite;
+      pointer-events:none;
+    }
+    .r1{ width:76px;  height:76px;  animation-delay:0s; }
+    .r2{ width:96px;  height:96px;  animation-delay:0.65s; }
+    .r3{ width:118px; height:118px; animation-delay:1.3s; }
+    @keyframes rippleOut {
+      0%  { opacity:0.7; transform:scale(0.6); }
+      100%{ opacity:0;   transform:scale(1); }
+    }
+
+    #music-status {
+      position:relative; z-index:20;
+      font-family: Georgia, serif;
+      font-size:13px; color:#c2185b;
+      background: rgba(255,255,255,0.85);
+      padding:5px 16px; border-radius:12px;
+      margin-top:8px; letter-spacing:0.3px;
+      box-shadow: 0 2px 8px rgba(214,51,132,0.15);
+    }
+
+    @media (max-width:768px) {
+      .message  { font-size:22px; padding:16px 22px; }
+      .bbl-sm   { font-size:14px; padding:8px 15px; }
+      .bbl-md   { font-size:16px; padding:10px 20px; }
+      .bbl-lg   { font-size:19px; padding:12px 24px; }
+      .bbl-pink { font-size:15px; padding:9px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="canvas-bg"></canvas>
+  <div id="bubbles-text"></div>
+
+  <div class="message">Eres solo tu❤️❤️</div>
+
+  <div class="music-wrap">
+    <div class="ripple r1"></div>
+    <div class="ripple r2"></div>
+    <div class="ripple r3"></div>
+    <div class="music-btn" id="music-btn" onclick="toggleMusic()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#d63384" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path id="play-icon" d="M8 5l11 7-11 7V5z"/>
+      </svg>
+    </div>
+  </div>
+  <div id="music-status">♫ toca para reproducir</div>
+
+  <audio id="bg-music" preload="auto">
+    <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Carla%20Morrison%20-%20Eres%20t%C3%BA%20(letra).mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const msgs = [
+      "Eres tu la que me ilumina ✨",
+      "Eres tu la que me fascina 💫",
+      "Eres tu mi alegría 💕",
+      "Eres tu mi sueño real 🥰",
+      "Eres tu mi todo 💗",
+      "Eres tu mi universo 🌌",
+      "Eres tu mi razón de sonreír 😊",
+      "Eres tu mi inspiración 🌹",
+      "Eres tu mi paz interior 🕊️",
+      "Eres tu mi amor eterno 💘",
+      "Eres tu mi vida entera ❤️",
+      "Eres tu mi destino 💞"
+    ];
+
+    const styleClasses = ['bbl-sm','bbl-md','bbl-lg','bbl-pink'];
+
+    /* ─── Canvas fondo con corazones ─── */
+    const canvas = document.getElementById('canvas-bg');
+    const ctx = canvas.getContext('2d');
+    let hearts = [];
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', () => { resize(); initHearts(); });
+
+    function initHearts() {
+      hearts = [];
+      for (let i = 0; i < 35; i++) {
+        hearts.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 18 + 7,
+          dx: (Math.random() - 0.5) * 0.4,
+          dy: -(Math.random() * 0.5 + 0.15),
+          a: Math.random(),
+          da: (Math.random()*0.004+0.002) * (Math.random()<0.5?1:-1),
+          color: ['#ff99b6','#f48fb1','#f06292','#d63384','#ec407a'][Math.floor(Math.random()*5)]
+        });
+      }
+    }
+    initHearts();
+
+    function drawHeart(cx, cy, size, color, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha * 0.52;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy + size*0.3);
+      ctx.bezierCurveTo(cx, cy, cx-size, cy, cx-size, cy+size*0.4);
+      ctx.bezierCurveTo(cx-size, cy+size*0.9, cx, cy+size*1.3, cx, cy+size*1.5);
+      ctx.bezierCurveTo(cx, cy+size*1.3, cx+size, cy+size*0.9, cx+size, cy+size*0.4);
+      ctx.bezierCurveTo(cx+size, cy, cx, cy, cx, cy+size*0.3);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawBg() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Fondo transparente para que se vea la imagen de `body` detrás del canvas
+      hearts.forEach(h => {
+        h.x += h.dx; h.y += h.dy; h.a += h.da;
+        if (h.a > 0.9 || h.a < 0.1) h.da *= -1;
+        if (h.y + h.size*2 < 0)          { h.y = canvas.height+h.size; h.x = Math.random()*canvas.width; }
+        if (h.x < -h.size*2)               h.x = canvas.width+h.size;
+        if (h.x > canvas.width+h.size*2)   h.x = -h.size;
+        drawHeart(h.x, h.y, h.size, h.color, h.a);
+      });
+      requestAnimationFrame(drawBg);
+    }
+    drawBg();
+
+    /* ─── Música ─── */
+    const audio = document.getElementById('bg-music');
+    let playing = false;
+
+    function toggleMusic() {
+      const icon   = document.getElementById('play-icon');
+      const status = document.getElementById('music-status');
+      if (!playing) {
+        audio.currentTime = 10;
+        audio.play().then(() => {
+          playing = true;
+          icon.setAttribute('d','M6 19h4V5H6v14zm8-14v14h4V5h-4z');
+          status.textContent = '♫ sonando con amor';
+        }).catch(() => { status.textContent = '♫ toca de nuevo'; });
+      } else {
+        audio.pause();
+        playing = false;
+        icon.setAttribute('d','M8 5l11 7-11 7V5z');
+        status.textContent = '♫ toca para reproducir';
+      }
+    }
+
+    const layer = document.getElementById('bubbles-text');
+
+    
+    const COLS = 4, ROWS = 5;
+    let zoneIdx = 0;
+
+    function createBubble() {
+      const el = document.createElement('div');
+      const cls = styleClasses[Math.floor(Math.random() * styleClasses.length)];
+      el.className = 'text-bubble ' + cls;
+      el.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+
+      const col = zoneIdx % COLS;
+      const row = Math.floor(zoneIdx / COLS) % ROWS;
+      zoneIdx++;
+
+      const cellW = window.innerWidth  / COLS;
+      const cellH = window.innerHeight / ROWS;
+
+      const maxX = Math.max(cellW - 250, 10);
+      const maxY = Math.max(cellH - 60,  10);
+
+      const x = col * cellW + Math.random() * maxX + 5;
+      const y = row * cellH + Math.random() * maxY + 5;
+
+      el.style.left = Math.min(x, window.innerWidth  - 260) + 'px';
+      el.style.top  = Math.min(y, window.innerHeight - 70)  + 'px';
+
+      layer.appendChild(el);
+      setTimeout(() => el.remove(), 7000);
+    }
+
+   
+    setInterval(createBubble, 550);
+
+    
+    for (let i = 0; i < COLS * ROWS; i++) {
+      setTimeout(createBubble, i * 120);
+    }
+
+    /* ─── Pétalos ─── */
+    function createPetal() {
+      const el = document.createElement('div');
+      el.className = 'petal';
+      el.textContent = Math.random() < 0.5 ? '✿' : '❀';
+      el.style.animationDuration = (4 + Math.random()*5).toFixed(1) + 's';
+      el.style.left  = (Math.random()*95) + '%';
+      el.style.color = ['#f48fb1','#f06292','#d63384','#ff99b6','#ec407a'][Math.floor(Math.random()*5)];
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 10000);
+    }
+    setInterval(createPetal, 700);
+    createPetal();
+  </script>
+</body>
+</html>
