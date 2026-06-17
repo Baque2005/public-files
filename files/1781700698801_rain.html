@@ -1,0 +1,258 @@
+Add your <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do you love me?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #000000;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            font-family: 'Press Start 2P', monospace;
+        }
+        .wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+        .pixel-window {
+            background-color: #000000;
+            border: 6px double #ffffff; 
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 12px 12px 0px #1a1a1a;
+        }
+
+        .window-bar {
+            border-bottom: 4px solid #ffffff;
+            padding: 10px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .window-dot {
+            width: 8px;
+            height: 8px;
+            border: 2px solid #ffffff;
+        }
+
+        .window-body {
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        .title-text {
+            color: #ffffff;
+            font-size: 13pt;
+            line-height: 1.6;
+            margin: 0 0 45px 0;
+            font-weight: normal;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        .pixel-btn {
+            background: transparent;
+            color: #ffffff;
+            border: 4px outset #ffffff; 
+            padding: 12px 24px;
+            font-size: 11pt;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            outline: none;
+        }
+
+        .pixel-btn:hover {
+            background: #ffffff;
+            color: #000000;
+            border: 4px inset #ffffff; 
+        }
+        .pixel-smiler {
+            display: none;
+            color: #ffffff;
+            font-size: 45pt;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+        }
+        .neon-center-set {
+            display: none;
+            position: absolute;
+            top: 53%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0px;
+            z-index: 6;
+            user-select: none;
+            pointer-events: none;
+        }
+        .neon-text {
+            color: #ffccff;
+            font-size: 26pt;
+            text-align: center;
+            margin-bottom: 5px;
+            text-shadow: 
+                0 0 5px #ffccff,
+                0 0 15px #ff3399,
+                0 0 30px #ff3399;
+        }
+        .neon-heart-svg {
+            width: 140px;
+            height: 140px;
+            filter: drop-shadow(0 0 4px #ffccff)
+                    drop-shadow(0 0 10px #ff3399)
+                    drop-shadow(0 0 25px #ff3399)
+                    drop-shadow(0 0 45px #ff3399);
+        }
+        .matrix-bg {
+            display: none; 
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0; 
+            transition: opacity 0.2s ease;
+        }
+        .matrix-column {
+            display: flex;
+            flex-direction: column;
+            white-space: nowrap;
+            font-size: 13px; 
+            line-height: 1.5;
+            color: rgba(255, 51, 153, 0.45);
+            user-select: none;
+        }
+        .matrix-move {
+            animation: scrollDown 10s linear infinite;
+        }
+        .matrix-column:nth-child(even) .matrix-move {
+            animation: scrollDown 7s linear infinite;
+        }
+
+        @keyframes scrollDown {
+            0% {
+                transform: translateY(-50%);
+            }
+            100% {
+                transform: translateY(0%);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper" id="viewInterface">
+        <div class="pixel-window" id="popupWindow">
+            <div class="window-bar">
+                <span class="window-dot"></span>
+                <span class="window-dot"></span>
+                <span class="window-dot"></span>
+            </div>
+            <div class="window-body">
+                <h1 class="title-text">Do you love me?</h1>
+                <div class="btn-container">
+                    <button class="pixel-btn" onclick="triggerYes()">Yes</button>
+                    <button class="pixel-btn" onclick="triggerNo()">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pixel-smiler" id="smileContainer">:)</div>
+    
+    <div class="neon-center-set" id="neonSet" style="display: none;">
+        <div class="neon-text">LOVE ME</div>
+        
+        <svg class="neon-heart-svg" viewBox="0 0 24 24" fill="#ffccff">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+    </div>
+
+    <div class="matrix-bg" id="bgContainer"></div>
+
+    <script>
+        const bgContainer = document.getElementById('bgContainer');
+
+        function buildMatrixBackground() {
+            bgContainer.innerHTML = '';
+            
+            const charWidth = 95; 
+            const columnCount = Math.ceil(window.innerWidth / charWidth) + 1;
+            
+            let textBlock = "";
+            for (let i = 0; i < 60; i++) {
+                textBlock += "LOVE ME<br>";
+            }
+
+            for (let i = 0; i < columnCount; i++) {
+                const col = document.createElement('div');
+                col.className = 'matrix-column';
+                
+                const moveDiv = document.createElement('div');
+                moveDiv.className = 'matrix-move';
+                moveDiv.innerHTML = textBlock + textBlock;
+                
+                col.style.opacity = (Math.random() * 0.5 + 0.3).toFixed(2);
+                moveDiv.style.animationDelay = (Math.random() * -10) + 's';
+
+                col.appendChild(moveDiv);
+                bgContainer.appendChild(col);
+            }
+        }
+
+        window.addEventListener('resize', buildMatrixBackground);
+
+        function triggerYes() {
+            document.getElementById('viewInterface').style.display = 'none';
+            document.getElementById('smileContainer').style.display = 'block';
+        }
+
+        function triggerNo() {
+            const frame = document.getElementById('popupWindow');
+            frame.style.transform = 'translate(4px, 4px)';
+            setTimeout(() => frame.style.transform = 'translate(-4px, -4px)', 40);
+            setTimeout(() => frame.style.transform = 'translate(4px, -4px)', 80);
+            
+            setTimeout(() => {
+                document.getElementById('viewInterface').style.display = 'none';
+                
+                buildMatrixBackground();
+                bgContainer.style.display = 'flex';
+                setTimeout(() => bgContainer.style.opacity = '1', 10);
+                document.getElementById('neonSet').style.display = 'flex';
+            }, 130);
+        }
+    </script>
+</body>
+</html>changes to Loveu.html
