@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi padre, Papá</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&family=Roboto+Slab:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto Slab', serif;
+            background: #0a121f;
+            color: #e0e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1100px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 500px;
+            padding: 40px 50px;
+            background: rgba(10, 18, 31, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 28px;
+            border: 1px solid rgba(0, 140, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            position: relative;
+        }
+
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) scale(0.96);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ===== CÍRCULOS SIN ANIMACIÓN ===== */
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            transition: background 0.2s ease;
+            cursor: default;
+        }
+        .dot.active-dot {
+            background: #4da6ff;
+            box-shadow: 0 0 20px rgba(0, 140, 255, 0.5);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.8em;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 1px;
+            margin-bottom: 0.1em;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        h1 .highlight {
+            color: #4da6ff;
+            font-style: italic;
+        }
+
+        h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.6em;
+            font-weight: 300;
+            color: #b0c8e0;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1em;
+            font-weight: 300;
+            color: #8aa3c0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .letter-text {
+            font-size: 1.5em;
+            line-height: 1.9;
+            max-width: 85%;
+            margin: 0 auto 30px;
+            font-weight: 300;
+            color: #d0dce8;
+        }
+        .letter-text strong {
+            color: #4da6ff;
+            font-weight: 600;
+        }
+
+        .btn {
+            background: transparent;
+            color: #4da6ff;
+            border: 1.5px solid #4da6ff;
+            padding: 12px 32px;
+            font-size: 1.1em;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            background: rgba(0, 140, 255, 0.05);
+            min-width: 140px;
+        }
+        .btn:hover {
+            background: #4da6ff;
+            color: #0a121f;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 140, 255, 0.3);
+        }
+
+        .btn-primary {
+            background: #4da6ff;
+            color: #0a121f;
+            border-color: #4da6ff;
+        }
+        .btn-primary:hover {
+            background: #3a8ee0;
+            border-color: #3a8ee0;
+        }
+
+        .btn-outline-light {
+            border-color: rgba(255, 255, 255, 0.25);
+            color: #e0e8f0;
+            background: transparent;
+        }
+        .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #4da6ff;
+            color: #4da6ff;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        /* ===== CONTADOR ===== */
+        #tiempo-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0 15px;
+        }
+        .tiempo-unidad {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px 25px;
+            border-radius: 14px;
+            min-width: 100px;
+            border: 1px solid rgba(0, 140, 255, 0.08);
+            backdrop-filter: blur(2px);
+        }
+        .tiempo-unidad span {
+            display: block;
+            font-size: 3.2em;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 2px;
+            font-variant-numeric: tabular-nums;
+        }
+        .tiempo-unidad .label {
+            font-size: 0.9em;
+            font-weight: 300;
+            text-transform: uppercase;
+            color: #8aa3c0;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+        .fecha-nacimiento {
+            margin-top: 10px;
+            font-style: italic;
+            color: #8aa3c0;
+            font-size: 1.1em;
+        }
+
+        /* ===== DIAPOSITIVA FINAL ===== */
+        .contenido-final {
+            display: flex;
+            gap: 40px;
+            width: 100%;
+            align-items: center;
+        }
+        .foto-container {
+            flex: 1.2;
+            animation: zoomIn 1s ease-out 0.3s backwards;
+        }
+        .foto-container img {
+            width: 100%;
+            border-radius: 18px;
+            border: 3px solid rgba(0, 140, 255, 0.2);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+        .foto-container img:hover {
+            transform: scale(1.02);
+        }
+        .pie-foto {
+            text-align: center;
+            font-style: italic;
+            color: #8aa3c0;
+            margin-top: 12px;
+            font-size: 0.95em;
+        }
+        .carta-final-container {
+            flex: 1;
+            text-align: left;
+        }
+        .carta-final-container p {
+            font-size: 1.15em;
+            line-height: 1.9;
+            font-weight: 300;
+        }
+        .firma {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6em !important;
+            font-weight: 600;
+            color: #4da6ff;
+            text-align: right;
+            margin-top: 25px;
+            font-style: italic;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.6) rotate(-3deg);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        /* ===== JUEGO DE DAMAS ===== */
+        #juego-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .tablero-wrapper {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+            position: relative;
+        }
+
+        #tableroCanvas {
+            border-radius: 14px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+            background: #1a2a3a;
+            cursor: pointer;
+            max-width: 100%;
+            height: auto;
+            transition: opacity 0.3s ease;
+            display: block;
+        }
+
+        /* ===== ENCABEZADO J. ENRIQUE ===== */
+        .header-jugador {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 10px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 140, 255, 0.12);
+            width: 100%;
+            max-width: 500px;
+            backdrop-filter: blur(4px);
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 10;
+        }
+        .header-jugador .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid #4da6ff;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .header-jugador .info {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            flex: 1;
+        }
+        .header-jugador .nombre {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.5px;
+        }
+        .header-jugador .estado {
+            font-size: 0.85em;
+            color: #8aa3c0;
+            font-weight: 300;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .header-jugador .estado .puntos {
+            display: inline-flex;
+            gap: 3px;
+        }
+        .header-jugador .estado .puntos span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #8aa3c0;
+            border-radius: 50%;
+            animation: puntosPensando 1.4s infinite ease-in-out;
+        }
+        .header-jugador .estado .puntos span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .header-jugador .estado .puntos span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes puntosPensando {
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.3;
+            }
+            30% {
+                transform: translateY(-5px);
+                opacity: 1;
+            }
+        }
+
+        .header-jugador .estado.activo .puntos span {
+            background: #4da6ff;
+        }
+        .header-jugador .estado.activo {
+            color: #4da6ff;
+        }
+
+        /* ===== MENÚ HAMBURGUESA ===== */
+        .menu-hamburguesa {
+            position: relative;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+            flex-shrink: 0;
+            margin-left: auto;
+            z-index: 100;
+        }
+        .menu-hamburguesa:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .menu-hamburguesa svg {
+            width: 28px;
+            height: 28px;
+            fill: #b0c8e0;
+            transition: fill 0.3s ease;
+        }
+        .menu-hamburguesa:hover svg {
+            fill: #4da6ff;
+        }
+
+        .menu-desplegable {
+            position: absolute;
+            top: 58px;
+            right: 0;
+            background: rgba(10, 18, 31, 0.97);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 16px;
+            border: 1px solid rgba(77, 166, 255, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            padding: 12px 0;
+            min-width: 220px;
+            display: none;
+            z-index: 9999;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .menu-desplegable.abierto {
+            display: block;
+            animation: menuSlideDown 0.25s ease-out;
+        }
+
+        @keyframes menuSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .menu-desplegable .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 18px;
+            color: #d0dce8;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 400;
+            transition: background 0.2s ease, color 0.2s ease;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+        .menu-desplegable .menu-item:hover {
+            background: rgba(77, 166, 255, 0.08);
+            color: #4da6ff;
+        }
+        .menu-desplegable .menu-item svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            fill: currentColor;
+        }
+        .menu-desplegable .menu-item .icono {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .menu-desplegable .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+            margin: 6px 12px;
+        }
+
+        .menu-desplegable::-webkit-scrollbar {
+            width: 4px;
+        }
+        .menu-desplegable::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .menu-desplegable::-webkit-scrollbar-thumb {
+            background: rgba(77, 166, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        /* ===== MENSAJE "TU TURNO PAPÁ" ===== */
+        .mensaje-turno {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 0 40px rgba(77, 166, 255, 0.3);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(77, 166, 255, 0.15);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            margin-bottom: 5px;
+        }
+        .mensaje-turno.mostrar {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .mensaje-turno.ocultar {
+            opacity: 0;
+            transform: scale(0.8) translateY(-10px);
+        }
+
+        /* ===== BOTÓN REINICIAR ===== */
+        .btn-reiniciar-abajo {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .btn-reiniciar-abajo .btn {
+            padding: 8px 24px;
+            font-size: 0.9em;
+            min-width: auto;
+        }
+
+        /* ===== OVERLAY FINAL ===== */
+        .overlay-final {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 28px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            animation: fadeInOverlay 0.5s ease-out;
+        }
+
+        .overlay-final.mostrar {
+            display: flex;
+        }
+
+        @keyframes fadeInOverlay {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .overlay-contenido {
+            text-align: center;
+            padding: 40px;
+            background: rgba(10, 18, 31, 0.9);
+            border-radius: 24px;
+            border: 2px solid rgba(77, 166, 255, 0.3);
+            max-width: 450px;
+            width: 90%;
+        }
+
+        .overlay-contenido .emoji {
+            font-size: 4em;
+            margin-bottom: 10px;
+        }
+        .overlay-contenido h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+        .overlay-contenido p {
+            color: #b0c8e0;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        .overlay-contenido .btn-group {
+            margin-top: 0;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 25px 15px;
+                min-height: auto;
+            }
+            h1 {
+                font-size: 2.2em;
+            }
+            h2 {
+                font-size: 1.1em;
+            }
+            .letter-text {
+                font-size: 1.1em;
+                max-width: 100%;
+            }
+            .tiempo-unidad {
+                min-width: 60px;
+                padding: 10px 8px;
+            }
+            .tiempo-unidad span {
+                font-size: 1.8em;
+            }
+            .contenido-final {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .carta-final-container {
+                text-align: center;
+            }
+            .firma {
+                text-align: center;
+                font-size: 1.2em !important;
+            }
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9em;
+                min-width: 100px;
+            }
+            .tablero-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+            .mensaje-turno {
+                font-size: 1.6em;
+                padding: 6px 20px;
+            }
+            .header-jugador {
+                padding: 8px 14px;
+                max-width: 100%;
+            }
+            .header-jugador .avatar {
+                width: 38px;
+                height: 38px;
+            }
+            .header-jugador .nombre {
+                font-size: 0.95em;
+            }
+            .overlay-contenido {
+                padding: 25px;
+            }
+            .overlay-contenido h2 {
+                font-size: 1.6em;
+            }
+            .btn-reiniciar-abajo .btn {
+                padding: 6px 16px;
+                font-size: 0.8em;
+            }
+            .menu-desplegable {
+                min-width: 180px;
+                right: -10px;
+            }
+            .menu-hamburguesa svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            .letter-text {
+                font-size: 1em;
+            }
+            .tiempo-unidad span {
+                font-size: 1.5em;
+            }
+            .mensaje-turno {
+                font-size: 1.3em;
+                padding: 4px 16px;
+            }
+            .header-jugador .avatar {
+                width: 32px;
+                height: 32px;
+            }
+            .header-jugador .nombre {
+                font-size: 0.85em;
+            }
+            .menu-desplegable {
+                min-width: 160px;
+                right: -5px;
+            }
+            .menu-desplegable .menu-item {
+                font-size: 0.8em;
+                padding: 8px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="main-container">
+
+        <!-- ===== SLIDE 1: BIENVENIDA ===== -->
+        <div id="slide-1" class="slide active">
+            <span class="subtitle">Para el hombre que me enseñó a pensar</span>
+            <h1>Feliz Día, <span class="highlight">Papá</span></h1>
+            <h2>De Tu hijo, que, tiene algo que decirte</h2>
+            <button class="btn btn-primary" id="startButton">Empezar</button>
+            <div class="progress-dots">
+                <span class="dot active-dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+
+        <!-- ===== SLIDE 2: CONTADOR ===== -->
+        <div id="slide-2" class="slide">
+            <h2>Antes que nada, un dato curioso...</h2>
+            <p style="font-size:1.2em; margin-bottom:5px; font-weight:300;">Llevas siendo mi padre exactamente:</p>
+            <div id="tiempo-container">
+                <div class="tiempo-unidad"><span id="dias">0</span><span class="label">Días</span></div>
+                <div class="tiempo-unidad"><span id="horas">0</span><span class="label">Horas</span></div>
+                <div class="tiempo-unidad"><span id="minutos">0</span><span class="label">Minutos</span></div>
+                <div class="tiempo-unidad"><span id="segundos">0</span><span class="label">Segundos</span></div>
+            </div>
+            <p class="fecha-nacimiento">Y en cada uno de ellos, una lección, una risa o una mirada cómplice.</p>
+            <div class="btn-group">
+                <button class="btn btn-outline-light" onclick="navigateSlide(-1)">Atrás</button>
+                <button class="btn btn-primary" onclick="showSlide('slide-3')">Continuar</button>
+            </div>
+            <div class="progress-dots">
+                <span class="dot"></span><span class="dot active-dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+
+        <!-- ===== SLIDE 3: CHARLAS ===== -->
+        <div id="slide-3" class="slide">
+            <h2 style="font-family:'Playfair Display',serif; font-weight:600;">Charlas que se quedan</h2>
+            <p class="letter-text" style="max-width:90%;">
+                Mira, papá, me acuerdo de esas sobremesas largas, con el café caliente, y esa chispa que se te encendía cuando discutíamos de cualquier cosa. No me diste respuestas fáciles, me diste <strong>preguntas</strong>, y eso es lo que más valoro. Me enseñaste a dudar, a buscar, a tener una opinión sin creerme superior. Concordamos en cómo vemos la juventud, la población, los problemas sociales. Gracias por no darme verdades, sino <strong>herramientas</strong> para construir las mías.
+            </p>
+            <div class="btn-group">
+                <button class="btn btn-outline-light" onclick="navigateSlide(-1)">Atrás</button>
+                <button class="btn btn-primary" onclick="showSlide('slide-4')">Siguiente</button>
+            </div>
+            <div class="progress-dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot active-dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+
+        <!-- ===== SLIDE 4: REALIDAD ===== -->
+        <div id="slide-4" class="slide">
+            <h2 style="font-family:'Playfair Display',serif; font-weight:600;">Aprender a mirar la realidad</h2>
+            <p class="letter-text">
+                Desde chico me enseñaste que la vida no es un cuento de hadas. Me ayudaste a reflexionar, a ver que a través de los <strong>golpes</strong> se aprende. No me protegiste de la realidad, me <strong>preparaste</strong> para enfrentarla. Ese realismo sin amargura es uno de tus mayores regalos. Gracias por enseñarme a caminar con los pies en la tierra, pero sin perder la mirada al horizonte.
+            </p>
+            <div class="btn-group">
+                <button class="btn btn-outline-light" onclick="navigateSlide(-1)">Atrás</button>
+                <button class="btn btn-primary" onclick="showSlide('slide-5')">Siguiente</button>
+            </div>
+            <div class="progress-dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot active-dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+
+        <!-- ===== SLIDE 5: APOYO ===== -->
+        <div id="slide-5" class="slide">
+            <h2 style="font-family:'Playfair Display',serif; font-weight:600;">Gracias por el apoyo</h2>
+            <p class="letter-text">
+                Has estado ahí en cada proyecto, en cada decisión difícil. No con consuelos vacíos, sino con <strong>perspectiva</strong> y una mano firme. Tu apoyo en mis trabajos ha sido un pilar. Saber que cuento con tu confianza y tu criterio me da la seguridad para seguir adelante, incluso cuando el camino se nubla. Eres mi mejor consejero y mi mayor respaldo.
+            </p>
+            <div class="btn-group">
+                <button class="btn btn-outline-light" onclick="navigateSlide(-1)">Atrás</button>
+                <button class="btn btn-primary" onclick="showSlide('slide-6')">Siguiente</button>
+            </div>
+            <div class="progress-dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot active-dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+
+        <!-- ===== SLIDE 6: FE ===== -->
+        <div id="slide-6" class="slide">
+            <h2 style="font-family:'Playfair Display',serif; font-weight:600;">La fe y los valores</h2>
+            <p class="letter-text">
+                Valoro un montón la fe que tú y mamá me inculcaste. No como un dogma, sino como un <strong>ancla</strong> que me recuerda que hay algo más grande. Gracias por cada momento juntos, por los valores que me han formado. La fe católica es un regalo que me ha dado sentido y esperanza, y sé que es fruto de tu ejemplo y dedicación.
+            </p>
+            <div class="btn-group">
+                <button class="btn btn-outline-light" onclick="navigateSlide(-1)">Atrás</button>
+                <button class="btn btn-primary" onclick="showSlide('slide-7')">Siguiente</button>
+            </div>
+            <div class="progress-dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot active-dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+
+        <!-- ===== SLIDE 7: MENTE ===== -->
+        <div id="slide-7" class="slide">
+            <h2 style="font-family:'Playfair Display',serif; font-weight:600;">Tu mente, tu ejemplo</h2>
+            <p class="letter-text">
+                Admiro tu inteligencia, tu capacidad de aprender de todo. Sabes de todas las cosas un poco y siempre buscas mejorar, <strong>contribuir a la sociedad</strong>. Creo que concordamos en mucho, aunque también tenemos nuestras diferencias, y eso enriquece. Gracias por los conocimientos y por ser un ejemplo de coherencia. Tu sed de saber me inspira a no conformarme.
+            </p>
+            <div class="btn-group">
+                <button class="btn btn-outline-light" onclick="navigateSlide(-1)">Atrás</button>
+                <button class="btn btn-primary" onclick="showSlide('slide-8')">Siguiente</button>
+            </div>
+            <div class="progress-dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot active-dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+
+        <!-- ===== SLIDE 8: CARTA FINAL ===== -->
+        <div id="slide-8" class="slide">
+            <div class="contenido-final">
+                <div class="foto-container">
+                    <img src="https://cdn-icons-png.magnific.com/512/3009/3009399.png" alt="Foto con papá">
+                    <p class="pie-foto">"De esas conversaciones que no se olvidan"</p>
+                </div>
+                <div class="carta-final-container">
+                    <p>
+                        Papá, no siempre tengo las palabras, pero hoy quiero que sepas que te <strong>admiro</strong> y agradezco cada lección, cada silencio cómplice y cada palabra justa. Eres un padre que nunca esperé tener y que estoy muy agradecido con Dios por habérmelo dado. Pido a Dios que te siga manteniendo con <strong>salud</strong>, con protección, que te siga iluminando y sigas demostrando el buen padre que eres.
+                    </p>
+                    <p class="firma">
+                        Con respeto y cariño,<br>
+                        Tu hijo.
+                    </p>
+                </div>
+            </div>
+            <div class="btn-group" style="margin-top:25px;">
+                <button class="btn btn-outline-light" onclick="navigateSlide(-1)">Atrás</button>
+                <button class="btn btn-primary" onclick="showSlide('slide-9')">Jugar damas</button>
+            </div>
+            <div class="progress-dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot active-dot"></span><span class="dot"></span>
+            </div>
+        </div>
+
+        <!-- ===== SLIDE 9: JUEGO DE DAMAS ===== -->
+        <div id="slide-9" class="slide" style="position:relative; overflow:hidden;">
+
+            <!-- OVERLAY FINAL -->
+            <div class="overlay-final" id="overlayFinal">
+                <div class="overlay-contenido">
+                    <div class="emoji" id="emojiFinal">🎉</div>
+                    <h2 id="tituloFinal">¡Ganaste!</h2>
+                    <p id="descripcionFinal">Jugaste increíble, papá.</p>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="reiniciarPartida()">Jugar de nuevo</button>
+                        <button class="btn btn-outline-light" onclick="reiniciar()">Volver al inicio</button>
+                    </div>
+                </div>
+            </div>
+
+            <h2 style="font-family:'Playfair Display',serif; font-weight:600;">Una partida de damas</h2>
+
+            <!-- ENCABEZADO J. ENRIQUE + MENÚ HAMBURGUESA -->
+            <div class="header-jugador">
+                <img src="https://static.vecteezy.com/system/resources/previews/004/477/053/non_2x/cute-little-boy-with-hands-up-in-frame-circular-free-vector.jpg" alt="J. Enrique" class="avatar">
+                <div class="info">
+                    <div class="nombre">Tu hijo</div>
+                    <div class="estado" id="estadoHeader">
+                        <span id="estadoTexto">En línea</span>
+                        <span class="puntos" id="puntosPensando" style="display:none;">
+                            <span></span><span></span><span></span>
+                        </span>
+                    </div>
+                </div>
+                <!-- Menú hamburguesa -->
+                <div class="menu-hamburguesa" id="menuHamburguesa" onclick="toggleMenu(event)">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
+                    </svg>
+                </div>
+                <!-- Menú desplegable -->
+                <div class="menu-desplegable" id="menuDesplegable">
+                    <!-- Telegram -->
+                    <a class="menu-item" href="https://t.me/@eltauromods" target="_blank">
+                        <span class="icono">
+                            <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                        </span>
+                        Telegram
+                    </a>
+                    <a class="menu-item" href="https://t.me/@elcanserbero_bot" target="_blank">
+                        <span class="icono">
+                            <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                        </span>
+                        Bot Telegram
+                    </a>
+                    <a class="menu-item" href="https://t.me/+CC1BEtApgWs3Zjhh" target="_blank">
+                        <span class="icono">
+                            <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                        </span>
+                        Grupo Telegram
+                    </a>
+                    <a class="menu-item" href="https://t.me/+TlK7D7raEbllNTQ5" target="_blank">
+                        <span class="icono">
+                            <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                        </span>
+                        Canal Telegram
+                    </a>
+                    <div class="divider"></div>
+                    <!-- WhatsApp -->
+                    <a class="menu-item" href="https://chat.whatsapp.com/D4deLp3tZBOHDk7akSP8F3" target="_blank">
+                        <span class="icono">
+                            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        </span>
+                        Grupo WhatsApp
+                    </a>
+                    <a class="menu-item" href="https://whatsapp.com/channel/0029VbCbfBb9Bb60Idkwfo2E" target="_blank">
+                        <span class="icono">
+                            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        </span>
+                        Canal WhatsApp
+                    </a>
+                    <a class="menu-item" href="https://wa.me/51949498347?text=Hola%20mi%20estimado!%20Vi%20tu%20archivo%20html%20y%20me%20gust%C3%B3,%20quisiera%20que%20me%20personalices%20uno%20para%20mi,%20porfavor%20y%20de%20antemano%20gracias,%20te%20apoyar%C3%A9%20y%20seguir%C3%A9%20en%20tus%20redes%20sociales%20%F0%9F%99%8C%E2%99%A5%EF%B8%8F" target="_blank">
+                        <span class="icono">
+                            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        </span>
+                        Contactar WhatsApp
+                    </a>
+                    <div class="divider"></div>
+                    <!-- Redes Sociales -->
+                    <a class="menu-item" href="https://www.instagram.com/@eltauromods_official" target="_blank">
+                        <span class="icono">
+                            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                        </span>
+                        Instagram
+                    </a>
+                    <a class="menu-item" href="https://x.com/eltauromods" target="_blank">
+                        <span class="icono">
+                            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </span>
+                        X (Twitter)
+                    </a>
+                    <a class="menu-item" href="https://www.facebook.com/eltauromods" target="_blank">
+                        <span class="icono">
+                            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </span>
+                        Facebook
+                    </a>
+                    <a class="menu-item" href="https://www.tiktok.com/@elcanserbero_official" target="_blank">
+                        <span class="icono">
+                            <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                        </span>
+                        TikTok
+                    </a>
+                    <div class="divider"></div>
+                    <!-- Support / Email -->
+                    <a class="menu-item" href="mailto:tauromodder@gmail.com" target="_blank">
+                        <span class="icono">
+                            <svg viewBox="0 0 24 24"><path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z"/><path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z"/></svg>
+                        </span>
+                        tauromodder@gmail.com
+                    </a>
+                </div>
+            </div>
+
+            <!-- MENSAJE "TU TURNO PAPÁ" -->
+            <div class="mensaje-turno" id="mensajeTurno">¡Tu turno Papá!</div>
+
+            <div id="juego-container">
+                <div class="tablero-wrapper">
+                    <canvas id="tableroCanvas" width="500" height="500"></canvas>
+                </div>
+
+                <div class="btn-reiniciar-abajo">
+                    <button class="btn btn-outline-light" onclick="reiniciarPartida()" style="padding:6px 18px; font-size:0.85em; min-width:auto;">Reiniciar partida</button>
+                    <button class="btn btn-outline-light" onclick="showSlide('slide-8')" style="padding:6px 18px; font-size:0.85em; min-width:auto;">Atrás</button>
+                    <button class="btn btn-primary" onclick="reiniciar()" style="padding:6px 18px; font-size:0.85em; min-width:auto;">Volver al inicio</button>
+                </div>
+            </div>
+
+            <div class="progress-dots">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span><span class="dot active-dot"></span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ===== TOGGLE MENÚ HAMBURGUESA =====
+        function toggleMenu(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('menuDesplegable');
+            menu.classList.toggle('abierto');
+        }
+
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('menuDesplegable');
+            const hamburguesa = document.getElementById('menuHamburguesa');
+            if (!hamburguesa.contains(event.target) && !menu.contains(event.target)) {
+                menu.classList.remove('abierto');
+            }
+        });
+
+        // ===== NAVEGACIÓN =====
+        const slides = ['slide-1', 'slide-2', 'slide-3', 'slide-4', 'slide-5', 'slide-6', 'slide-7', 'slide-8', 'slide-9'];
+        let currentIndex = 0;
+        let confettiLanzado = false;
+
+        function showSlide(id) {
+            const index = slides.indexOf(id);
+            if (index === -1) return;
+            currentIndex = index;
+            document.querySelectorAll('.slide').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            updateDots(index);
+
+            if (id === 'slide-2') iniciarAnimacionContador();
+            if (id === 'slide-8' && !confettiLanzado) {
+                setTimeout(() => { lanzarConfeti();
+                    confettiLanzado = true; }, 10000);
+            }
+            if (id === 'slide-9') {
+                if (!window.juegoIniciado) {
+                    iniciarJuego();
+                    window.juegoIniciado = true;
+                } else {
+                    dibujarTablero();
+                    document.getElementById('overlayFinal').classList.remove('mostrar');
+                    actualizarEstadoUI('Tu turno', 'En línea', false);
+                }
+                setTimeout(mostrarMensajeTurno, 300);
+                document.getElementById('menuDesplegable').classList.remove('abierto');
+            }
+        }
+
+        function navigateSlide(direction) {
+            let newIndex = currentIndex + direction;
+            if (newIndex < 0) newIndex = 0;
+            if (newIndex >= slides.length) newIndex = slides.length - 1;
+            if (newIndex === currentIndex) return;
+            showSlide(slides[newIndex]);
+        }
+
+        function updateDots(index) {
+            document.querySelectorAll('.dot').forEach((dot, i) => {
+                dot.classList.toggle('active-dot', i === index);
+            });
+        }
+
+        document.getElementById('startButton').addEventListener('click', () => showSlide('slide-2'));
+
+        function reiniciar() {
+            confettiLanzado = false;
+            window.juegoIniciado = false;
+            showSlide('slide-1');
+        }
+
+        // ===== CONTADOR =====
+        const fechaNacimiento = new Date(2007, 4, 12, 0, 0, 0);
+        let contadorAnimado = false;
+
+        function getTiempos() {
+            const ahora = new Date();
+            const diff = ahora - fechaNacimiento;
+            return {
+                dias: Math.floor(diff / (1000 * 60 * 60 * 24)),
+                horas: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                minutos: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+                segundos: Math.floor((diff % (1000 * 60)) / 1000)
+            };
+        }
+
+        function formatear(t) { return t < 10 ? '0' + t : t; }
+
+        function iniciarAnimacionContador() {
+            if (contadorAnimado) {
+                const t = getTiempos();
+                document.getElementById('dias').textContent = t.dias.toLocaleString('es-ES');
+                document.getElementById('horas').textContent = formatear(t.horas);
+                document.getElementById('minutos').textContent = formatear(t.minutos);
+                document.getElementById('segundos').textContent = formatear(t.segundos);
+                return;
+            }
+            contadorAnimado = true;
+            const target = getTiempos();
+            const duracion = 2200;
+            const inicio = performance.now();
+
+            function easeInOut(t) {
+                return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+            }
+
+            function animar(ahora) {
+                const elapsed = ahora - inicio;
+                const progreso = Math.min(elapsed / duracion, 1);
+                const factor = easeInOut(progreso);
+                document.getElementById('dias').textContent = Math.floor(target.dias * factor).toLocaleString('es-ES');
+                document.getElementById('horas').textContent = formatear(Math.floor(target.horas * factor));
+                document.getElementById('minutos').textContent = formatear(Math.floor(target.minutos * factor));
+                document.getElementById('segundos').textContent = formatear(Math.floor(target.segundos * factor));
+                if (progreso < 1) requestAnimationFrame(animar);
+                else {
+                    document.getElementById('dias').textContent = target.dias.toLocaleString('es-ES');
+                    document.getElementById('horas').textContent = formatear(target.horas);
+                    document.getElementById('minutos').textContent = formatear(target.minutos);
+                    document.getElementById('segundos').textContent = formatear(target.segundos);
+                    iniciarActualizacionContinua();
+                }
+            }
+            requestAnimationFrame(animar);
+        }
+
+        let intervaloReal = null;
+
+        function iniciarActualizacionContinua() {
+            if (intervaloReal) clearInterval(intervaloReal);
+            intervaloReal = setInterval(() => {
+                const t = getTiempos();
+                document.getElementById('dias').textContent = t.dias.toLocaleString('es-ES');
+                document.getElementById('horas').textContent = formatear(t.horas);
+                document.getElementById('minutos').textContent = formatear(t.minutos);
+                document.getElementById('segundos').textContent = formatear(t.segundos);
+            }, 1000);
+        }
+
+        window.addEventListener('load', () => {
+            const t = getTiempos();
+            document.getElementById('dias').textContent = t.dias.toLocaleString('es-ES');
+            document.getElementById('horas').textContent = formatear(t.horas);
+            document.getElementById('minutos').textContent = formatear(t.minutos);
+            document.getElementById('segundos').textContent = formatear(t.segundos);
+        });
+
+        // ===== CONFETI =====
+        function lanzarConfeti() {
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            setTimeout(() => confetti({ particleCount: 100, spread: 100, origin: { y: 0.5, x: 0.3 } }), 200);
+            setTimeout(() => confetti({ particleCount: 100, spread: 100, origin: { y: 0.5, x: 0.7 } }), 400);
+            setTimeout(() => confetti({ particleCount: 200, spread: 120, origin: { y: 0.4 } }), 600);
+        }
+
+        // ===== PARTÍCULAS =====
+        (function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let particles = [];
+            const NUM = 70;
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.size = Math.random() * 2.2 + 0.6;
+                    this.speedX = (Math.random() - 0.5) * 0.2;
+                    this.speedY = (Math.random() - 0.5) * 0.2;
+                    this.opacity = Math.random() * 0.5 + 0.2;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > height) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(77, 166, 255, ${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+
+            for (let i = 0; i < NUM; i++) particles.push(new Particle());
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => { p.update();
+                    p.draw(); });
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 140) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(77, 166, 255, ${0.06 * (1 - dist / 140)})`;
+                            ctx.lineWidth = 0.6;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+        })();
+
+        // ===== FLECHAS TECLADO =====
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateSlide(1);
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateSlide(-1);
+            }
+        });
+
+        // ============================================================
+        // ===== JUEGO DE DAMAS =====
+        // ============================================================
+        const canvas = document.getElementById('tableroCanvas');
+        const ctx = canvas.getContext('2d');
+        const TAM = 500;
+        const CASILLA = TAM / 8;
+
+        let tablero = [];
+        let turno = 'jugador';
+        let seleccionada = null;
+        let movimientosValidos = [];
+        let juegoTerminado = false;
+
+        const VACIO = 0;
+        const FICHA_JUGADOR = 1;
+        const FICHA_MAQUINA = 2;
+        const REY_JUGADOR = 3;
+        const REY_MAQUINA = 4;
+
+        function obtenerMovimientosConReina(fila, col, tableroActual, soloCapturas = false) {
+            const val = tableroActual[fila][col];
+            if (val === VACIO) return [];
+            const esJugador = (val === FICHA_JUGADOR || val === REY_JUGADOR);
+            const esRey = (val === REY_JUGADOR || val === REY_MAQUINA);
+            const direcciones = esRey ? [-1, 1] : (esJugador ? [-1] : [1]);
+            const movs = [];
+            const capturas = [];
+
+            for (const df of direcciones) {
+                for (const dc of [-1, 1]) {
+                    if (!esRey) {
+                        const nf = fila + df,
+                            nc = col + dc;
+                        if (nf >= 0 && nf < 8 && nc >= 0 && nc < 8) {
+                            if (tableroActual[nf][nc] === VACIO) {
+                                if (!soloCapturas) movs.push({ fila: nf, col: nc, captura: false });
+                            } else {
+                                const enemigo = tableroActual[nf][nc];
+                                const enemigoEsJugador = (enemigo === FICHA_JUGADOR || enemigo === REY_JUGADOR);
+                                if (esJugador !== enemigoEsJugador) {
+                                    const sf = nf + df,
+                                        sc = nc + dc;
+                                    if (sf >= 0 && sf < 8 && sc >= 0 && sc < 8 && tableroActual[sf][sc] === VACIO) {
+                                        capturas.push({ fila: sf, col: sc, captura: true, capturada: { fila: nf, col: nc } });
+                                    }
+                                }
+                            }
+                        }
+                        continue;
+                    }
+
+                    // REINA: movimiento largo
+                    let nf = fila + df,
+                        nc = col + dc;
+                    while (nf >= 0 && nf < 8 && nc >= 0 && nc < 8) {
+                        if (tableroActual[nf][nc] !== VACIO) break;
+                        if (!soloCapturas) movs.push({ fila: nf, col: nc, captura: false });
+                        nf += df;
+                        nc += dc;
+                    }
+
+                    // REINA: captura larga
+                    nf = fila + df;
+                    nc = col + dc;
+                    let enemigoEncontrado = false;
+                    let enemigoFila = -1,
+                        enemigoCol = -1;
+                    while (nf >= 0 && nf < 8 && nc >= 0 && nc < 8) {
+                        if (tableroActual[nf][nc] !== VACIO) {
+                            const enemigo = tableroActual[nf][nc];
+                            const enemigoEsJugador = (enemigo === FICHA_JUGADOR || enemigo === REY_JUGADOR);
+                            if (esJugador !== enemigoEsJugador && !enemigoEncontrado) {
+                                enemigoEncontrado = true;
+                                enemigoFila = nf;
+                                enemigoCol = nc;
+                            } else {
+                                break;
+                            }
+                        } else if (enemigoEncontrado) {
+                            capturas.push({
+                                fila: nf,
+                                col: nc,
+                                captura: true,
+                                capturada: { fila: enemigoFila, col: enemigoCol }
+                            });
+                            break;
+                        }
+                        nf += df;
+                        nc += dc;
+                    }
+                }
+            }
+
+            if (capturas.length > 0) return capturas;
+            return movs;
+        }
+
+        function obtenerTodasCapturasConReina(tableroActual, esJugador) {
+            const capturas = [];
+            for (let f = 0; f < 8; f++) {
+                for (let c = 0; c < 8; c++) {
+                    const val = tableroActual[f][c];
+                    if (val === VACIO) continue;
+                    const esJugadorFicha = (val === FICHA_JUGADOR || val === REY_JUGADOR);
+                    if (esJugadorFicha !== esJugador) continue;
+                    const movs = obtenerMovimientosConReina(f, c, tableroActual, true);
+                    for (const m of movs) {
+                        if (m.captura) capturas.push({ from: { fila: f, col: c }, to: m });
+                    }
+                }
+            }
+            return capturas;
+        }
+
+        function iniciarJuego() {
+            tablero = Array(8).fill().map(() => Array(8).fill(VACIO));
+            for (let f = 0; f < 8; f++) {
+                for (let c = 0; c < 8; c++) {
+                    if ((f + c) % 2 === 1) {
+                        if (f < 3) tablero[f][c] = FICHA_MAQUINA;
+                        else if (f > 4) tablero[f][c] = FICHA_JUGADOR;
+                    }
+                }
+            }
+            turno = 'jugador';
+            seleccionada = null;
+            movimientosValidos = [];
+            juegoTerminado = false;
+            actualizarEstadoUI('Tu turno', 'En línea', false);
+            document.getElementById('overlayFinal').classList.remove('mostrar');
+            dibujarTablero();
+            window.juegoIniciado = true;
+            setTimeout(mostrarMensajeTurno, 300);
+        }
+
+        function actualizarEstadoUI(estadoJugador, estadoHeader, pensando) {
+            const estadoHeaderEl = document.getElementById('estadoHeader');
+            const estadoTexto = document.getElementById('estadoTexto');
+            const puntos = document.getElementById('puntosPensando');
+
+            if (pensando) {
+                estadoTexto.textContent = 'Pensando';
+                estadoHeaderEl.classList.add('activo');
+                puntos.style.display = 'inline-flex';
+            } else {
+                estadoTexto.textContent = estadoHeader;
+                estadoHeaderEl.classList.remove('activo');
+                puntos.style.display = 'none';
+            }
+        }
+
+        function mostrarMensajeTurno() {
+            const el = document.getElementById('mensajeTurno');
+            el.classList.remove('mostrar', 'ocultar');
+            void el.offsetWidth;
+            el.classList.add('mostrar');
+            setTimeout(() => {
+                el.classList.remove('mostrar');
+                el.classList.add('ocultar');
+                setTimeout(() => el.classList.remove('ocultar'), 500);
+            }, 1800);
+        }
+
+        function dibujarTablero() {
+            ctx.clearRect(0, 0, TAM, TAM);
+            for (let f = 0; f < 8; f++) {
+                for (let c = 0; c < 8; c++) {
+                    const x = c * CASILLA,
+                        y = f * CASILLA;
+                    ctx.fillStyle = (f + c) % 2 === 0 ? '#1e2e3e' : '#d4e4f0';
+                    ctx.fillRect(x, y, CASILLA, CASILLA);
+                    if (movimientosValidos.some(m => m.fila === f && m.col === c)) {
+                        ctx.fillStyle = 'rgba(0, 200, 255, 0.35)';
+                        ctx.beginPath();
+                        ctx.arc(x + CASILLA / 2, y + CASILLA / 2, CASILLA / 3.5, 0, 2 * Math.PI);
+                        ctx.fill();
+                    }
+                    if (seleccionada && seleccionada.fila === f && seleccionada.col === c) {
+                        ctx.strokeStyle = '#4da6ff';
+                        ctx.lineWidth = 4;
+                        ctx.shadowColor = '#4da6ff';
+                        ctx.shadowBlur = 15;
+                        ctx.strokeRect(x + 2, y + 2, CASILLA - 4, CASILLA - 4);
+                        ctx.shadowBlur = 0;
+                    }
+                }
+            }
+            for (let f = 0; f < 8; f++) {
+                for (let c = 0; c < 8; c++) {
+                    const val = tablero[f][c];
+                    if (val === VACIO) continue;
+                    const x = c * CASILLA + CASILLA / 2;
+                    const y = f * CASILLA + CASILLA / 2;
+                    const radio = CASILLA * 0.42;
+                    const esJugador = (val === FICHA_JUGADOR || val === REY_JUGADOR);
+                    const esRey = (val === REY_JUGADOR || val === REY_MAQUINA);
+                    const grad = ctx.createRadialGradient(x - 6, y - 6, 4, x, y, radio);
+                    if (esJugador) {
+                        grad.addColorStop(0, '#7ec8ff');
+                        grad.addColorStop(0.6, '#3d8fd9');
+                        grad.addColorStop(1, '#1a5a9e');
+                    } else {
+                        grad.addColorStop(0, '#666');
+                        grad.addColorStop(0.5, '#333');
+                        grad.addColorStop(1, '#111');
+                    }
+                    ctx.beginPath();
+                    ctx.arc(x, y, radio, 0, 2 * Math.PI);
+                    ctx.fillStyle = grad;
+                    ctx.shadowColor = esJugador ? 'rgba(77,166,255,0.3)' : 'rgba(0,0,0,0.3)';
+                    ctx.shadowBlur = 10;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.strokeStyle = esJugador ? '#aacbff' : '#555';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                    if (esRey) {
+                        ctx.fillStyle = '#ffd700';
+                        ctx.shadowColor = '#ffd700';
+                        ctx.shadowBlur = 15;
+                        ctx.font = `${CASILLA*0.45}px Arial`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('👑', x, y + 2);
+                        ctx.shadowBlur = 0;
+                    }
+                }
+            }
+        }
+
+        function aplicarMovimiento(tableroActual, from, to, capturaInfo) {
+            const nuevo = tableroActual.map(row => [...row]);
+            const val = nuevo[from.fila][from.col];
+            nuevo[from.fila][from.col] = VACIO;
+            nuevo[to.fila][to.col] = val;
+            if (capturaInfo) {
+                nuevo[capturaInfo.fila][capturaInfo.col] = VACIO;
+            }
+            if (val === FICHA_JUGADOR && to.fila === 0) nuevo[to.fila][to.col] = REY_JUGADOR;
+            if (val === FICHA_MAQUINA && to.fila === 7) nuevo[to.fila][to.col] = REY_MAQUINA;
+            return nuevo;
+        }
+
+        function evaluar(tableroActual) {
+            let score = 0;
+            for (let f = 0; f < 8; f++) {
+                for (let c = 0; c < 8; c++) {
+                    const val = tableroActual[f][c];
+                    if (val === FICHA_JUGADOR) score -= 10;
+                    else if (val === REY_JUGADOR) score -= 20;
+                    else if (val === FICHA_MAQUINA) score += 10;
+                    else if (val === REY_MAQUINA) score += 20;
+                }
+            }
+            return score;
+        }
+
+        function minimax(tableroActual, profundidad, esMaximizador, alpha, beta) {
+            if (profundidad === 0) return { score: evaluar(tableroActual) };
+
+            const esMaquina = esMaximizador;
+            const mejor = esMaquina ? { score: -Infinity } : { score: Infinity };
+            let movs = [];
+
+            for (let f = 0; f < 8; f++) {
+                for (let c = 0; c < 8; c++) {
+                    const val = tableroActual[f][c];
+                    if (val === VACIO) continue;
+                    const esJugadorFicha = (val === FICHA_JUGADOR || val === REY_JUGADOR);
+                    if (esJugadorFicha === esMaquina) continue;
+                    const movsFicha = obtenerMovimientosConReina(f, c, tableroActual);
+                    for (const m of movsFicha) {
+                        movs.push({ from: { fila: f, col: c }, to: m, capturaInfo: m.captura ? { fila: m.capturada.fila, col: m.capturada.col } : null });
+                    }
+                }
+            }
+
+            if (movs.length === 0) {
+                return { score: esMaquina ? -10000 : 10000 };
+            }
+
+            for (const mov of movs) {
+                const nuevoTablero = aplicarMovimiento(tableroActual, mov.from, mov.to, mov.capturaInfo);
+                const resultado = minimax(nuevoTablero, profundidad - 1, !esMaximizador, alpha, beta);
+                if (esMaquina) {
+                    if (resultado.score > mejor.score) {
+                        mejor.score = resultado.score;
+                        mejor.movimiento = mov;
+                    }
+                    alpha = Math.max(alpha, mejor.score);
+                } else {
+                    if (resultado.score < mejor.score) {
+                        mejor.score = resultado.score;
+                        mejor.movimiento = mov;
+                    }
+                    beta = Math.min(beta, mejor.score);
+                }
+                if (beta <= alpha) break;
+            }
+            return mejor;
+        }
+
+        function moverMaquina() {
+            if (juegoTerminado) return;
+            actualizarEstadoUI('Pensando...', 'Pensando', true);
+
+            setTimeout(() => {
+                const capturas = obtenerTodasCapturasConReina(tablero, false);
+                if (capturas.length > 0) {
+                    let mejorCaptura = capturas[0];
+                    let mejorScore = -Infinity;
+                    for (const cap of capturas) {
+                        const nuevo = aplicarMovimiento(tablero, cap.from, cap.to, cap.to.captura ? { fila: cap.to.capturada.fila, col: cap.to.capturada.col } : null);
+                        const score = evaluar(nuevo);
+                        if (score > mejorScore) {
+                            mejorScore = score;
+                            mejorCaptura = cap;
+                        }
+                    }
+                    const mov = mejorCaptura;
+                    tablero = aplicarMovimiento(tablero, mov.from, mov.to, mov.to.captura ? { fila: mov.to.capturada.fila, col: mov.to.capturada.col } : null);
+                    dibujarTablero();
+
+                    const val = tablero[mov.to.fila][mov.to.col];
+                    const esMaquinaFicha = (val === FICHA_MAQUINA || val === REY_MAQUINA);
+                    if (esMaquinaFicha) {
+                        const nuevasCapturas = obtenerMovimientosConReina(mov.to.fila, mov.to.col, tablero, true);
+                        if (nuevasCapturas.length > 0) {
+                            setTimeout(() => moverMaquina(), 400);
+                            return;
+                        }
+                    }
+
+                    if (!hayMovimientosJugador()) {
+                        finalizarJuego(false);
+                        return;
+                    }
+                    turno = 'jugador';
+                    actualizarEstadoUI('Tu turno', 'En línea', false);
+                    seleccionada = null;
+                    movimientosValidos = [];
+                    dibujarTablero();
+                    mostrarMensajeTurno();
+                    return;
+                }
+
+                const resultado = minimax(tablero, 3, true, -Infinity, Infinity);
+                if (resultado.movimiento) {
+                    const mov = resultado.movimiento;
+                    tablero = aplicarMovimiento(tablero, mov.from, mov.to, mov.capturaInfo);
+                    dibujarTablero();
+
+                    const val = tablero[mov.to.fila][mov.to.col];
+                    const esMaquinaFicha = (val === FICHA_MAQUINA || val === REY_MAQUINA);
+                    if (esMaquinaFicha) {
+                        const nuevasCapturas = obtenerMovimientosConReina(mov.to.fila, mov.to.col, tablero, true);
+                        if (nuevasCapturas.length > 0) {
+                            setTimeout(() => moverMaquina(), 400);
+                            return;
+                        }
+                    }
+
+                    if (!hayMovimientosJugador()) {
+                        finalizarJuego(false);
+                        return;
+                    }
+                    turno = 'jugador';
+                    actualizarEstadoUI('Tu turno', 'En línea', false);
+                    seleccionada = null;
+                    movimientosValidos = [];
+                    dibujarTablero();
+                    mostrarMensajeTurno();
+                } else {
+                    finalizarJuego(true);
+                }
+            }, 500);
+        }
+
+        function hayMovimientosJugador() {
+            for (let f = 0; f < 8; f++) {
+                for (let c = 0; c < 8; c++) {
+                    const val = tablero[f][c];
+                    if (val === FICHA_JUGADOR || val === REY_JUGADOR) {
+                        const movs = obtenerMovimientosConReina(f, c, tablero);
+                        if (movs.length > 0) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function hayMovimientosMaquina() {
+            for (let f = 0; f < 8; f++) {
+                for (let c = 0; c < 8; c++) {
+                    const val = tablero[f][c];
+                    if (val === FICHA_MAQUINA || val === REY_MAQUINA) {
+                        const movs = obtenerMovimientosConReina(f, c, tablero);
+                        if (movs.length > 0) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function finalizarJuego(ganoJugador) {
+            juegoTerminado = true;
+            const overlay = document.getElementById('overlayFinal');
+            const emoji = document.getElementById('emojiFinal');
+            const titulo = document.getElementById('tituloFinal');
+            const descripcion = document.getElementById('descripcionFinal');
+
+            if (ganoJugador) {
+                emoji.textContent = '🎉';
+                titulo.textContent = '¡Ganaste como siempre, papá!';
+                descripcion.textContent = 'Jugaste increíble. Eres un maestro.';
+                actualizarEstadoUI('Ganaste', 'Ganaste', false);
+                lanzarConfeti();
+            } else {
+                emoji.textContent = '😅';
+                titulo.textContent = '¡Perdiste, papá!';
+                descripcion.textContent = 'No pasa nada, la próxima vez será. ¡Yo también aprendo de ti!';
+                actualizarEstadoUI('Perdiste', 'Perdiste', false);
+            }
+            overlay.classList.add('mostrar');
+        }
+
+        canvas.addEventListener('click', (e) => {
+            if (turno !== 'jugador' || juegoTerminado) return;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            const mouseY = (e.clientY - rect.top) * scaleY;
+            const col = Math.floor(mouseX / CASILLA);
+            const fila = Math.floor(mouseY / CASILLA);
+            if (fila < 0 || fila > 7 || col < 0 || col > 7) return;
+
+            const val = tablero[fila][col];
+            const capturasDisponibles = obtenerTodasCapturasConReina(tablero, true);
+
+            if (capturasDisponibles.length > 0) {
+                const esFichaCaptura = capturasDisponibles.some(c => c.from.fila === fila && c.from.col === col);
+                if (!seleccionada) {
+                    if (esFichaCaptura && (val === FICHA_JUGADOR || val === REY_JUGADOR)) {
+                        const movs = obtenerMovimientosConReina(fila, col, tablero);
+                        if (movs.length > 0) {
+                            seleccionada = { fila, col };
+                            movimientosValidos = movs;
+                            dibujarTablero();
+                        }
+                    }
+                    return;
+                }
+            } else {
+                if (!seleccionada) {
+                    if (val === FICHA_JUGADOR || val === REY_JUGADOR) {
+                        const movs = obtenerMovimientosConReina(fila, col, tablero);
+                        if (movs.length > 0) {
+                            seleccionada = { fila, col };
+                            movimientosValidos = movs;
+                            dibujarTablero();
+                        }
+                    }
+                    return;
+                }
+            }
+
+            const destino = movimientosValidos.find(m => m.fila === fila && m.col === col);
+            if (destino) {
+                const capturaInfo = destino.captura ? { fila: destino.capturada.fila, col: destino.capturada.col } : null;
+                tablero = aplicarMovimiento(tablero, seleccionada, destino, capturaInfo);
+                seleccionada = null;
+                movimientosValidos = [];
+                dibujarTablero();
+
+                const valMovido = tablero[destino.fila][destino.col];
+                const esJugadorFicha = (valMovido === FICHA_JUGADOR || valMovido === REY_JUGADOR);
+                if (esJugadorFicha && destino.captura) {
+                    const nuevasCapturas = obtenerMovimientosConReina(destino.fila, destino.col, tablero, true);
+                    if (nuevasCapturas.length > 0) {
+                        seleccionada = { fila: destino.fila, col: destino.col };
+                        movimientosValidos = nuevasCapturas;
+                        dibujarTablero();
+                        return;
+                    }
+                }
+
+                if (!hayMovimientosMaquina()) {
+                    finalizarJuego(true);
+                    return;
+                }
+
+                turno = 'maquina';
+                moverMaquina();
+            } else {
+                if (val === FICHA_JUGADOR || val === REY_JUGADOR) {
+                    const movs = obtenerMovimientosConReina(fila, col, tablero);
+                    if (movs.length > 0) {
+                        seleccionada = { fila, col };
+                        movimientosValidos = movs;
+                        dibujarTablero();
+                    }
+                }
+            }
+        });
+
+        function reiniciarPartida() {
+            iniciarJuego();
+            window.juegoIniciado = true;
+            actualizarEstadoUI('Tu turno', 'En línea', false);
+            document.getElementById('overlayFinal').classList.remove('mostrar');
+            dibujarTablero();
+            setTimeout(mostrarMensajeTurno, 300);
+        }
+
+        window.addEventListener('load', () => {
+            iniciarJuego();
+            window.juegoIniciado = false;
+        });
+    </script>
+</body>
+</html>
