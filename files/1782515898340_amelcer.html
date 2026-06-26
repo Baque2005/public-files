@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Para Ruthie 💛</title>
+  <link href="https://baque2005.github.io/public-files/2025/10/favicon.png" rel="icon" type="image/png">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    .ui-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      text-align: center;
+      width: 90%;
+      max-width: 500px;
+      pointer-events: none;
+    }
+    .message {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255,255,255,0.3), 0 0 20px rgba(255,215,0,0.5);
+      margin-bottom: 20px;
+      animation: pulse 2s infinite ease-in-out;
+    }
+    .credits {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+    }
+    .audio-player {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      padding: 10px 20px;
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      transition: all 0.3s ease;
+      pointer-events: auto;
+    }
+    .audio-player:hover {
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 20px rgba(255,215,0,0.3);
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="heartCanvas"></canvas>
+
+<div class="ui-container">
+  <div class="message">Te Amo Muchote Mi Pinchecha Hermosa Ruthie💛</div>
+  <div class="credits">Base: tlanex · Adaptación 💫</div>
+</div>
+
+<div class="audio-player" id="playerBtn">
+  🎵 Toca para reproducir música <b>💙🌹♥️</b>
+</div>
+
+<audio id="bgAudio" loop>
+  <source src="https://baque2005.github.io/public-files/2025/10/ahi_estabas_tu.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  // Configuración del canvas de corazones (Efecto idéntico)
+  const canvas = document.getElementById('heartCanvas');
+  const ctx = canvas.getContext('2d');
+
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+
+  // Corazón matemático
+  function heartPoint(t) {
+    return {
+      x: 16 * Math.pow(Math.sin(t), 3),
+      y: 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)
+    };
+  }
+
+  const particles = [];
+  const particleCount = 150;
+
+  for (let i = 0; i < particleCount; i++) {
+    const t = Math.random() * Math.PI * 2;
+    const point = heartPoint(t);
+    particles.push({
+      t: t,
+      speed: 0.3 + Math.random() * 0.7,
+      scale: 10 + Math.random() * 8,
+      x: width / 2,
+      y: height / 2,
+      targetX: point.x,
+      targetY: -point.y,
+      size: 1 + Math.random() * 2,
+      alpha: 0.4 + Math.random() * 0.6,
+      color: Math.random() > 0.3 ? '#ff4b6b' : '#ffd700'
+    });
+  }
+
+  function animate() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, width, height);
+
+    const time = Date.now() * 0.001;
+
+    particles.forEach(p => {
+      const pulse = 1 + 0.1 * Math.sin(time * 3 + p.t);
+      const curScale = p.scale * pulse;
+      
+      const x = width / 2 + p.targetX * curScale;
+      const y = height / 2 + p.targetY * curScale;
+
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = p.color;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(x, y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // Controlador de Audio Interactivo (Solución a restricciones del navegador)
+  const audio = document.getElementById('bgAudio');
+  const playerBtn = document.getElementById('playerBtn');
+  let playing = false;
+
+  playerBtn.addEventListener('click', () => {
+    if (!playing) {
+      audio.play().then(() => {
+        playerBtn.innerHTML = "⏸️ Pausar Música <b>💙🌹♥️</b>";
+        playing = true;
+      }).catch(err => {
+        console.log("Error de reproducción:", err);
+      });
+    } else {
+      audio.pause();
+      playerBtn.innerHTML = "🎵 Toca para reproducir música <b>💙🌹♥️</b>";
+      playing = false;
+    }
+  });
+</script>
+
+</body>
+</html>
