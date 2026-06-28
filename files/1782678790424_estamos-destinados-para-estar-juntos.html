@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>I LOVE YOU CANTIKU</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      font-family: Arial, sans-serif;
+      touch-action: none; /* evita zoom accidental al tocar */
+    }
+    canvas {
+      display: block;
+    }
+
+    #intro-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, rgba(255, 75, 120, 0.35), rgba(0, 0, 0, 0.92) 65%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .modal-card {
+      width: min(92vw, 420px);
+      padding: 18px 18px 20px;
+      border-radius: 24px;
+      background: rgba(15, 10, 18, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), 0 0 80px rgba(255, 0, 90, 0.18);
+      text-align: center;
+    }
+
+    .modal-card img {
+      width: 100%;
+      max-height: 320px;
+      object-fit: cover;
+      border-radius: 18px;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    #intro-button {
+      appearance: none;
+      border: 0;
+      padding: 14px 22px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff4d7d, #ff1f5f);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(255, 31, 95, 0.35);
+    }
+
+    #intro-button:active {
+      transform: translateY(1px);
+    }
+
+    #countdown-overlay {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      pointer-events: none;
+    }
+
+    .countdown-label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #ffd7e4;
+    }
+
+    .countdown-number {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      text-shadow: 0 0 18px rgba(255, 255, 255, 0.5);
+    }
+
+    #countdown-button {
+      display: none;
+      margin: 12px auto 0;
+      appearance: none;
+      border: 0;
+      padding: 14px 22px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff4d7d, #ff1f5f);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(255, 31, 95, 0.35);
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 16;
+    }
+
+    #countdown-button:active {
+      transform: translate(-50%, -50%) translateY(1px);
+    }
+
+    #huella-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 22;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(20, 8, 18, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .huella-card {
+      width: min(92vw, 420px);
+      padding: 24px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255, 192, 219, 0.96), rgba(255, 117, 173, 0.95));
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 20px 55px rgba(255, 97, 167, 0.22);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .huella-card h2 {
+      margin: 0 0 18px;
+      font-size: 1.5rem;
+      color: #4b052d;
+      line-height: 1.3;
+    }
+
+    .huella-button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      width: min(280px, 85vw);
+      height: min(280px, 85vw);
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border-radius: 28px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 18px 40px rgba(255, 79, 142, 0.24);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .huella-button:active {
+      transform: scale(0.98);
+    }
+
+    .huella-button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.25), rgba(255,255,255,0.04));
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .huella-button img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 24px;
+      border: 4px solid rgba(255, 255, 255, 0.55);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18);
+      display: block;
+    }
+
+    .huella-button .progress-ring {
+      position: absolute;
+      inset: 12px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+      transform: translateZ(0);
+    }
+
+    .huella-button .progress-fill {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 0%;
+      background: rgba(255, 255, 255, 0.35);
+      transition: height 0.05s linear;
+    }
+
+    .huella-card .hint {
+      margin: 0;
+      font-size: 1rem;
+      color: #65062c;
+      opacity: 0.95;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .huella-card .hint--small {
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    #huella-button {
+      max-width: 320px;
+      max-height: 320px;
+      width: min(78vw, 320px);
+      height: min(78vw, 320px);
+      margin: 0 auto;
+    }
+
+    #white-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: #ffffff;
+      color: #2f1825;
+    }
+
+    .white-card {
+      width: min(92vw, 420px);
+      padding: 24px;
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.12);
+      text-align: center;
+    }
+
+    .white-card h2 {
+      margin: 0 0 10px;
+      font-size: 1.7rem;
+      color: #ff4d7d;
+    }
+
+    .white-card p {
+      margin: 0 0 14px;
+      line-height: 1.6;
+      color: #5c4755;
+    }
+
+    .white-card button {
+      appearance: none;
+      border: 0;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: #ff4d7d;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #question-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(10, 5, 12, 0.38);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .question-card {
+      width: min(92vw, 520px);
+      padding: 24px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      box-shadow: 0 20px 55px rgba(0, 0, 0, 0.24);
+      color: #fff;
+      text-align: left;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .question-progress {
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: #ffdce9;
+      font-weight: 700;
+    }
+
+    .question-card h2 {
+      margin: 0 0 10px;
+      font-size: 1.4rem;
+      color: #fff5f9;
+    }
+
+    .question-card p {
+      margin: 0 0 14px;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #fff7fb;
+    }
+
+    .question-card input {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      margin-bottom: 12px;
+    }
+
+    .question-card input::placeholder {
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    .question-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .question-card button {
+      appearance: none;
+      border: 0;
+      padding: 11px 16px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff4d7d, #ff1f5f);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .question-card .secondary-btn {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      display: none;
+    }
+
+    .question-status {
+      margin-top: 12px;
+      font-size: 0.95rem;
+      min-height: 1.2rem;
+      color: #ffe4eb;
+    }
+
+    .unlock-text {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #fffdfd;
+      line-height: 1.6;
+      display: none;
+      white-space: pre-line;
+    }
+
+    #final-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      overflow: hidden;
+      pointer-events: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0,0,0,0.12);
+      flex-direction: column;
+      padding: 24px;
+    }
+
+    #final-screen.active {
+      display: flex;
+      pointer-events: auto;
+    }
+
+    #final-screen .final-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(255, 78, 140, 0.24), rgba(0, 0, 0, 0.35)),
+        url('https://i.pinimg.com/736x/b5/bf/a6/b5bfa63b700e218233e8f9f62aea6bb6.jpg') center/cover no-repeat;
+      z-index: 0;
+      pointer-events: none;
+      filter: saturate(1.05) brightness(0.92);
+    }
+
+    #final-screen #canvas-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    #final-screen #bubbles-text {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 15;
+      top: 0;
+      left: 0;
+    }
+
+    #final-screen .content-wrap {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
+      max-width: min(90vw, 520px);
+    }
+
+    #final-screen .message {
+      background: rgba(255,255,255,0.92);
+      padding: 22px 36px;
+      border-radius: 20px;
+      box-shadow: 0 6px 28px rgba(214,51,132,0.25);
+      font-size: 28px;
+      color: #d63384;
+      font-family: Georgia, serif;
+      font-weight: bold;
+      animation: bounce 2s ease-in-out infinite;
+      text-align: center;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #final-screen .music-wrap {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 130px;
+      height: 130px;
+    }
+
+    #final-screen .music-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(214,51,132,0.65);
+      background: rgba(255,255,255,0.90);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.3s;
+      box-shadow: 0 4px 16px rgba(214,51,132,0.25);
+    }
+
+    #final-screen .music-btn:hover { transform: scale(1.1); border-color: #d63384; }
+    #final-screen .music-btn svg { width: 26px; height: 26px; }
+
+    #final-screen .ripple {
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px solid rgba(214,51,132,0.30);
+      animation: rippleOut 2s ease-out infinite;
+      pointer-events: none;
+    }
+
+    #final-screen #music-status {
+      position: relative;
+      z-index: 20;
+      color: #fff;
+      font-size: 16px;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.45);
+      width: 100%;
+    }
+    #final-screen .r1 { width: 76px; height: 76px; animation-delay: 0s; }
+    #final-screen .r2 { width: 96px; height: 96px; animation-delay: 0.65s; }
+    #final-screen .r3 { width: 118px; height: 118px; animation-delay: 1.3s; }
+
+    @keyframes rippleOut {
+      0% { opacity: 0.7; transform: scale(0.6); }
+      100% { opacity: 0; transform: scale(1); }
+    }
+
+    #final-screen #music-status {
+      position: relative;
+      z-index: 20;
+      font-family: Georgia, serif;
+      font-size: 13px;
+      color: #c2185b;
+      background: rgba(255,255,255,0.85);
+      padding: 5px 16px;
+      border-radius: 12px;
+      margin-top: 8px;
+      letter-spacing: 0.3px;
+      box-shadow: 0 2px 8px rgba(214,51,132,0.15);
+    }
+
+    #final-screen .text-bubble {
+      position: absolute;
+      font-family: Georgia, serif;
+      border-radius: 26px;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      animation: floatBubble 6.5s ease-in-out forwards;
+      z-index: 19;
+    }
+
+    #final-screen .bbl-sm {
+      font-size: 15px;
+      padding: 9px 18px;
+      color: #880e4f;
+      background: rgba(255,255,255,0.96);
+      border: 2px solid rgba(214,51,132,0.40);
+      box-shadow: 0 4px 14px rgba(214,51,132,0.22);
+    }
+
+    #final-screen .bbl-md {
+      font-size: 18px;
+      padding: 12px 24px;
+      color: #ad1457;
+      background: rgba(255,255,255,0.96);
+      border: 2.5px solid rgba(214,51,132,0.50);
+      box-shadow: 0 5px 18px rgba(214,51,132,0.28);
+    }
+
+    #final-screen .bbl-lg {
+      font-size: 22px;
+      padding: 15px 30px;
+      color: #c2185b;
+      font-weight: bold;
+      background: rgba(255,255,255,0.97);
+      border: 3px solid rgba(214,51,132,0.60);
+      box-shadow: 0 6px 24px rgba(214,51,132,0.35);
+    }
+
+    #final-screen .bbl-pink {
+      font-size: 17px;
+      padding: 11px 22px;
+      color: #fff;
+      font-weight: bold;
+      background: rgba(248,85,167,0.88);
+      border: 2px solid rgba(255,255,255,0.50);
+      box-shadow: 0 5px 18px rgba(214,51,132,0.40);
+    }
+
+    @keyframes floatBubble {
+      0% { opacity: 0; transform: scale(0.55) translateY(25px); }
+      15% { opacity: 1; transform: scale(1) translateY(0); }
+      78% { opacity: 1; transform: scale(1) translateY(-45px); }
+      100% { opacity: 0; transform: scale(0.92) translateY(-85px); }
+    }
+
+    .petal {
+      position: fixed;
+      font-size: 20px;
+      animation: petalFall linear forwards;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    @keyframes petalFall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(420deg); opacity: 0; }
+    }
+
+    @media (max-width: 768px) {
+      #final-screen .message { font-size: 22px; padding: 16px 22px; }
+      #final-screen .bbl-sm { font-size: 14px; padding: 8px 15px; }
+      #final-screen .bbl-md { font-size: 16px; padding: 10px 20px; }
+      #final-screen .bbl-lg { font-size: 19px; padding: 12px 24px; }
+      #final-screen .bbl-pink { font-size: 15px; padding: 9px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="intro-modal">
+    <div class="modal-card">
+      <img src="https://i.pinimg.com/736x/66/2c/85/662c85b18d5770a52c1fc3104bb6e6f4.jpg" alt="Imagen de inicio">
+      <p style="margin: 0 0 14px; color: #ffd6e6; font-size: 1rem; font-weight: 700; line-height: 1.5;">De mi para el amor de mi vida Dayy</p>
+      <button id="intro-button" type="button">apreta aqui</button>
+    </div>
+  </div>
+
+  <div id="countdown-overlay">
+    <div class="countdown-label" id="countdown-label">Espera 5 segundos</div>
+    <div class="countdown-number" id="countdown-number">5</div>
+  </div>
+
+  <button id="countdown-button" type="button">apretalo!!</button>
+
+  <div id="huella-modal" role="dialog" aria-modal="true" aria-label="Modal huella rosa">
+    <div class="huella-card">
+      <h2>gracias por esperar, por favor pon tu dedo</h2>
+      <button id="huella-button" class="huella-button" type="button">
+        <div class="progress-ring"><div class="progress-fill"></div></div>
+        <img src="https://adfy2.icu/img/huella/huella.png" alt="Huella rosa">
+      </button>
+      <p class="hint hint--small">Mantén presionado hasta que termine</p>
+    </div>
+  </div>
+
+  <div id="question-modal" role="dialog" aria-modal="true" aria-label="Modal de preguntas">
+    <div class="question-card">
+      <div class="question-progress" id="question-progress">Pregunta 1 de 6</div>
+      <h2 id="question-title">Pregunta 1</h2>
+      <p id="question-text">¿En qué mes nos conocimos?</p>
+      <input id="question-answer" type="text" placeholder="Escribe tu respuesta" autocomplete="off">
+      <div class="question-actions">
+        <button id="question-submit" type="button">Responder</button>
+        <button id="question-next" class="secondary-btn" type="button">Siguiente</button>
+      </div>
+      <div class="question-status" id="question-status"></div>
+      <div class="unlock-text" id="unlock-text"></div>
+    </div>
+  </div>
+
+  <div id="white-screen" role="dialog" aria-modal="true" aria-label="Pantalla blanca">
+    <div class="white-card">
+      <h2>Mi amor</h2>
+      <p>Este es el espacio blanco que querías para la siguiente parte 💖</p>
+      <button id="close-white-screen" type="button">Cerrar</button>
+    </div>
+  </div>
+
+  <div id="final-screen" aria-hidden="true">
+    <div class="final-bg"></div>
+    <canvas id="canvas-bg"></canvas>
+    <div id="bubbles-text"></div>
+    <div class="content-wrap">
+      <div class="message">Mi amor</div>
+      <div class="music-wrap">
+        <div class="ripple r1"></div>
+        <div class="ripple r2"></div>
+        <div class="ripple r3"></div>
+        <div class="music-btn" id="music-btn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#d63384" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path id="play-icon" d="M8 5l11 7-11 7V5z"/>
+          </svg>
+        </div>
+      </div>
+      <div id="music-status">♫ toca para reproducir</div>
+    </div>
+    <audio id="bg-music" preload="auto">
+      <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/Carla%20Morrison%20-%20Eres%20t%C3%BA%20(letra).mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <canvas id="canvas"></canvas>
+
+  
+</body>
+</html>
+
