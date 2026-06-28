@@ -1,0 +1,460 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy of Love</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow: hidden;
+            height: 100%;
+            background: #000;
+            font-family: Georgia, serif;
+        }
+
+        .webgl {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            outline: none;
+        }
+
+        /* Floating CSS hearts in background */
+        .heart {
+            position: absolute;
+            color: rgba(255, 100, 100, 0.15);
+            font-size: 24px;
+            animation: float 15s infinite ease-in-out;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-20px) rotate(10deg);
+                opacity: 0.7;
+            }
+        }
+
+        .credits {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-family: 'Pacifico', cursive;
+            font-size: 16px;
+            text-align: center;
+            text-shadow: 
+                0 0 3px #fff,
+                0 0 6px #fff,
+                0 0 10px #ff6030,
+                0 0 15px #ff6030;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        .instructions {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-family: Georgia, serif;
+            font-size: 14px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            z-index: 10;
+        }
+        
+        /* Menú de configuración */
+        .menu-button {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 20;
+            backdrop-filter: blur(5px);
+        }
+        
+        .menu-button span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: white;
+            margin: 2px 0;
+            border-radius: 1px;
+        }
+        
+        .config-panel {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            height: 100%;
+            background: rgba(10, 10, 20, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 15;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            transition: left 0.3s ease;
+            border-right: 1px solid rgba(255, 96, 48, 0.3);
+        }
+        
+        .config-panel.open {
+            left: 0;
+        }
+        
+        .config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .config-title {
+            color: white;
+            font-family: 'Pacifico', cursive;
+            font-size: 24px;
+        }
+        
+        .close-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        
+        .close-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .config-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(30, 30, 40, 0.6);
+            border-radius: 15px;
+        }
+        
+        .config-section h3 {
+            color: #ff6030;
+            margin-bottom: 15px;
+            font-family: 'Pacifico', cursive;
+            font-size: 20px;
+        }
+        
+        .config-option {
+            margin-bottom: 12px;
+        }
+        
+        .config-option label {
+            display: block;
+            color: white;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .config-option input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .config-option input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ff6030;
+            cursor: pointer;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #ff6030;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .color-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-option.active {
+            border-color: white;
+            transform: scale(1.15);
+        }
+        
+        .developer-info {
+            margin-top: auto;
+            padding: 20px;
+            background: rgba(20, 20, 30, 0.8);
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 96, 48, 0.3);
+        }
+        
+        .developer-info h3 {
+            color: #ff6030;
+            margin-bottom: 10px;
+            font-family: 'Pacifico', cursive;
+            font-size: 20px;
+        }
+        
+        .developer-info p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .whatsapp-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: all 0.2s;
+            font-size: 15px;
+        }
+        
+        .whatsapp-link:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+        }
+        
+        .whatsapp-link i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 14;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .credits { font-size: 14px; bottom: 10px; }
+            .instructions { font-size: 12px; padding: 6px 12px; }
+            .menu-button { top: 10px; left: 10px; width: 36px; height: 36px; }
+            .menu-button span { width: 18px; }
+            .config-panel { width: 280px; padding: 15px; }
+            .config-title { font-size: 20px; }
+            .whatsapp-link { padding: 8px 14px; font-size: 14px; }
+        }
+        
+        @media (max-width: 480px) {
+            .config-panel { width: 100%; left: -100%; }
+            .config-panel.open { left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <canvas class="webgl"></canvas>
+    <div class="instructions">Te Amo Muchote</div>
+    <div class="credits">Fernando</div>
+    
+    <!-- Menú de configuración -->
+    <div class="menu-button" id="menuButton">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="config-panel" id="configPanel">
+        <div class="config-header">
+            <div class="config-title">Configuración</div>
+            <button class="close-button" id="closeButton">✕</button>
+        </div>
+        
+        <div class="config-section">
+            <h3>Corazones Orbitales</h3>
+            <div class="config-option">
+                <label for="heartSize">Tamaño</label>
+                <input type="range" id="heartSize" min="0.3" max="1.2" step="0.1" value="0.8">
+            </div>
+            <div class="config-option">
+                <label for="heartSpeed">Velocidad de rotación</label>
+                <input type="range" id="heartSpeed" min="0" max="1" step="0.05" value="0.25">
+            </div>
+            <div class="config-option">
+                <label>Color principal</label>
+                <div class="color-options">
+                    <div class="color-option active" style="background-color: #FFD700;" data-color="#FFD700"></div>
+                    <div class="color-option" style="background-color: #C7B8EA;" data-color="#C7B8EA"></div>
+                    <div class="color-option" style="background-color: #800080;" data-color="#800080"></div>
+                    <div class="color-option" style="background-color: #0949f0;" data-color="#0949f0"></div>
+                    <div class="color-option" style="background-color: #8a2be2;" data-color="#8a2be2"></div>
+                    <div class="color-option" style="background-color: #01ffff;" data-color="#01ffff"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="config-section">
+            <h3>Corazón Central</h3>
+            <div class="config-option">
+                <label for="centerHeartSize">Tamaño</label>
+                <input type="range" id="centerHeartSize" min="2.0" max="5.0" step="0.2" value="3.2">
+            </div>
+        </div>
+        
+        <div class="config-section">
+            <h3>Fondo Estelar</h3>
+            <div class="config-option">
+                <label for="starBrightness">Brillo de estrellas</label>
+                <input type="range" id="starBrightness" min="0.3" max="1.0" step="0.1" value="0.85">
+            </div>
+        </div>
+
+        <div class="config-section">
+            <h3>Opciones Avanzadas</h3>
+            <div class="config-option">
+                <label>Rotación automática</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autoRotateToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="config-option">
+                <label for="textOpacity">Opacidad de textos románticos</label>
+                <input type="range" id="textOpacity" min="0.1" max="1.0" step="0.1" value="0.9">
+            </div>
+        </div>
+        
+        <div class="developer-info">
+            <h3>MR</h3>
+            <p>Te Amo Muchote Mi Niña Hermosa</p>
+            
+            </a>
+            <p style="margin-top: 12px; font-size: 12px; color: rgba(255, 255, 255, 0.6);">
+               And
+            </p>
+        </div>
+    </div>
+
+    
+</body>
+</html>
+</head>
+<body>
+    <audio id="bg-music" loop autoplay>
+        <source src="https://github.com/Gon-p/G-/raw/refs/heads/main/adore%20-%20_did%20i%20tell%20u%20that%20i%20miss%20u_%20(lyric%20video).m4a" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    
+</body>
+</html>
+
+    
