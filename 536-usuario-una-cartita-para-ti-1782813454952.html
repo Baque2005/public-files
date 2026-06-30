@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eres mi felicidad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-image: url('https://i.pinimg.com/736x/88/56/cf/8856cfc889c6edfb76628d053c65c7f6.jpg');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+      color: #333;
+      transition: background-color 0.5s ease;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .screen {
+      display: none;
+      animation: fadeIn 0.8s ease;
+      width: 90%;
+      max-width: 600px;
+    }
+    .active {
+      display: block;
+    }
+    .main-img {
+      width: 280px;
+      height: auto;
+      margin-bottom: 15px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      border: none;
+      box-shadow: none;
+    }
+    .main-img:hover {
+      transform: scale(1.05);
+    }
+    .card {
+      background-color: #fff;
+      background-image: url('https://i.pinimg.com/1200x/f0/5b/e4/f05be478111de929e4ec98a07362d3ab.jpg');
+      background-size: 100% 100%;
+      background-position: top left;
+      background-repeat: no-repeat;
+      border-radius: 0; /* esquinas en punta */
+      padding: 52px 78px 44px;
+      border: 2px solid #e5e5e5;
+      width: 95%;
+      max-width: 900px;
+      text-align: left;
+      margin: 0 auto;
+      box-sizing: border-box;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      animation: fadeIn 1s ease;
+    }
+    .card h3 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2em;
+      text-align: left;
+      margin-bottom: 20px;
+      margin-left: 10px;
+      color: #444;
+    }
+    .card p {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.1em;
+  line-height: 1.6;
+  text-align: justify;
+  text-justify: inter-word;
+  color: #444;
+  margin: 0 0 1em;
+}
+    .return-btn {
+      margin-top: 25px;
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+      background-color: #ff4f81;
+      color: white;
+    }
+    .return-btn:hover {
+      background-color: #ff2a66;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: scale(0.95);}
+      to {opacity: 1; transform: scale(1);}
+    }
+    @media (max-width: 600px) {
+  .card {
+    padding: 24px 18px 20px;
+    width: 95%;
+  }
+
+  .card h3 {
+    font-size: 1.6em;
+    text-align: center;
+    margin-left: 0;
+  }
+
+  .card p {
+    font-size: 0.92em;
+    line-height: 1.55;
+    text-align: left;
+  }
+
+  h2 {
+    font-size: 1.2em;
+  }
+
+  .card h3 {
+    font-size: 1.35em;
+  }
+
+  .main-img {
+    width: 220px;
+  }
+}
+  </style>
+</head>
+<body>
+    <audio id="musica" loop>
+  <source src="https://raw.githubusercontent.com/baque2005/public-files/main/assets/audio/536_1782813453493_ssstik.io_1782811709255__2_.mp3" type="audio/mpeg">
+</audio>
+  <div class="screen active" id="screen1">
+   
+    <img src="https://i.pinimg.com/736x/a1/92/d5/a192d5e43af550b13a2cf7e46fd05cbb.jpg" alt="Correo" class="main-img">
+  </div>
+  <div class="screen" id="screen2">
+    
+    <img src="https://i.pinimg.com/736x/9f/c6/43/9fc6433cb7a0f57f372518aed30a9100.jpg" alt="Carta" class="main-img">
+  </div>
+  <div class="screen" id="screen3">
+    
+    <img src="https://i.pinimg.com/736x/df/92/93/df929364c1816ffbeff677819abcf8cf.jpg" alt="Sobre" class="main-img">
+  </div>
+  <div class="screen" id="screen5">
+    <div class="card">
+      <h3>Mi Amorcito</h3>
+   <p>Mi cielo hermoso,</p>
+
+<p><strong>cada día contigo es mi lugar favorito 💖</strong></p>
+
+<p>Tu forma de ser ilumina mi corazón y hace que todo a mi alrededor tenga más sentido.</p>
+
+<p>Te pienso en cada momento, y aunque a veces estemos lejos, mi amor por ti siempre te encuentra.</p>
+
+<p>Gracias por existir, por tu ternura y por hacer de mi vida un sueño bonito 💗</p>
+
+<p>Hoy, mañana y siempre, te voy a amar con todo mi corazón 💖</p>
+    <div style="text-align: center;">
+      <button class="return-btn">Solo eres tú!</button>
+    </div>
+  </div>
+  
+</body>
+</html>
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Corazones flotando</title>
+
+  <style>
+
+    body {
+  margin: 0;
+  height: 100vh;
+  background-image: url('https://i.pinimg.com/736x/88/56/cf/8856cfc889c6edfb76628d053c65c7f6.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  overflow: hidden;
+}
+    .heart {
+
+      position: absolute;
+
+      bottom: -20px;
+
+      color: pink;
+
+      font-size: 20px;
+
+      animation: float 6s linear forwards;
+
+    }
+
+    @keyframes float {
+
+      0% {
+
+        transform: translateY(0) scale(1);
+
+        opacity: 1;
+
+      }
+
+      100% {
+
+        transform: translateY(-100vh) scale(1.5);
+
+        opacity: 0;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+
+
+</body>
+
+</html>
