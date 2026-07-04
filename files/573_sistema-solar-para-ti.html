@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>por-ti-iria-hasta-marte</title>
+    <style>
+@import url("https://fonts.googleapis.com/css?family=Montserrat:300,400,700");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+body {
+  overflow: hidden;
+  background: black;
+  height: 100vh;
+  font-family: "Montserrat", sans-serif;
+  position: relative;
+}
+
+/* Control de música */
+.music-control {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 300;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  backdrop-filter: blur(10px);
+}
+
+.music-control:hover {
+  background: rgba(255,255,255,0.2);
+  transform: scale(1.1);
+}
+
+.music-control svg {
+  width: 24px;
+  height: 24px;
+  fill: white;
+}
+
+.music-control.playing {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+  50% { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+}
+
+/* Corazones flotantes */
+.heart {
+  position: fixed;
+  font-size: clamp(25px, 6vw, 35px);
+  pointer-events: none;
+  z-index: 1000;
+  animation: floatUp 3s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(0) rotate(0deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-30px) scale(1.2) rotate(10deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-250px) scale(1.8) rotate(25deg);
+  }
+}
+
+/* Animación simple de fade para el planeta */
+@keyframes simpleFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.planet-view.active .planet-sphere {
+  animation: rotate 60s linear infinite, simpleFadeIn 0.8s ease-out;
+}
+
+/* Animación simple de texto */
+@keyframes textFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.planet-view.active .planet-info {
+  animation: textFadeIn 1s ease-out 0.3s both;
+}
+
+/* Estrellas de fondo */
+.star {
+  position: fixed;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 3s infinite;
+  z-index: -1;
+  box-shadow: 0 0 3px rgba(255,255,255,0.8);
+}
+
+@keyframes twinkle {
+  0%, 100% { 
+    opacity: 0.2; 
+    transform: scale(1);
+    box-shadow: 0 0 2px rgba(255,255,255,0.5);
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.8);
+    box-shadow: 0 0 5px rgba(255,255,255,1);
+  }
+}
+
+/* Menú lateral */
+.planet-menu {
+  position: fixed;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.planet-btn {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.planet-btn:hover {
+  transform: translateX(5px);
+}
+
+.planet-btn .preview {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-size: cover !important;
+  box-shadow: 0 -10px 8px 2px black inset, 0 0 10px rgba(255,255,255,0.3);
+  position: relative;
+}
+
+.planet-btn .preview::after {
+  content: "";
+  display: block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid white;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.3s;
+}
+
+.planet-btn.active .preview::after {
+  opacity: 1;
+  background: white;
+  width: 6px;
+  height: 6px;
+}
+
+.planet-btn .info {
+  margin-left: 12px;
+  display: none;
+}
+
+.planet-btn .info h2 {
+  color: white;
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.planet-btn .info h3 {
+  color: rgba(255,255,255,0.5);
+  font-size: 8px;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+.planet-btn.active .info {
+  display: block;
+}
+
+/* Colores de indicador por planeta */
+.planet-btn.active.mercury .info h2 { color: #E8927C; }
+.planet-btn.active.venus .info h2 { color: #b45d15; }
+.planet-btn.active.earth .info h2 { color: #26daaa; }
+.planet-btn.active.mars .info h2 { color: #e55f45; }
+.planet-btn.active.jupiter .info h2 { color: orange; }
+.planet-btn.active.saturn .info h2 { color: #b29d81; }
+.planet-btn.active.uranus .info h2 { color: #8dcdd8; }
+.planet-btn.active.neptune .info h2 { color: #4f83e2; }
+.planet-btn.active.pluto .info h2 { color: #FF8732; }
+
+/* Previews de planetas */
+.mercury .preview { background: url("https://www.solarsystemscope.com/images/textures/full/2k_makemake_fictional.jpg") !important; }
+.venus .preview { background: url("https://i.postimg.cc/kXsdr2Zq/istockphoto-472523336-612x612.jpg") !important; }
+.earth .preview { background: url("https://img00.deviantart.net/04ef/i/2009/114/3/e/new_earth_texture_map_by_lightondesigns.jpg") !important; }
+.mars .preview { background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/mars_texture.jpg") !important; }
+.jupiter .preview { background: url("https://i.postimg.cc/cJQmjn9F/jupiter-wii.webp") !important; }
+.saturn .preview { background: url("https://www.solarsystemscope.com/images/textures/full/2k_saturn.jpg") !important; }
+.uranus .preview { background: url("https://img00.deviantart.net/957c/i/2017/165/4/9/uranus_texture_map_by_jcpag2010-db7yjwb.png") !important; }
+.neptune .preview { background: url("https://img00.deviantart.net/f068/i/2017/165/b/c/neptune_texture_map_by_jcpag2010-dbcjcv5.png") !important; }
+.pluto .preview { background: url("https://pre00.deviantart.net/4677/th/pre/f/2015/314/4/e/pluto_map__2015_nov_10__by_snowfall_the_cat-d918tlb.png") !important; }
+
+/* Contenedor solar */
+.solar-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: perspective(1000px) rotateX(-15deg);
+  transform-style: preserve-3d;
+  z-index: 1;
+}
+
+.planet-view {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 1s ease;
+  z-index: 1;
+}
+
+.planet-view.active {
+  display: flex;
+  opacity: 1;
+  animation: fadeIn 1.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.planet-sphere {
+  width: min(70vw, 400px);
+  height: min(70vw, 400px);
+  border-radius: 50%;
+  background-size: cover !important;
+  position: relative;
+  animation: rotate 60s linear infinite;
+  box-shadow: 0 0 100px rgba(255,255,255,0.1);
+}
+
+@keyframes rotate {
+  from { background-position: 0 0; }
+  to { background-position: 1000px 0; }
+}
+
+/* Overlay oscuro en la parte inferior */
+.planet-sphere::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: inset 0 -80px 100px 20px rgba(0,0,0,0.9);
+}
+
+/* Texturas específicas */
+.planet-sphere.mercury {
+  background: url("https://www.solarsystemscope.com/images/textures/full/2k_makemake_fictional.jpg");
+  box-shadow: 0 0 80px rgba(232, 146, 124, 0.4), inset 0 0 100px rgba(0,0,0,0.5);
+}
+
+.planet-sphere.venus {
+  background: url("https://i.postimg.cc/kXsdr2Zq/istockphoto-472523336-612x612.jpg");
+  box-shadow: 0 0 80px rgba(255, 203, 156, 0.4), inset 0 0 100px rgba(0,0,0,0.5);
+}
+
+.planet-sphere.earth {
+  background: url("https://img00.deviantart.net/04ef/i/2009/114/3/e/new_earth_texture_map_by_lightondesigns.jpg");
+  box-shadow: 0 0 80px rgba(140, 186, 255, 0.4), inset 0 0 100px rgba(0,0,0,0.5);
+}
+
+.planet-sphere.mars {
+  background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/217233/mars_texture.jpg");
+  box-shadow: 0 0 80px rgba(232, 99, 99, 0.4), inset 0 0 100px rgba(0,0,0,0.5);
+}
+
+.planet-sphere.jupiter {
+  background: url("https://i.postimg.cc/cJQmjn9F/jupiter-wii.webp");
+  box-shadow: 0 0 80px rgba(255, 165, 0, 0.4), inset 0 0 100px rgba(0,0,0,0.5);
+}
+
+.planet-sphere.saturn {
+  background: url("https://www.solarsystemscope.com/images/textures/full/2k_saturn.jpg");
+  box-shadow: 0 0 80px rgba(178, 157, 129, 0.4), inset 0 0 100px rgba(0,0,0,0.5);
+}
+
+.planet-sphere.uranus {
+  background: url("https://img00.deviantart.net/957c/i/2017/165/4/9/uranus_texture_map_by_jcpag2010-db7yjwb.png");
+  box-shadow: 0 0 80px rgba(141, 205, 216, 0.4), inset 0 0 100px rgba(0,0,0,0.5);
+}
+
+.planet-sphere.neptune {
+  background: url("https://www.solarsystemscope.com/images/textures/full/2k_neptune.jpg");
+  box-shadow: 0 0 80px rgba(79, 131, 226, 0.4), inset 0 0 100px rgba(0,0,0,0.5);
+}
+
+.planet-sphere.pluto {
+  background: url("https://pre00.deviantart.net/4677/th/pre/f/2015/314/4/e/pluto_map__2015_nov_10__by_snowfall_the_cat-d918tlb.png");
+  box-shadow: 0 0 80px rgba(255, 135, 50, 0.4), inset 0 0 100px rgba(0,0,0,0.5);
+}
+
+/* Información del planeta */
+.planet-info {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: white;
+  width: 92%;
+  max-width: 700px;
+  padding: 0 15px;
+}
+
+.planet-info h2 {
+  font-size: clamp(9px, 2vw, 11px);
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 5px;
+}
+
+.planet-info h1 {
+  font-size: clamp(36px, 9vw, 52px);
+  font-weight: 400;
+  letter-spacing: clamp(10px, 3vw, 18px);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  text-shadow: 0 0 25px rgba(255,255,255,0.4);
+  line-height: 1.1;
+}
+
+.planet-info p {
+  font-size: clamp(15px, 4vw, 20px);
+  font-weight: 400;
+  line-height: 2;
+  letter-spacing: 1.8px;
+  opacity: 1;
+  text-shadow: 0 3px 15px rgba(0,0,0,0.9);
+  background: rgba(0,0,0,0.4);
+  padding: 18px 22px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Colores específicos por planeta */
+.planet-info.mercury h1 { color: #f7dad3; }
+.planet-info.venus h1 { color: #e99046; }
+.planet-info.earth h1 { color: #7de9cc; }
+.planet-info.mars h1 { color: #f2ac9e; }
+.planet-info.jupiter h1 { color: #ffc966; }
+.planet-info.saturn h1 { color: #d9cec0; }
+.planet-info.uranus h1 { color: #d9eef2; }
+.planet-info.neptune h1 { color: #a7c1f0; }
+.planet-info.pluto h1 { color: #ffc398; }
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .music-control {
+    width: 45px;
+    height: 45px;
+    top: 12px;
+    right: 12px;
+  }
+  
+  .music-control svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .planet-menu {
+    left: 8px;
+    gap: 10px;
+  }
+  
+  .planet-btn .preview {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .planet-btn .info {
+    margin-left: 10px;
+  }
+  
+  .planet-btn .info h2 {
+    font-size: 9px;
+  }
+  
+  .planet-btn .info h3 {
+    font-size: 7px;
+  }
+  
+  .planet-info {
+    top: 3%;
+    width: 94%;
+  }
+  
+  .planet-info h2 {
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+  }
+  
+  .planet-info h1 {
+    margin-bottom: 15px;
+  }
+  
+  .planet-info p {
+    line-height: 1.8;
+    padding: 15px 18px;
+    letter-spacing: 1.2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .planet-sphere {
+    width: 75vw;
+    height: 75vw;
+  }
+  
+  .planet-info {
+    top: 2%;
+    width: 96%;
+    padding: 0 10px;
+  }
+  
+  .planet-info p {
+    padding: 12px 15px;
+    line-height: 1.7;
+  }
+  
+  .heart {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 380px) {
+  .music-control {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .music-control svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .planet-menu {
+    left: 6px;
+    gap: 9px;
+  }
+  
+  .planet-btn .preview {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .planet-info p {
+    padding: 10px 12px;
+  }
+}
+    </style>
+</head>
+<body>
+    <!-- Control de música -->
+    <div class="music-control" id="musicControl">
+        <svg id="playIcon" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+        </svg>
+        <svg id="pauseIcon" style="display:none;" viewBox="0 0 24 24">
+            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+        </svg>
+    </div>
+    
+    <!-- Audio -->
+    <audio id="backgroundMusic" loop>
+        <source src="https://github.com/codeninja543/codeninja5433/raw/refs/heads/main/Manuel%20Medrano%20-%20Bajo%20El%20Agua%20(Video%20Oficial).mp3" type="audio/mpeg">
+    </audio>
+    
+    <div class="planet-menu">
+        <div class="planet-btn mercury active" data-planet="mercury">
+            <div class="preview"></div>
+            <div class="info">
+                <h2>Mercurio</h2>
+                <h3>0.39 UA</h3>
+            </div>
+        </div>
+        
+        <div class="planet-btn venus" data-planet="venus">
+            <div class="preview"></div>
+            <div class="info">
+                <h2>Venus</h2>
+                <h3>0.723 UA</h3>
+            </div>
+        </div>
+        
+        <div class="planet-btn earth" data-planet="earth">
+            <div class="preview"></div>
+            <div class="info">
+                <h2>Tierra</h2>
+                <h3>1 UA</h3>
+            </div>
+        </div>
+        
+        <div class="planet-btn mars" data-planet="mars">
+            <div class="preview"></div>
+            <div class="info">
+                <h2>Marte</h2>
+                <h3>1.524 UA</h3>
+            </div>
+        </div>
+        
+        <div class="planet-btn jupiter" data-planet="jupiter">
+            <div class="preview"></div>
+            <div class="info">
+                <h2>Júpiter</h2>
+                <h3>5.203 UA</h3>
+            </div>
+        </div>
+        
+        <div class="planet-btn saturn" data-planet="saturn">
+            <div class="preview"></div>
+            <div class="info">
+                <h2>Saturno</h2>
+                <h3>9.539 UA</h3>
+            </div>
+        </div>
+        
+        <div class="planet-btn uranus" data-planet="uranus">
+            <div class="preview"></div>
+            <div class="info">
+                <h2>Urano</h2>
+                <h3>19.18 UA</h3>
+            </div>
+        </div>
+        
+        <div class="planet-btn neptune" data-planet="neptune">
+            <div class="preview"></div>
+            <div class="info">
+                <h2>Neptuno</h2>
+                <h3>30.06 UA</h3>
+            </div>
+        </div>
+        
+        <div class="planet-btn pluto" data-planet="pluto">
+            <div class="preview"></div>
+            <div class="info">
+                <h2>Plutón</h2>
+                <h3>39.5 UA</h3>
+            </div>
+        </div>
+    </div>
+    
+    <div class="solar-container">
+        <div class="planet-view active" id="mercury">
+            <div class="planet-sphere mercury"></div>
+            <div class="planet-info mercury">
+                <h2>Planeta</h2>
+                <h1>Mercurio</h1>
+                <p>Aunque eres el más cercano al sol, mi amor por ti arde aún más fuerte. Cruzaría el universo entero solo para estar cerca de tu calor.</p>
+            </div>
+        </div>
+        
+        <div class="planet-view" id="venus">
+            <div class="planet-sphere venus"></div>
+            <div class="planet-info venus">
+                <h2>Planeta</h2>
+                <h1>Venus</h1>
+                <p>Eres la diosa de mi universo, la estrella más brillante en mi cielo. Tu belleza ilumina cada rincón de mi galaxia personal.</p>
+            </div>
+        </div>
+        
+        <div class="planet-view" id="earth">
+            <div class="planet-sphere earth"></div>
+            <div class="planet-info earth">
+                <h2>Planeta</h2>
+                <h1>Tierra</h1>
+                <p>Contigo encontré mi hogar entre las estrellas. Eres mi mundo, mi atmósfera, el único lugar donde puedo respirar amor verdadero.</p>
+            </div>
+        </div>
+        
+        <div class="planet-view" id="mars">
+            <div class="planet-sphere mars"></div>
+            <div class="planet-info mars">
+                <h2>Planeta</h2>
+                <h1>Marte</h1>
+                <p>Por ti iría hasta Marte y más allá. Conquistaría planetas rojos, atravesaría tormentas de arena cósmica, todo por verte sonreír.</p>
+            </div>
+        </div>
+        
+        <div class="planet-view" id="jupiter">
+            <div class="planet-sphere jupiter"></div>
+            <div class="planet-info jupiter">
+                <h2>Planeta</h2>
+                <h1>Júpiter</h1>
+                <p>Mi amor por ti es tan grande como este gigante. Infinito, majestuoso, capaz de protegerte de cualquier asteroide que se atreva a acercarse.</p>
+            </div>
+        </div>
+        
+        <div class="planet-view" id="saturn">
+            <div class="planet-sphere saturn"></div>
+            <div class="planet-info saturn">
+                <h2>Planeta</h2>
+                <h1>Saturno</h1>
+                <p>Tú eres el anillo que completa mi existencia. Elegante, única, una joya cósmica que adorna mi vida con su presencia celestial.</p>
+            </div>
+        </div>
+        
+        <div class="planet-view" id="uranus">
+            <div class="planet-sphere uranus"></div>
+            <div class="planet-info uranus">
+                <h2>Planeta</h2>
+                <h1>Urano</h1>
+                <p>Como este planeta único, nuestro amor desafía las reglas. Giramos en nuestra propia órbita, donde solo existimos tú y yo.</p>
+            </div>
+        </div>
+        
+        <div class="planet-view" id="neptune">
+            <div class="planet-sphere neptune"></div>
+            <div class="planet-info neptune">
+                <h2>Planeta</h2>
+                <h1>Neptuno</h1>
+                <p>Eres el misterio azul que quiero descubrir cada día. Profundo como un océano cósmico, me sumerjo en tu amor sin miedo a perderme.</p>
+            </div>
+        </div>
+        
+        <div class="planet-view" id="pluto">
+            <div class="planet-sphere pluto"></div>
+            <div class="planet-info pluto">
+                <h2>Planeta enano</h2>
+                <h1>Plutón</h1>
+                <p>Aunque el mundo diga que estás lejos, para mí siempre serás un planeta en mi corazón. Viajaría al fin del sistema solar solo por estar contigo.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const planetButtons = document.querySelectorAll('.planet-btn');
+        const planetViews = document.querySelectorAll('.planet-view');
+        const musicControl = document.getElementById('musicControl');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const playIcon = document.getElementById('playIcon');
+        const pauseIcon = document.getElementById('pauseIcon');
+        let isPlaying = false;
+        
+        // Control de planetas
+        planetButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const planetName = button.getAttribute('data-planet');
+                
+                planetButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                planetViews.forEach(view => view.classList.remove('active'));
+                document.getElementById(planetName).classList.add('active');
+            });
+        });
+        
+        // Control de música
+        musicControl.addEventListener('click', () => {
+            if (isPlaying) {
+                backgroundMusic.pause();
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+                musicControl.classList.remove('playing');
+            } else {
+                backgroundMusic.play();
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+                musicControl.classList.add('playing');
+            }
+            isPlaying = !isPlaying;
+        });
+        
+        // Crear corazones al tocar la pantalla
+        const colors = ['#ff1744', '#ff4081', '#ff80ab', '#f50057', '#ff6090', '#ffc1e3'];
+        
+        function createHeart(x, y) {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤';
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Variación aleatoria en la posición
+            const randomX = (Math.random() - 0.5) * 50;
+            heart.style.transform = `translateX(${randomX}px)`;
+            
+            document.body.appendChild(heart);
+            
+            // Eliminar el corazón después de la animación
+            setTimeout(() => {
+                heart.remove();
+            }, 3000);
+        }
+        
+        // Evento de click/touch
+        document.addEventListener('click', (e) => {
+            createHeart(e.clientX, e.clientY);
+        });
+        
+        document.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            Array.from(e.touches).forEach(touch => {
+                createHeart(touch.clientX, touch.clientY);
+            });
+        });
+        
+        // Crear estrellas de fondo
+        function createStars() {
+            const starCount = 150;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                document.body.appendChild(star);
+            }
+        }
+        
+        createStars();
+    </script>
+</body>
+</html>
