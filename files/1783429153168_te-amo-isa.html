@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Para Isa ❤️</title>
+<style>
+html,body{margin:0;padding:0;overflow:hidden;background:#02030b;color:white;font-family:Georgia,serif;height:100%}
+#bg{position:fixed;inset:0;background:linear-gradient(#02030b,#09142b)}
+.star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;animation:twinkle 2s infinite alternate}
+@keyframes twinkle{from{opacity:.2}to{opacity:1}}
+#moon{position:absolute;top:60px;right:60px;width:120px;height:120px;border-radius:50%;background:#f7f2d3;box-shadow:0 0 40px #fff8;}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:25px;text-align:center}
+button{padding:18px 40px;font-size:24px;border:none;border-radius:999px;background:#ff4f8b;color:#fff;cursor:pointer;transition:.15s}
+button:active{transform:scale(.92)}
+#story{display:none;max-width:760px;font-size:22px;line-height:1.7;white-space:pre-wrap}
+#end{display:none;text-align:center}
+#end img{width:320px;max-width:80vw;border-radius:18px;box-shadow:0 0 30px #fff4}
+.heart{position:fixed;font-size:22px;pointer-events:none;animation:float 1s forwards}
+@keyframes float{to{transform:translateY(-100px) scale(1.7);opacity:0}}
+</style>
+</head>
+<body>
+<div id="bg"><div id="moon"></div></div>
+
+<div class="screen" id="start">
+<h1>✨ Para la niña más hermosa del universo ✨</h1>
+<p>Hay algo muy especial esperándote...</p>
+<button id="go">❤️ Presiona ❤️</button>
+</div>
+
+<div class="screen">
+<div id="story"></div>
+
+<div id="end">
+<img src="https://images.unsplash.com/photo-1591769225440-811ad7d6eab3?w=800" alt="Bernés">
+<h2>Siempre tú ❤️</h2>
+<p>Eres mi lugar favorito en todo el universo.</p>
+</div>
+</div>
+
+<script>
+for(let i=0;i<220;i++){
+ let s=document.createElement("div");
+ s.className="star";
+ s.style.left=Math.random()*100+"%";
+ s.style.top=Math.random()*100+"%";
+ s.style.opacity=Math.random();
+ document.getElementById("bg").appendChild(s);
+}
+document.addEventListener("pointerdown",e=>{
+ for(let i=0;i<10;i++){
+   let h=document.createElement("div");
+   h.className="heart";
+   h.innerHTML="❤";
+   h.style.left=(e.clientX+(Math.random()*30-15))+"px";
+   h.style.top=(e.clientY+(Math.random()*30-15))+"px";
+   document.body.appendChild(h);
+   setTimeout(()=>h.remove(),1000);
+ }
+});
+const text=`Mi amor...
+
+No existen palabras suficientes para explicarte cuánto te amo.
+
+Desde que llegaste a mi vida descubrí que el hogar también puede ser una persona.
+
+Amo tu sonrisa, tu forma de ver el mundo, tu sensibilidad, tu fortaleza y hasta esos días en los que solo necesitas un abrazo.
+
+Quiero que nunca olvides lo importante que eres para mí.
+
+Gracias por cada momento, por cada risa, por confiar en mí y por permitirme conocer el corazón tan bonito que tienes.
+
+Prometo seguir aprendiendo para amarte mejor.
+
+Prometo escucharte.
+
+Prometo cuidar tu corazón.
+
+Y aunque a veces me equivoque, jamás dejaré de elegirte.
+
+Porque para mí eres única.
+
+Sueño con construir miles de recuerdos contigo.
+
+Gracias por existir, Isa.
+
+Te amo con todo mi corazón.
+
+Hoy, mañana y siempre. ❤️`;
+
+go.onclick=()=>{
+ start.style.display="none";
+ story.style.display="block";
+ let i=0;
+ let timer=setInterval(()=>{
+   if(text[i]=="\n") story.innerHTML+="<br>";
+   else story.innerHTML+=text[i];
+   i++;
+   if(i>=text.length){
+      clearInterval(timer);
+      setTimeout(()=>{
+        story.style.display="none";
+        end.style.display="block";
+      },2500);
+   }
+ },40);
+};
+</script>
+</body>
+</html>
