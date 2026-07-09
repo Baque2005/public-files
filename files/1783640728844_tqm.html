@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>❤️ Te Amo ❤️</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{display:flex;justify-content:center;align-items:center;height:100vh;overflow:hidden;background:linear-gradient(135deg,#ff4e8a,#ff8fb1);font-family:Arial,sans-serif;}
+.container{text-align:center;color:#fff;position:relative;z-index:2;}
+.heart{width:180px;height:180px;display:block;margin:0 auto 25px;animation:latido 1s infinite;filter:drop-shadow(0 0 20px rgba(255,0,0,.4));}
+h1{font-size:60px;animation:aparecer 2s ease,brillo 2s infinite alternate;}
+p{margin-top:15px;font-size:24px;text-shadow:0 0 10px rgba(255,255,255,.5);}
+.floating-hearts{position:absolute;inset:0;overflow:hidden;z-index:1;}
+.floating-hearts span{position:absolute;bottom:-50px;font-size:30px;animation:subir linear infinite;opacity:.8;}
+.floating-hearts span:nth-child(1){left:10%;animation-duration:8s;}
+.floating-hearts span:nth-child(2){left:25%;animation-duration:10s;animation-delay:2s;}
+.floating-hearts span:nth-child(3){left:40%;animation-duration:7s;animation-delay:1s;}
+.floating-hearts span:nth-child(4){left:55%;animation-duration:9s;animation-delay:3s;}
+.floating-hearts span:nth-child(5){left:70%;animation-duration:8s;animation-delay:1s;}
+.floating-hearts span:nth-child(6){left:85%;animation-duration:11s;animation-delay:4s;}
+@keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+@keyframes aparecer{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes brillo{from{text-shadow:0 0 10px #fff,0 0 20px #ff4e8a}to{text-shadow:0 0 20px #fff,0 0 40px #ff0066,0 0 60px #ff0066}}
+@keyframes subir{0%{transform:translateY(0) scale(.5);opacity:0}20%{opacity:1}100%{transform:translateY(-120vh) scale(1.5);opacity:0}}
+</style>
+</head>
+<body>
+<div class="floating-hearts"><span>❤️</span><span>💕</span><span>💖</span><span>💗</span><span>💞</span><span>❤️</span></div>
+<div class="container">
+<svg class="heart" viewBox="0 0 512 512"><path fill="#ff0000" d="M256 472s-29-26-58-52C92 326 32 268 32 176 32 110 86 56 152 56c41 0 79 19 104 49 25-30 63-49 104-49 66 0 120 54 120 120 0 92-60 150-166 244-29 26-58 52-58 52z"/></svg>
+<h1>Te Amo ❤️</h1><p>Siempre estaré contigo.</p>
+</div>
+</body></html>
