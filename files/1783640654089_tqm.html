@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>❤️ Te Amo ❤️</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{overflow:hidden;height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#ff4e8a,#ff9ac2,#ffd6e7);font-family:Arial,sans-serif}
+.container{text-align:center;color:#fff;z-index:2}
+.heart{position:relative;width:140px;height:140px;background:#ff003c;transform:rotate(-45deg);margin:auto;animation:beat 1s infinite;box-shadow:0 0 40px #ff003c}
+.heart:before,.heart:after{content:"";position:absolute;width:140px;height:140px;background:#ff003c;border-radius:50%}
+.heart:before{top:-70px}.heart:after{left:70px}
+h1{margin-top:40px;font-size:65px;text-shadow:0 0 20px white}p{font-size:24px;margin-top:15px}
+@keyframes beat{0%,100%{transform:rotate(-45deg) scale(1)}50%{transform:rotate(-45deg) scale(1.2)}}
+.floating-heart{position:absolute;font-size:25px;animation:float 8s linear infinite}
+@keyframes float{from{transform:translateY(100vh)}to{transform:translateY(-120px);opacity:0}}
+</style></head><body>
+<div class="container"><div class="heart"></div><h1>Te Amo ❤️</h1><p>Siempre estaré contigo, hoy, mañana y por siempre. 💖</p></div>
+<script>
+function c(){let d=document.createElement('div');d.className='floating-heart';d.textContent='❤️';d.style.left=Math.random()*100+'vw';d.style.fontSize=(20+Math.random()*30)+'px';d.style.animationDuration=(5+Math.random()*5)+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),10000)}
+setInterval(c,300);
+</script></body></html>
