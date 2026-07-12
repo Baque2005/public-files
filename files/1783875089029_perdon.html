@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<!-- saved from url=(0063)file:///C:/Users/Administrador/Desktop/Nueva%20carpeta/oye.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Día de la Novia 💖</title>
+  <link href="./algo que conarte_files/css2" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Lato", sans-serif;
+      background: linear-gradient(135deg, #ffe0ec 0%, #fce4f3 40%, #f8d7ea 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Pétalos de fondo animados */
+    .petal {
+      position: fixed;
+      top: -30px;
+      pointer-events: none;
+      z-index: 0;
+      font-size: 18px;
+      animation: caer linear infinite;
+      opacity: 0.7;
+    }
+    @keyframes caer {
+      0%   { transform: translateY(0) rotate(0deg);   opacity: 0.8; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* PANTALLAS */
+    .screen {
+      display: none;
+      animation: aparecer 0.9s ease both;
+      width: 90%;
+      max-width: 560px;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+    .screen.active { display: flex; flex-direction: column; align-items: center; }
+
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(24px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0)    scale(1);    }
+    }
+
+    /* Imágenes clickeables */
+    .tap-img {
+      width: 240px;
+      height: 240px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 5px solid #fff;
+      box-shadow: 0 8px 32px rgba(220, 80, 140, 0.25);
+      cursor: pointer;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+      margin-bottom: 18px;
+    }
+    .tap-img:hover {
+      transform: scale(1.06);
+      box-shadow: 0 12px 40px rgba(220, 80, 140, 0.4);
+    }
+
+    .tap-hint {
+      font-size: 0.88em;
+      color: #c0547e;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 6px;
+      animation: pulso 1.8s ease-in-out infinite;
+    }
+    @keyframes pulso {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    .screen-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2em;
+      color: #c0547e;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 8px rgba(192,84,126,0.15);
+    }
+
+    /* CARTA */
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 44px 48px 36px;
+      max-width: 680px;
+      width: 95%;
+      box-shadow: 0 12px 48px rgba(200, 60, 120, 0.18);
+      position: relative;
+      z-index: 10;
+      border-top: 6px solid #e8709a;
+    }
+
+    .card::before {
+      content: '💌';
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2.4em;
+    }
+
+    .card-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.2em;
+      color: #c0547e;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .card p {
+      font-family: "Lato", sans-serif;
+      font-size: 1.05em;
+      line-height: 1.75;
+      color: #4a4a4a;
+      text-align: justify;
+      margin-bottom: 1em;
+    }
+
+    .card p strong {
+      color: #c0547e;
+    }
+
+    .firma {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.5em;
+      color: #c0547e;
+      text-align: right;
+      margin-top: 16px;
+    }
+
+    /* Separador decorativo */
+    .sep {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 18px 0;
+      color: #e8709a;
+      font-size: 1.1em;
+    }
+    .sep::before, .sep::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #e8709a, transparent);
+    }
+
+    .btn-volver {
+      margin-top: 28px;
+      padding: 12px 32px;
+      font-size: 1em;
+      font-family: "Lato", sans-serif;
+      font-weight: 700;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #e8709a, #c0547e);
+      color: #fff;
+      letter-spacing: 0.04em;
+      box-shadow: 0 4px 16px rgba(200, 80, 140, 0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-volver:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(200, 80, 140, 0.45);
+    }
+
+    /* Badge del día */
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #e8709a, #c0547e);
+      color: #fff;
+      font-size: 0.78em;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 16px;
+      border-radius: 50px;
+      margin-bottom: 16px;
+    }
+
+    /* Responsivo */
+    @media (max-width: 600px) {
+      .card { padding: 36px 22px 28px; }
+      .card-title { font-size: 1.8em; }
+      .card p { font-size: 0.95em; }
+      .tap-img { width: 190px; height: 190px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Audio de fondo -->
+<audio id="musica" loop="">
+  <source src="sonido.mp3" type="audio/mpeg" <source="">
+</audio>
+
+<!-- Pantalla 1: sobre cerrado -->
+<div class="screen active" id="screen1">
+  <div class="badge">💕 Quiero decirte algo:(..</div>
+  <img src="./algo que conarte_files/a192d5e43af550b13a2cf7e46fd05cbb.jpg" alt="Correo" class="tap-img" onclick="nextScreen(2)">
+  <p class="tap-hint">Toca para abrir ✨</p>
+</div>
+
+<!-- Pantalla 2 -->
+<div class="screen" id="screen2">
+  <p class="screen-title">Algo llegó para ti…</p>
+  <img src="./algo que conarte_files/9fc6433cb7a0f57f372518aed30a9100.jpg" alt="Carta" class="tap-img" onclick="nextScreen(3)">
+  <p class="tap-hint">Sigue abriendo 💌</p>
+</div>
+
+<!-- Pantalla 3 -->
+<div class="screen" id="screen3">
+  <p class="screen-title">¿Lista para leer? 🌸</p>
+  <img src="./algo que conarte_files/df929364c1816ffbeff677819abcf8cf.jpg" alt="Sobre" class="tap-img" onclick="nextScreen(4)">
+  <p class="tap-hint">valdra la pena 💖</p>
+</div>
+
+<!-- Pantalla 4: La carta -->
+<div class="screen" id="screen4">
+  <div class="card">
+    <p class="card-title">Mi Amor,</p>
+
+    <p>He estado <strong>pensando </strong>en lo de ayer y me duele haberlo hecho mal. 
+Cuando me dijiste que te sentías mal, en vez de preguntarte qué pasaba y estar para ti, fui distante. Te dije que ya me contarías después. Y entiendo ahora que lo que necesitabas era mi atención en ese momento, no después.</p>
+
+    <div class="sep">🌸</div>
+
+    <p>Perdóname por fallarte ahí. Por no cuidarte cuando me necesitabas. La regué y me hago cargo, sin excusas.
+</p>
+
+    <p>Tú no mereces que te dejen sola cuando estás mal. Mereces a alguien que pregunte, que escuche y que esté. Y yo quiero ser ese hombre para ti</p>
+
+    <div class="sep">💗</div>
+
+    <p>No te pido que olvidemos lo de ayer. Te pido la oportunidad de demostrarte que aprendí. Que la próxima vez voy a estar, aunque sea difícil.</p>
+
+    <p>Te amo mucho — <strong>Y si todavía quieres luchar por nosotros, yo estoy dispuesto a hacerlo bien.</strong>. 💖</p>
+
+    <p class="firma">Piensa lo que necesites. Yo voy a estar aquí, haciendo el trabajo para merecerte de nuevo. Te amo ❤️</p>
+
+    <div style="text-align:center;">
+      <button class="btn-volver" onclick="nextScreen(1)">¡Solo eres tú! 💕</button>
+    </div>
+  </div>
+</div>
+
+<!-- Corazones flotantes -->
+<script>
+  // Pétalos / corazones de fondo
+  const emojis = ['🌸','💕','💗','🌹','✨','💖','🌷'];
+  function crearPetal() {
+    const el = document.createElement('div');
+    el.classList.add('petal');
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.fontSize = (Math.random() * 16 + 12) + 'px';
+    el.style.animationDuration = (Math.random() * 5 + 6) + 's';
+    el.style.animationDelay = '0s';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 11000);
+  }
+  setInterval(crearPetal, 400);
+
+  // Cambio de pantalla
+  function nextScreen(num) {
+    const current = document.querySelector('.screen.active');
+    if (current) current.classList.remove('active');
+    const next = document.getElementById('screen' + num);
+    next.classList.add('active');
+  }
+
+  // Música al primer toque
+  document.body.addEventListener('click', () => {
+    const audio = document.getElementById('musica');
+    audio.play().catch(() => {});
+  }, { once: true });
+</script>
+
+
+
+<div class="petal" style="left: 76.4397vw; font-size: 21.009px; animation-duration: 6.99591s; animation-delay: 0s;">💗</div><div class="petal" style="left: 91.0096vw; font-size: 23.3273px; animation-duration: 7.77015s; animation-delay: 0s;">🌷</div><div class="petal" style="left: 34.0895vw; font-size: 26.1659px; animation-duration: 7.15529s; animation-delay: 0s;">💖</div><div class="petal" style="left: 71.9218vw; font-size: 18.4025px; animation-duration: 8.46509s; animation-delay: 0s;">🌸</div><div class="petal" style="left: 76.4501vw; font-size: 26.8778px; animation-duration: 8.06582s; animation-delay: 0s;">💗</div><div class="petal" style="left: 30.3506vw; font-size: 19.221px; animation-duration: 9.01629s; animation-delay: 0s;">🌷</div><div class="petal" style="left: 73.2518vw; font-size: 16.9845px; animation-duration: 10.747s; animation-delay: 0s;">💕</div><div class="petal" style="left: 94.9182vw; font-size: 16.9063px; animation-duration: 7.80277s; animation-delay: 0s;">💖</div><div class="petal" style="left: 66.5598vw; font-size: 19.5664px; animation-duration: 10.9288s; animation-delay: 0s;">💕</div><div class="petal" style="left: 97.2137vw; font-size: 22.2428px; animation-duration: 8.98553s; animation-delay: 0s;">🌷</div><div class="petal" style="left: 20.6017vw; font-size: 21.3967px; animation-duration: 8.60148s; animation-delay: 0s;">✨</div><div class="petal" style="left: 62.4488vw; font-size: 15.1922px; animation-duration: 7.93172s; animation-delay: 0s;">💗</div><div class="petal" style="left: 65.3167vw; font-size: 19.623px; animation-duration: 6.92326s; animation-delay: 0s;">💗</div><div class="petal" style="left: 77.8083vw; font-size: 12.4903px; animation-duration: 8.47398s; animation-delay: 0s;">🌸</div><div class="petal" style="left: 49.2426vw; font-size: 25.01px; animation-duration: 8.36563s; animation-delay: 0s;">🌹</div><div class="petal" style="left: 2.16501vw; font-size: 24.5918px; animation-duration: 6.4086s; animation-delay: 0s;">✨</div><div class="petal" style="left: 71.0001vw; font-size: 18.3034px; animation-duration: 9.66792s; animation-delay: 0s;">🌸</div><div class="petal" style="left: 60.3583vw; font-size: 25.8612px; animation-duration: 7.3876s; animation-delay: 0s;">💕</div><div class="petal" style="left: 60.6908vw; font-size: 18.3099px; animation-duration: 10.6474s; animation-delay: 0s;">💖</div><div class="petal" style="left: 62.6526vw; font-size: 22.6573px; animation-duration: 10.9552s; animation-delay: 0s;">💖</div><div class="petal" style="left: 24.6841vw; font-size: 25.3711px; animation-duration: 10.9042s; animation-delay: 0s;">🌷</div><div class="petal" style="left: 82.3705vw; font-size: 13.244px; animation-duration: 6.56721s; animation-delay: 0s;">💕</div><div class="petal" style="left: 99.5999vw; font-size: 13.407px; animation-duration: 10.0704s; animation-delay: 0s;">🌸</div><div class="petal" style="left: 29.3411vw; font-size: 22.3383px; animation-duration: 8.8536s; animation-delay: 0s;">💕</div><div class="petal" style="left: 12.6883vw; font-size: 24.221px; animation-duration: 10.9509s; animation-delay: 0s;">🌷</div><div class="petal" style="left: 13.4826vw; font-size: 16.567px; animation-duration: 7.91938s; animation-delay: 0s;">💗</div><div class="petal" style="left: 88.1676vw; font-size: 27.2181px; animation-duration: 7.57986s; animation-delay: 0s;">💗</div><div class="petal" style="left: 63.7083vw; font-size: 26.8277px; animation-duration: 7.56424s; animation-delay: 0s;">💗</div></body></html>
