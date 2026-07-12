@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños Sofía! 🎂</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ffe5ec, #ffc2d1);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #4a4a4a;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(255, 112, 150, 0.2);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            border: 2px solid #ff85a2;
+            animation: fadeIn 1.5s ease-in-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #ff477e;
+            font-size: 2.6rem;
+            margin-bottom: 5px;
+            margin-top: 0;
+        }
+
+        h2 {
+            color: #ff7096;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .quote {
+            font-style: italic;
+            font-size: 1.2rem;
+            color: #ff477e;
+            line-height: 1.6;
+            margin: 25px 0;
+            padding: 0 10px;
+            border-left: 3px solid #ff85a2;
+            border-right: 3px solid #ff85a2;
+        }
+
+        .birthday-wish {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin: 25px 0;
+        }
+
+        .heart-btn {
+            background-color: #ff477e;
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 5px 15px rgba(255, 71, 126, 0.3);
+            margin-top: 10px;
+        }
+
+        .heart-btn:hover {
+            transform: scale(1.05);
+            background-color: #ff5c8a;
+        }
+
+        .heart {
+            position: absolute;
+            color: #ff85a2;
+            font-size: 20px;
+            animation: float 4s linear infinite;
+            opacity: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>¡Feliz Cumpleaños, Sofía! 🎉</h1>
+        <h2>✨ ¡Felices 19 años! ✨</h2>
+        
+        <!-- Tu frase especial -->
+        <p class="quote">"Te quise una sola vez, pero ahí cabía toda una vida."</p>
+        
+        <!-- Frase de cumpleaños complementaria -->
+        <p class="birthday-wish">
+            Hoy celebro tu vida y lo increíble que es tenerte a mi lado. Que este nuevo año de vida te traiga un sinfín de momentos hermosos, risas y que se cumpla cada uno de tus sueños. ¡Te mereces todo lo bonito del mundo!
+        </p>
+        
+        <p style="font-size: 1.2rem; color: #ff477e; font-weight: bold;">Te amo muchísimo ❤️</p>
+        
+        <button class="heart-btn" onclick="createHearts()">Haz clic aquí, mi amor 💖</button>
+    </div>
+
+    <script>
+        function createHearts() {
+            // Genera una lluvia de corazones al presionar el botón
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.innerHTML = '❤️';
+                    // Posición aleatoria en la pantalla
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    // Velocidad aleatoria
+                    heart.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    // Tamaño aleatorio
+                    heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                    document.body.appendChild(heart);
+
+                    // Elimina el corazón después de que termine la animación
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 4000);
+                }, i * 120);
+            }
+        }
+    </script>
+</body>
+</html>
