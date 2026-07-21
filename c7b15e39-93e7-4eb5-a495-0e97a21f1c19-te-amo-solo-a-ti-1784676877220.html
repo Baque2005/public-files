@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Un mensaje de amor para la niña mas hermosa 🩵</title>
+<style>
+html,body{margin:0;padding:0;overflow:hidden;background:#02030b;color:white;font-family:Georgia,serif;height:100%}
+#bg{position:fixed;inset:0;background-image:url('https://i.pinimg.com/736x/ea/04/c8/ea04c8d02368046a9a0b10d31f08b5e4.jpg');background-size:cover;background-position:center;background-repeat:no-repeat;}
+.star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;animation:twinkle 2s infinite alternate}
+@keyframes twinkle{from{opacity:.2}to{opacity:1}}
+#moon{position:absolute;top:60px;right:60px;width:120px;height:120px;border-radius:50%;background:rgba(247,242,211,0.75);box-shadow:0 0 40px rgba(255,255,255,0.4);}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:25px;text-align:center}
+#start{z-index:2}
+#storyScreen{display:none;z-index:1}
+button{padding:18px 40px;font-size:24px;border:none;border-radius:999px;background:#ff4f8b;color:#fff;cursor:pointer;transition:.15s}
+button:active{transform:scale(.92)}
+#story{display:none;max-width:min(760px,90vw);width:min(760px,90vw);font-size:clamp(16px,2.2vw,22px);line-height:1.7;white-space:pre-wrap;overflow-y:auto;max-height:80vh;padding:20px 24px;background:rgba(2,3,11,0.6);border-radius:20px;backdrop-filter:blur(6px);box-shadow:0 0 25px rgba(255,255,255,0.12)}
+#end{display:none;text-align:center;max-width:min(760px,90vw);width:min(760px,90vw);padding:20px 24px;background:rgba(2,3,11,0.6);border-radius:20px;backdrop-filter:blur(6px);box-shadow:0 0 25px rgba(255,255,255,0.12)}
+#end img{width:min(320px,70vw);max-width:80vw;border-radius:18px;box-shadow:0 0 30px #fff4}
+.heart{position:fixed;font-size:22px;pointer-events:none;animation:float 1s forwards}
+@keyframes float{to{transform:translateY(-100px) scale(1.7);opacity:0}}
+</style>
+</head>
+<body>
+<div id="bg"><div id="moon"></div></div>
+
+<div class="screen" id="start">
+<h1>✨ Para alguien muy especial ✨</h1>
+<p>Hay algo muy especial para ti aquí... </p>
+<button id="go">🩵Presiona aqui mi Sammy 🩵</button>
+</div>
+
+<div class="screen" id="storyScreen">
+<div id="story"></div>
+
+<div id="end">
+<img src="https://i.pinimg.com/736x/30/ac/68/30ac68c8d3951075c693293942f4e0b7.jpg" alt="Momento de amor">
+<h2>Siempre tu presencia esta aqui conmigo 🩵</h2>
+<p>Eres una parte hermosa de todo mi corazón 🩵</p>
+</div>
+</div>
+
+<script>
+const bg=document.getElementById("bg");
+const start=document.getElementById("start");
+const storyScreen=document.getElementById("storyScreen");
+const story=document.getElementById("story");
+const end=document.getElementById("end");
+const go=document.getElementById("go");
+
+for(let i=0;i<220;i++){
+ let s=document.createElement("div");
+ s.className="star";
+ s.style.left=Math.random()*100+"%";
+ s.style.top=Math.random()*100+"%";
+ s.style.opacity=Math.random();
+ bg.appendChild(s);
+}
+document.addEventListener("pointerdown",e=>{
+ for(let i=0;i<10;i++){
+   let h=document.createElement("div");
+   h.className="heart";
+   h.innerHTML="❤";
+   h.style.left=(e.clientX+(Math.random()*30-15))+"px";
+   h.style.top=(e.clientY+(Math.random()*30-15))+"px";
+   document.body.appendChild(h);
+   setTimeout(()=>h.remove(),1000);
+ }
+});
+const text=`Mi Sammy hermosa 🩵
+
+No existen palabras suficientes para expresar lo mucho que el amor puede transformar en tan pocos días 
+
+Desde que llegaste a mi vida descubrí que eras una persona tan hermosa eres simplemente perfecta ante mis ojos
+
+Amo tu forma de ser, tu sensibilidad, tu fuerza y la manera en que conviertes lo cotidiano en algo especial contigo no debo guardarme nada tu me haces sentir seguro y eso eso lo que me encanta de ti
+
+Quiero que nunca olvides lo importante que eres para mi vida
+
+Gracias por cada momento, por cada risa y por cada instante en que me has demostrado que el amor verdadero existe, gracias por estar a mi lado
+
+Prometo escucharte, cuidarte y acompañarte siempre en los momentos malos y buenos de los 2 prometo estar ahi para apoyarte en todo y alegrame de tus logros
+
+Y aunque a veces me equivoque, jamás dejaré de elegirte como la chica que quiero que me acompañe en mi vida
+
+Porque para mí eres alguien única en el mundo y con hermosos sentimientos 
+
+Sueño con construir miles de recuerdos contigo
+
+Gracias por existir y llegar ami
+
+Te amo con todo mi corazón mi niña
+
+Hoy, mañana y siempre voy a amarte te lo prometo mi Sam🩵`;
+
+go.addEventListener("click",()=>{
+ start.style.display="none";
+ storyScreen.style.display="flex";
+ story.style.display="block";
+ story.innerHTML="";
+ let i=0;
+ let timer=setInterval(()=>{
+   if(text[i]=="\n") story.innerHTML+="<br>";
+   else story.innerHTML+=text[i];
+   i++;
+   if(i>=text.length){
+      clearInterval(timer);
+      setTimeout(()=>{
+        story.style.display="none";
+        end.style.display="block";
+      },2500);
+   }
+ },40);
+});
+</script>
+</body>
+</html>
+ muy nmigo🩵rmos
