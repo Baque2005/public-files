@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>❤️ I Love You ❤️</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* ----- PANTALLA DE INICIO (ESTILO SPOTIFY) ----- */
+        #startScreen {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 5, 10, 0.98);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: opacity 0.6s ease;
+        }
+
+        #startScreen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #startScreen h2 {
+            margin-bottom: 25px;
+            color: #ff6aa8;
+            font-size: 26px;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(255, 106, 168, 0.5);
+        }
+
+        .playlist-container {
+            width: min(400px, 90vw);
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 35px;
+            border: 1px solid rgba(255, 106, 168, 0.15);
+            box-shadow: 0 0 30px rgba(255, 106, 168, 0.08);
+        }
+
+        .song-item {
+            display: flex;
+            align-items: center;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+        }
+
+        .song-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .song-item:hover {
+            background: rgba(255, 106, 168, 0.15);
+        }
+
+        .song-item.active {
+            background: rgba(255, 106, 168, 0.25);
+            border: 1px solid rgba(255, 106, 168, 0.4);
+        }
+
+        .song-item.active .song-icon {
+            animation: pulseIcon 1s infinite alternate;
+        }
+
+        @keyframes pulseIcon {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.2); }
+        }
+
+        .song-icon {
+            margin-right: 15px;
+            font-size: 20px;
+        }
+
+        .song-title-list {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 500;
+            color: #fce4ec;
+        }
+
+        .enter-btn {
+            padding: 16px 50px;
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(135deg, #ff6aa8, #ff9bc1);
+            color: #16060d;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(255, 106, 168, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .enter-btn:active {
+            transform: scale(0.95);
+        }
+
+        .enter-btn:hover {
+            box-shadow: 0 0 35px rgba(255, 106, 168, 0.6);
+        }
+
+        /* ----- ELEMENTOS DE LA ANIMACIÓN ----- */
+        .info {
+            position: fixed;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: rgba(255, 100, 150, 0.5);
+            font-size: 12px;
+            font-family: monospace;
+            pointer-events: none;
+        }
+
+        .top-image {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 11;
+            width: min(220px, calc(100vw - 32px));
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 140, 180, 0.3);
+            box-shadow: 0 0 22px rgba(255, 80, 150, 0.22);
+            background: rgba(20, 5, 12, 0.35);
+        }
+
+        .top-image img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        /* ----- REPRODUCTOR DE MÚSICA ACTUALIZADO ----- */
+        .music-player {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            width: min(520px, calc(100vw - 32px));
+            padding: 14px 18px;
+            border-radius: 999px;
+            background: rgba(20, 5, 12, 0.72);
+            border: 1px solid rgba(255, 120, 170, 0.28);
+            box-shadow: 0 0 24px rgba(255, 80, 150, 0.18), inset 0 0 18px rgba(255, 80, 150, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 0 0 auto;
+        }
+
+        .music-player button {
+            width: 42px;
+            height: 42px;
+            border: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6aa8, #ff9bc1);
+            color: #16060d;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 0 18px rgba(255, 110, 170, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .music-player button.small {
+            width: 32px;
+            height: 32px;
+            font-size: 12px;
+            background: rgba(255, 106, 168, 0.2);
+            color: #ff9bc1;
+            box-shadow: none;
+            border: 1px solid rgba(255, 106, 168, 0.3);
+        }
+
+        .music-player button:active {
+            transform: scale(0.95);
+        }
+
+        .music-player .track {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .music-player .title {
+            color: rgba(255, 215, 230, 0.92);
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+        }
+
+        .music-player .bar {
+            width: 100%;
+            accent-color: #ff79b2;
+            cursor: pointer;
+            height: 4px;
+        }
+
+        .music-player .time {
+            display: flex;
+            justify-content: space-between;
+            color: rgba(255, 180, 205, 0.85);
+            font-size: 11px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Pantalla de Selección -->
+    <div id="startScreen">
+        <h2>❤️ Elige una canción ❤️</h2>
+        <div id="playlistContainer" class="playlist-container">
+            <!-- La lista se genera con JavaScript -->
+        </div>
+        <button id="enterBtn" class="enter-btn">Entrar</button>
+    </div>
+
+    <!-- Lienzo de la animación -->
+    <canvas id="c"></canvas>
+
+    <div class="top-image">
+        <img src="https://i.pinimg.com/736x/a7/a1/80/a7a180e8c8f2979245d3df096a235263.jpg" alt="Imagen decorativa" />
+    </div>
+
+    <div class="info">
+        ❤️ I LOVE YOU ❤️
+    </div>
+
+    <!-- Reproductor Principal -->
+    <div class="music-player" aria-label="Reproductor de música">
+        <div class="music-controls">
+            <button id="prevBtn" class="small" type="button">⏮</button>
+            <button id="playBtn" type="button">▶</button>
+            <button id="nextBtn" class="small" type="button">⏭</button>
+        </div>
+        
+        <div class="track">
+            <div class="title" id="trackTitle">Selecciona una canción</div>
+            <input id="progress" class="bar" type="range" min="0" max="1000" value="0" />
+            <div class="time">
+                <span id="currentTime">0:00</span>
+                <span id="duration">0:00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Etiqueta de audio limpia -->
+    <audio id="music" preload="auto"></audio>
+
+    <script>
+        // ----- DATOS DE LA LISTA DE REPRODUCCIÓN -----
+        const playlist = [
+            {
+                title: "Axel - Tu Amor Por Siempre",
+                src: "https://github.com/politoroqui-spec/videos/raw/refs/heads/main/Axel%20-%20Tu%20Amor%20Por%20Siempre%20(Audio).mp3"
+            },
+            {
+                title: "Calle 24 - SUIZA",
+                src: "https://github.com/politoroqui-spec/videos/raw/refs/heads/main/Calle%2024%20-%20SUIZA.mp3"
+            },
+            {
+                title: "Emmanuel Cortes - Amor",
+                src: "https://github.com/politoroqui-spec/videos/raw/refs/heads/main/Emmanuel%20Cortes-%20Amor%20(Official%20Video).mp3"
+            },
+            {
+                title: "Si Pudiera - Manuel Medrano",
+                src: "https://github.com/politoroqui-spec/videos/raw/refs/heads/main/Si%20Pudiera%20-%20Manuel%20Medrano%20%20Letra.mp3"
+            },
+            {
+                title: "Zoé - Soñé (MTV Unplugged)",
+                src: "https://github.com/politoroqui-spec/videos/raw/refs/heads/main/Zo%C3%A9%20-%20So%C3%B1%C3%A9%20(MTV%20Unplugged).mp3"
+            }
+        ];
+
+        // ----- REFERENCIAS DEL DOM -----
+        const canvas = document.getElementById("c");
+        const ctx = canvas.getContext("2d");
+        const music = document.getElementById("music");
+        
+        const playBtn = document.getElementById("playBtn");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const progress = document.getElementById("progress");
+        const currentTime = document.getElementById("currentTime");
+        const duration = document.getElementById("duration");
+        const trackTitle = document.getElementById("trackTitle");
+        
+        const startScreen = document.getElementById("startScreen");
+        const playlistContainer = document.getElementById("playlistContainer");
+        const enterBtn = document.getElementById("enterBtn");
+
+        let currentTrackIndex = 0;
+
+        // ----- LÓGICA DEL REPRODUCTOR -----
+        function loadTrack(index) {
+            currentTrackIndex = index;
+            const track = playlist[currentTrackIndex];
+            music.src = track.src;
+            trackTitle.textContent = track.title;
+            
+            // Actualizar estilo en la lista visual
+            const items = document.querySelectorAll('.song-item');
+            items.forEach((item, i) => {
+                if(i === index) item.classList.add('active');
+                else item.classList.remove('active');
+            });
+        }
+
+        function playTrack() {
+            music.play().then(() => {
+                playBtn.textContent = "⏸";
+            }).catch(() => {
+                playBtn.textContent = "▶";
+            });
+        }
+
+        function togglePlay() {
+            if (music.paused) {
+                playTrack();
+            } else {
+                music.pause();
+                playBtn.textContent = "▶";
+            }
+        }
+
+        function nextTrack() {
+            let nextIndex = currentTrackIndex + 1;
+            if (nextIndex >= playlist.length) {
+                nextIndex = 0; // Vuelve al inicio si terminó la lista
+            }
+            loadTrack(nextIndex);
+            playTrack();
+        }
+
+        function prevTrack() {
+            let prevIndex = currentTrackIndex - 1;
+            if (prevIndex < 0) {
+                prevIndex = playlist.length - 1; // Va a la última canción
+            }
+            loadTrack(prevIndex);
+            playTrack();
+        }
+
+        function formatTime(seconds) {
+            if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60).toString().padStart(2, "0");
+            return `${minutes}:${remainingSeconds}`;
+        }
+
+        // ----- EVENTOS DEL REPRODUCTOR -----
+        playBtn.addEventListener("click", togglePlay);
+        nextBtn.addEventListener("click", nextTrack);
+        prevBtn.addEventListener("click", prevTrack);
+        
+        // Pasa a la siguiente canción automáticamente
+        music.addEventListener("ended", nextTrack);
+
+        music.addEventListener("loadedmetadata", () => {
+            duration.textContent = formatTime(music.duration);
+        });
+
+        music.addEventListener("timeupdate", () => {
+            currentTime.textContent = formatTime(music.currentTime);
+            if (Number.isFinite(music.duration) && music.duration > 0) {
+                progress.value = Math.floor((music.currentTime / music.duration) * 1000);
+            }
+        });
+
+        progress.addEventListener("input", () => {
+            if (Number.isFinite(music.duration) && music.duration > 0) {
+                music.currentTime = (progress.value / 1000) * music.duration;
+            }
+        });
+
+        music.addEventListener("play", () => playBtn.textContent = "⏸");
+        music.addEventListener("pause", () => playBtn.textContent = "▶");
+
+        // ----- INICIALIZACIÓN DE LA PANTALLA DE INICIO -----
+        playlist.forEach((track, index) => {
+            const div = document.createElement("div");
+            div.className = "song-item";
+            div.innerHTML = `
+                <span class="song-icon">▶</span>
+                <span class="song-title-list">${track.title}</span>
+            `;
+            div.addEventListener("click", () => {
+                loadTrack(index);
+                playTrack();
+            });
+            playlistContainer.appendChild(div);
+        });
+
+        // Cargar la primera canción por defecto al abrir
+        loadTrack(0);
+
+        // Botón Entrar
+        enterBtn.addEventListener("click", () => {
+            startScreen.classList.add("hidden");
+            // Si el usuario no reprodujo nada en la pantalla de inicio, reproducir al entrar
+            if (music.paused) {
+                playTrack();
+            }
+        });
+
+        // ----- LÓGICA DE ANIMACIÓN DEL CORAZÓN (Canvas) -----
+        let W, H, CX, CY, SCALE;
+        const DPR = Math.min(window.devicePixelRatio || 1, 2);
+        const phrase = "i love you";
+        const points = [];
+        const TOTAL = 150;
+
+        function resize() {
+            W = window.innerWidth;
+            H = window.innerHeight;
+            canvas.width = W * DPR;
+            canvas.height = H * DPR;
+            canvas.style.width = W + "px";
+            canvas.style.height = H + "px";
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.scale(DPR, DPR);
+            CX = W / 2;
+            CY = H / 2 + 20;
+            SCALE = Math.min(W, H) * 0.014;
+            buildPoints();
+        }
+
+        function heart(t) {
+            const x = 16 * Math.pow(Math.sin(t), 3);
+            const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+            return { x: x * SCALE, y: -y * SCALE };
+        }
+
+        function buildPoints() {
+            points.length = 0;
+            for (let i = 0; i < TOTAL; i++) {
+                const t = (Math.PI * 2 * i) / TOTAL;
+                const p = heart(t);
+                points.push({ x: p.x, y: p.y, offset: Math.random() * Math.PI * 2 });
+            }
+        }
+
+        function drawWord(word, x, y, time) {
+            const pulse = Math.sin(time * 2) * 2;
+            ctx.save();
+            ctx.translate(x, y);
+            const fontSize = 11 + pulse;
+
+            for (let s = 3; s >= 0; s--) {
+                ctx.shadowBlur = s * 8;
+                ctx.shadowColor = `rgba(255, 80, 150, ${0.7 - s * 0.15})`;
+                ctx.font = `${fontSize + s}px Arial`;
+                ctx.fillStyle = s === 0 ? "white" : `rgba(255, 100, 160, 0.35)`;
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(word, 0, 0);
+            }
+            ctx.restore();
+        }
+
+        function drawHeartLineGlow() {
+            ctx.beginPath();
+            for (let i = 0; i < points.length; i++) {
+                const p = points[i];
+                const x = CX + p.x;
+                const y = CY + p.y;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.strokeStyle = "rgba(255, 50, 120, 0.25)";
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = "#ff4fa0";
+            ctx.stroke();
+        }
+
+        function animate(time = 0) {
+            time *= 0.001;
+            ctx.clearRect(0, 0, W, H);
+            drawHeartLineGlow();
+
+            for (let i = 0; i < points.length; i++) {
+                const p = points[i];
+                const wave = Math.sin(time * 2 + p.offset) * 4;
+                const x = CX + p.x;
+                const y = CY + p.y + wave;
+                drawWord(phrase, x, y, time);
+                if (i % 10 === 0) {
+                    drawWord(phrase, x + 8, y - 6, time);
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener("resize", resize);
+        resize();
+        animate();
+    </script>
+</body>
+</html>
