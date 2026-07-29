@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños! 🐱✨</title>
+    <style>
+        *, *::after, *::before {
+          padding: 0;
+          margin: 0;
+          box-sizing: border-box;
+        }
+
+        :root {
+          --dark-color: #05040b;
+        }
+
+        body {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 100vh;
+          background-color: var(--dark-color);
+          overflow-x: hidden;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Fondo nocturno y estrellas */
+        .night {
+          position: fixed;
+          left: 0; top: 0;
+          width: 100vw; height: 100vh;
+          background: radial-gradient(circle at top, #2d1233, #0b0618 65%, #020204 100%);
+          z-index: 0;
+        }
+
+        /* Partículas flotantes */
+        .particles {
+          position: fixed;
+          left: 0; bottom: 0;
+          width: 100vw; height: 100vh;
+          pointer-events: none;
+          z-index: 3;
+        }
+        .particle {
+          position: absolute;
+          bottom: 0;
+          width: 0.6vmin; height: 0.6vmin;
+          background: #ffb6d5;
+          border-radius: 50%;
+          opacity: 0.7;
+          animation: particle-up linear infinite;
+        }
+        @keyframes particle-up {
+          0% { transform: translateY(0) scale(1); opacity: 0.8; }
+          100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+        }
+
+        /* Modal inicial */
+        .modal-inicio {
+          position: fixed;
+          top: 0; left: 0; width: 100vw; height: 100vh;
+          display: flex; align-items: center; justify-content: center;
+          z-index: 300;
+          background: rgba(15, 10, 25, 0.85);
+          backdrop-filter: blur(5px);
+        }
+        .modal-contenido {
+          background: linear-gradient(135deg, #fff0fa 60%, #ffb6d5 100%);
+          border-radius: 32px;
+          box-shadow: 0 8px 48px rgba(255, 105, 180, 0.5);
+          padding: 3.5em 2.5em;
+          text-align: center;
+          max-width: 90vw;
+          width: 380px;
+          border: 2.5px solid #ffb6d5;
+          animation: modalPop 0.8s cubic-bezier(.4,0,.2,1);
+        }
+        @keyframes modalPop {
+          0% { transform: scale(0.7) translateY(40px); opacity: 0; }
+          100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .modal-titulo {
+          font-size: 2em;
+          color: #e75480;
+          margin-bottom: 0.5em;
+          font-weight: bold;
+        }
+        .modal-texto {
+          font-size: 1.1em;
+          color: #880e4f;
+          margin-bottom: 2em;
+        }
+        .btn-abrir {
+          padding: 1em 2em;
+          font-size: 1.3em;
+          border-radius: 30px;
+          background: linear-gradient(90deg, #e75480 0%, #ff8fcf 100%);
+          color: #fff;
+          border: none;
+          box-shadow: 0 0 20px rgba(231, 84, 128, 0.6);
+          cursor: pointer;
+          font-weight: bold;
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-abrir:hover {
+          transform: scale(1.05);
+          box-shadow: 0 0 30px rgba(231, 84, 128, 0.9);
+        }
+
+        /* Contenido Principal */
+        .container {
+          position: relative;
+          z-index: 10;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 20px;
+          max-width: 650px;
+          width: 100%;
+          margin: auto;
+        }
+
+        /* Ilustración del Gato */
+        .cat-container {
+          width: 180px;
+          height: 180px;
+          margin-bottom: -20px;
+          z-index: 12;
+          filter: drop-shadow(0 0 15px rgba(255, 182, 213, 0.4));
+          animation: floatCat 3s ease-in-out infinite alternate;
+        }
+        @keyframes floatCat {
+          0% { transform: translateY(0px); }
+          100% { transform: translateY(-12px); }
+        }
+
+        /* Carta desplegable */
+        .card {
+          background: rgba(255, 255, 255, 0.92);
+          backdrop-filter: blur(10px);
+          border-radius: 24px;
+          padding: 35px 30px;
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 182, 213, 0.3);
+          border: 2px solid rgba(255, 182, 213, 0.5);
+          text-align: center;
+          color: #333;
+          opacity: 0;
+          transform: translateY(30px);
+          transition: opacity 1s ease, transform 1s ease;
+        }
+        .card.visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        .card h1 {
+          color: #c2185b;
+          font-size: 1.8rem;
+          margin-bottom: 20px;
+          text-shadow: 0 0 10px rgba(255, 182, 213, 0.5);
+        }
+
+        .card-body {
+          font-size: 1.05rem;
+          line-height: 1.7;
+          color: #4a4a4a;
+          text-align: left;
+          max-height: 50vh;
+          overflow-y: auto;
+          padding-right: 10px;
+        }
+
+        .card-body p {
+          margin-bottom: 15px;
+        }
+
+        .signature {
+          text-align: right;
+          font-weight: bold;
+          color: #e75480;
+          margin-top: 25px;
+          font-size: 1.1rem;
+        }
+
+        /* Personalización de la barra de scroll de la carta */
+        .card-body::-webkit-scrollbar {
+          width: 6px;
+        }
+        .card-body::-webkit-scrollbar-thumb {
+          background: #ffb6d5;
+          border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+  <div id="pantalla-inicial" class="modal-inicio">
+    <div class="modal-contenido">
+      <div class="modal-titulo">🎉 ¡Una sorpresa! 🎉</div>
+      <div class="modal-texto">Alguien te ha preparado una carta especial por tu cumpleaños...</div>
+      <button id="btn-abrir" class="btn-abrir">Abrir Carta 🐾</button>
+    </div>
+  </div>
+
+  <div class="night"></div>
+  <div class="particles"></div>
+
+  <div class="container" id="contenido-principal" style="display:none;">
+    
+    <div class="cat-container">
+      <svg viewBox="0 0 200 200" width="100%" height="100%">
+        <path d="M 60,80 L 40,30 L 80,50 Z" fill="#e0e0e0" stroke="#b0b0b0" stroke-width="3"/>
+        <path d="M 65,75 L 50,40 L 78,55 Z" fill="#ffb6d5"/>
+        <path d="M 140,80 L 160,30 L 120,50 Z" fill="#e0e0e0" stroke="#b0b0b0" stroke-width="3"/>
+        <path d="M 135,75 L 150,40 L 122,55 Z" fill="#ffb6d5"/>
+        <circle cx="100" cy="95" r="50" fill="#f5f5f5" stroke="#d6d6d6" stroke-width="3"/>
+        
+        <ellipse cx="80" cy="88" rx="6" ry="9" fill="#2c3e50"/>
+        <ellipse cx="120" cy="88" rx="6" ry="9" fill="#2c3e50"/>
+        <circle cx="78" cy="85" r="2.5" fill="#ffffff"/>
+        <circle cx="118" cy="85" r="2.5" fill="#ffffff"/>
+        
+        <polygon points="96,98 104,98 100,103" fill="#ff8fcf"/>
+        <path d="M 94,106 Q 100,112 106,106" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round"/>
+        
+        <line x1="50" y1="92" x2="70" y2="95" stroke="#b0b0b0" stroke-width="2"/>
+        <line x1="48" y1="100" x2="68" y2="100" stroke="#b0b0b0" stroke-width="2"/>
+        <line x1="150" y1="92" x2="130" y2="95" stroke="#b0b0b0" stroke-width="2"/>
+        <line x1="152" y1="100" x2="132" y2="100" stroke="#b0b0b0" stroke-width="2"/>
+
+        <path d="M 65,130 C 65,180 135,180 135,130 Z" fill="#f5f5f5" stroke="#d6d6d6" stroke-width="3"/>
+        
+        <path d="M 100,145 C 100,145 80,125 70,135 C 60,145 75,160 100,175 C 125,160 140,145 130,135 C 120,125 100,145 100,145 Z" fill="#e75480"/>
+        
+        <ellipse cx="78" cy="140" rx="8" ry="6" fill="#e0e0e0"/>
+        <ellipse cx="122" cy="140" rx="8" ry="6" fill="#e0e0e0"/>
+      </svg>
+    </div>
+
+    <div class="card" id="carta">
+      <h1>¡Feliz Cumpleaños, Amiga! 🎂✨</h1>
+      <div class="card-body">
+        <p>Hoy es un día súper especial y no quería dejar pasar la oportunidad de recordarte lo increíble e importante que eres en mi vida.</p>
+        
+        <p>Encontrar a una amiga tan leal, alegre y genuina como tú es un regalo que valoro todos los días. Gracias por estar ahí en los momentos de risas descontroladas, pero también en los días más tranquilos donde solo basta con conversar un rato.</p>
+        
+        <p>Deseo de todo corazón que este nuevo año de vida te traiga un sinfín de momentos hermosos, proyectos cumplidos, mucha salud y toda la felicidad que te mereces (¡y muchos gatitos tiernos también! 🐾).</p>
+        
+        <p>Sigue brillando con esa luz única que te caracteriza y llenando de alegría a todos los que tenemos la dicha de conocerte. ¡Disfruta muchísimo de tu día!</p>
+        
+        <div class="signature">
+          Con muchísimo cariño,<br>
+         
+          
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Generador de partículas de fondo
+    function createParticles() {
+      const container = document.querySelector('.particles');
+      for (let i = 0; i < 35; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + 'vw';
+        const size = Math.random() * 1.2 + 0.4;
+        p.style.width = size + 'vmin';
+        p.style.height = size + 'vmin';
+        p.style.animationDuration = (Math.random() * 4 + 4) + 's';
+        p.style.animationDelay = (Math.random() * 3) + 's';
+        container.appendChild(p);
+      }
+    }
+    createParticles();
+
+    // Evento de apertura
+    document.getElementById('btn-abrir').onclick = function() {
+      document.getElementById('pantalla-inicial').style.display = 'none';
+      document.getElementById('contenido-principal').style.display = 'flex';
+      
+      setTimeout(function() {
+        document.getElementById('carta').classList.add('visible');
+      }, 100);
+    };
+  </script>
+</body>
+</html>
