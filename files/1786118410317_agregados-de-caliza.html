@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregados Pétreos y Calizas | Soluciones para la Construcción</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* Variables y Setup General */
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent: #d97706;
+            --accent-hover: #b45309;
+            --text-dark: #334155;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --font-heading: 'Poppins', sans-serif;
+            --font-body: 'Lato', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-dark);
+            line-height: 1.6;
+            background-color: var(--white);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* Container y Clases de Utilidad */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-padding {
+            padding: 80px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            font-family: var(--font-heading);
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--white);
+            color: var(--primary);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 50px auto;
+        }
+
+        .section-header .tag {
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .section-header h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        /* Header & Navegación */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--primary);
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            color: var(--white);
+            font-family: var(--font-heading);
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), url('https://johnstonquarries.co.uk/wp-content/uploads/2021/06/jq-aggregate-scaled.jpg') center/cover no-repeat;
+            height: 100vh;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            color: var(--white);
+            padding-top: 80px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            color: var(--white);
+            font-size: 52px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 35px;
+            color: #cbd5e1;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Sección Empresa / Nosotros */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .about-image {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .pillar-card {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            padding: 20px;
+            background-color: var(--bg-light);
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .pillar-card i {
+            font-size: 28px;
+            color: var(--accent);
+            margin-top: 5px;
+        }
+
+        /* Sección Catálogo de Productos */
+        .products {
+            background-color: var(--bg-light);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .product-card-body {
+            padding: 30px;
+        }
+
+        .product-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #fef3c7;
+            color: var(--accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .product-card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .product-card p {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .product-specs {
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+        }
+
+        .product-specs li {
+            font-size: 14px;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .product-specs li i {
+            color: var(--accent);
+            font-size: 12px;
+        }
+
+        /* Sección Contacto */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+
+        .contact-info-card {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .contact-info-card h3 {
+            color: var(--white);
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .info-list {
+            margin: 30px 0;
+        }
+
+        .info-item {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .info-item i {
+            font-size: 22px;
+            color: var(--accent);
+            width: 30px;
+        }
+
+        .contact-form {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: var(--font-body);
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            height: 120px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-light);
+            color: #94a3b8;
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Responsive Media Queries */
+        @media (max-width: 768px) {
+            .navbar .container {
+                flex-direction: column;
+                height: auto;
+                padding: 15px;
+            }
+
+            .nav-links {
+                margin-top: 15px;
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .about-grid, .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-btns {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header & Navegación -->
+    <header class="navbar">
+        <div class="container">
+            <a href="#inicio" class="logo">
+                <i class="fa-solid fa-mountain"></i> AGREGADOS Y CALIZAS
+            </a>
+            <nav class="nav-links">
+                <a href="#inicio">Inicio</a>
+                <a href="#empresa">Empresa</a>
+                <a href="#productos">Productos</a>
+                <a href="#contacto">Contacto</a>
+                <a href="#contacto" class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;">Cotizar</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Sección 1: Inicio / Hero -->
+    <section id="inicio" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Soluciones de Alta Calidad en Agregados y Derivados Calizos</h1>
+                <p>Suministro confiable de arena, grava y materiales de piedra caliza para proyectos de construcción, infraestructura e industria.</p>
+                <div class="hero-btns">
+                    <a href="#productos" class="btn btn-primary">Ver Catálogo de Productos</a>
+                    <a href="#contacto" class="btn btn-secondary">Solicitar Cotización</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 2: Empresa / Nosotros -->
+    <section id="empresa" class="section-padding">
+        <div class="container">
+            <div class="about-grid">
+                <div>
+                    <div class="section-header" style="text-align: left; margin-bottom: 30px;">
+                        <span class="tag">Sobre Nosotros</span>
+                        <h2>Respaldamos la Fuerza de tus Proyectos</h2>
+                    </div>
+                    <p>Somos una empresa dedicada a la extracción, procesamiento y comercialización de materiales pétreos y derivados de la piedra caliza. Nos enfocamos en ofrecer agregados que cumplen con los más altos estándares de resistencia y calidad para el sector de la construcción e industrial.</p>
+                    
+                    <div class="pillars-grid">
+                        <div class="pillar-card">
+                            <i class="fa-solid fa-vial-circle-check"></i>
+                            <div>
+                                <h4>Calidad Garantizada</h4>
+                                <p style="font-size: 14px; color: var(--text-muted);">Control de procesos en la selección y trituración para asegurar la granulometría idónea.</p>
+                            </div>
+                        </div>
+                        <div class="pillar-card">
+                            <i class="fa-solid fa-truck-ramp-box"></i>
+                            <div>
+                                <h4>Capacidad de Respuesta</h4>
+                                <p style="font-size: 14px; color: var(--text-muted);">Suministro oportuno para atender desde pequeñas obras hasta proyectos de gran escala.</p>
+                            </div>
+                        </div>
+                        <div class="pillar-card">
+                            <i class="fa-solid fa-headset"></i>
+                            <div>
+                                <h4>Atención Personalizada</h4>
+                                <p style="font-size: 14px; color: var(--text-muted);">Asesoría técnica para seleccionar el material óptimo según las especificaciones de tu obra.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-image">
+                    <img src="https://ozinga.com/wp-content/uploads/2020/09/1-1-2-Limestone-FIT.jpg" alt="Grava y agregados pétreos triturados">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 3: Productos / Catálogo -->
+    <section id="productos" class="section-padding products">
+        <div class="container">
+            <div class="section-header">
+                <span class="tag">Catálogo de Productos</span>
+                <h2>Materiales Pétreos Seleccionados</h2>
+                <p>Ofrecemos productos triturados y clasificados con granulometría uniforme para garantizar máximo desempeño técnico.</p>
+            </div>
+
+            <div class="products-grid">
+                <!-- Producto 1: Arenas y Polvos -->
+                <div class="product-card">
+                    <div class="product-card-body">
+                        <div class="product-icon">
+                            <i class="fa-solid fa-mound"></i>
+                        </div>
+                        <h3>Arenas y Polvos de Caliza</h3>
+                        <p>Materiales finos procedentes de trituración primaria, limpios y exentos de materia orgánica.</p>
+                        <ul class="product-specs">
+                            <li><i class="fa-solid fa-check"></i> Arena Triturada #4</li>
+                            <li><i class="fa-solid fa-check"></i> Polvo de Piedra Caliza 1/8"</li>
+                            <li><i class="fa-solid fa-check"></i> Uso: Concreto hidráulico, morteros y adoquines</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Producto 2: Gravas Trituradas -->
+                <div class="product-card">
+                    <div class="product-card-body">
+                        <div class="product-icon">
+                            <i class="fa-solid fa-cubes"></i>
+                        </div>
+                        <h3>Gravas Trituradas</h3>
+                        <p>Agregados gruesos angulares clasificados por tamaño para asegurar resistencia a la compresión.</p>
+                        <ul class="product-specs">
+                            <li><i class="fa-solid fa-check"></i> Medidas: 3/4", 1" y 1 1/2"</li>
+                            <li><i class="fa-solid fa-check"></i> Sellos asfálticos y piedra filtro</li>
+                            <li><i class="fa-solid fa-check"></i> Uso: Concreto estructural y cimentaciones</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Producto 3: Bases y Terracerías -->
+                <div class="product-card">
+                    <div class="product-card-body">
+                        <div class="product-icon">
+                            <i class="fa-solid fa-road"></i>
+                        </div>
+                        <h3>Bases Hidráulicas</h3>
+                        <p>Mezclas balanceadas de grava, arena y limo calizo para estabilización de suelos y carpetas.</p>
+                        <ul class="product-specs">
+                            <li><i class="fa-solid fa-check"></i> Base y Sub-base hidráulica</li>
+                            <li><i class="fa-solid fa-check"></i> Piedra Plomo y Balasto</li>
+                            <li><i class="fa-solid fa-check"></i> Uso: Carreteras, estacionamientos y vialidades</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 4: Contacto y Cotizaciones -->
+    <section id="contacto" class="section-padding">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info-card">
+                    <div>
+                        <h3>Ponte en Contacto</h3>
+                        <p>Solicita presupuestos por metro cúbico, tonelada o flete directo a la ubicación de tu proyecto.</p>
+                        
+                        <div class="info-list">
+                            <div class="info-item">
+                                <i class="fa-solid fa-phone"></i>
+                                <div>
+                                    <strong style="display:block;">Teléfono de Ventas:</strong>
+                                    <span>(55) 5555-0199</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fa-solid fa-envelope"></i>
+                                <div>
+                                    <strong style="display:block;">Correo Electrónico:</strong>
+                                    <span>contacto@materialespetreos.com</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <div>
+                                    <strong style="display:block;">Ubicación:</strong>
+                                    <span>Planta y Oficinas Centrales</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <i class="fa-solid fa-clock"></i>
+                                <div>
+                                    <strong style="display:block;">Horario de Atención:</strong>
+                                    <span>Lun - Vie: 8:00 AM - 6:00 PM | Sáb: 8:00 AM - 1:00 PM</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 13px; color: #94a3b8;">* Suministro a nivel local y regional. Cotizaciones inmediatas.</p>
+                </div>
+
+                <div class="contact-form">
+                    <h3 style="margin-bottom: 20px;">Solicitar Cotización</h3>
+                    <form onsubmit="alert('¡Gracias por enviar tu solicitud! Nos pondremos en contacto a la brevedad.'); return false;">
+                        <div class="form-group">
+                            <label for="nombre">Nombre Completo / Empresa</label>
+                            <input type="text" id="nombre" class="form-control" placeholder="Ej. Constructora Ramírez" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="correo">Correo Electrónico</label>
+                            <input type="email" id="correo" class="form-control" placeholder="tu@correo.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefono">Teléfono de Contacto</label>
+                            <input type="tel" id="telefono" class="form-control" placeholder="(55) 0000-0000" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="material">Material de Interés</label>
+                            <select id="material" class="form-control">
+                                <option>Arena de Trituración</option>
+                                <option>Grava (3/4", 1", 1 1/2")</option>
+                                <option>Polvo de Piedra Caliza</option>
+                                <option>Base Hidráulica</option>
+                                <option>Otro / Consulta General</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mensaje">Detalles de la Solicitud (Volumen estimado, ubicación de obra, etc.)</label>
+                            <textarea id="mensaje" class="form-control" placeholder="Escribe aquí los detalles de tu obra..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar Solicitud</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Agregados Pétreos y Calizas. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
