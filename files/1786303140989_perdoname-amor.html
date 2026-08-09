@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perdón❤️</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fad0c4);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .container {
+      text-align: center;
+      color: white;
+      animation: fadeIn 2s ease-out forwards;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+
+    p {
+      font-size: 1.5rem;
+      opacity: 0;
+      animation: slideUp 2s ease-out forwards;
+      animation-delay: 1s;
+    }
+
+    .heart {
+      font-size: 5rem;
+      animation: beat 1s infinite alternate;
+      margin-top: 30px;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border: none;
+      background-color: white;
+      color: #e91e63;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+      animation: fadeIn 2s ease forwards;
+      animation-delay: 2s;
+      opacity: 0;
+    }
+
+    button:hover {
+      background-color: #f8bbd0;
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes beat {
+      from {
+        transform: scale(1);
+      }
+      to {
+        transform: scale(1.2);
+      }
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 20px;
+      z-index: 10;
+    }
+
+    .modal-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+      color: #333;
+      transform: translateY(30px);
+      animation: modalIn 0.3s ease forwards;
+    }
+
+    .modal img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      aspect-ratio: 16 / 9;
+      max-height: 280px;
+    }
+
+    .modal-body {
+      padding: 24px;
+      text-align: center;
+    }
+
+    .modal-body h2 {
+      margin: 0 0 14px;
+      font-size: 1.65rem;
+      color: #e91e63;
+    }
+
+    .modal-body p {
+      margin: 0 0 20px;
+      line-height: 1.7;
+      color: #555;
+      font-size: 1rem;
+      text-align: left;
+    }
+
+    .modal-body button {
+      width: 100%;
+      padding: 14px 0;
+      font-size: 1rem;
+      border: none;
+      border-radius: 999px;
+      background: #e91e63;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .modal-body button:hover {
+      transform: scale(1.02);
+      background: #d81b60;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Perdón Amor</h1>
+    <p>Te amo mucho ❤️</p>
+    <div class="heart">💖</div>
+    <button onclick="mostrarMensaje()">Haz clic aquí</button>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay" onclick="cerrarModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <img src="https://i.pinimg.com/736x/fc/90/3a/fc903ad780d82999d11051277e27b20f.jpg" alt="Imagen de disculpa de amor">
+      <div class="modal-body">
+        <h2>Perdón mi amor</h2>
+        <p>Quiero pedirte disculpas desde lo más profundo de mi corazón. Nunca fue mi intención herirte, y siento que debo decirte cuánto te valoro. Cada día a tu lado me enseña lo mucho que significas para mí, y deseo que recuperemos nuestra paz y ternura juntos.
+        <br><br>
+        Si mi error te dolió, lo siento con toda mi alma. Prometo cuidarte mejor, escucharte siempre y amarte cada vez más fuerte. Te necesito, te adoro y quiero que volvamos a sonreír juntos como antes.</p>
+        <button onclick="cerrarModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function mostrarMensaje() {
+      document.getElementById('modalOverlay').classList.add('visible');
+    }
+
+    function cerrarModal(event) {
+      if (event && event.target !== document.getElementById('modalOverlay')) return;
+      document.getElementById('modalOverlay').classList.remove('visible');
+    }
+  </script>
+</body>
+</html>
+
+
