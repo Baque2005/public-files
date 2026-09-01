@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Flores amarillas para Priscila 💛</title>
+<style>
+  :root{
+    --sky1:#071a3d;
+    --sky2:#164f8c;
+    --sky3:#ffd27a;
+    --paper:#fffaf0;
+    --ink:#4e3b2d;
+    --gold:#ffd83d;
+  }
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;
+    min-height:100%;
+    font-family: ui-rounded, "Segoe UI", system-ui, -apple-system, sans-serif;
+    overflow-x:hidden;
+  }
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 80% 18%, rgba(255,255,255,.14), transparent 24%),
+      linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 52%,var(--sky3) 100%);
+    color:white;
+  }
+  .sky{
+    position:fixed; inset:0; overflow:hidden; pointer-events:none;
+  }
+  .star{
+    position:absolute;
+    width:2px; height:2px;
+    background:white; border-radius:50%;
+    opacity:.75;
+    animation: twinkle var(--t) ease-in-out infinite alternate;
+  }
+  @keyframes twinkle{from{opacity:.2; transform:scale(.8)}to{opacity:1; transform:scale(1.8)}}
+  .shooting{
+    position:absolute;
+    width:120px; height:2px;
+    background:linear-gradient(90deg,rgba(255,255,255,0),#fff);
+    border-radius:999px;
+    filter:drop-shadow(0 0 6px rgba(255,255,255,.9));
+    transform:rotate(-22deg);
+    animation:shoot 5.5s linear infinite;
+    opacity:0;
+  }
+  .shooting.s2{animation-delay:2.4s; top:23%; left:-25%}
+  .shooting.s3{animation-delay:4.1s; top:42%; left:-25%}
+  @keyframes shoot{
+    0%,68%{transform:translate(-20vw,-10vh) rotate(-22deg);opacity:0}
+    72%{opacity:1}
+    86%{opacity:1}
+    100%{transform:translate(140vw,55vh) rotate(-22deg);opacity:0}
+  }
+
+  .wrap{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:48px 18px 110px;
+    text-align:center;
+  }
+  .moon{
+    width:82px;height:82px;border-radius:50%;
+    background:#fff7cf;
+    box-shadow:0 0 40px rgba(255,247,207,.55);
+    margin-bottom:12px;
+    opacity:.9;
+  }
+  h1{
+    margin:4px 0 8px;
+    font-size:clamp(2rem,9vw,4rem);
+    line-height:1;
+    letter-spacing:-.04em;
+    text-shadow:0 3px 18px rgba(0,0,0,.28);
+  }
+  .subtitle{
+    margin:0 0 22px;
+    opacity:.9;
+    font-size:1rem;
+  }
+
+  .garden{
+    position:relative;
+    width:min(560px,96vw);
+    height:270px;
+    margin-top:6px;
+  }
+  .bouquet{
+    position:relative;
+    width:100%;
+    height:100%;
+  }
+  .wrapper{
+    position:absolute;
+    left:50%;
+    bottom:0;
+    width:285px;
+    height:205px;
+    transform:translateX(-50%) rotate(1deg);
+    background:
+      linear-gradient(145deg,rgba(255,255,255,.95),rgba(232,221,199,.95));
+    clip-path:polygon(3% 0,97% 4%,78% 100%,22% 100%);
+    filter:drop-shadow(0 10px 10px rgba(0,0,0,.2));
+    z-index:1;
+  }
+  .wrapper:before,.wrapper:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(145deg,rgba(255,255,255,.7),rgba(218,202,174,.5));
+    clip-path:polygon(0 7%,50% 0,30% 100%,8% 100%);
+  }
+  .wrapper:after{
+    clip-path:polygon(100% 8%,50% 0,70% 100%,92% 100%);
+    background:linear-gradient(225deg,rgba(255,255,255,.7),rgba(218,202,174,.5));
+  }  .tag{
+    position:absolute;
+    left:50%;
+    bottom:15px;
+    transform:translateX(-50%) rotate(-2deg);
+    width:116px;
+    min-height:62px;
+    padding:10px 8px;
+    background:#fff9e9;
+    color:#66533b;
+    z-index:10;
+    box-shadow:0 5px 10px rgba(0,0,0,.18);
+    font-family:"Segoe Print","Comic Sans MS",cursive;
+    font-size:12px;
+    line-height:1.2;
+  }
+  .tag:before{
+    content:"";
+    position:absolute;
+    top:-7px;left:50%;
+    width:34px;height:14px;
+    background:rgba(226,191,104,.75);
+    transform:translateX(-50%) rotate(-3deg);
+  }
+
+  .flower{
+    position:absolute;
+    bottom:0;
+    left:var(--x);
+    transform:translateX(-50%) scale(var(--s));
+    transform-origin:bottom center;
+    animation:sway var(--d) ease-in-out infinite alternate;
+  }
+  @keyframes sway{
+    from{transform:translateX(-50%) rotate(-4deg) scale(var(--s))}
+    to{transform:translateX(-50%) rotate(5deg) scale(var(--s))}
+  }
+  .stem{
+    width:7px;height:145px;background:#3f8a4f;
+    margin:auto;border-radius:8px;
+    box-shadow:inset 2px 0 rgba(255,255,255,.15);
+  }
+  .leaf{
+    position:absolute;width:34px;height:16px;background:#55a764;border-radius:100% 0 100% 0;
+  }
+  .leaf.l{left:-26px;bottom:58px;transform:rotate(28deg)}
+  .leaf.r{right:-26px;bottom:90px;transform:scaleX(-1) rotate(28deg)}
+  .bloom{
+    position:absolute;
+    top:-30px;left:50%;
+    width:64px;height:64px;
+    transform:translateX(-50%);
+    animation:bloom 1.2s cubic-bezier(.2,.9,.3,1) both;
+  }
+  @keyframes bloom{from{transform:translateX(-50%) scale(.05) rotate(-60deg);opacity:0}to{transform:translateX(-50%) scale(1) rotate(0);opacity:1}}
+  .petal{
+    position:absolute;
+    width:23px;height:36px;
+    left:20px;top:14px;
+    background:linear-gradient(#ffe86a,#ffc928);
+    border-radius:60% 60% 45% 45%;
+    transform-origin:50% 88%;
+    box-shadow:0 0 10px rgba(255,223,67,.28);
+  }
+  .center{
+    position:absolute;left:22px;top:22px;width:21px;height:21px;border-radius:50%;
+    background:radial-gradient(circle at 38% 35%,#ffd95a,#e8a91d 75%);
+    box-shadow:inset 0 0 0 3px rgba(255,238,115,.45);
+    z-index:5;
+  }
+  .sparkle{
+    position:fixed;
+    width:5px;height:5px;border-radius:50%;
+    background:#fff7bf;
+    box-shadow:0 0 10px #fff;
+    animation:floatUp linear infinite;
+    opacity:.75;
+    pointer-events:none;
+  }
+  @keyframes floatUp{
+    from{transform:translateY(20vh) scale(.4);opacity:0}
+    20%{opacity:.9}
+    to{transform:translateY(-120vh) scale(1.2);opacity:0}
+  }
+
+  .open-btn{
+    position:relative;
+    z-index:10;
+    border:0;
+    padding:15px 24px;
+    border-radius:999px;
+    background:rgba(255,251,219,.96);
+    color:#6a4c12;
+    font-size:1.05rem;
+    font-weight:800;
+    box-shadow:0 12px 32px rgba(0,0,0,.20),0 0 0 1px rgba(255,255,255,.7) inset;
+    cursor:pointer;
+    animation:pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse{50%{transform:scale(1.045);box-shadow:0 12px 36px rgba(0,0,0,.24),0 0 22px rgba(255,232,92,.5)}}
+
+  .letter-overlay{
+    position:fixed; inset:0; z-index:30;
+    display:flex; align-items:center; justify-content:center;
+    padding:18px;
+    background:rgba(4,10,25,.58);
+    backdrop-filter:blur(8px);
+    opacity:0; visibility:hidden;
+    transition:.5s ease;
+  }
+  .letter-overlay.show{opacity:1;visibility:visible}
+  .letter{
+    position:relative;
+    width:min(680px,94vw);
+    max-height:84vh;
+    overflow:auto;
+    background:
+      linear-gradient(rgba(255,255,255,.72),rgba(255,255,255,.72)),
+      repeating-linear-gradient(0deg,#f4dfb6 0 1px,transparent 1px 28px),
+      var(--paper);
+    color:var(--ink);
+    border-radius:24px;
+    padding:30px 24px 28px;
+    box-shadow:0 26px 90px rgba(0,0,0,.38);
+    text-align:left;
+    transform:translateY(24px) scale(.94);
+    transition:.55s cubic-bezier(.2,.9,.25,1);
+  }
+  .show .letter{transform:none}
+  .letter h2{
+    margin:0 0 14px;
+    text-align:center;
+    color:#8e6811;
+    font-size:1.6rem;
+  }
+  .letter p{
+    font-family: Georgia, "Times New Roman", serif;
+    font-size:1.03rem;
+    line-height:1.75;
+    margin:0;
+    white-space:pre-wrap;
+  }
+  .close{
+    position:sticky;
+    float:right;
+    top:0;
+    margin:-12px -8px 0 12px;
+    width:38px;height:38px;border-radius:50%;border:0;
+    background:#f5df9b;color:#5a4315;font-size:1.2rem;font-weight:800;cursor:pointer;
+  }
+  .tiny{
+    text-align:center;
+    margin-top:18px;
+    font-size:.82rem;
+    opacity:.72;
+  }
+  #playerWrap{
+    position:fixed;
+    width:1px;height:1px;
+    overflow:hidden;
+    opacity:.01;
+    pointer-events:none;
+  }
+  @media (max-width:430px){
+    .wrap{padding-top:30px}
+    .garden{height:250px}
+    .stem{height:125px}
+    .letter{padding:24px 20px}
+    .letter p{font-size:.98rem;line-height:1.68}
+  }
+</style>
+</head>
+<body>
+
+<div class="sky" id="sky">
+  <div class="shooting" style="top:12%;left:-25%"></div>
+  <div class="shooting s2"></div>
+  <div class="shooting s3"></div>
+</div>
+
+<main class="wrap">
+  <div class="moon"></div>
+  <h1>Flores amarillas 💛</h1>
+  <p class="subtitle">Una pequeña sorpresa para ti.</p>
+
+  <div class="garden" id="garden"></div>
+
+  <button class="open-btn" id="openBtn">🌻 Toca aquí</button>
+</main>
+
+<section class="letter-overlay" id="overlay" aria-hidden="true">
+  <article class="letter">
+    <button class="close" id="closeBtn" aria-label="Cerrar">×</button>
+    <h2>Para Priscila ❤️</h2>
+    <p>Se que no soy el mejor amigo que te mereces a veces soy muy tonto contigo y me comporto mal, no te presto la atencion que nesecitas y aveces piensas qe ya no te quiero, pero creeme que yo siempre te voy a amar, hago todo lo que me pides, facilmente podria mentirte y no lo notarias pero no lo hago, no podria mentirle a una persona que apesar de como soy no se va, siempre me aguantas a pesar que quieres matarme no me abandonas y lo aprecio demasiado, no somos la relacion mas admirable ya que siempre peleamos, pero apesar de todas nuestras diferencias funcionamos y lo hacemos de maravilla bueno eso creo, y se que si algun dia nos alejamos, me costara mucho encontrar a alguien que siquiera te llegue a los talones, eres la mejor amiga que alguien podiese desear y eres mi alumeto de la suerte pero ojo solo mia y un poco del putito de tu ex, bueno hice lo mejor que puede princesa Te amo mucho Priscila❤️.</p>
+    <div class="tiny">Hecho con flores amarillas, estrellas y mucho cariño ✨</div>
+  </article>
+</section>
+
+<div id="playerWrap"><div id="player"></div></div>
+
+<script>
+  // Estrellas
+  const sky = document.getElementById('sky');
+  for(let i=0;i<72;i++){
+    const s=document.createElement('span');
+    s.className='star';
+    s.style.left=Math.random()*100+'vw';
+    s.style.top=Math.random()*58+'vh';
+    s.style.setProperty('--t',(1.3+Math.random()*2.8)+'s');
+    sky.appendChild(s);
+  }
+
+  // Brillos flotantes
+  for(let i=0;i<26;i++){
+    const sp=document.createElement('span');
+    sp.className='sparkle';
+    sp.style.left=Math.random()*100+'vw';
+    sp.style.bottom=(-20-Math.random()*100)+'px';
+    sp.style.animationDuration=(5+Math.random()*7)+'s';
+    sp.style.animationDelay=(-Math.random()*9)+'s';
+    document.body.appendChild(sp);
+  }
+
+  // Ramo sencillo de 10 girasoles
+  const garden=document.getElementById('garden');
+  const bouquet=document.createElement('div');
+  bouquet.className='bouquet';
+  garden.appendChild(bouquet);
+
+  const sunflowerData=[
+    [14,.62,-15,25],[25,.78,-11,18],[36,.88,-6,10],[48,1.0,0,4],
+    [60,.88,7,10],[71,.78,12,18],[82,.62,16,25],
+    [31,.72,-17,2],[52,.82,4,0],[68,.70,16,3]
+  ];
+
+  function sunflower(x,s,rot,i,bottom){
+    const f=document.createElement('div');
+    f.className='flower';
+    f.style.setProperty('--x',x+'%');
+    f.style.setProperty('--s',s);
+    f.style.setProperty('--d',(2.5+i*.11)+'s');
+    f.style.bottom=bottom+'px';
+    f.style.zIndex=3+i;
+    f.style.transform=`translateX(-50%) rotate(${rot}deg) scale(${s})`;
+
+    const stem=document.createElement('div');
+    stem.className='stem';
+    stem.style.height=(125+(i%4)*10)+'px';
+
+    const bloom=document.createElement('div');
+    bloom.className='bloom';
+    bloom.style.animationDelay=(i*.07)+'s';
+
+    for(let p=0;p<14;p++){
+      const pet=document.createElement('span');
+      pet.className='petal';
+      pet.style.transform=`rotate(${p*25.714}deg) translateY(-17px)`;
+      bloom.appendChild(pet);
+    }
+
+    // Centro amarillo, sin hueco oscuro.
+    const c=document.createElement('span');
+    c.className='center';
+    bloom.appendChild(c);
+
+    f.appendChild(stem);
+    f.appendChild(bloom);
+    bouquet.appendChild(f);
+  }
+  sunflowerData.forEach((a,i)=>sunflower(...a,i));
+
+  // Carta
+  const overlay=document.getElementById('overlay');
+  document.getElementById('openBtn').addEventListener('click',()=>{
+    overlay.classList.add('show');
+    overlay.setAttribute('aria-hidden','false');
+    startMusic();
+  });
+  document.getElementById('closeBtn').addEventListener('click',()=>{
+    overlay.classList.remove('show');
+    overlay.setAttribute('aria-hidden','true');
+  });
+  overlay.addEventListener('click',e=>{
+    if(e.target===overlay){
+      overlay.classList.remove('show');
+      overlay.setAttribute('aria-hidden','true');
+    }
+  });
+
+  // Música: JAURIM - Twenty-five, twenty-one.
+  // Se reproduce desde YouTube después del toque del usuario, con volumen suave.
+  let player, ready=false;
+  const tag=document.createElement('script');
+  tag.src='https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+
+  window.onYouTubeIframeAPIReady=function(){
+    player=new YT.Player('player',{
+      height:'1',width:'1',videoId:'BteNIPEAB90',
+      playerVars:{playsinline:1,controls:0,rel:0},
+      events:{onReady:function(){ready=true;}}
+    });
+  };
+  function startMusic(){
+    if(ready && player){
+      try{
+        player.setVolume(24);
+        player.playVideo();
+      }catch(e){}
+    } else {
+      setTimeout(startMusic,500);
+    }
+  }
+</script>
+</body>
+</html>
