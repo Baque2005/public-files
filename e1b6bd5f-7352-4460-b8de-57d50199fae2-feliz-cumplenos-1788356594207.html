@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños Especial!</title>
+    <style>
+        /* Configuración base y fondo */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #ff9a9e, #fecfef, #a1c4fd, #c2e9fb);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Primera Tarjeta */
+        .tarjeta {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            margin-bottom: 20px;
+            margin-top: 50px;
+        }
+
+        h1 { color: #ff477e; font-size: 2.5rem; margin-bottom: 10px; }
+        .subtitulo { color: #6c757d; font-size: 1.1rem; margin-bottom: 30px; }
+
+        .btn-regalo {
+            background: linear-gradient(135deg, #ff477e, #ff7096);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 71, 126, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-regalo:hover { transform: translateY(-3px) scale(1.05); }
+
+        .mensaje-oculto {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+
+        .mensaje-oculto.mostrar {
+            max-height: 300px;
+            opacity: 1;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px dashed #fecfef;
+        }
+
+        /* Contenedor del Sobre Secreto */
+        .contenedor-sobre {
+            display: none;
+            margin-top: 20px;
+            animation: entradaSuave 1s ease forwards;
+        }
+
+        @keyframes entradaSuave {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* El Sobre Interactivo */
+        .sobre {
+            font-size: 5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            display: inline-block;
+            user-select: none;
+        }
+        .sobre:hover { transform: scale(1.1) rotate(-5deg); }
+
+        /* Estilo base para las Cartas (Segunda y Tercera) */
+        .carta-estilo {
+            display: none;
+            background: #fff0f5;
+            border: 2px solid #ffb3c1;
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 85%;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            animation: abrirCarta 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            z-index: 15;
+        }
+
+        @keyframes abrirCarta {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .ramo-rosas {
+            font-size: 6rem;
+            margin-top: 15px;
+            animation: flotarRamo 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes flotarRamo {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        /* === ESTILOS PARA EL SLIDER DE GATITOS === */
+        .slider-contenedor {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            perspective: 1000px;
+        }
+
+        .slider-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+            border: 4px solid white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            opacity: 0; 
+            animation: pasarDetras 8s infinite;
+        }
+
+        .slider-img:nth-child(1) { animation-delay: 0s; }
+        .slider-img:nth-child(2) { animation-delay: 2s; }
+        .slider-img:nth-child(3) { animation-delay: 4s; }
+        .slider-img:nth-child(4) { animation-delay: 6s; }
+
+        @keyframes pasarDetras {
+            0% { opacity: 0; transform: translateX(80px) scale(0.8) rotateZ(5deg); z-index: 1; }
+            5% { opacity: 1; transform: translateX(0) scale(1) rotateZ(0deg); z-index: 10; }
+            20% { opacity: 1; transform: translateX(0) scale(1) rotateZ(0deg); z-index: 10; }
+            25% { opacity: 0; transform: translateX(-80px) scale(0.8) rotateZ(-5deg); z-index: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Lluvia de palabras y pétalos */
+        .elemento-flotante {
+            position: absolute;
+            top: -50px;
+            font-weight: bold;
+            user-select: none;
+            pointer-events: none;
+            animation: caer linear infinite; /* La duración se asigna en JS */
+            white-space: nowrap;
+            z-index: 999;
+        }
+
+        @keyframes caer {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        @keyframes rebote {
+            from { transform: translateX(-50%) translateY(0); }
+            to { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* === ESTILOS DEL PERGAMINO === */
+        .pergamino {
+            display: none;
+            background: linear-gradient(to right, #faebd7, #ffefd5, #faebd7);
+            border: 2px solid #deb887;
+            padding: 40px 30px;
+            border-radius: 3px;
+            box-shadow: inset 0 0 20px rgba(139, 69, 19, 0.15), 0 15px 35px rgba(0,0,0,0.15);
+            max-width: 450px;
+            width: 85%;
+            margin-top: 30px;
+            margin-bottom: 80px; /* Margen extra para el final de la página */
+            text-align: center;
+            animation: abrirCarta 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            z-index: 15;
+            position: relative;
+        }
+
+        .pergamino::before, .pergamino::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: #deb887;
+            border-radius: 5px;
+            box-shadow: inset 0 -3px 5px rgba(0,0,0,0.2);
+        }
+        
+        .pergamino::before { top: -6px; }
+        .pergamino::after { 
+            bottom: -6px; 
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.2); 
+        }
+
+        .texto-poema {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            color: #5c4033;
+            line-height: 2;
+            font-size: 1.2rem;
+            font-style: italic;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- ============================================== -->
+    <!-- ETIQUETA DE AUDIO (MÚSICA DE FONDO)            -->
+    <!-- Cambia "cancion.mp3" por el nombre de tu audio -->
+    <!-- ============================================== -->
+    <audio id="musicaFondo" src="cancion.mp3" loop></audio>
+
+    <!-- Primera Tarjeta -->
+    <div class="tarjeta">
+        <h1>🎈 ¡Feliz Cumpleaños Mi amor! 🎂</h1>
+        <p class="subtitulo">Hoy es un día muy especial, hoy mi niña crecio :c, recuerdo que te conoci cuando tenias 14, que rapido pasa el tiempo, como me gustaria que me permitieras pasar el resto de tus cumpleaños a tu lado, prometo hacer cada uno de ellos un dia especial para ti, disfruta tu dia, come muchos dulces como la niña que eres, y ten presente que tienes a muchas personas a tu lado que te aman (eres todo para mí) 💜 .</p>
+        
+        <button class="btn-regalo" id="btnSorpresa">🎁 Abrir mi sorpresa</button>
+
+        <div class="mensaje-oculto" id="seccionMensaje">
+            <p>"Que la vida te regale siempre los momentos más felices, mucha salud y que tus sueños se cumplan. ¡Gracias por aparecer en mi vida!" ✨</p>
+            
+            <div class="contenedor-sobre" id="bloqueSobre">
+                <p style="color: #ff477e; font-weight: bold;">👇 ¡Mira! Apareció algo más abajo, tócalo:</p>
+                <div class="sobre" id="sobreCerrado">✉️</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Segunda Carta Secreta -->
+    <div class="carta-estilo" id="cartaSegunda">
+        <div class="ramo-rosas">💐🌹</div>
+        <h2 style="color: #ff1493; margin-top: 10px;">Para alguien inolvidable... 💖</h2>
+        <p style="color: #555; line-height: 1.6; font-style: italic;">
+            "No quería dejar pasar este momento sin recordarte lo mucho que significas para mí. Este pequeñisimo detalle (recien aprendi como hacer estas cosas, no entendia nada D:) es una pequeña muestra de todo el amor que tengo por ti, y de que puedo aprender a hacer de todo con tal de hacerte feliz, te amo tanto que en este espacio no cabe más (aun no descubro como hacerlo más grande). ¡Feliz cumpleaños, mi vida!"
+        </p>
+    </div>
+
+    <!-- Secuencia de Fotos -->
+    <div class="secuencia-fotos" id="secuenciaFotos" style="display: none; width: 100%; margin-top: 40px; text-align: center;">
+        <p style="color: #ff1493; font-weight: bold; margin-bottom: 25px; font-size: 1.2rem;">🌹 ¡Más flores para ti! 🌹</p>
+        
+        <div style="display: flex; justify-content: center; align-items: center; gap: 15px; width: 100%;">
+            <div style="font-size: 3.5rem; animation: flotarRamo 2s ease-in-out infinite alternate;">💐</div>
+            
+            <div class="slider-contenedor">
+                <img class="slider-img" src="gato1.png" alt="Gatito 1" onerror="this.style.display='none'">
+                <img class="slider-img" src="gato2.jpg" alt="Gatito 2" onerror="this.style.display='none'">
+                <img class="slider-img" src="gato3.jpg" alt="Gatito 3" onerror="this.style.display='none'">
+                <img class="slider-img" src="gato4.jpg" alt="Gatito 4" onerror="this.style.display='none'">
+            </div>
+            
+            <div style="font-size: 3.5rem; animation: flotarRamo 2s ease-in-out infinite alternate; animation-delay: 1s;">💐</div>
+        </div>
+    </div>
+
+    <!-- Sección Especial Final: Licencia -->
+    <div class="seccion-final" id="seccionFinal" style="display: none; margin-top: 60px; position: relative; text-align: center; max-width: 500px; width: 90%;">
+        <div style="position: absolute; top: -55px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 20; animation: rebote 1.5s infinite alternate;">
+            <div style="background-color: #ff477e; color: white; padding: 5px 20px; font-weight: bold; border-radius: 20px; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">👉 YOU 👈</div>
+            <div style="font-size: 2rem; color: #ff477e; margin-top: -5px;">👇</div>
+        </div>
+        <img src="licencia.jpg" style="width: 100%; max-width: 450px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 4px solid white;" alt="Licencia Especial" onerror="this.style.display='none'">
+    </div>
+
+    <!-- Tercera Carta -->
+    <div class="carta-estilo" id="cartaTercera">
+        <h2 style="color: #ff1493; margin-top: 10px;">Y una cosita más... ✨</h2>
+        <p style="color: #555; line-height: 1.6; font-style: italic;">
+            "Te amo mas que a nada en este mundo, todo lo que tenga que ver contigo es muy importante para mi por eso aunque digas que es igual que cualquier dia, quiero hacerte feliz siempre y ahora decidi hacer una innovación y creame que no ha sido facil, no pense que hacer estas cosas seria tan dificl, pero eso, prometo amarte ahora y por los siglos de los siglos, sin importar que pase te amare con mi alma, mi niña ❤️ ."
+        </p>
+    </div>
+
+    <!-- === PERGAMINO PARA EL POEMA (NUEVO) === -->
+    <div class="pergamino" id="seccionPoema">
+        <h2 style="font-family: 'Georgia', serif; color: #8b4513; margin-top: 0;">Para ti... 📜</h2>
+        <div class="texto-poema">
+            Hoy no solo celebro tu cumpleaños,<br>
+            celebro también el día en que llegaste al mundo,<br>
+            sin saber que algún día,<br>
+            ibas a convertirte en alguien tan importante para mí.<br>
+
+            Desde que apareciste en mi vida,<br>
+            hay recuerdos que llevan tu nombre,<br>
+            canciones que me hacen pensar en ti<br>
+            y momentos pequeños<br>
+            que ahora significan muchísimo.<br>
+
+            Me gusta quererte de esta manera,<br>
+            sin necesitar grandes razones,<br>
+            porque te quiero en tus días felices,<br>
+            en tus días difíciles,<br>
+            cuando ríes y cuando simplemente<br>
+            necesitas que alguien se quede a tu lado.<br>
+
+            Ojalá pudieras mirarte con mis ojos<br>
+            aunque fuera por un instante,<br>
+            para que entendieras lo especial que eres,<br>
+            para que vieras todo eso bonito<br>
+            que quizás tú misma no alcanzas a notar.<br>
+
+            Y si algún día dudas de cuánto significas para mí,<br>
+            recuerda que entre tantas personas en el mundo,<br>
+            tuviste la suerte de encontrarme<br>
+            en tus días difíciles,<br>
+            y yo tuve la suerte todavía más grande<br>
+            de encontrarte a ti.<br>
+
+            Así que hoy, en tu cumpleaños<br>
+            solo quiero decirte algo sencillo,<br>
+            pero completamente sincero:<br>
+
+            Gracias por existir.<br>
+            Gracias por llegar a mi vida.<br>
+            Y gracias por ser tú.<br>
+
+            Feliz cumpleaños, mi amor.<br>
+            Que este nuevo año de tu vida<br>
+            te encuentre rodeada de amor,<br>
+            de sueños cumplidos<br>
+            y de momentos que algún día<br>
+            recuerdes con una sonrisa.<br>
+
+            Te amo, Amor de mi vida.<br>
+            <br>
+        </div>
+    </div>
+
+    <!-- Script interactivo completo -->
+    <script>
+        const btn = document.getElementById('btnSorpresa');
+        const mensaje = document.getElementById('seccionMensaje');
+        const bloqueSobre = document.getElementById('bloqueSobre');
+        const sobreCerrado = document.getElementById('sobreCerrado');
+        const cartaSegunda = document.getElementById('cartaSegunda');
+        const cartaTercera = document.getElementById('cartaTercera');
+        const seccionPoema = document.getElementById('seccionPoema');
+
+        // Acción 1: Abrir la primera tarjeta, mostrar el sobre y reproducir música
+        btn.addEventListener('click', () => {
+            mensaje.classList.add('mostrar');
+            btn.innerHTML = "✨ ¡Disfruta tu día princesa hermosa! ✨";
+            
+            // Intentar reproducir la música
+            const audio = document.getElementById('musicaFondo');
+            if (audio) {
+                audio.play().catch(e => console.log("El navegador requiere interacción previa para el audio."));
+            }
+
+            generarLluvia('palabras');
+            
+            setTimeout(() => {
+                bloqueSobre.style.display = 'block';
+            }, 1000);
+        });
+
+        // Acción 2: Hacer clic en el sobre para ver TODO el contenido sorpresa
+        sobreCerrado.addEventListener('click', () => {
+            cartaSegunda.style.display = 'block'; 
+            document.getElementById('secuenciaFotos').style.display = 'block';
+            document.getElementById('seccionFinal').style.display = 'block';
+            cartaTercera.style.display = 'block'; 
+            seccionPoema.style.display = 'block'; // Muestra el pergamino
+
+            sobreCerrado.innerHTML = "📂📩"; 
+            
+            generarLluvia('petalos');
+            
+            // Hace un scroll automático suave hacia abajo
+            setTimeout(() => {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }, 300);
+        });
+
+        function generarLluvia(tipo) {
+            let elementos = [];
+            let colores = [];
+            
+            if (tipo === 'palabras') {
+                elementos = ['Te amo', '❤️', 'Te amo ✨', '💖'];
+                colores = ['#ff477e', '#ff1493', '#ff69b4', '#ff0000'];
+            } else {
+                elementos = ['🌹', '🌸', 'Te amo 💖', '✨', '🌹'];
+                colores = ['#ff0055', '#ff69b4', '#d81b60', '#ffb3c1'];
+            }
+            
+            // Aumenté la cantidad de elementos a 60 para que se vea más lleno
+            for (let i = 0; i < 60; i++) {
+                const item = document.createElement('div');
+                item.classList.add('elemento-flotante');
+                
+                item.innerText = elementos[Math.floor(Math.random() * elementos.length)];
+                item.style.left = Math.random() * 90 + 'vw';
+                item.style.color = colores[Math.floor(Math.random() * colores.length)];
+                item.style.fontSize = Math.random() * 12 + 16 + 'px';
+                
+                // Hice que caigan más lento (tardan entre 6 y 12 segundos en caer)
+                item.style.animationDuration = Math.random() * 6 + 6 + 's'; 
+                item.style.animationDelay = Math.random() * 2 + 's';
+                
+                document.body.appendChild(item);
+
+                // Aumenté el tiempo antes de que desaparezcan a 14 segundos
+                setTimeout(() => { item.remove(); }, 14000);
+            }
+        }
+    </script>
+</body>
+</html>
