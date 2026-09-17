@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quieres ser?</title>
+    <style>
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #ffffff;
+    }
+
+    .container {
+        text-align: center;
+    }
+
+    #gifContainerImg {
+        width: 60%;
+        height: 60%;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin: 10px;
+        cursor: pointer;
+    }
+    #siBtn {
+        padding: 10px 20px; 
+        font-size: 16px;
+        margin: 10px;
+        cursor: pointer;
+        background-color: #009705; /* Verde */
+        color: white;
+        border: 2px solid #FFC0CB; /* Bordes rosa */
+        border-radius: 10px; /* Esquinas redondeadas */
+    }
+
+    #noBtn {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin: 10px;
+        cursor: pointer;
+        background-color: #FF5733; /* Rojo */
+        color: white;
+        border: 2px solid #FFC0CB; /* Bordes rosa */
+        border-radius: 10px; /* Esquinas redondeadas */
+    }
+    #noBtn span {
+        font-size: 18px;
+        color: #fcf4f4; /* Cambia el color del texto según tus preferencias */
+        /* Otras propiedades de estilo aquí */
+    }
+
+    #siBtn:hover{
+        background-color: #053a03; /* Cambia a otro color en hover, puedes ajustar el valor según tus preferencias */
+    }
+    #noBtn:hover {
+        background-color: #641e0d; /* Cambia a otro color en hover, puedes ajustar el valor según tus preferencias */
+    }
+    .bg-green {
+        background-color: #ffffff; /* Nuevo color de fondo verde */
+    }
+
+    #messageContainer {
+        font-size: 30px;
+        color: #FF0000; /* Color rojo */
+        font-family: 'YourDesiredFont', sans-serif; /* Reemplaza 'YourDesiredFont' con la fuente que desees */
+        text-shadow: 2px 2px 4px #000; /* Borde simulado */
+        animation: pulse 0.5s infinite alternate; /* Animación de palpitación más rápida */
+    }
+
+    @keyframes pulse {
+        from {
+            transform: scale(1);
+        }
+        to {
+            transform: scale(1.3); /* Zoom más grande */
+        }
+    }
+
+    @keyframes sway {
+        0%, 100% {
+            transform: translateX(calc(-50% - 6px)) rotate(-2deg);
+        }
+        50% {
+            transform: translateX(calc(-50% + 6px)) rotate(2deg);
+        }
+    }
+
+    .successImage {
+        position: absolute;
+        top: 48%;
+        left: 50%;
+        z-index: 2;
+        width: 20%;
+        max-width: 100px;
+        animation: sway 2.8s ease-in-out infinite;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="gifContainer">
+            <img id="gifContainerImg" src="https://i.pinimg.com/736x/eb/b0/c9/ebb0c991e1a4c0999385a4d604b76f8e.jpg" alt="Imagen Inicial">
+        </div>
+
+    <h1 id="question">¿Aceptas mis flores amarillas?</h1>
+        <div id="messageContainer" style="display: none;"></div>
+
+        <button id="siBtn">Sí</button>
+        <button id="noBtn">No</button>
+        
+    </div>
+    <script>
+    const gifContainer = document.getElementById('gifContainer');
+    const gifContainerImg = document.getElementById('gifContainerImg');
+    const questionEl = document.getElementById('question');
+    const messageContainer = document.getElementById('messageContainer');
+    const siBtn = document.getElementById('siBtn');
+    const noBtn = document.getElementById('noBtn');
+    const container = document.querySelector('.container');
+
+    let noButtonState = 0;
+    let currentSadImg = null;
+
+    const noMessages = [
+        '¿No aceptas mis flores amarillas? ¡Mira qué bonitas!',
+        'Vamos, no pesan nada... bueno, quizá un poquito',
+        'Son flores, no una factura: ¡acéptalas!',
+        'Prometo regarlas yo, tú solo di que sí',
+        'Se las doy a otra!',
+        'Es mentira, son solo para ti',
+        'No seas cruel, ya les conté que te iban a gustar',
+        'Una flor amarilla por cada sonrisa tuya',
+        'Las quemare!!',
+        'Las flores dicen que tienes excelente gusto',
+        '¿Ni siquiera una? Vienen con cariño incluido',
+        'Última oportunidad',
+        'Acepta las flores y todos salimos felices',
+        'No puedes decirle que no a unas flores tan inocentes',
+        'Creo que las flores ya te eligieron a ti',
+        'Di que sí y ya!!',
+        'Te las dejare mientras duermes!'
+    ];
+
+    const sadImages = [
+        'https://i.pinimg.com/736x/eb/b0/c9/ebb0c991e1a4c0999385a4d604b76f8e.jpg',
+        'https://i.pinimg.com/1200x/09/9f/30/099f30285d042599035d5bb3f4ca34c3.jpg',
+        'https://i.pinimg.com/736x/ba/25/6b/ba256ba11d13e539cde99f9f9746ffd7.jpg',
+        'https://i.pinimg.com/736x/a2/21/0c/a2210c96613f918ec43f2ebbe4996d79.jpg',
+        'https://i.pinimg.com/736x/5d/27/6a/5d276aecb9be275ef3ee2adc42ee78b5.jpg',
+        'https://i.postimg.cc/28F1P1D0/descarga.png',
+        'https://i.pinimg.com/736x/5e/81/02/5e81029181eec3ca37a43ec57bcfc82d.jpg'
+    ];
+
+    function removeCurrentSadImage() {
+        if (currentSadImg) {
+            currentSadImg.remove();
+            currentSadImg = null;
+        }
+    }
+
+    function showSadImage(index) {
+        removeCurrentSadImage();
+        const src = sadImages[index];
+        if (!src) return;
+        currentSadImg = document.createElement('img');
+        currentSadImg.src = src;
+        currentSadImg.alt = 'Imagen triste';
+        currentSadImg.style.width = '80%';
+        currentSadImg.style.height = '80%';
+        currentSadImg.style.display = 'block';
+        currentSadImg.style.margin = '0 auto 20px';
+        container.insertBefore(currentSadImg, questionEl);
+    }
+
+    function showSuccessMessage() {
+        gifContainer.style.display = 'none';
+        removeCurrentSadImage();
+        questionEl.style.display = 'none';
+        siBtn.style.display = 'none';
+        noBtn.style.display = 'none';
+        document.body.classList.add('bg-green');
+        messageContainer.style.display = 'block';
+        messageContainer.innerHTML = 'Aqui tienes, estas flores son tan bonitas como tu!';
+
+        let gifContainerFinal = document.getElementById('gifContainerFinal');
+        if (!gifContainerFinal) {
+            gifContainerFinal = document.createElement('div');
+            gifContainerFinal.id = 'gifContainerFinal';
+            gifContainerFinal.style.marginTop = '20px';
+            gifContainerFinal.style.display = 'flex';
+            gifContainerFinal.style.justifyContent = 'center';
+            gifContainerFinal.style.alignItems = 'center';
+            gifContainerFinal.style.position = 'relative';
+            gifContainerFinal.style.width = '100%';
+            const successImage = document.createElement('img');
+            successImage.src = 'https://i.postimg.cc/yYSP9X06/d8f54e667d2889d43d2f6f86d7d4ef27.png';
+            successImage.alt = 'Flores amarillas';
+            successImage.className = 'successImage';
+            gifContainerFinal.appendChild(successImage);
+            const gif = document.createElement('img');
+            gif.src = 'https://i.pinimg.com/originals/88/14/9b/88149b0400750578f4d07d9bc3fb0fee.gif';
+            gif.alt = 'Celebración';
+            gif.style.maxWidth = '80%';
+            gif.style.maxHeight = '400px';
+            gifContainerFinal.appendChild(gif);
+            container.appendChild(gifContainerFinal);
+        } else {
+            gifContainerFinal.style.display = 'flex';
+        }
+    }
+
+    siBtn.addEventListener('click', showSuccessMessage);
+
+    noBtn.addEventListener('click', function() {
+        if (noButtonState >= noMessages.length) {
+            noButtonState = 0;
+            noBtn.textContent = noMessages[0];
+            removeCurrentSadImage();
+            gifContainer.style.display = 'block';
+            return;
+        }
+
+        if (noButtonState === 0) {
+            gifContainer.style.display = 'none';
+        }
+
+        noBtn.textContent = noMessages[noButtonState];
+        noBtn.style.backgroundColor = '#F1330A';
+        const fontSize = 40 + Math.min(noButtonState, 6) * 10;
+        const padding = 20 + Math.min(noButtonState, 6) * 10;
+        siBtn.style.fontSize = fontSize + 'px';
+        siBtn.style.padding = padding + 'px ' + (padding + 20) + 'px';
+
+        showSadImage(Math.min(noButtonState + 1, sadImages.length - 1));
+
+        noButtonState++;
+    });
+    </script>
+</body>
+</html>
