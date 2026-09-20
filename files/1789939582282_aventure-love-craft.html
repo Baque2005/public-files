@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Una Aventura Craft... para ti ❤</title>
+
+<script>
+  window.CONFIG = {
+    formspreeEndpoint: "https://formspree.io/f/xwvglwrg",
+
+    mensajesCrecimiento: [
+      "Tu sonrisa ilumina más que una antorcha.",
+      "Eres el diamante más brillante que he encontrado en este mundo.",
+      "Contigo, hasta picar piedra se siente una aventura épica.",
+      "Me encantaría que fueras parte de todas mis aventuras."
+    ],
+
+    mensajeCrafteo: "Me encanta lo increíble que eres. Cada bloque que unimos construye algo especial entre tú y yo.",
+
+    carta: [
+      "Hola,",
+      "Eres una persona maravillosa y mereces lo mejor. Gracias por compartir tu tiempo conmigo y hacer mi mundo más cuadrado y feliz.",
+      "Me gustas muchísimo. Ojalá esta aventura sea solo el comienzo."
+    ]
+  };
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --grass-a:#5c8727; --grass-b:#4d7020; --grass-c:#6c9f2e;
+    --panel:#c6c6c6; --wood:#8f6e46; --wood-dark:#453018;
+    --gold:#ffff55; --pink:#ff5fd1; --danger:#ff5555; --ok:#55ff7f;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  .hidden{display:none!important}
+  body{
+    margin:0;
+    font-family:'Press Start 2P',monospace;
+    background-color:var(--grass-a);
+    background-image:
+      radial-gradient(var(--grass-b) 15%,transparent 16%),
+      radial-gradient(var(--grass-c) 15%,transparent 16%);
+    background-size:60px 60px;
+    background-position:0 0,30px 30px;
+    color:#fff;
+    min-height:100vh;
+    overflow-x:hidden;
+    -webkit-user-select:none;user-select:none;
+    touch-action:manipulation;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+
+  #loader{
+    position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:18px;
+    background-color:var(--grass-a);
+    background-image:radial-gradient(var(--grass-b) 15%,transparent 16%),radial-gradient(var(--grass-c) 15%,transparent 16%);
+    background-size:60px 60px;background-position:0 0,30px 30px;
+    transition:opacity .5s ease;
+  }
+  #loader svg{width:84px;height:84px;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.4));animation:bounce 1s infinite}
+  #loader span{font-size:12px;letter-spacing:1px;text-shadow:2px 2px 0 #3f3f3f}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+  #app{display:flex;min-height:100vh;align-items:center;justify-content:center}
+  .screen{
+    display:none;flex-direction:column;align-items:center;justify-content:center;
+    width:100%;max-width:640px;padding:24px 16px 140px;
+    box-sizing:border-box;text-align:center;animation:fadeIn .4s ease;
+  }
+  .screen.active{display:flex}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+  h1{color:var(--gold);font-size:clamp(15px,4.4vw,22px);line-height:1.6;text-shadow:3px 3px 0 #3f3f3f;margin:0 0 18px}
+  h2{color:var(--gold);font-size:clamp(13px,3.8vw,18px);text-shadow:2px 2px 0 #3f3f3f;margin:0 0 6px}
+  p.sub{font-size:11px;color:#eaffea;line-height:1.7;margin:0 0 20px;text-shadow:2px 2px 0 #3f3f3f}
+
+  .mc-btn{
+    font-family:'Press Start 2P',monospace;
+    padding:14px 20px;font-size:13px;background:#8b8b8b;color:#fff;
+    border:4px solid #373737;
+    border-top-color:#fff;border-left-color:#fff;border-bottom-color:#555;border-right-color:#555;
+    cursor:pointer;text-shadow:2px 2px 0 #3f3f3f;transition:transform .08s;
+    touch-action:manipulation;
+  }
+  .mc-btn:active{border-top-color:#555;border-left-color:#555;border-bottom-color:#fff;border-right-color:#fff;transform:translateY(2px)}
+  .mc-btn.green{background:#5ea63c}
+  .mc-btn.pink{background:#c25b9c}
+  .mc-btn.small{font-size:10px;padding:10px 14px}
+  .btn-row{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin-top:8px;position:relative;min-height:60px}
+
+  #btn-no{position:relative;transition:left .25s ease, top .25s ease}
+
+  .link-ghost{
+    margin-top:22px;background:none;border:none;color:#cfe8cf;font-family:'Press Start 2P',monospace;
+    font-size:9px;text-decoration:underline;opacity:.65;cursor:pointer;
+  }
+
+  .sign-container{
+    background:var(--wood);border:6px solid var(--wood-dark);padding:22px;
+    width:88%;max-width:400px;margin-bottom:18px;position:relative;
+    box-shadow:inset 0 0 10px rgba(0,0,0,.5),5px 5px 0 rgba(0,0,0,.3);
+  }
+  .sign-text{font-size:13px;color:#000;text-shadow:none;line-height:1.7}
+  .steve-sprite{width:88px;height:88px;margin-bottom:-8px;z-index:2;position:relative;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.4))}
+
+  .inventory-container{
+    display:grid;grid-template-columns:repeat(3,78px);gap:14px;background:var(--panel);padding:18px;border-radius:6px;
+    border:4px solid #555;box-shadow:inset 2px 2px 0 #fff,inset -2px -2px 0 #888,6px 6px 0 rgba(0,0,0,.4);
+    margin:14px auto;
+  }
+  .inv-slot{
+    width:78px;height:78px;background:#8b8b8b;border:4px solid #373737;
+    border-top-color:#fefefe;border-left-color:#fefefe;border-bottom-color:#555;border-right-color:#555;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s;
+  }
+  .inv-slot:hover{transform:scale(1.05);background:#9a9a9a}
+  .pixel-icon{width:48px;height:48px;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.5))}
+
+  .crafting-grid{
+    display:grid;grid-template-columns:repeat(3,70px);gap:12px;background:var(--panel);padding:16px;border-radius:6px;
+    border:4px solid #555;box-shadow:inset 2px 2px 0 #fff,inset -2px -2px 0 #888,6px 6px 0 rgba(0,0,0,.4);
+    margin:14px auto;
+  }
+  .craft-slot{
+    width:70px;height:70px;background:#8b8b8b;border:4px solid #373737;
+    border-top-color:#fefefe;border-left-color:#fefefe;border-bottom-color:#555;border-right-color:#555;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s;position:relative;
+  }
+  .craft-slot:hover{transform:scale(1.04);background:#9a9a9a}
+  .craft-slot svg{width:40px;height:40px}
+  .craft-slot.filled{background:var(--danger);border-color:#a00}
+  .craft-slot.filled svg{opacity:0}
+  .craft-slot.filled::after{content:"";position:absolute;inset:8px;background:var(--danger);border-radius:2px;box-shadow:inset 0 0 0 3px #ff9d9d}
+  #craft-msg{min-height:24px;font-size:11px;margin-top:10px;color:var(--ok);text-shadow:2px 2px 0 #000}
+
+  .mine-wrap{position:relative;width:170px;height:170px;margin:18px auto}
+  .diamond-block-lg{width:150px;height:150px;position:absolute;top:10px;left:10px;transition:transform .1s;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.4))}
+  #diamond-block{cursor:pointer}
+  .shake{animation:shake .15s}
+  @keyframes shake{0%{transform:translate(4px,3px)}50%{transform:translate(-4px,-3px)}100%{transform:translate(0,0)}}
+  .flower-svg{position:absolute;top:10px;left:10px;width:150px;height:150px;animation:popIn .3s cubic-bezier(.175,.885,.32,1.275)}
+
+  #rpg-dialog{
+    position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));
+    transform:translateX(-50%);width:92%;max-width:560px;
+    background:rgba(0,0,0,.75);border:2px solid #666;padding:14px 16px;
+    z-index:60;text-align:left;display:none;
+  }
+  #rpg-dialog.show{display:block}
+  #rpg-text{color:#fff;font-size:12px;line-height:1.7;margin:0;min-height:38px;text-shadow:2px 2px 0 #000}
+  .chat-name{color:#5ff}
+  #rpg-next{display:block;margin-top:8px;font-size:9px;color:#ffd;text-align:right;opacity:.8;animation:blink 1.1s infinite}
+  @keyframes blink{0%,100%{opacity:.85}50%{opacity:.15}}
+
+  .tooltip-box{
+    background:#110111;border:4px solid #4a195e;padding:20px;width:92%;max-width:360px;
+    text-align:left;box-shadow:inset 0 0 0 2px #110111,6px 6px 0 rgba(0,0,0,.5);margin:10px auto 20px;
+  }
+  .tooltip-title{color:var(--pink);font-size:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;line-height:1.5}
+  .tooltip-title svg{width:34px;height:34px;flex-shrink:0}
+  .tooltip-desc{color:#aaa;font-size:10px;margin-bottom:14px;line-height:1.6}
+  .tooltip-eff{color:var(--ok);font-size:10px;margin:5px 0}
+
+  .mc-book{
+    background:#d7b57a;border:6px solid #5b3e23;width:92%;max-width:480px;
+    min-height:120px;height:auto;
+    padding:34px 30px;box-sizing:border-box;box-shadow:inset 0 0 30px rgba(100,50,0,.3),8px 8px 0 rgba(0,0,0,.4);
+    color:#000;text-align:left;margin-bottom:18px;overflow:hidden;
+    transition:min-height .45s cubic-bezier(.22,.68,0,1.01);
+  }
+  #letter-text{font-family:'Indie Flower',cursive;font-size:1.4rem;font-weight:700;line-height:1.55}
+  .cursor-letter{animation:blink 1s infinite}
+
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;z-index:200;padding:20px;
+  }
+  .modal-overlay.show{display:flex}
+  .modal-box{
+    background:var(--panel);border:4px solid #373737;border-top-color:#fff;border-left-color:#fff;
+    border-bottom-color:#555;border-right-color:#555;padding:34px 26px;width:100%;max-width:380px;
+    text-align:center;animation:popIn .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:10px 10px 0 rgba(0,0,0,.5);
+  }
+  @keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+  .modal-title{color:var(--gold);font-size:16px;margin-bottom:14px;text-shadow:2px 2px 0 #3f3f3f}
+  .modal-text{color:#222;font-size:11px;line-height:1.8;margin-bottom:22px}
+  .pixel-heart{width:52px;height:52px;margin:6px auto 18px;display:block;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.3))}
+
+  #top-ui{
+    position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:0;right:0;
+    display:flex;justify-content:space-between;padding:0 14px;z-index:80;pointer-events:none;
+  }
+  #hearts-counter,#sound-toggle{
+    pointer-events:auto;background:rgba(0,0,0,.55);color:#fff;font-family:'Press Start 2P',monospace;
+    font-size:11px;padding:8px 10px;border-radius:8px;border:2px solid #444;cursor:pointer;
+    display:flex;align-items:center;gap:6px;
+  }
+
+  #toast{
+    position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-20px);
+    background:#222;border:2px solid var(--gold);color:#fff;font-size:10px;padding:10px 16px;
+    border-radius:8px;opacity:0;transition:all .35s ease;z-index:150;pointer-events:none;text-align:center;
+    max-width:88%;line-height:1.6;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .confetti-heart{position:fixed;top:-30px;pointer-events:none;z-index:30;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:.2}}
+
+  .foot-note{margin-top:24px;font-size:9px;color:#dfe;opacity:.6;line-height:1.6}
+  footer.credit{position:fixed;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));font-size:8px;color:#fff9;font-family:'Press Start 2P',monospace;z-index:5}
+</style>
+</head>
+<body>
+
+<div id="loader"><svg viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <path fill="#8b5a2b" d="M0 4h16v12H0z"/>
+  <path fill="#55ff55" d="M0 0h16v4H0z"/>
+  <path fill="#55ff55" d="M0 4h2v2H0zM3 4h2v1H3zM7 4h2v2H7zM10 4h2v1h-2zM14 4h2v2h-2z"/>
+  <path fill="#6c4622" d="M2 7h2v1H2zM10 9h1v1h-1zM4 12h2v1H4zM13 6h1v1h-1z"/>
+</svg><span>Cargando aventura...</span></div>
+
+<div id="top-ui">
+  <div id="hearts-counter">❤ <span id="heart-count">0</span></div>
+  <div id="sound-toggle" title="Música">🔇</div>
+</div>
+
+<div id="toast"></div>
+
+<div id="app">
+
+  <section class="screen" id="screen-start">
+    <svg class="steve-sprite" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+      <path fill="#4a3018" d="M4 2h8v2H4z M3 3h1v2H3z M12 3h1v2h-1z"/>
+      <path fill="#d9a066" d="M4 4h8v4H4z M5 5h1v1H5z M10 5h1v1h-1z"/>
+      <path fill="#fff" d="M5 6h2v1H5z M9 6h2v1H9z"/>
+      <path fill="#4040ff" d="M6 6h1v1H6z M10 6h1v1h-1z"/>
+      <path fill="#8a5a3a" d="M6 8h4v1H6z"/>
+      <path fill="#00aaaa" d="M4 8h8v5H4z M3 8h1v3H3z M12 8h1v3h-1z"/>
+      <path fill="#3a3a9a" d="M4 13h3v3H4z M9 13h3v3H9z"/>
+      <path fill="#d9a066" d="M3 11h1v2H3z M12 11h1v2h-1z"/>
+    </svg>
+    <div class="sign-container">
+      <p class="sign-text">Hola,<br><br>¿Aceptas empezar la aventura?</p>
+    </div>
+    <div class="btn-row">
+      <button class="mc-btn green" id="btn-yes">Sí</button>
+      <button class="mc-btn" id="btn-no">No</button>
+    </div>
+    <button class="link-ghost" id="btn-real-no" style="display:none">Prefiero decir que no, en serio</button>
+    <p class="foot-note">🎮 Una pequeña aventura hecha con cariño, bloque por bloque.</p>
+  </section>
+
+  <section class="screen" id="screen-inventory">
+    <h2>INVENTARIO</h2>
+    <p class="sub">Selecciona un bloque para abrirlo:</p>
+    <div class="inventory-container">
+      <div class="inv-slot" id="slot-chest" title="Cofre - carta especial">
+        <svg class="pixel-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+          <path fill="#8a5a3a" d="M2 3h12v10H2z"/>
+          <path fill="#5b3e23" d="M2 3h12v1H2z M2 7h12v1H2z M2 12h12v1H2z M2 4h1v8H2z M13 4h1v8h-1z"/>
+          <path fill="#a0a0a0" d="M7 6h2v3H7z"/>
+          <path fill="#000" d="M7 8h2v1H7z"/>
+        </svg>
+      </div>
+      <div class="inv-slot" id="slot-diamond" title="Bloque misterioso">
+        <svg class="pixel-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+          <path fill="#55ffff" d="M2 2h12v12H2z"/>
+          <path fill="#ffffff" d="M3 3h2v2H3z M6 4h1v1H6z M11 11h2v2h-2z"/>
+          <path fill="#00aaaa" d="M3 11h2v2H3z M11 3h2v2h-2z M7 7h2v2H7z"/>
+        </svg>
+      </div>
+      <div class="inv-slot" id="slot-craft" title="Mesa de crafteo">
+        <svg class="pixel-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+          <path fill="#8a5a3a" d="M2 2h12v12H2z"/>
+          <path fill="#d9a066" d="M2 2h12v5H2z"/>
+          <path fill="#5b3e23" d="M2 7h12v1H2z M5 2v5h1v-5z M10 2v5h1v-5z M2 4h12v1H2z"/>
+          <path fill="#5b3e23" d="M3 9h2v2H3z M11 9h2v2h-2z"/>
+        </svg>
+      </div>
+    </div>
+    <p class="foot-note" id="inv-hint">Aún te falta explorar algunos bloques...</p>
+  </section>
+
+  <section class="screen" id="screen-mine">
+    <h2 id="mine-title">¡Haz clic para picar el bloque!</h2>
+    <div class="mine-wrap" id="mine-wrap">
+      <svg id="large-diamond" class="diamond-block-lg" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+        <path fill="#55ffff" d="M1 1h14v14H1z"/>
+        <path fill="#ffffff" d="M2 2h3v3H2z M6 3h1v1H6z M11 11h3v3h-3z"/>
+        <path fill="#00aaaa" d="M2 11h3v3H2z M11 2h3v3h-3z M7 7h2v2H7z M4 8h1v1H4z M12 7h1v1h-1z"/>
+        <path id="crack-1" fill="#000" class="hidden" d="M1 1h2v1H1z M3 2h1v1H3z M4 3h1v2H4z"/>
+        <path id="crack-2" fill="#000" class="hidden" d="M14 1h1v2h-1z M13 3h1v1h-1z M11 4h2v1h-2z M11 5h1v1h-1z"/>
+        <path id="crack-3" fill="#000" class="hidden" d="M1 14h2v1H1z M3 13h1v1H3z M4 11h1v2H4z M5 10h1v1H5z"/>
+        <path id="crack-4" fill="#000" class="hidden" d="M7 8h1v2H7z M8 10h2v1H8z M10 11h1v2h-1z M11 13h2v1h-2z M13 14h2v1h-2z"/>
+      </svg>
+      <svg id="grass-block" class="diamond-block-lg hidden" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+        <path fill="#8b5a2b" d="M0 4h16v12H0z"/>
+        <path fill="#55ff55" d="M0 0h16v4H0z"/>
+        <path fill="#55ff55" d="M0 4h2v2h-2z M3 4h2v1h-2z M7 4h2v2h-2z M10 4h2v1h-2z M14 4h2v2h-2z"/>
+        <path fill="#6c4622" d="M2 7h2v1H2z M10 9h1v1h-1z M4 12h2v1H4z M13 6h1v1h-1z"/>
+      </svg>
+      <svg id="flower-st-0" class="flower-svg hidden" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><path fill="#00aa00" d="M7 14h2v2H7z"/><path fill="#007700" d="M8 14h1v2H8z"/></svg>
+      <svg id="flower-st-1" class="flower-svg hidden" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><path fill="#00aa00" d="M7 9h2v7H7z"/><path fill="#007700" d="M8 9h1v7H8z"/></svg>
+      <svg id="flower-st-2" class="flower-svg hidden" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><path fill="#00aa00" d="M7 9h2v7H7z M4 11h3v2H4z M9 12h3v2H9z"/><path fill="#007700" d="M8 9h1v7H8z M5 12h2v1H5z M10 13h2v1h-2z"/></svg>
+      <svg id="flower-st-3" class="flower-svg hidden" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><path fill="#00aa00" d="M7 9h2v7H7z M4 11h3v2H4z M9 12h3v2H9z"/><path fill="#007700" d="M8 9h1v7H8z M5 12h2v1H5z M10 13h2v1h-2z"/><path fill="#aa0000" d="M5 4h6v5H5z M6 3h4v1H6z M4 5h1v3H4z M11 5h1v3h-1z M6 9h4v1H6z"/><path fill="#ff3333" d="M6 4h4v4H6z M5 5h1v2H5z M10 5h1v2h-1z"/><path fill="#ffaaaa" d="M6 4h2v1H6z M6 5h1v1H6z"/></svg>
+    </div>
+    <p class="foot-note" id="mine-hint">0 / 4 golpes</p>
+    <button class="mc-btn small" id="btn-back-inv" style="display:none;margin-top:14px">Volver al Inventario</button>
+  </section>
+
+  <section class="screen" id="screen-craft">
+    <h2>Mesa de Crafteo</h2>
+    <p class="sub">Dibuja un corazón en la cuadrícula.</p>
+    <div class="crafting-grid" id="craft-grid"></div>
+    <p id="craft-msg"></p>
+    <button class="mc-btn small" id="btn-craft-reset" style="display:none;margin-top:6px">Reiniciar dibujo</button>
+  </section>
+
+  <section class="screen" id="screen-potion">
+    <div class="tooltip-box">
+      <div class="tooltip-title">
+        <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+          <path fill="#ffffff" d="M6 1h4v2H6z M5 3h1v2H5z M10 3h1v2h-1z M4 5h1v2H4z M11 5h1v2h-1z"/>
+          <path fill="#aaaaaa" d="M7 1h2v1H7z"/>
+          <path fill="#ff55ff" d="M5 7h6v5H5z M6 12h4v1H6z M7 13h2v1H7z M4 7h1v3H4z M11 7h1v3h-1z"/>
+          <path fill="#ffffff" d="M6 8h1v2H6z"/>
+        </svg>
+        <span>Poción de la Valentía Suprema</span>
+      </div>
+      <p class="tooltip-desc">Un objeto legendario, forjado con el material más raro del universo: tú.</p>
+      <p class="tooltip-eff">Efectos aplicados al beber:</p>
+      <p class="tooltip-eff">+1000 Mariposas en el Estómago (Infinito)</p>
+      <p class="tooltip-eff">Inmunidad a la Timidez</p>
+      <p class="tooltip-eff">Valentía Incondicional IV</p>
+    </div>
+    <button class="mc-btn pink" id="btn-love">¡Me gustas mucho!</button>
+  </section>
+
+  <section class="screen" id="screen-book">
+    <div class="mc-book" id="mc-book">
+      <div id="letter-text"></div>
+    </div>
+    <button class="mc-btn small" id="btn-close-book">Cerrar Libro</button>
+  </section>
+
+</div>
+
+<div id="rpg-dialog">
+  <p id="rpg-text"><span class="chat-name">&lt;Sistema&gt;</span> <span id="rpg-msg"></span></p>
+  <span id="rpg-next">▼ toca para continuar</span>
+</div>
+
+<div class="modal-overlay" id="final-modal">
+  <div class="modal-box">
+    <div class="modal-title">¡Misión Completada!</div>
+    <svg class="pixel-heart" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+      <path fill="#ff0000" d="M3 2h2v1h1v1h4V3h1V2h2v3h1v4h-1v2h-1v1h-1v1h-1v1H8v1H7v-1H6v-1H5v-1H4v-1H3V9H2V5h1z"/>
+      <path fill="#ff9999" d="M3 3h1v2H3z M4 4h1v1H4z"/>
+    </svg>
+    <p class="modal-text">Has desbloqueado el logro más importante de todos: ¡decir lo que sientes! Ojalá esta aventura apenas comience. ❤️</p>
+    <button class="mc-btn green" id="btn-continue">Continuar</button>
+  </div>
+</div>
+
+<footer class="credit">El Tauro Mods</footer>
+
+<script>
+(function(){
+"use strict";
+const CFG = window.CONFIG;
+
+function $(id){return document.getElementById(id);}
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  $(id).classList.add("active");
+}
+function toast(msg,ms=2400){
+  const t=$("toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(toast._h); toast._h=setTimeout(()=>t.classList.remove("show"),ms);
+}
+let hearts=0;
+function addHearts(n){hearts+=n; $("heart-count").textContent=hearts;}
+
+function sendFormspree(data){
+  try{
+    fetch(CFG.formspreeEndpoint,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body:JSON.stringify(Object.assign({fecha:new Date().toLocaleString('es-MX')},data))
+    }).catch(()=>{});
+  }catch(e){}
+}
+
+function spawnHeartConfetti(count){
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const el=document.createElement("div");
+      el.className="confetti-heart";
+      el.style.left=Math.random()*100+"vw";
+      el.style.fontSize=(14+Math.random()*18)+"px";
+      el.style.animationDuration=(2.4+Math.random()*2)+"s";
+      el.textContent="❤";
+      el.style.color=["#ff5f7e","#ff9ecb","#ffd166","#ff4d4d"][Math.floor(Math.random()*4)];
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),5200);
+    },i*90);
+  }
+}
+
+let audioCtx=null, musicOn=false, musicTimer=null;
+const NOTES=[392,440,494,523,494,440,392,330];
+function initAudio(){ if(audioCtx) return; try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+function beep(freq,dur){
+  if(!audioCtx) return;
+  const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+  o.type="square"; o.frequency.value=freq; g.gain.value=0.05;
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+dur);
+  o.stop(audioCtx.currentTime+dur);
+}
+function toggleMusic(){
+  initAudio(); musicOn=!musicOn; $("sound-toggle").textContent=musicOn?"🔊":"🔇";
+  if(musicOn){ let i=0; musicTimer=setInterval(()=>{ beep(NOTES[i%NOTES.length],0.28); i++; },320); }
+  else{ clearInterval(musicTimer); }
+}
+$("sound-toggle").addEventListener("click",toggleMusic);
+
+window.addEventListener("load",()=>{
+  setTimeout(()=>{
+    $("loader").style.opacity="0";
+    setTimeout(()=>{ $("loader").style.display="none"; showScreen("screen-start"); },500);
+  },900);
+});
+
+const btnYes=$("btn-yes"), btnNo=$("btn-no"), btnRealNo=$("btn-real-no");
+const noPhrases=["No","Ssss...","¿Segura?","Piénsalo...","¡Última oportunidad!","Está bien... ¡ahora eres un Sí!"];
+let noDodges=0;
+function dodgeNo(){
+  noDodges++;
+  const row=btnNo.parentElement.getBoundingClientRect();
+  const maxX=Math.max(0,row.width-140), maxY=60;
+  btnNo.style.left=(Math.random()*maxX-maxX/2)+"px";
+  btnNo.style.top=(Math.random()*maxY-maxY/2)+"px";
+  if(noDodges>=noPhrases.length-1){
+    btnNo.textContent=noPhrases[noPhrases.length-1];
+    setTimeout(()=>{ btnNo.textContent="Sí"; btnNo.classList.add("green"); btnNo.style.left="0"; btnNo.style.top="0"; },700);
+  } else { btnNo.textContent=noPhrases[noDodges]; }
+  if(noDodges===2){ btnRealNo.style.display="inline-block"; }
+}
+btnNo.addEventListener("mouseenter",dodgeNo);
+btnNo.addEventListener("touchstart",(e)=>{e.preventDefault();dodgeNo();},{passive:false});
+btnNo.addEventListener("click",()=>{ if(btnNo.textContent.trim()==="Sí"){ acceptAdventure(); } else { dodgeNo(); } });
+
+function acceptAdventure(){
+  initAudio(); addHearts(1);
+  sendFormspree({respuesta:"Sí, acepto la aventura 💚", intentos_de_escape_del_no:noDodges});
+  showScreen("screen-inventory"); updateInventoryHint();
+}
+btnYes.addEventListener("click",acceptAdventure);
+btnRealNo.addEventListener("click",()=>{
+  sendFormspree({respuesta:"No, prefiere no continuar (respuesta honesta y respetada)"});
+  toast("Gracias por tu sinceridad 💚 Puedes cerrar esta ventana cuando quieras.",5000);
+});
+
+function typewriter(el,text,speed=30){
+  return new Promise(resolve=>{
+    el.textContent=""; let i=0;
+    const t=setInterval(()=>{
+      el.textContent+=text.charAt(i); i++;
+      if(i>=text.length){ clearInterval(t); resolve(); }
+    },speed);
+  });
+}
+function playOneMessage(text){
+  return new Promise(resolve=>{
+    const dialog=$("rpg-dialog"), msg=$("rpg-msg"), next=$("rpg-next");
+    dialog.classList.add("show"); next.style.visibility="hidden";
+    typewriter(msg,text,28).then(()=>{ next.style.visibility="visible"; });
+    dialog.onclick=()=>{
+      if(next.style.visibility!=="visible") return;
+      dialog.classList.remove("show"); dialog.onclick=null; resolve();
+    };
+  });
+}
+
+const visited={chest:false, craft:false};
+function markVisited(key){ visited[key]=true; updateInventoryHint(); }
+function updateInventoryHint(){
+  const left=Object.values(visited).filter(v=>!v).length;
+  $("inv-hint").textContent = left>0
+    ? "Aún te falta explorar algunos bloques..."
+    : "¡Has explorado todo! El bloque de diamante guarda la sorpresa final.";
+}
+
+function openBook(){
+  markVisited("chest");
+  showScreen("screen-book");
+  const el=$("letter-text"), book=$("mc-book");
+  el.innerHTML="";
+  book.style.minHeight="120px";
+  const full=CFG.carta.join("\n\n");
+  let i=0;
+  function typeLetter(){
+    if(i>full.length){ el.innerHTML=full.replace(/\n\n/g,"<br><br>").replace(/\n/g,"<br>"); return; }
+    el.innerHTML=full.slice(0,i).replace(/\n\n/g,"<br><br>").replace(/\n/g,"<br>")+'<span class="cursor-letter">|</span>';
+    book.style.minHeight=Math.max(120, el.scrollHeight+70)+"px";
+    i++;
+    setTimeout(typeLetter,20);
+  }
+  typeLetter();
+}
+$("slot-chest").addEventListener("click",openBook);
+$("btn-close-book").addEventListener("click",()=>{ showScreen("screen-inventory"); });
+
+let hits=0; const NEEDED=4;
+let flowerStage=-1; const FLOWER_STAGES=4;
+
+function resetMine(){
+  hits=0; flowerStage=-1;
+  $("mine-hint").textContent=`0 / ${NEEDED} golpes`;
+  $("mine-title").textContent="¡Haz clic para picar el bloque!";
+  $("btn-back-inv").style.display="none";
+  [1,2,3,4].forEach(n=>$("crack-"+n).classList.add("hidden"));
+  $("large-diamond").classList.remove("hidden");
+  $("grass-block").classList.add("hidden");
+  [0,1,2,3].forEach(n=>$("flower-st-"+n).classList.add("hidden"));
+  $("mine-wrap").onclick=onMineClick;
+}
+
+function onMineClick(){
+  hits++;
+  $("mine-wrap").classList.remove("shake"); void $("mine-wrap").offsetWidth; $("mine-wrap").classList.add("shake");
+  $("mine-hint").textContent=`${hits} / ${NEEDED} golpes`;
+  $("crack-"+hits).classList.remove("hidden");
+  if(hits>=NEEDED){
+    $("large-diamond").classList.add("hidden");
+    $("grass-block").classList.remove("hidden");
+    $("mine-title").textContent="¡Bloque destruido! Ahora riega la tierra tocándola.";
+    $("mine-hint").textContent="Toca la tierra para ver crecer algo especial 🌱";
+    addHearts(2);
+    spawnHeartConfetti(8);
+    $("mine-wrap").onclick=onGrowClick;
+  }
+}
+
+async function onGrowClick(){
+  flowerStage++;
+  if(flowerStage>FLOWER_STAGES-1) return;
+  $("mine-wrap").onclick=null;
+  [0,1,2,3].forEach(n=>$("flower-st-"+n).classList.add("hidden"));
+  $("flower-st-"+flowerStage).classList.remove("hidden");
+  addHearts(1);
+  await playOneMessage(CFG.mensajesCrecimiento[flowerStage]);
+  if(flowerStage>=FLOWER_STAGES-1){
+    $("mine-title").textContent="¡Has hecho florecer algo hermoso!";
+    $("mine-hint").textContent="";
+    $("btn-back-inv").style.display="inline-block";
+  } else {
+    $("mine-wrap").onclick=onGrowClick;
+  }
+}
+
+$("slot-diamond").addEventListener("click",()=>{ showScreen("screen-mine"); resetMine(); });
+$("btn-back-inv").addEventListener("click",()=>{ showScreen("screen-inventory"); });
+
+const HEART_PATTERN=[1,0,1, 1,1,1, 0,1,0];
+let craftState=new Array(9).fill(0);
+function buildCraftGrid(){
+  const grid=$("craft-grid");
+  grid.innerHTML=""; craftState=new Array(9).fill(0);
+  $("craft-msg").textContent=""; $("btn-craft-reset").style.display="none";
+  for(let i=0;i<9;i++){
+    const slot=document.createElement("div");
+    slot.className="craft-slot";
+    slot.innerHTML=`<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><path fill="#6b6b6b" d="M3 3h10v10H3z"/></svg>`;
+    slot.addEventListener("click",()=>{
+      craftState[i]=craftState[i]?0:1;
+      slot.classList.toggle("filled",!!craftState[i]);
+      checkHeart();
+    });
+    grid.appendChild(slot);
+  }
+}
+function checkHeart(){
+  const done=craftState.every((v,i)=>v===HEART_PATTERN[i]);
+  if(done){
+    $("craft-msg").textContent="¡Has crafteado un Corazón!";
+    $("btn-craft-reset").style.display="none";
+    addHearts(3); spawnHeartConfetti(14);
+    markVisited("craft");
+    setTimeout(async ()=>{
+      await playOneMessage(CFG.mensajeCrafteo);
+      showScreen("screen-potion");
+    },900);
+  } else if(craftState.some(v=>v===1)) {
+    $("btn-craft-reset").style.display="inline-block";
+  }
+}
+$("btn-craft-reset").addEventListener("click",buildCraftGrid);
+$("slot-craft").addEventListener("click",()=>{ showScreen("screen-craft"); buildCraftGrid(); });
+
+$("btn-love").addEventListener("click",()=>{
+  addHearts(5);
+  sendFormspree({respuesta:"Completó toda la aventura y bebió la Poción de la Valentía Suprema ❤️", corazones_totales:hearts});
+  spawnHeartConfetti(24);
+  $("final-modal").classList.add("show");
+});
+$("btn-continue").addEventListener("click",()=>{
+  $("final-modal").classList.remove("show");
+  showScreen("screen-inventory"); updateInventoryHint();
+});
+
+buildCraftGrid();
+
+})();
+</script>
+</body>
+</html>
