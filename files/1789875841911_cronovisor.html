@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBSERVATORIO DE FRECUENCIAS ESPACIALES - CORE v1.0</title>
+    <style>
+        :root {
+            --bg-main: #05080c;
+            --bg-panel: #0a1118;
+            --border-cyan: #00ffcc;
+            --border-dim: #004433;
+            --text-primary: #00ffcc;
+            --text-secondary: #77e5d0;
+            --alert-pink: #ff2a6d;
+            --warning-gold: #ffcc00;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            min-height: 100vh;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Encabezado Principal */
+        header {
+            border: 1px solid var(--border-cyan);
+            background: var(--bg-panel);
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px var(--border-cyan);
+        }
+
+        .sys-status {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Grid Principal de la Consola */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            grid-template-rows: 220px 1fr;
+            gap: 15px;
+            flex: 1;
+        }
+
+        /* Modulos/Paneles genéricos */
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-dim);
+            border-radius: 4px;
+            padding: 12px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--border-cyan);
+            border-bottom: 1px solid var(--border-dim);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Asignación de Paneles en la Grid */
+        #panel-controls { grid-column: 1 / 2; grid-row: 1 / 3; }
+        #panel-spectrum  { grid-column: 2 / 3; grid-row: 1 / 2; }
+        #panel-logs      { grid-column: 2 / 3; grid-row: 2 / 3; }
+        #panel-telemetry { grid-column: 3 / 4; grid-row: 1 / 2; }
+        #panel-decoder   { grid-column: 3 / 4; grid-row: 2 / 3; }
+
+        /* Estilos Adaptativos Responsive */
+        @media (max-width: 1024px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+            #panel-controls, #panel-spectrum, #panel-logs, #panel-telemetry, #panel-decoder {
+                grid-column: 1 / 2;
+                grid-row: auto;
+            }
+        }
+        /* [BLOQUE DE ESTILOS ADICIONALES SE INSERTARÁN EN SIGUIENTES PARTES] */
+        
+          /* Estilos Parte 2: Mandos e Indicadores */
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .control-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .btn-action {
+            background: rgba(0, 255, 204, 0.05);
+            border: 1px solid var(--border-cyan);
+            color: var(--text-primary);
+            padding: 10px;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .btn-action:hover {
+            background: var(--border-cyan);
+            color: var(--bg-main);
+            box-shadow: 0 0 10px var(--border-cyan);
+        }
+
+        .btn-action.active {
+            background: var(--border-cyan);
+            color: var(--bg-main);
+        }
+
+        .select-input {
+            background: #020406;
+            border: 1px solid var(--border-dim);
+            color: var(--text-primary);
+            padding: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .select-input:focus {
+            border-color: var(--border-cyan);
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .slider-container input[type="range"] {
+            accent-color: var(--border-cyan);
+            cursor: pointer;
+        }
+
+        .slider-val {
+            font-size: 0.75rem;
+            color: var(--warning-gold);
+            text-align: right;
+        }
+
+        /* Indicadores LED */
+        .led-panel {
+            border: 1px solid var(--border-dim);
+            background: #020406;
+            padding: 10px;
+            border-radius: 3px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .led-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+        }
+
+        .led-light {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #222;
+            box-shadow: inset 0 0 2px #000;
+        }
+
+        .led-light.active-green {
+            background: #00ffcc;
+            box-shadow: 0 0 8px #00ffcc;
+        }
+
+        .led-light.active-red {
+            background: var(--alert-pink);
+            box-shadow: 0 0 8px var(--alert-pink);
+        }
+
+        .led-light.active-yellow {
+            background: var(--warning-gold);
+            box-shadow: 0 0 8px var(--warning-gold);
+        }
+        /* Estilos Parte 3: Consola de Logs y Terminal */
+        .log-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+
+        .log-filters {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-filter {
+            background: #020406;
+            border: 1px solid var(--border-dim);
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+
+        .btn-filter.active, .btn-filter:hover {
+            border-color: var(--border-cyan);
+            color: var(--border-cyan);
+        }
+
+        .log-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-small {
+            background: transparent;
+            border: 1px solid var(--border-dim);
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+
+        .btn-small:hover {
+            border-color: var(--border-cyan);
+            color: var(--text-primary);
+        }
+
+        .terminal-box {
+            background: #020406;
+            border: 1px solid var(--border-dim);
+            border-radius: 3px;
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 0.78rem;
+            line-height: 1.4;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .log-entry {
+            display: flex;
+            gap: 8px;
+            word-break: break-all;
+        }
+
+        .log-time {
+            color: #558877;
+            white-space: nowrap;
+        }
+
+        .log-tag {
+            font-weight: bold;
+            padding: 0 4px;
+            border-radius: 2px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+
+        .tag-sys { background: rgba(0, 255, 204, 0.1); color: var(--border-cyan); }
+        .tag-sat { background: rgba(255, 204, 0, 0.1); color: var(--warning-gold); }
+        .tag-anomaly { background: rgba(255, 42, 109, 0.2); color: var(--alert-pink); font-weight: bold; }
+        .tag-decode { background: rgba(119, 229, 208, 0.1); color: var(--text-secondary); }
+
+        .log-text-anomaly {
+            color: var(--alert-pink);
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 42, 109, 0.3);
+        }
+        /* Estilos Parte 4: Telemetría Orbital y Radar */
+        .telemetry-grid {
+            display: grid;
+            grid-template-columns: 1fr 110px;
+            gap: 10px;
+            height: 100%;
+        }
+
+        .telemetry-data {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 0.75rem;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed rgba(0, 255, 204, 0.15);
+            padding-bottom: 2px;
+        }
+
+        .data-label { color: var(--text-secondary); }
+        .data-val { color: var(--warning-gold); font-weight: bold; }
+
+        .radar-box {
+            border: 1px solid var(--border-dim);
+            background: #020406;
+            border-radius: 3px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas#radarCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+              /* Estilos Parte 5: Espectrograma FFT y Decodificador de Trama */
+        .spectrum-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            position: relative;
+        }
+
+        canvas#spectrumCanvas {
+            width: 100%;
+            height: calc(100% - 25px);
+            background: #020406;
+            border: 1px solid var(--border-dim);
+            border-radius: 3px;
+            display: block;
+        }
+
+        .freq-legend {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            padding: 0 5px;
+        }
+
+        .decoder-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            gap: 8px;
+        }
+
+        .decoder-display {
+            background: #020406;
+            border: 1px solid var(--border-dim);
+            border-radius: 3px;
+            flex: 1;
+            padding: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--border-cyan);
+            overflow-y: auto;
+            word-break: break-all;
+        }
+
+        .decoder-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+  </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>SISTEMA DE ANÁLISIS DE FRECUENCIAS Y ANOMALÍAS ESPACIALES</h1>
+            <span class="sys-status">CORE SYSTEM: ONLINE | BETA 1.0</span>
+        </div>
+        <div>
+            <span id="utc-clock">00:00:00 UTC</span>
+        </div>
+    </header>
+
+    <div class="grid-container">
+        <!-- Panel 1: Mandos e Indicadores -->
+        <section class="panel" id="panel-controls">
+            <div class="panel-header">Módulo 01: Panel de Control</div>
+            <div id="controls-mount">
+                          <div class="control-group">
+                <span class="control-label">Fuente de Entrada RF</span>
+                <select class="select-input" id="source-select">
+                    <option value="mic">Audio Micrófono / SDR Local</option>
+                    <option value="sim">Simulador Espacio Profundo</option>
+                    <option value="websdr">WebSDR Radioastronomía</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <button class="btn-action" id="btn-toggle-recv">INICIAR RECEPTOR</button>
+                <button class="btn-action" id="btn-trigger-scan">ANALIZAR ESPECTRO</button>
+            </div>
+
+            <div class="control-group slider-container">
+                <div style="display: flex; justify-content: space-between;">
+                    <span class="control-label">Ganancia Receptor</span>
+                    <span class="slider-val" id="gain-val">75%</span>
+                </div>
+                <input type="range" id="gain-slider" min="0" max="100" value="75">
+            </div>
+
+            <div class="control-group slider-container">
+                <div style="display: flex; justify-content: space-between;">
+                    <span class="control-label">Filtro de Ruido (Squelch)</span>
+                    <span class="slider-val" id="squelch-val">-40 dB</span>
+                </div>
+                <input type="range" id="squelch-slider" min="-90" max="0" value="-40">
+            </div>
+
+            <!-- Estado del Hardware / LEDs -->
+            <div class="led-panel">
+                <div class="led-row">
+                    <span>RECEPTOR SDR</span>
+                    <div class="led-light" id="led-sdr"></div>
+                </div>
+                <div class="led-row">
+                    <span>FFT PROCESSOR</span>
+                    <div class="led-light" id="led-fft"></div>
+                </div>
+                <div class="led-row">
+                    <span>DETECTOR ANOMALÍAS</span>
+                    <div class="led-light" id="led-anomaly"></div>
+                </div>
+                <div class="led-row">
+                    <span>LINK SATELITAL</span>
+                    <div class="led-light" id="led-sat"></div>
+                </div>
+            </div>
+
+            </div>
+        </section>
+
+        <!-- Panel 2: Espectrograma FFT -->
+        <section class="panel" id="panel-spectrum">
+            <div class="panel-header">Módulo 02: Espectro Electromagnético</div>
+            <div id="spectrum-mount">            <div class="spectrum-container">
+                <canvas id="spectrumCanvas" width="600" height="160"></canvas>
+                <div class="freq-legend">
+                    <span>144.000 MHz</span>
+                    <span>144.500 MHz</span>
+                    <span>145.000 MHz</span>
+                    <span>145.500 MHz</span>
+                    <span>146.000 MHz</span>
+                </div>
+            </div>
+</div>
+        </section>
+
+        <!-- Panel 3: Consola de Logs -->
+        <section class="panel" id="panel-logs">
+            <div class="panel-header">
+                <span>Módulo 03: Registro de Anomalías</span>
+                <span style="font-size: 0.7rem; color: var(--text-secondary);" id="log-count">0 Eventos</span>
+            </div>
+            <div id="logs-mount" style="display: flex; flex-direction: column; flex: 1;">            <div class="log-toolbar">
+                <div class="log-filters">
+                    <button class="btn-filter active" data-filter="all">TODOS</button>
+                    <button class="btn-filter" data-filter="sys">SYS</button>
+                    <button class="btn-filter" data-filter="sat">SAT</button>
+                    <button class="btn-filter" data-filter="anomaly">ANOMALÍA</button>
+                    <button class="btn-filter" data-filter="decode">DECODE</button>
+                </div>
+                <div class="log-actions">
+                    <button class="btn-small" id="btn-clear-logs">LIMPIAR</button>
+                </div>
+            </div>
+
+            <div class="terminal-box" id="terminal-output"></div>
+</div>
+        </section>
+
+        <!-- Panel 4: Telemetría Orbital -->
+        <section class="panel" id="panel-telemetry">
+            <div class="panel-header">Módulo 04: Telemetría Satelital</div>
+            <div id="telemetry-mount" style="height: 100%;">            <div class="telemetry-grid">
+                <div class="telemetry-data">
+                    <div class="data-row">
+                        <span class="data-label">OBJETIVO:</span>
+                        <span class="data-val" id="sat-id">ISS (ZARYA)</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">LATITUD:</span>
+                        <span class="data-val" id="sat-lat">00.0000° N</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">LONGITUD:</span>
+                        <span class="data-val" id="sat-lon">00.0000° W</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">ALTITUD:</span>
+                        <span class="data-val" id="sat-alt">418.2 km</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">VELOCIDAD:</span>
+                        <span class="data-val" id="sat-spd">27,580 km/h</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">DOPPLER:</span>
+                        <span class="data-val" id="sat-dop">+1.42 kHz</span>
+                    </div>
+                </div>
+                <div class="radar-box">
+                    <canvas id="radarCanvas" width="110" height="110"></canvas>
+                </div>
+            </div>
+</div>
+        </section>
+
+        <!-- Panel 5: Decodificador -->
+        <section class="panel" id="panel-decoder">
+            <div class="panel-header">Módulo 05: Decodificador de Trama</div>
+            <div id="decoder-mount">            <div class="decoder-container">
+                <div class="decoder-display" id="decoder-output">
+                    [ESPERANDO SEÑAL RF DE ENTRADA PARA DECODIFICACIÓN BPSK/AFSK...]
+                </div>
+                <div class="decoder-stats">
+                    <span>BITRATE: <strong id="dec-rate" style="color:var(--text-primary);">1200 baud</strong></span>
+                    <span>SNR: <strong id="dec-snr" style="color:var(--warning-gold);">+18.4 dB</strong></span>
+                    <span>MODO: <strong id="dec-mode" style="color:var(--text-primary);">NOAA-APT / AFSK</strong></span>
+                </div>
+            </div>
+</div>
+        </section>
+    </div>
+
+    <!-- [CÓDIGO JAVASCRIPT SE INSERTARÁ EN SIGUIENTES PARTES] -->
+        <script>
+        /* ==========================================================================
+           PARTE 6: ESTADO GLOBAL DEL SISTEMA Y RELOJ UTC EN TIEMPO REAL
+           ========================================================================== */
+
+        // Objeto de Estado Global de la Consola
+        const SystemState = {
+            isReceiving: false,
+            isScanning: false,
+            activeSource: 'mic', // Options: 'mic', 'sim', 'websdr'
+            gain: 75,
+            squelch: -40,
+            
+            // Estado de los Canales/LEDs de Hardware
+            leds: {
+                sdr: false,
+                fft: false,
+                anomaly: false,
+                sat: true
+            },
+
+            // Telemetría Orbital Inicial (ISS)
+            satTelemetry: {
+                id: 'ISS (ZARYA)',
+                lat: -12.4321,
+                lon: -76.8901,
+                alt: 418.2,
+                speed: 27580,
+                doppler: 1.42
+            },
+
+            // Filtro activo para los logs
+            activeLogFilter: 'all',
+            logCount: 0
+        };
+
+        // Actualización en tiempo real del Reloj UTC en el Encabezado
+        function updateUTCClock() {
+            const clockEl = document.getElementById('utc-clock');
+            if (!clockEl) return;
+
+            const now = new Date();
+            const hours = String(now.getUTCHours()).padStart(2, '0');
+            const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+
+            clockEl.textContent = `${hours}:${minutes}:${seconds} UTC`;
+        }
+
+        // Iniciar el reloj cada segundo
+        setInterval(updateUTCClock, 1000);
+        updateUTCClock(); // Ejecución inmediata al cargar
+
+        console.log("[SYS] Núcleo del sistema inicializado correctamente.");
+            /* ==========================================================================
+           PARTE 7: CONTROLADORES DE INTERFAZ, SLIDERS Y ESTADO DE LEDS
+           ========================================================================== */
+
+        // Función para actualizar la apariencia visual de los LEDs según el estado
+        function updateLEDs() {
+            const ledMap = {
+                'led-sdr': { state: SystemState.leds.sdr, activeClass: 'active-green' },
+                'led-fft': { state: SystemState.leds.fft, activeClass: 'active-green' },
+                'led-anomaly': { state: SystemState.leds.anomaly, activeClass: 'active-red' },
+                'led-sat': { state: SystemState.leds.sat, activeClass: 'active-yellow' }
+            };
+
+            for (const [id, config] of Object.entries(ledMap)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.className = 'led-light';
+                    if (config.state) {
+                        el.classList.add(config.activeClass);
+                    }
+                }
+            }
+        }
+
+        // Inicialización de Event Listeners para Controles
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elementos del DOM
+            const btnToggleRecv = document.getElementById('btn-toggle-recv');
+            const btnTriggerScan = document.getElementById('btn-trigger-scan');
+            const sourceSelect = document.getElementById('source-select');
+            const gainSlider = document.getElementById('gain-slider');
+            const gainVal = document.getElementById('gain-val');
+            const squelchSlider = document.getElementById('squelch-slider');
+            const squelchVal = document.getElementById('squelch-val');
+
+            // 1. Selector de Fuente RF
+            if (sourceSelect) {
+                sourceSelect.addEventListener('change', (e) => {
+                    SystemState.activeSource = e.target.value;
+                    if (typeof addLogEntry === 'function') {
+                        addLogEntry('sys', `Fuente RF cambiada a: ${e.target.options[e.target.selectedIndex].text}`);
+                    }
+                });
+            }
+
+            // 2. Botón Iniciar / Detener Receptor
+            if (btnToggleRecv) {
+                btnToggleRecv.addEventListener('click', () => {
+                    SystemState.isReceiving = !SystemState.isReceiving;
+                    SystemState.leds.sdr = SystemState.isReceiving;
+                    SystemState.leds.fft = SystemState.isReceiving;
+                    updateLEDs();
+
+                    if (SystemState.isReceiving) {
+                        btnToggleRecv.textContent = "DETENER RECEPTOR";
+                        btnToggleRecv.classList.add('active');
+                        if (typeof addLogEntry === 'function') {
+                            addLogEntry('sys', 'Receptor SDR en línea. Capturando flujo de entrada...');
+                        }
+                    } else {
+                        btnToggleRecv.textContent = "INICIAR RECEPTOR";
+                        btnToggleRecv.classList.remove('active');
+                        if (typeof addLogEntry === 'function') {
+                            addLogEntry('sys', 'Receptor SDR detenido.');
+                        }
+                    }
+                });
+            }
+
+            // 3. Botón Analizar Espectro
+            if (btnTriggerScan) {
+                btnTriggerScan.addEventListener('click', () => {
+                    if (!SystemState.isReceiving) {
+                        if (typeof addLogEntry === 'function') {
+                            addLogEntry('sys', 'ERROR: Debe iniciar el receptor antes de escanear.');
+                        }
+                        return;
+                    }
+                    if (typeof addLogEntry === 'function') {
+                        addLogEntry('sys', 'Iniciando escaneo de banda completa 144-146 MHz...');
+                    }
+                });
+            }
+
+            // 4. Slider Ganancia
+            if (gainSlider && gainVal) {
+                gainSlider.addEventListener('input', (e) => {
+                    SystemState.gain = parseInt(e.target.value);
+                    gainVal.textContent = `${SystemState.gain}%`;
+                });
+            }
+
+            // 5. Slider Squelch
+            if (squelchSlider && squelchVal) {
+                squelchSlider.addEventListener('input', (e) => {
+                    SystemState.squelch = parseInt(e.target.value);
+                    squelchVal.textContent = `${SystemState.squelch} dB`;
+                });
+            }
+
+            // Renderizar LEDs iniciales
+            updateLEDs();
+        });
+        /* ==========================================================================
+           PARTE 8: SISTEMA TERMINAL DE LOGS Y FILTROS DINÁMICOS
+           ========================================================================== */
+
+        // Función principal para agregar entradas al registro del sistema
+        function addLogEntry(type, message) {
+            const terminal = document.getElementById('terminal-output');
+            const logCountEl = document.getElementById('log-count');
+            if (!terminal) return;
+
+            // Incrementar contador de eventos
+            SystemState.logCount++;
+            if (logCountEl) {
+                logCountEl.textContent = `${SystemState.logCount} Eventos`;
+            }
+
+            // Mapeo de tipos a clases CSS y texto de etiqueta
+            const typeConfig = {
+                'sys': { tag: 'SYS', class: 'tag-sys' },
+                'sat': { tag: 'SAT', class: 'tag-sat' },
+                'anomaly': { tag: 'ANOMALÍA', class: 'tag-anomaly' },
+                'decode': { tag: 'DECODE', class: 'tag-decode' }
+            };
+
+            const config = typeConfig[type] || typeConfig['sys'];
+
+            // Obtener marca de tiempo actual en formato UTC (HH:MM:SS)
+            const now = new Date();
+            const timeStr = `${String(now.getUTCHours()).padStart(2, '0')}:${String(now.getUTCMinutes()).padStart(2, '0')}:${String(now.getUTCSeconds()).padStart(2, '0')}`;
+
+            // Crear elemento DOM para la entrada del log
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'log-entry';
+            entryDiv.dataset.type = type;
+
+            // Determinar si el mensaje requiere resaltado de anomalía
+            const textClass = (type === 'anomaly') ? 'log-text-anomaly' : '';
+
+            entryDiv.innerHTML = `
+                <span class="log-time">[${timeStr}]</span>
+                <span class="log-tag ${config.class}">${config.tag}</span>
+                <span class="${textClass}">${message}</span>
+            `;
+
+            // Ocultar la entrada si no coincide con el filtro activo
+            if (SystemState.activeLogFilter !== 'all' && SystemState.activeLogFilter !== type) {
+                entryDiv.style.display = 'none';
+            }
+
+            terminal.appendChild(entryDiv);
+
+            // Auto-scroll al final del terminal
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        // Configuración de Filtros y Acciones de la Terminal
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterButtons = document.querySelectorAll('.btn-filter');
+            const btnClearLogs = document.getElementById('btn-clear-logs');
+
+            // 1. Manejo de botones de filtrado
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+
+                    const filter = e.target.dataset.filter;
+                    SystemState.activeLogFilter = filter;
+
+                    // Filtrar entradas visibles en la terminal
+                    const entries = document.querySelectorAll('#terminal-output .log-entry');
+                    entries.forEach(entry => {
+                        if (filter === 'all' || entry.dataset.type === filter) {
+                            entry.style.display = 'flex';
+                        } else {
+                            entry.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // 2. Limpiar terminal de logs
+            if (btnClearLogs) {
+                btnClearLogs.addEventListener('click', () => {
+                    const terminal = document.getElementById('terminal-output');
+                    if (terminal) {
+                        terminal.innerHTML = '';
+                    }
+                    SystemState.logCount = 0;
+                    const logCountEl = document.getElementById('log-count');
+                    if (logCountEl) {
+                        logCountEl.textContent = '0 Eventos';
+                    }
+                    addLogEntry('sys', 'Terminal de registro reiniciada.');
+                });
+            }
+
+            // Log de prueba inicial
+            addLogEntry('sys', 'Terminal de monitoreo lista. Filtros activos.');
+        });
+        /* ==========================================================================
+           PARTE 9: WEB AUDIO API Y RENDERIZADOR DEL ESPECTROGRAMA FFT
+           ========================================================================== */
+
+        let audioCtx = null;
+        let analyser = null;
+        let microphoneStream = null;
+        let fftDataArray = null;
+        let spectrumAnimFrame = null;
+
+        // Inicializar AudioContext y el nodo AnalyserNode
+        function initAudioEngine() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            if (!analyser) {
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 512;
+                analyser.smoothingTimeConstant = 0.8;
+                const bufferLength = analyser.frequencyBinCount;
+                fftDataArray = new Uint8Array(bufferLength);
+            }
+        }
+
+        // Conectar micrófono real al analizador de espectro
+        async function startMicrophone() {
+            try {
+                initAudioEngine();
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                microphoneStream = audioCtx.createMediaStreamSource(stream);
+                microphoneStream.connect(analyser);
+                addLogEntry('sys', 'Entrada de micrófono activada correctamente.');
+            } catch (err) {
+                addLogEntry('sys', 'No se pudo acceder al micrófono. Usando modo simulación.');
+                SystemState.activeSource = 'sim';
+            }
+        }
+
+        // Detener micrófono
+        function stopMicrophone() {
+            if (microphoneStream && microphoneStream.mediaStream) {
+                microphoneStream.mediaStream.getTracks().forEach(track => track.stop());
+                microphoneStream = null;
+            }
+        }
+
+        // Bucle de renderizado gráfico del espectro en el Canvas
+        function drawSpectrum() {
+            spectrumAnimFrame = requestAnimationFrame(drawSpectrum);
+
+            const canvas = document.getElementById('spectrumCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Limpiar canvas con fondo oscuro
+            ctx.fillStyle = '#020406';
+            ctx.fillRect(0, 0, width, height);
+
+            // Dibujar cuadrícula de fondo
+            ctx.strokeStyle = 'rgba(0, 255, 204, 0.08)';
+            ctx.lineWidth = 1;
+            const gridCols = 8;
+            const gridRows = 4;
+
+            for (let i = 1; i < gridCols; i++) {
+                const x = (width / gridCols) * i;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+
+            for (let j = 1; j < gridRows; j++) {
+                const y = (height / gridRows) * j;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+
+            // Si el receptor no está activo, solo dibujar ruido base leve
+            if (!SystemState.isReceiving) {
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(0, 255, 204, 0.3)';
+                ctx.lineWidth = 1.5;
+                for (let x = 0; x < width; x += 4) {
+                    const noiseY = height - 10 - (Math.random() * 8);
+                    if (x === 0) ctx.moveTo(x, noiseY);
+                    else ctx.lineTo(x, noiseY);
+                }
+                ctx.stroke();
+                return;
+            }
+
+            // Capturar datos FFT reales o simularlos
+            if (analyser && SystemState.activeSource === 'mic') {
+                analyser.getByteFrequencyData(fftDataArray);
+            } else {
+                // Simulación sintética de señal FFT si se selecciona 'sim' o 'websdr'
+                if (!fftDataArray) fftDataArray = new Uint8Array(256);
+                for (let i = 0; i < fftDataArray.length; i++) {
+                    let val = Math.random() * 30;
+                    // Generar pico simulación de señal
+                    if (i > 90 && i < 110) {
+                        val += Math.sin((i - 90) / 20 * Math.PI) * 180 + (Math.random() * 20);
+                    }
+                    fftDataArray[i] = Math.min(255, val);
+                }
+            }
+
+            // Renderizado de las barras / línea de frecuencia
+            const barWidth = (width / fftDataArray.length) * 1.5;
+            let x = 0;
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#00ffcc';
+            ctx.lineWidth = 1.5;
+
+            // Degradado de relleno para la onda
+            const gradient = ctx.createLinearGradient(0, 0, 0, height);
+            gradient.addColorStop(0, 'rgba(0, 255, 204, 0.5)');
+            gradient.addColorStop(1, 'rgba(0, 255, 204, 0.0)');
+
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.moveTo(0, height);
+
+            for (let i = 0; i < fftDataArray.length; i++) {
+                const value = fftDataArray[i];
+                const percent = value / 255;
+                const barHeight = (height - 20) * percent;
+                const y = height - barHeight;
+
+                ctx.lineTo(x, y);
+                x += barWidth;
+                if (x > width) break;
+            }
+
+            ctx.lineTo(width, height);
+            ctx.closePath();
+            ctx.fill();
+
+            // Dibujar la línea superior fluorescente
+            x = 0;
+            ctx.beginPath();
+            ctx.strokeStyle = '#00ffcc';
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = '#00ffcc';
+
+            for (let i = 0; i < fftDataArray.length; i++) {
+                const value = fftDataArray[i];
+                const percent = value / 255;
+                const barHeight = (height - 20) * percent;
+                const y = height - barHeight;
+
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+
+                x += barWidth;
+                if (x > width) break;
+            }
+            ctx.stroke();
+            ctx.shadowBlur = 0; // Resetear sombra
+        }
+
+        // Manejar el encendido del micrófono desde la lógica del botón
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnToggleRecv = document.getElementById('btn-toggle-recv');
+            if (btnToggleRecv) {
+                btnToggleRecv.addEventListener('click', () => {
+                    if (SystemState.isReceiving) {
+                        if (SystemState.activeSource === 'mic') {
+                            startMicrophone();
+                        }
+                    } else {
+                        stopMicrophone();
+                    }
+                });
+            }
+
+            // Iniciar bucle del espectro
+            drawSpectrum();
+        });
+        /* ==========================================================================
+           PARTE 10: RENDERIZADOR DEL RADAR ORBITAL Y TELEMETRÍA SATELITAL
+           ========================================================================== */
+
+        let radarAngle = 0;
+        let radarAnimFrame = null;
+
+        // Función para renderizar el Radar Canvas en 2D
+        function drawRadar() {
+            radarAnimFrame = requestAnimationFrame(drawRadar);
+
+            const canvas = document.getElementById('radarCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) / 2 - 4;
+
+            // Limpiar canvas con fondo oscuro
+            ctx.fillStyle = '#020406';
+            ctx.fillRect(0, 0, width, height);
+
+            // 1. Dibujar Anillos Concentricos
+            ctx.strokeStyle = 'rgba(0, 255, 204, 0.2)';
+            ctx.lineWidth = 1;
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * 0.66, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * 0.33, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 2. Ejes de Coordenadas Cruzadas
+            ctx.beginPath();
+            ctx.moveTo(centerX, 0);
+            ctx.lineTo(centerX, height);
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(width, centerY);
+            ctx.stroke();
+
+            // 3. Línea de Barrido Giratorio (Sweep)
+            radarAngle += 0.03;
+            if (radarAngle >= Math.PI * 2) radarAngle = 0;
+
+            const sweepX = centerX + Math.cos(radarAngle) * radius;
+            const sweepY = centerY + Math.sin(radarAngle) * radius;
+
+            // Sector del barrido con degradado
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, radarAngle - 0.3, radarAngle);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 255, 204, 0.12)';
+            ctx.fill();
+
+            // Línea principal del barrido
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(sweepX, sweepY);
+            ctx.strokeStyle = 'rgba(0, 255, 204, 0.8)';
+            ctx.stroke();
+
+            // 4. Marcador Satelital (Blip de Telemetría)
+            if (SystemState.leds.sat) {
+                // Posición relativa basada en las coordenadas simuladas
+                const blipX = centerX + (Math.sin(Date.now() * 0.001) * (radius * 0.5));
+                const blipY = centerY + (Math.cos(Date.now() * 0.0008) * (radius * 0.4));
+
+                // Blip parpadeante
+                ctx.beginPath();
+                ctx.arc(blipX, blipY, 3.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffcc00';
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = '#ffcc00';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Anillo de seguimiento alrededor del satélite
+                ctx.beginPath();
+                ctx.arc(blipX, blipY, 7, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255, 204, 0, 0.5)';
+                ctx.stroke();
+            }
+        }
+
+        // Bucle de actualización de los datos de telemetría en la UI
+        function updateTelemetryDisplay() {
+            if (!SystemState.isReceiving) return;
+
+            // Simular pequeños cambios orbitales en vivo
+            const time = Date.now() * 0.0005;
+            const lat = (-12.4321 + Math.sin(time) * 1.5).toFixed(4);
+            const lon = (-76.8901 + Math.cos(time) * 2.1).toFixed(4);
+            const alt = (418.2 + Math.sin(time * 2) * 0.4).toFixed(1);
+            const doppler = (1.42 + Math.cos(time * 1.5) * 0.35).toFixed(2);
+
+            const latEl = document.getElementById('sat-lat');
+            const lonEl = document.getElementById('sat-lon');
+            const altEl = document.getElementById('sat-alt');
+            const dopEl = document.getElementById('sat-dop');
+
+            if (latEl) latEl.textContent = `${Math.abs(lat)}° ${lat >= 0 ? 'N' : 'S'}`;
+            if (lonEl) lonEl.textContent = `${Math.abs(lon)}° ${lon >= 0 ? 'E' : 'W'}`;
+            if (altEl) altEl.textContent = `${alt} km`;
+            if (dopEl) dopEl.textContent = `${doppler >= 0 ? '+' : ''}${doppler} kHz`;
+        }
+
+        // Inicializar radar y ciclo de telemetría al cargar el DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            drawRadar();
+            setInterval(updateTelemetryDisplay, 800);
+        });
+        /* ==========================================================================
+           PARTE 11: DECODIFICADOR DE TRAMA Y GENERADOR DE ANOMALÍAS
+           ========================================================================== */
+
+        // Conjunto de paquetes de telemetría / tramas para simulación de decodificación
+        const mockFrameData = [
+            "FRAME_HEAD [0x7E] :: ORBIT_ID: 15429 :: TEMP_CPU: +38.4°C :: BAT_VOLT: 28.2V :: OK",
+            "SYNC_WORD: 0xA3F2 :: PACKET_NO: 8841 :: MOD: AFSK_1200 :: CRC: 0x41B9 [PASS]",
+            "TELEMETRY_DAT :: RPT_CH1: 0.884 :: RPT_CH2: 1.204 :: SOLAR_PWR: 142W :: STABLE",
+            "PAYLOAD_RAW :: 4E 4F 41 41 2D 31 39 20 4F 52 42 49 54 41 4C 20 44 41 54 41",
+            "DECODE_APT :: SYNC_A: 1040Hz :: SYNC_B: 832Hz :: WX_LINE_RES: 2080px :: OK",
+            "FRAME_TAIL [0x7E] :: TIMESTAMP_UTC: AUTO :: RSSI: -84dBm :: LOCK: TRUE"
+        ];
+
+        // Conjunto de anomalías electromagnéticas detectadas
+        const mockAnomalies = [
+            "Pico espectral no identificado detectado en 145.825 MHz (+22 dBm sobre piso de ruido).",
+            "Derivación Doppler anómala fuera de parámetros orbitales en banda VHF.",
+            "Desincronización de trama AFSK: Interferencia de patrón pulsante no catalogada.",
+            "Variación abrupta de SNR detectada en espectrograma FFT (-12 dB a +24 dB).",
+            "Señal BPSK no autorizada transmitiendo trama criptográfica corta."
+        ];
+
+        // Actualización dinámica del Decodificador de Trama
+        function processDecoderFrame() {
+            if (!SystemState.isReceiving) return;
+
+            const decoderOutput = document.getElementById('decoder-output');
+            const decSnr = document.getElementById('dec-snr');
+
+            if (!decoderOutput) return;
+
+            // Seleccionar trama aleatoria para simular recepción fluida
+            const rawFrame = mockFrameData[Math.floor(Math.random() * mockFrameData.length)];
+            const timeStamp = new Date().toISOString().split('T')[1].slice(0, 8);
+
+            const frameLine = document.createElement('div');
+            frameLine.style.marginBottom = '2px';
+            frameLine.textContent = `[${timeStamp}] ${rawFrame}`;
+
+            decoderOutput.appendChild(frameLine);
+
+            // Mantener un límite de líneas en pantalla para evitar saturar el DOM
+            while (decoderOutput.childNodes.length > 12) {
+                decoderOutput.removeChild(decoderOutput.firstChild);
+            }
+
+            // Auto-scroll al final del contenedor de decodificación
+            decoderOutput.scrollTop = decoderOutput.scrollHeight;
+
+            // Fluctuar el SNR para darle dinamismo
+            if (decSnr) {
+                const randomSnr = (14 + Math.random() * 8).toFixed(1);
+                decSnr.textContent = `+${randomSnr} dB`;
+            }
+
+            // Registrar en el log de forma esporádica
+            if (Math.random() > 0.6) {
+                addLogEntry('decode', `Trama procesada: CRC 0x${Math.floor(Math.random()*65535).toString(16).toUpperCase()} [PASS]`);
+            }
+        }
+
+        // Bucle aleatorio para la generación de anomalías de señal
+        function checkForAnomalies() {
+            if (!SystemState.isReceiving) return;
+
+            // Probabilidad del 25% de disparar una anomalía por ciclo
+            if (Math.random() < 0.25) {
+                const anomalyText = mockAnomalies[Math.floor(Math.random() * mockAnomalies.length)];
+                
+                // Activar indicador LED de anomalía
+                SystemState.leds.anomaly = true;
+                updateLEDs();
+
+                // Notificar en la consola de logs
+                addLogEntry('anomaly', `¡ALERTA!: ${anomalyText}`);
+
+                // Desactivar el LED tras 3.5 segundos
+                setTimeout(() => {
+                    SystemState.leds.anomaly = false;
+                    updateLEDs();
+                }, 3500);
+            }
+        }
+
+        // Inicializar temporizadores del decodificador y detector de anomalías
+        document.addEventListener('DOMContentLoaded', () => {
+            // Procesar tramas cada 1.8 segundos
+            setInterval(processDecoderFrame, 1800);
+
+            // Evaluar presencia de anomalías cada 6 segundos
+            setInterval(checkForAnomalies, 6000);
+        });
+        /* ==========================================================================
+           PARTE 12: ATAJOS DE TECLADO, DIAGNÓSTICO DE INICIO Y CIERRE
+           ========================================================================== */
+
+        // Atajos de teclado para operación remota/rápida de la consola
+        document.addEventListener('keydown', (e) => {
+            // Ignorar si el usuario está interactuando con selecciones
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+            switch (e.key.toLowerCase()) {
+                case ' ': // Barra espaciadora: Iniciar / Detener Receptor
+                    e.preventDefault();
+                    const btnRecv = document.getElementById('btn-toggle-recv');
+                    if (btnRecv) btnRecv.click();
+                    break;
+
+                case 's': // Tecla S: Analizar espectro
+                    e.preventDefault();
+                    const btnScan = document.getElementById('btn-trigger-scan');
+                    if (btnScan) btnScan.click();
+                    break;
+
+                case 'c': // Tecla C: Limpiar consola de logs
+                    e.preventDefault();
+                    const btnClear = document.getElementById('btn-clear-logs');
+                    if (btnClear) btnClear.click();
+                    break;
+            }
+        });
+
+        // Verificación de integridad del sistema al cargar completamente la página
+        window.addEventListener('load', () => {
+            addLogEntry('sys', 'Comprobación de módulos finalizada: WebAudio, Canvas 2D, Telemetría y Decoder operando en parámetros nominales.');
+            addLogEntry('sat', 'Enlace orbital con ISS (ZARYA) verificado. Frecuencia base: 145.800 MHz FM.');
+            addLogEntry('sys', 'Atajos de teclado habilitados: [ESPACIO] Encendido | [S] Escaneo | [C] Limpiar');
+            console.log("[SYS] Observatorio Espacial Beta 1.0 completamente ensamblado y operativo.");
+        });
+</script>
+</body>
+</html>
