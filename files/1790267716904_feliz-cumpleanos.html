@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es" >
+<head>
+  <meta charset="UTF-8">
+  <title> Happy birthday Card</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css?family=Indie+Flower');
+		@import url('https://fonts.googleapis.com/css?family=Amatic+SC');
+
+		body {
+			font-family: 'Indie Flower', cursive;
+			background-color: #FDE3A7;
+			background-image: url('https://i.pinimg.com/originals/d8/e3/3e/d8e33e8eb9b11342592784f345194fc2.gif');
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+			margin: 0;
+			padding: 0;
+		}
+
+		::selection {
+			background: transparent;
+		}
+
+		h4 {
+			font-size: 26px;
+			line-height: 1px;
+			font-family: 'Amatic SC', cursive;
+		}
+
+		.color1 { color: #1BBC9B; }
+		.color2 { color: #C0392B; }
+
+		.card {
+			color: #013243;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 300px;
+			height: 400px;
+			background: #e0e1dc;
+			transform-style: preserve-3d;
+			transform: translate(-50%, -50%) perspective(2000px);
+			box-shadow: inset 300px 0 50px rgba(0, 0, 0, .5), 20px 0 60px rgba(0, 0, 0, .5);
+			transition: 1s;
+		}
+
+		.card:hover {
+			transform: translate(-50%, -50%) perspective(2000px) rotate(15deg) scale(1.2);
+			box-shadow: inset 20px 0 50px rgba(0, 0, 0, .5), 0 10px 100px rgba(0, 0, 0, .5);
+		}
+
+		.card::before {
+			content: '';
+			position: absolute;
+			top: -5px;
+			left: 0;
+			width: 100%;
+			height: 5px;
+			background: #BAC1BA;
+			transform-origin: bottom;
+			transform: skewX(-45deg);
+		}
+
+		.card::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			right: -5px;
+			width: 5px;
+			height: 100%;
+			background: #92A29C;
+			transform-origin: left;
+			transform: skewY(-45deg);
+		}
+
+		.card .imgBox {
+			width: 100%;
+			height: 100%;
+			position: relative;
+			transform-origin: left;
+			transition: .7s;
+		}
+
+		.card .bark {
+			position: absolute;
+			background: #e0e1dc;
+			width: 100%;
+			height: 100%;
+			opacity: 0;
+			transition: .7s;
+		}
+
+		.card .imgBox img,
+		.card .imgBox video {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.card:hover .imgBox {
+			transform: rotateY(-135deg);
+		}
+
+		.card:hover .bark {
+			opacity: 1;
+			transition: .6s;
+			box-shadow: 300px 200px 100px rgba(0, 0, 0, .4) inset;
+		}
+
+		.card .details {
+			position: absolute;
+			top: 0;
+			left: 0;
+			box-sizing: border-box;
+			padding: 0 0 0 10px;
+			z-index: -1;
+			margin-top: 70px;
+		}
+
+		.card .details p {
+			font-size: 15px;
+			line-height: 1.25;
+			transform: rotate(-10deg);
+			padding: 0 0 0 20px;
+		}
+
+		.card .details h4 {
+			text-align: center;
+		}
+
+		.text-right {
+			text-align: right;
+		}
+
+		.music-player {
+			position: fixed;
+			bottom: 16px;
+			left: 50%;
+			z-index: 10;
+			width: min(390px, calc(100% - 32px));
+			transform: translateX(-50%);
+			box-sizing: border-box;
+			padding: 12px 16px 10px;
+			border: 1px solid rgba(255, 255, 255, .55);
+			border-radius: 18px;
+			background: rgba(20, 31, 38, .34);
+			box-shadow: 0 8px 28px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .22);
+			backdrop-filter: blur(8px);
+			-webkit-backdrop-filter: blur(8px);
+			color: #ffffff;
+			text-shadow: 0 1px 3px rgba(0, 0, 0, .8);
+		}
+
+		.music-player::before {
+			content: '';
+			display: block;
+			width: 46px;
+			height: 3px;
+			margin: 0 auto 8px;
+			border-radius: 3px;
+			background: #FDE3A7;
+			box-shadow: 0 0 10px rgba(253, 227, 167, .8);
+		}
+
+		.music-player .music-label {
+			display: block;
+			margin-bottom: 1px;
+			color: #FDE3A7;
+			font-family: Arial, sans-serif;
+			font-size: 9px;
+			font-weight: bold;
+			letter-spacing: 2px;
+			text-transform: uppercase;
+		}
+
+		.music-player h2 {
+			margin: 0 0 7px;
+			font-size: 27px;
+			line-height: 1;
+			font-family: 'Amatic SC', cursive;
+		}
+
+		.music-player audio {
+			display: block;
+			width: 100%;
+			height: 32px;
+			background: transparent;
+		}
+
+		.music-player audio::-webkit-media-controls-panel {
+			background: rgba(255, 255, 255, .72);
+		}
+
+		@media (max-width: 480px) {
+			.music-player {
+				bottom: 10px;
+				padding: 10px 12px 8px;
+			}
+
+			.music-player h2 {
+				font-size: 24px;
+			}
+		}
+	</style>
+
+</head>
+<body>
+
+<div class="card">
+		<div class="imgBox">
+			<div class="bark"></div>
+			<video autoplay muted loop playsinline>
+				<source src="https://github.com/Cotipo12/video/raw/refs/heads/main/From%20Klickpin.com-%20From%20beginner%20to%20obsessed%20Love%20these%20elegant%20bridesmaid%20gift%20ideas%20youll%20want%20to%20recreate%20this%20weekend%20designed%20to%20feel%20inspiri.mp4" type="video/mp4">
+				Tu navegador no admite videos HTML5.
+			</video>
+		</div>
+		<div class="details">
+			<h4 class="color3">FELIZ CUMPLEAÑOS!</h4>
+			<p>En este día tan especial quiero desearte un cumpleaños lleno de amor, alegría y momentos que llenen tu corazón de felicidad. Eres una persona maravillosa y mereces todo lo mejor en este día y siempre. Estoy agradecido por tenerte en mi vida y por compartir tantos momentos especiales juntos. Te quiero muchísimo y deseo que este día sea tan hermoso como tú lo mereces.</p>
+			<p class="text-right">¡Besos y abrazos!</p>
+			<p class="text-right">de mi pues ♥</p>
+		</div>
+	</div>
+
+	<div class="music-player">
+		<span class="music-label">Ahora suena</span>
+		<h2>Feliz Cumpleaños</h2>
+		<audio controls loop>
+			<source src="https://github.com/Cotipo12/video/raw/refs/heads/main/Feliz%20Cumplea%C3%B1os%20Jazz%20%F0%9F%8E%B7Versi%C3%B3n%20Original%20y%20Elegante%20para%20Fiestas%20-Happy%20Birthday%20Jazz%20%F0%9F%8E%B7Original%20Jazz.mp3" type="audio/mpeg">
+			Tu navegador no admite audio HTML5.
+		</audio>
+	</div>
+
+</body>
+</html>
