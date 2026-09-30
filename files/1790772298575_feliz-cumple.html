@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Una Sorpresa para Ti</title>
+    <!-- Cargamos la librería de confeti desde internet -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        body {
+            background-color: #fef5e7; 
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            text-align: center;
+            perspective: 1000px;
+        }
+
+        /* Contenedor principal del sobre */
+        .contenedor-sobre {
+            position: relative;
+            width: 320px;
+            height: 200px;
+            cursor: pointer;
+            z-index: 20;
+            transition: transform 0.5s;
+        }
+
+        /* El sobre cerrado - Ahora Blanco Puro */
+        .sobre {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff; 
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* La solapa del sobre - Blanco con sombra suave */
+        .solapa {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 110px solid #f9f9f9; 
+            transform-origin: top;
+            transition: transform 0.4s ease;
+            z-index: 4;
+            filter: drop-shadow(0 3px 2px rgba(0,0,0,0.08));
+        }
+
+        /* El sello de corazón verde en la solapa */
+        .sello-corazon {
+            position: absolute;
+            top: -125px; /* Posicionado exactamente en la punta del triángulo */
+            left: -20px;
+            font-size: 35px;
+            z-index: 5;
+            transition: transform 0.4s ease, opacity 0.3s;
+            user-select: none;
+        }
+
+        /* El frente del sobre - Blanco con cortes limpios */
+        .sobre::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid #fcfcfc;
+            border-right: 160px solid #fcfcfc;
+            border-top: 100px solid transparent;
+            z-index: 3;
+            border-radius: 0 0 10px 10px;
+            filter: drop-shadow(0 -2px 3px rgba(0,0,0,0.03));
+        }
+
+        /* La carta con tu mensaje */
+        .tarjeta {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border: 2px solid #f39c12;
+            transition: transform 0.6s ease, opacity 0.4s;
+            opacity: 0;
+            z-index: 1;
+            transform: translateY(0);
+            pointer-events: none;
+        }
+
+        h1 { color: #d35400; font-size: 1.5em; margin-top: 0; }
+        p { color: #3e2723; font-size: 1em; line-height: 1.4; }
+
+        /* Apertura del sobre */
+        .contenedor-sobre.abierto .solapa {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        /* Esconde o desvía el corazón cuando se abre para que no estorbe */
+        .contenedor-sobre.abierto .sello-corazon {
+            transform: translateY(-10px) scale(0);
+            opacity: 0;
+        }
+
+        .contenedor-sobre.abierto .tarjeta {
+            opacity: 1;
+            transform: translateY(-160px) scale(1.05); 
+            z-index: 6;
+            pointer-events: auto;
+        }
+
+        /* Animación de los girasoles y corazones flotantes */
+        .elemento-flotante {
+            position: absolute;
+            bottom: -60px;
+            animation: flotarY_Girar 6s linear infinite;
+            opacity: 0.85;
+            z-index: 2;
+            user-select: none;
+        }
+
+        @keyframes flotarY_Girar {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-115vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Texto de ayuda arriba del sobre */
+        .instruccion {
+            color: #d35400;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            z-index: 10;
+            animation: latido 1.5s infinite;
+        }
+
+        @keyframes latido {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="instruccion" id="guia">✉️ ¡Haz clic en el sobre para abrirlo!</div>
+
+    <div class="contenedor-sobre" onclick="abrirSobre()">
+        <div class="solapa">
+            <!-- El corazón verde puesto como sello en la solapa -->
+            <div class="sello-corazon">💚</div>
+        </div>
+        <div class="sobre"></div>
+        
+        <div class="tarjeta">
+            <h1>🌻 ¡Feliz Cumpleaños! 🌻</h1>
+            <p>Hoy es un día increíble porque celebra un año más la persona más especial del mundo. Quería sorprenderte con algo único, hecho con mis propias manos y código, para recordarte lo mucho que valoro tu amistad.</p>
+            <p>Gracias por cada risa, por cada locura y por estar siempre ahí. Que este nuevo año de vida te traiga tantas alegrías como girasoles flotan en la pantalla. ¡Te quiero muchísimo! 💚</p>
+        </div>
+    </div>
+
+    <!-- Lluvia combinada de Girasoles (🌻) y Corazones Verdes (💚) -->
+    <div class="elemento-flotante" style="left: 5%;  font-size: 45px; animation-delay: 0s;   animation-duration: 7s;">🌻</div>
+    <div class="elemento-flotante" style="left: 15%; font-size: 30px; animation-delay: 3s;   animation-duration: 5s;">💚</div>
+    <div class="elemento-flotante" style="left: 25%; font-size: 45px; animation-delay: 1.5s; animation-duration: 8s;">🌻</div>
+    <div class="elemento-flotante" style="left: 35%; font-size: 35px; animation-delay: 4.5s; animation-duration: 6s;">💚</div>
+    <div class="elemento-flotante" style="left: 45%; font-size: 45px; animation-delay: 0.5s; animation-duration: 7.5s;">🌻</div>
+    <div class="elemento-flotante" style="left: 55%; font-size: 30px; animation-delay: 2.2s; animation-duration: 5.5s;">💚</div>
+    <div class="elemento-flotante" style="left: 65%; font-size: 45px; animation-delay: 3.8s; animation-duration: 6.5s;">🌻</div>
+    <div class="elemento-flotante" style="left: 75%; font-size: 35px; animation-delay: 1s;   animation-duration: 7s;">💚</div>
+    <div class="elemento-flotante" style="left: 85%; font-size: 45px; animation-delay: 5s;   animation-duration: 8s;">🌻</div>
+    <div class="elemento-flotante" style="left: 93%; font-size: 30px; animation-delay: 2.7s; animation-duration: 6s;">💚</div>
+
+    <script>
+        function abrirSobre() {
+            var sobre = document.querySelector('.contenedor-sobre');
+            sobre.classList.toggle('abierto');
+            
+            var guia = document.getElementById('guia');
+            
+            if (sobre.classList.contains('abierto')) {
+                guia.innerHTML = "✨ ¡Sorpresa! ✨";
+                
+                // Explosión de confeti festivo
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { x: 0, y: 0.6 }
+                });
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { x: 1, y: 0.6 }
+                });
+            } else {
+                guia.innerHTML = "✉️ ¡Haz clic en el sobre para abrirlo!";
+            }
+        }
+    </script>
+
+</body>
+</html>
