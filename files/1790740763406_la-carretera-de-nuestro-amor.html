@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para el amor de mi vida - 30 de Septiembre</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Pacifico&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        romantic: ['Pacifico', 'cursive'],
+                    },
+                    colors: {
+                        racingRed: '#FF1E00',
+                        hotPink: '#FF2E93',
+                        speedGold: '#FFD700',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes floatHeart {
+            0% { transform: translateY(0px) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(1.5) rotate(360deg); opacity: 0; }
+        }
+        .floating-heart {
+            position: absolute;
+            bottom: -20px;
+            color: #FF2E93;
+            animation: floatHeart 5s linear infinite;
+        }
+        @keyframes moveTrack {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 0; }
+        }
+        .racing-track {
+            background-image: repeating-linear-gradient(90deg, #1e293b, #1e293b 30px, #facc15 30px, #facc15 45px);
+            animation: moveTrack 2s linear infinite;
+        }
+        .glass-romantic {
+            background: rgba(20, 20, 30, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 46, 147, 0.3);
+        }
+        .glow-text {
+            text-shadow: 0 0 20px rgba(255, 46, 147, 0.6), 0 0 40px rgba(255, 30, 0, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen overflow-x-hidden selection:bg-hotPink selection:text-white relative">
+
+    <!-- Floating Hearts Container -->
+    <div id="hearts-container" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+
+    <!-- Header -->
+    <header class="relative z-10 glass-romantic sticky top-0 border-b border-rose-500/20 px-6 py-4 flex items-center justify-between shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-racingRed to-hotPink flex items-center justify-center text-white shadow-lg shadow-hotPink/30 animate-pulse">
+                <i class="fa-solid fa-car-side text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-sm tracking-widest text-hotPink uppercase">30 de Septiembre</h1>
+                <p class="text-xs font-romantic text-rose-300">Día de los Hot Wheels & Mi Amor</p>
+            </div>
+        </div>
+        <div class="hidden sm:flex items-center space-x-6 text-xs font-semibold tracking-wider uppercase text-rose-200">
+            <a href="#carta" class="hover:text-hotPink transition-colors">Carta de Amor</a>
+            <a href="#garaje" class="hover:text-hotPink transition-colors">Nuestro Garaje</a>
+            <a href="#juego" class="hover:text-hotPink transition-colors">Pista del Amor</a>
+        </div>
+        <button onclick="reproducirMotor()" class="bg-gradient-to-r from-racingRed to-hotPink px-4 py-2 rounded-xl text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-all flex items-center space-x-2">
+            <i class="fa-solid fa-gauge-high"></i>
+            <span>¡Acelerar Corazón!</span>
+        </button>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative z-10 min-h-[85vh] flex flex-col items-center justify-center text-center px-4 py-12">
+        <div class="absolute w-72 h-72 md:w-96 md:h-96 bg-hotPink/20 rounded-full blur-[100px] pointer-events-none -top-10"></div>
+        <div class="absolute w-72 h-72 md:w-96 md:h-96 bg-racingRed/20 rounded-full blur-[100px] pointer-events-none -bottom-10"></div>
+
+        <span class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-hotPink/10 text-hotPink border border-hotPink/30 mb-6 shadow-sm">
+            <i class="fa-solid fa-fire mr-1.5 text-speedGold"></i> Edición Especial Limitada: Mi Novio Favorito
+        </span>
+
+        <h2 class="text-4xl md:text-7xl font-black tracking-tight mb-6 glow-text max-w-4xl">
+            Contigo, mi vida va a <span class="font-romantic text-hotPink font-normal capitalize">velocidad máxima</span> de amor
+        </h2>
+
+        <p class="text-slate-300 max-w-xl text-sm md:text-base leading-relaxed mb-10">
+            Hoy 30 de septiembre celebramos los Hot Wheels, pero yo celebro tener al piloto más guapo, tierno y especial conduciendo mi corazón todos los días. 🏎️💨❤️
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 w-full max-w-sm justify-center">
+            <a href="#carta" class="bg-gradient-to-r from-hotPink to-racingRed text-white font-bold py-3.5 px-8 rounded-2xl shadow-xl shadow-hotPink/30 hover:scale-105 transition-all flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-envelope-open-text"></i>
+                <span>Abrir Carta de Amor</span>
+            </a>
+            <a href="#garaje" class="glass-romantic text-white font-bold py-3.5 px-8 rounded-2xl hover:bg-rose-950/40 transition-all flex items-center justify-center space-x-2 border border-rose-500/40">
+                <i class="fa-solid fa-trophy text-speedGold"></i>
+                <span>Nuestros Momentos</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Carta de Amor Interactiva -->
+    <section id="carta" class="relative z-10 max-w-4xl mx-auto px-4 py-16">
+        <div class="text-center mb-10">
+            <span class="text-xs font-bold text-hotPink uppercase tracking-widest">Para el dueño de mis suspiros</span>
+            <h3 class="text-3xl md:text-4xl font-extrabold mt-1">Una carta directa desde los pits de mi corazón</h3>
+        </div>
+
+        <div class="glass-romantic p-6 md:p-10 rounded-3xl shadow-2xl relative border-2 border-hotPink/30">
+            <div class="absolute -top-5 left-10 bg-gradient-to-r from-racingRed to-hotPink text-white px-5 py-1.5 rounded-full text-xs font-bold shadow-md flex items-center space-x-2">
+                <i class="fa-solid fa-heart"></i>
+                <span>30.09.2026 - Día de los Hot Wheels</span>
+            </div>
+
+            <div class="space-y-6 text-slate-200 text-sm md:text-base leading-relaxed pt-4 font-light">
+                <p class="font-semibold text-lg text-rose-300 font-romantic">Mi amor hermoso,</p>
+                <p>
+                    Dicen que los mejores autos de colección son difíciles de encontrar, pero yo tuve la inmensa fortuna de encontrarte a ti, que eres mil veces mejor que cualquier Hot Wheels de edición limitada. Me encantan tus pasiones, la forma en que brillan tus ojos cuando hablas de carritos, y sobre todo, la manera tan bonita en que aceleras mis latidos cada vez que me sonríes.
+                </p>
+                <p>
+                    En esta pista llamada vida, quiero ser tu copiloto en todas las curvas cerradas, en las rectas largas y en cada meta que nos propongamos alcanzar juntos. Gracias por llenarme de amor, risas y por ser ese refugio tan seguro al que siempre quiero volver.
+                </p>
+                <p class="font-romantic text-xl text-hotPink pt-2">
+                    ¡Te amo con todo el motor de mi alma! 🏎️❤️✨
+                </p>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-rose-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <span class="text-xs text-rose-300 italic"><i class="fa-solid fa-stamp mr-1 text-speedGold"></i> Certificado de amor eterno y exclusivo</span>
+                <button onclick="lanzarFuegosArtificiales()" class="bg-speedGold text-slate-950 font-extrabold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center space-x-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>¡Enviar Besos Turbo!</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nuestro Garaje de Momentos -->
+    <section id="garaje" class="relative z-10 max-w-6xl mx-auto px-4 py-16">
+        <div class="text-center mb-12">
+            <span class="text-xs font-bold text-hotPink uppercase tracking-widest">Colección Privada</span>
+            <h3 class="text-3xl md:text-4xl font-extrabold mt-1">El Garaje de Nuestros Mejores Momentos</h3>
+            <p class="text-xs md:text-sm text-slate-400 mt-2">Cada modelo representa un recuerdo imborrable en nuestra historia de amor.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Card 1 -->
+            <div class="glass-romantic p-6 rounded-3xl hover:border-hotPink transition-all duration-300 group">
+                <div class="h-48 rounded-2xl bg-gradient-to-tr from-rose-900/40 to-pink-900/40 border border-hotPink/20 flex items-center justify-center relative overflow-hidden mb-5">
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-hotPink/10 via-transparent to-transparent"></div>
+                    <i class="fa-solid fa-car-rear text-6xl text-hotPink group-hover:scale-110 transition-transform duration-300"></i>
+                    <span class="absolute top-3 right-3 bg-speedGold text-slate-950 font-bold text-[10px] px-2.5 py-1 rounded-full shadow-sm">Modelo #01</span>
+                </div>
+                <h4 class="font-bold text-lg mb-2 text-rose-200">Nuestra Primera Cita en Carro</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">Aquel día en que las horas pasaban volando mientras platicábamos de todo y de nada, sintiendo que ya nos conocíamos de otra vida.</p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="glass-romantic p-6 rounded-3xl hover:border-hotPink transition-all duration-300 group">
+                <div class="h-48 rounded-2xl bg-gradient-to-tr from-amber-900/40 to-red-900/40 border border-speedGold/20 flex items-center justify-center relative overflow-hidden mb-5">
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-speedGold/10 via-transparent to-transparent"></div>
+                    <i class="fa-solid fa-flag-checkered text-6xl text-speedGold group-hover:scale-110 transition-transform duration-300"></i>
+                    <span class="absolute top-3 right-3 bg-hotPink text-white font-bold text-[10px] px-2.5 py-1 rounded-full shadow-sm">Modelo #02</span>
+                </div>
+                <h4 class="font-bold text-lg mb-2 text-rose-200">Metas y Sueños Compartidos</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">Apoyarnos en cada proyecto y saber que tenemos el equipo perfecto para ganar cualquier carrera que se nos cruce.</p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="glass-romantic p-6 rounded-3xl hover:border-hotPink transition-all duration-300 group">
+                <div class="h-48 rounded-2xl bg-gradient-to-tr from-purple-900/40 to-pink-900/40 border border-purple-500/20 flex items-center justify-center relative overflow-hidden mb-5">
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-500/10 via-transparent to-transparent"></div>
+                    <i class="fa-solid fa-heart-pulse text-6xl text-purple-400 group-hover:scale-110 transition-transform duration-300"></i>
+                    <span class="absolute top-3 right-3 bg-purple-500 text-white font-bold text-[10px] px-2.5 py-1 rounded-full shadow-sm">Edición Especial</span>
+                </div>
+                <h4 class="font-bold text-lg mb-2 text-rose-200">Abrazos que Recargan Baterías</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">Tus abrazos son mi parada en pits favorita; ahí encuentro la paz y la energía para continuar con una sonrisa.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Minijuego / Pista del Amor -->
+    <section id="juego" class="relative z-10 max-w-4xl mx-auto px-4 py-16">
+        <div class="glass-romantic p-8 rounded-3xl border-2 border-speedGold/30 text-center relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-speedGold/10 rounded-full blur-2xl"></div>
+
+            <span class="text-xs font-bold text-speedGold uppercase tracking-widest"><i class="fa-solid fa-gamepad mr-1"></i> Pista Interactiva de Afecto</span>
+            <h3 class="text-2xl md:text-3xl font-extrabold mt-2 mb-4">¿Cuánto aceleras mi corazón hoy?</h3>
+            <p class="text-xs md:text-sm text-slate-300 max-w-lg mx-auto mb-8">
+                Presiona el acelerador cuantas veces quieras para calcular cuánto amor te tengo en este preciso instante.
+            </p>
+
+            <div class="racing-track h-20 rounded-2xl border border-rose-500/30 flex items-center justify-between px-6 relative mb-8 overflow-hidden shadow-inner">
+                <div id="car-icon" class="text-3xl text-speedGold transition-all duration-300 relative z-10" style="transform: translateX(0px);">
+                    <i class="fa-solid fa-car-side"></i>
+                </div>
+                <div class="text-right z-10">
+                    <span id="turbo-counter" class="text-3xl md:text-4xl font-black text-hotPink">100%</span>
+                    <p class="text-[10px] uppercase font-bold text-slate-400">Nivel de Amor</p>
+                </div>
+            </div>
+
+            <button onclick="acelerarCarro()" class="bg-gradient-to-r from-racingRed via-hotPink to-speedGold text-slate-950 font-black px-8 py-4 rounded-2xl text-sm md:text-base uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all">
+                <i class="fa-solid fa-gauge mr-2"></i> ¡Pisar el Acelerador al Máximo!
+            </button>
+            <p id="turbo-msg" class="text-xs text-rose-300 mt-4 font-semibold h-6"></p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative z-10 glass-romantic border-t border-rose-500/20 py-8 px-6 text-center text-xs text-slate-400 space-y-2 mt-12">
+        <p class="font-romantic text-base text-hotPink">Hecho con todo mi corazón para el mejor novio del mundo en su día.</p>
+        <p>&copy; 2026 - Pista de Amor Autorizada. Prohibido no sonreír hoy. 🏁❤️</p>
+    </footer>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Generate floating hearts background
+        function createHeart() {
+            const container = document.getElementById('hearts-container');
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.innerHTML = '<i class="fa-solid fa-heart"></i>';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 15 + 10) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            container.appendChild(heart);
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+        setInterval(createHeart, 3500);
+
+        // Sound / Engine click simulation & Notification
+        function reproducirMotor() {
+            mostrarNotificacion('¡Brrrrum! Motor encendido y listo para amarte más. 🏎️💨');
+            lanzarFuegosArtificiales();
+        }
+
+        function lanzarFuegosArtificiales() {
+            for(let i=0; i<15; i++) {
+                setTimeout(createHeart, i * 150);
+            }
+            mostrarNotificacion('¡Besos turbo enviados directo a tu corazón! 💖');
+        }
+
+        // Mini-game car accelerator
+        let nivelAmor = 100;
+        let carPos = 0;
+        const mensajesAmor = [
+            "¡Nivel normal de amor por ti!",
+            "¡El motor ruge con fuerza por tu sonrisa!",
+            "¡Acelerando a 200 km/h directo a tus brazos!",
+            "¡Alerta máxima! Mi corazón se sale del pecho por ti.",
+            "¡Fuera de este mundo! Eres mi Hot Wheels favorito por siempre."
+        ];
+
+        function acelerarCarro() {
+            nivelAmor += Math.floor(Math.random() * 50) + 50;
+            carPos = (carPos + 35) % 300;
+            
+            document.getElementById('turbo-counter').textContent = nivelAmor + '%';
+            document.getElementById('car-icon').style.transform = `translateX(${carPos}px)`;
+            
+            const msgIdx = Math.floor(Math.random() * mensajesAmor.length);
+            document.getElementById('turbo-msg').textContent = mensajesAmor[msgIdx];
+            
+            mostrarNotificacion('¡Aceleración de amor registrada!');
+        }
+
+        // Toast notification system
+        function mostrarNotificacion(mensaje) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'glass-romantic bg-slate-900/95 text-white px-5 py-3 rounded-2xl shadow-2xl text-xs font-bold flex items-center space-x-3 pointer-events-auto border border-hotPink/50 animate-bounce';
+            toast.innerHTML = `<i class="fa-solid fa-car-side text-hotPink text-base"></i><span>${mensaje}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
+        }
+
+        // Initial trigger
+        window.onload = function() {
+            for(let i=0; i<5; i++) {
+                createHeart();
+            }
+        };
+    </script>
+</body>
+</html>
