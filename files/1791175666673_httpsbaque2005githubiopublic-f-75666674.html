@@ -359,6 +359,95 @@
             50% { transform: scale(1.04); }
         }
 
+        /* ==================== BOTÓN VOLVER (ARRIBA DERECHA) ==================== */
+        .boton-regresar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 26px;
+            background: linear-gradient(135deg, #ff8bd0 0%, #ff4da6 50%, #ff1b6b 100%);
+            background-size: 200% 200%;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow:
+                0 8px 20px rgba(255, 27, 107, 0.55),
+                0 0 30px rgba(255, 100, 200, 0.4),
+                inset 0 -2px 8px rgba(0, 0, 0, 0.15),
+                inset 0 2px 4px rgba(255, 255, 255, 0.35);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 50;
+            overflow: hidden;
+            pointer-events: auto;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        /* Destello que recorre el botón */
+        .boton-regresar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.6) 50%,
+                transparent 100%);
+            animation: brilloDeslizante 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes brilloDeslizante {
+            0% { left: -100%; }
+            50%, 100% { left: 100%; }
+        }
+
+        /* Icono de corazón que late dentro del botón */
+        .boton-regresar .icono-corazon {
+            display: inline-block;
+            font-size: 1.1rem;
+            animation: latidoIconoBoton 1s ease-in-out infinite;
+        }
+
+        @keyframes latidoIconoBoton {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+        }
+
+        .boton-regresar:hover {
+            background-position: 100% 100%;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow:
+                0 14px 32px rgba(255, 27, 107, 0.75),
+                0 0 50px rgba(255, 100, 200, 0.6),
+                inset 0 -2px 8px rgba(0, 0, 0, 0.15),
+                inset 0 2px 4px rgba(255, 255, 255, 0.4);
+        }
+
+        .boton-regresar:active {
+            transform: translateY(0) scale(0.98);
+            transition: transform 0.1s ease;
+        }
+
+        /* Cuando la carta está abierta, mostrar el botón */
+        #modal-carta.visible .boton-regresar {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.5s ease 1.5s, transform 0.5s ease 1.5s, box-shadow 0.3s ease, background-position 0.6s ease;
+        }
+
         /* --- Corazones mágicos --- */
         .corazon-magico {
             position: fixed;
@@ -427,6 +516,13 @@
             .bloque-firma { flex-direction: column; align-items: center; gap: 20px; }
             .imagen-recuerdo { order: 0; width: 70%; max-width: 100px; }
             .boton-sorpresa { font-size: 0.92rem; padding: 12px 22px; }
+
+            .boton-regresar {
+                top: 14px;
+                right: 14px;
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -507,6 +603,12 @@
                 </div>
             </div>
         </div>
+
+        <!-- ============ BOTÓN VOLVER (ARRIBA DERECHA) ============ -->
+        <button id="boton-regresar" class="boton-regresar">
+            <span class="icono-corazon">💖</span>
+            Volver
+        </button>
     </div>
 
     <!-- Reproductores de audio -->
@@ -890,11 +992,12 @@
             renderer.setSize(sizes.width, sizes.height);
         });
 
-        /* ==================== LÓGICA DEL SOBRE (CON FIX DE AUDIO) ==================== */
+        /* ==================== LÓGICA DEL SOBRE ==================== */
         const envoltura = document.querySelector(".envoltura-sobre");
         const carta = document.querySelector(".carta");
         const sonidoSobre = document.getElementById("sound");
         const musicaFondo = document.getElementById("musica-fondo");
+        const botonRegresar = document.getElementById("boton-regresar");
         let isAnimating = false;
         let cartaAbierta = false;
         const esMovil = window.innerWidth <= 768;
@@ -906,12 +1009,14 @@
             if (accion === 'abrir') {
                 envoltura.classList.add('abierto');
 
-                // ⏸️ PAUSAR música de fondo para que no se cruce con el sonido del sobre
-                if (musicaFondo && !musicaFondo.paused) {
+                // 🔇 DETENER COMPLETAMENTE la música de la galaxia
+                if (musicaFondo) {
                     musicaFondo.pause();
+                    musicaFondo.currentTime = 0;
                 }
 
-                // ▶️ Reproducir el sonido del sobre
+                // ▶️ Reproducir el sonido de la carta desde el inicio
+                sonidoSobre.currentTime = 0;
                 sonidoSobre.play().catch(e => console.log("La reproducción automática fue bloqueada."));
 
                 if (esMovil) {
@@ -938,7 +1043,7 @@
 
                 envoltura.classList.add('cerrando');
 
-                // ⏸️ Pausar el sonido del sobre y reiniciarlo
+                // ⏹️ Detener el sonido de la carta
                 if (sonidoSobre) {
                     sonidoSobre.pause();
                     sonidoSobre.currentTime = 0;
@@ -950,19 +1055,33 @@
                     cartaAbierta = false;
                     modalCarta.classList.remove('visible');
 
-                    // ▶️ REANUDAR música de fondo al cerrar la carta
-                    if (musicaFondo && musicaFondo.paused) {
+                    // ▶️ REANUDAR la música de la galaxia desde el inicio
+                    if (musicaFondo) {
+                        musicaFondo.currentTime = 0;
                         musicaFondo.play().catch(e => console.log("No se pudo reanudar la música"));
                     }
                 }, { once: true });
             }
         }
 
+        // 🔘 BOTÓN VOLVER: vuelve a la galaxia
+        botonRegresar.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isAnimating) return;
+            gestionarAnimacionSobre('cerrar');
+        });
+
+        botonRegresar.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+        });
+
         document.addEventListener('click', (e) => {
             if (!modalCarta.classList.contains('visible')) return;
             if (isAnimating) return;
 
+            // Si toca el botón de sorpresa o el botón volver, no cerrar
             if (e.target.closest('.boton-sorpresa')) return;
+            if (e.target.closest('.boton-regresar')) return;
 
             const clickEnSobre = e.target.closest('.envoltura-sobre');
             const clickEnCarta = e.target.closest('.carta');
