@@ -273,7 +273,6 @@
         }
         .contenido::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.2); }
 
-        /* --- Saludo con Parisienne (como en la imagen) --- */
         .contenido .saludo {
             font-family: var(--fuente-saludo);
             font-size: clamp(1.8rem, 7vw, 2.6rem);
@@ -286,7 +285,6 @@
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
         }
 
-        /* --- Párrafos con Lora italic (como en la imagen) --- */
         .contenido .cuerpo {
             font-family: var(--fuente-cuerpo);
             font-style: italic;
@@ -299,7 +297,6 @@
             letter-spacing: 0.2px;
         }
 
-        /* --- Subtítulo de sección (Parisienne) --- */
         .contenido .seccion-titulo {
             font-family: var(--fuente-saludo);
             font-size: clamp(1.5rem, 5.5vw, 2rem);
@@ -311,7 +308,6 @@
             letter-spacing: 1px;
         }
 
-        /* --- Firma con Parisienne (como en la imagen) --- */
         .contenido .firma {
             font-family: var(--fuente-firma);
             font-size: clamp(1.8rem, 6.5vw, 2.4rem);
@@ -437,10 +433,8 @@
 <body>
     <canvas class="webgl"></canvas>
 
-    <!-- Título principal de la galaxia -->
     <div id="titulo-corazon">Apreta el corazon</div>
 
-    <!-- Modal con el sobre y la carta animada -->
     <div id="modal-carta">
         <div class="main-content">
             <h1>Un Mensaje Especial para Ti</h1>
@@ -521,12 +515,10 @@
     </audio>
     <audio id="sound" src="https://dl.dropboxusercontent.com/scl/fi/esct592hxwzjyf9a2egpc/Si-supieras-lo-que-siento-con-mirarte....mp3?rlkey=xqbaohnpyd7b3mejkvvdg6dlq&st=2vagx61x&dl=1" type="audio/mpeg" preload="auto"></audio>
 
-    <!-- Pantalla de inicio -->
     <div id="inicio">
         <p>toca Aqui</p>
     </div>
 
-    <!-- Pantalla de carga -->
     <div id="loader">
         <div class="loader-icon">💌</div>
         <div class="progress-bar-container">
@@ -545,7 +537,6 @@
         const scene = new THREE.Scene();
         const ORBIT_SYNC_SPEED = 0.003;
 
-        // --- Estrellas de fondo ---
         function crearEstrellasFondo() {
             const starGeometry = new THREE.BufferGeometry();
             const starCount = 5000;
@@ -564,7 +555,6 @@
         }
         crearEstrellasFondo();
 
-        // --- Galaxia ---
         let galaxy;
         const parameters = {
             count: 80000,
@@ -619,7 +609,6 @@
         }
         generateGalaxy();
 
-        // --- Corazón 3D (partículas) ---
         const heartGeometry = new THREE.BufferGeometry();
         const hPos = [], hCol = [];
         for (let i = 0; i < 3500; i++) {
@@ -642,7 +631,6 @@
         const heart = new THREE.Points(heartGeometry, heartMaterial);
         scene.add(heart);
 
-        // --- Corazón GLB 3D al centro ---
         let heartModel = null;
         const gltfLoader = new THREE.GLTFLoader();
         const matcapLoader = new THREE.TextureLoader();
@@ -665,10 +653,9 @@
                 scene.add(heartModel);
             },
             undefined,
-            () => { /* Si el modelo no carga, la escena sigue funcionando. */ }
+            () => {}
         );
 
-        // --- Texto "FELIZ CUMPLEAÑOS" usando canvas ---
         function crearTextoCanvasSprite() {
             const canvas = document.createElement("canvas");
             const width = 2048;
@@ -724,7 +711,6 @@
         const miTodoText = crearTextoCanvasSprite();
         scene.add(miTodoText);
 
-        // --- Frases por todo el universo ---
         const frases = [
             "Mi amor 💖", "Mi hogar 🌙", "Mi alegría ✨", "Mi razón 💫", "Mi universo 🌈",
             "Eres mi calma 🌸", "Eres mi luz 🌟", "Eres mi paz 💗", "Eres mi sueño ✨", "Mi corazón ❤️",
@@ -772,7 +758,6 @@
             textoSprites.push(t);
         }
 
-        // --- Fotos pequeñas ---
         const photoTextureLoader = new THREE.TextureLoader();
         const urls = [
             "https://i.postimg.cc/j25hZZVh/44590ec1953eb49122449b9884c8d48e.jpg",
@@ -806,7 +791,6 @@
             fotoSprites.push(sprite);
         }
 
-        // --- Cámara y Render ---
         const sizes = { width: window.innerWidth, height: window.innerHeight };
         const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 600);
         camera.position.set(10, 12, 20);
@@ -824,7 +808,6 @@
         const mouse = new THREE.Vector2();
         const modalCarta = document.getElementById('modal-carta');
 
-        // --- Raycaster para abrir la carta ---
         canvasEl.addEventListener('pointerdown', (event) => {
             if (!heartModel) return;
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -852,7 +835,6 @@
             }, 300);
         }
 
-        // --- Animación ---
         function tick() {
             const elapsed = clock.getElapsedTime();
             galaxy.rotation.y += 0.001;
@@ -900,7 +882,6 @@
         }
         tick();
 
-        // --- Responsive Three.js ---
         window.addEventListener('resize', () => {
             sizes.width = window.innerWidth;
             sizes.height = window.innerHeight;
@@ -909,10 +890,11 @@
             renderer.setSize(sizes.width, sizes.height);
         });
 
-        /* ==================== LÓGICA DEL SOBRE ==================== */
+        /* ==================== LÓGICA DEL SOBRE (CON FIX DE AUDIO) ==================== */
         const envoltura = document.querySelector(".envoltura-sobre");
         const carta = document.querySelector(".carta");
         const sonidoSobre = document.getElementById("sound");
+        const musicaFondo = document.getElementById("musica-fondo");
         let isAnimating = false;
         let cartaAbierta = false;
         const esMovil = window.innerWidth <= 768;
@@ -923,6 +905,13 @@
 
             if (accion === 'abrir') {
                 envoltura.classList.add('abierto');
+
+                // ⏸️ PAUSAR música de fondo para que no se cruce con el sonido del sobre
+                if (musicaFondo && !musicaFondo.paused) {
+                    musicaFondo.pause();
+                }
+
+                // ▶️ Reproducir el sonido del sobre
                 sonidoSobre.play().catch(e => console.log("La reproducción automática fue bloqueada."));
 
                 if (esMovil) {
@@ -948,6 +937,8 @@
                 void carta.offsetWidth;
 
                 envoltura.classList.add('cerrando');
+
+                // ⏸️ Pausar el sonido del sobre y reiniciarlo
                 if (sonidoSobre) {
                     sonidoSobre.pause();
                     sonidoSobre.currentTime = 0;
@@ -958,6 +949,11 @@
                     isAnimating = false;
                     cartaAbierta = false;
                     modalCarta.classList.remove('visible');
+
+                    // ▶️ REANUDAR música de fondo al cerrar la carta
+                    if (musicaFondo && musicaFondo.paused) {
+                        musicaFondo.play().catch(e => console.log("No se pudo reanudar la música"));
+                    }
                 }, { once: true });
             }
         }
