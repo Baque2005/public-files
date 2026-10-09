@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Feliz Cumpleaños ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS GENERALES Y FONDO --- */
+        *, ::before, ::after { box-sizing: border-box; }
+        
+        body {
+            font-family: "Quicksand", sans-serif;
+            margin: 0;
+            height: 100vh;
+            min-height: 100svh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .bg-gif-fijo {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+            background: #fff;
+        }
+
+        .bg-gif-fijo img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: clamp(90px, 16vw, 190px);
+            aspect-ratio: 4 / 5;
+            object-fit: cover;
+            border: 5px solid #fff;
+            border-radius: 14px;
+            box-shadow: 0 10px 32px rgba(120, 60, 90, 0.18);
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+
+        .bg-gif-fijo .photo-one:nth-of-type(1) {
+            animation: photo-cross-one 24s linear infinite;
+        }
+
+        .bg-gif-fijo .photo-one:nth-of-type(2) {
+            animation: photo-cross-one 24s linear -8s infinite;
+        }
+
+        .bg-gif-fijo .photo-one:nth-of-type(3) {
+            animation: photo-cross-one 24s linear -16s infinite;
+        }
+
+        .bg-gif-fijo .photo-two:nth-of-type(4) {
+            animation: photo-cross-two 29s linear infinite;
+        }
+
+        .bg-gif-fijo .photo-two:nth-of-type(5) {
+            animation: photo-cross-two 29s linear -9.67s infinite;
+        }
+
+        .bg-gif-fijo .photo-two:nth-of-type(6) {
+            animation: photo-cross-two 29s linear -19.33s infinite;
+        }
+
+        .bg-gif-fijo .photo-three:nth-of-type(7) {
+            animation: photo-cross-three 27s linear infinite;
+        }
+
+        .bg-gif-fijo .photo-three:nth-of-type(8) {
+            animation: photo-cross-three 27s linear -9s infinite;
+        }
+
+        .bg-gif-fijo .photo-three:nth-of-type(9) {
+            animation: photo-cross-three 27s linear -18s infinite;
+        }
+
+        @keyframes photo-cross-one {
+            0% { opacity: 0; transform: translate(-25vw, 82vh) rotate(-12deg); }
+            12%, 82% { opacity: 0.82; }
+            100% { opacity: 0; transform: translate(125vw, -25vh) rotate(12deg); }
+        }
+
+        @keyframes photo-cross-two {
+            0% { opacity: 0; transform: translate(25vw, 112vh) rotate(10deg); }
+            12%, 82% { opacity: 0.82; }
+            100% { opacity: 0; transform: translate(82vw, -28vh) rotate(-10deg); }
+        }
+
+        @keyframes photo-cross-three {
+            0% { opacity: 0; transform: translate(125vw, 78vh) rotate(12deg); }
+            12%, 82% { opacity: 0.82; }
+            100% { opacity: 0; transform: translate(-25vw, 12vh) rotate(-12deg); }
+        }
+
+        @media (max-width: 600px) {
+            .bg-gif-fijo img {
+                width: clamp(76px, 25vw, 125px);
+                border-width: 4px;
+                border-radius: 10px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .bg-gif-fijo img {
+                animation: none;
+                opacity: 0.55;
+            }
+
+            .bg-gif-fijo img:nth-of-type(1) { transform: translate(8vw, 12vh) rotate(-10deg); }
+            .bg-gif-fijo img:nth-of-type(2) { transform: translate(42vw, 12vh) rotate(8deg); }
+            .bg-gif-fijo img:nth-of-type(3) { transform: translate(76vw, 12vh) rotate(-6deg); }
+            .bg-gif-fijo img:nth-of-type(4) { transform: translate(8vw, 42vh) rotate(7deg); }
+            .bg-gif-fijo img:nth-of-type(5) { transform: translate(42vw, 42vh) rotate(-8deg); }
+            .bg-gif-fijo img:nth-of-type(6) { transform: translate(76vw, 42vh) rotate(6deg); }
+            .bg-gif-fijo img:nth-of-type(7) { transform: translate(8vw, 72vh) rotate(-7deg); }
+            .bg-gif-fijo img:nth-of-type(8) { transform: translate(42vw, 72vh) rotate(9deg); }
+            .bg-gif-fijo img:nth-of-type(9) { transform: translate(76vw, 72vh) rotate(-5deg); }
+        }
+
+            .heart-rain {
+                position: fixed;
+                inset: 0;
+                z-index: 0;
+                overflow: hidden;
+                pointer-events: none;
+            }
+
+            .heart-rain span {
+                position: absolute;
+                top: -2em;
+                left: var(--left);
+                font-size: var(--size);
+                opacity: 0;
+                filter: drop-shadow(0 2px 3px rgba(180, 40, 90, 0.2));
+                animation: heart-fall var(--duration) linear var(--delay) infinite;
+                will-change: transform, opacity;
+            }
+
+            @keyframes heart-fall {
+                0% { opacity: 0; transform: translate3d(0, -5vh, 0) rotate(0deg); }
+                10% { opacity: 0.9; }
+                85% { opacity: 0.8; }
+                100% { opacity: 0; transform: translate3d(var(--drift), 110vh, 0) rotate(360deg); }
+            }
+
+            @media (max-width: 600px) {
+                .heart-rain span { font-size: calc(var(--size) * 0.8); }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .heart-rain { display: none; }
+            }
+
+            /* --- SOBRE (ENVELOPE) --- */
+            .envelope {
+            --width: 300px;
+            --height: 175px;
+            position: relative;
+            z-index: 1;
+            width: var(--width);
+            height: var(--height);
+            perspective: 1000px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        @media (min-width: 720px) {
+            .envelope { --width: 500px; --height: 290px; }
+        }
+
+        .envelope-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s ease-in-out;
+            transform-style: preserve-3d;
+        }
+
+        .envelope.open .envelope-inner { transform: rotateY(180deg); }
+
+        .envelope-front, .envelope-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .envelope-front {
+            background: #f8bbd0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .envelope-front img.stamp {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 60px;
+            height: 70px;
+            border-radius: 4px;
+            border: 2px dashed #ad1457;
+        }
+
+        .envelope-back {
+            background: #f48fb1;
+            transform: rotateY(180deg);
+        }
+
+        .envelope-back::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: conic-gradient(transparent 60deg, #f06292 60deg 120deg, #fce4ec 120deg 240deg, #f06292 240deg 300deg, transparent 300deg);
+            z-index: 2;
+        }
+
+        .top-fold {
+            position: absolute;
+            inset: 0;
+            background: #f48fb1;
+            clip-path: polygon(0% 0%, 50% 55%, 100% 0%);
+            z-index: 10;
+            transform-origin: top;
+            transition: transform 0.4s ease 0.4s;
+        }
+
+        .envelope.open .top-fold { transform: rotateX(180deg); z-index: 0; }
+
+        .letter-preview {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            width: 90%;
+            height: 80%;
+            background: white;
+            transform: translateX(-50%);
+            z-index: 1;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.4s ease 0.6s;
+        }
+
+        .envelope.open .letter-preview { transform: translate(-50%, -40%); }
+
+        /* --- MODAL MEJORADO --- */
+        .modal-carta {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+        }
+
+        .modal-carta.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-carta-content {
+            background: #fff;
+            width: 100%;
+            max-width: 520px;
+            max-height: calc(100vh - 80px);
+            border-radius: 22px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.18);
+            overflow: hidden; /* el scroll lo gestionará el body interno */
+            padding: 10px; /* espacio para que el borde interno no se pegue al contenedor */
+            box-sizing: border-box;
+        }
+
+        .modal-carta-content::-webkit-scrollbar { display: none; }
+
+        /* Contenido interno que crece con el scroll: aquí va el borde rosado */
+        .modal-carta-body {
+            background: transparent;
+            border-radius: 18px;
+            padding: 26px 20px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            box-sizing: border-box;
+            border: 0; /* sin borde por defecto, usamos box-shadow para el marco */
+            box-shadow: inset 0 0 0 4px rgba(244,143,177,0.95);
+        }
+
+        .modal-carta-body::-webkit-scrollbar { display: none; }
+
+        /* GIF del modal (Nuevo) */
+        .modal-footer-gif {
+            width: 100%;
+            max-width: 250px;
+            display: block;
+            margin: 20px auto 0;
+            border-radius: 15px;
+            opacity: 1;
+        }
+
+        .gift-hint {
+            margin-top: 8px;
+            margin-bottom: 8px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #ad1457;
+            text-shadow: 0 1px 6px rgba(255, 255, 255, 0.75);
+        }
+
+        .modal-carta-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f48fb1;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .modal-carta-close:hover { transform: scale(1.1) rotate(90deg); }
+
+        .letra-flotante-badge {
+            display: inline-block;
+            background: #ad1457;
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            animation: float 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes float {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        /* Ajustes responsivos para el modal en móviles */
+        @media (max-width: 420px) {
+            .modal-carta { padding: 12px; }
+            .modal-carta-content {
+                padding: 18px 14px;
+                border: 4px solid #fff;
+                max-width: 96vw;
+                max-height: calc(100vh - 40px);
+                border-radius: 16px;
+            }
+            .modal-carta-content::before { box-shadow: inset 0 0 0 3px rgba(244,143,177,0.95); }
+            .modal-footer-gif { max-width: 200px; }
+        }
+
+        .texto-carta {
+            font-size: 1.2rem;
+            line-height: 1.6;
+                color: #6b1aa9;
+            text-align: center;
+            margin-bottom: 20px;
+                font-weight: 600;
+        }
+
+            .texto-carta .resaltado {
+                font-weight: 800;
+                color: #4a0b74;
+                background: rgba(244,143,177,0.06);
+                padding: 6px 8px;
+                border-radius: 8px;
+                display: inline-block;
+            }
+
+        .img-polaroid {
+            width: 180px;
+            height: 180px;
+            background: transparent;
+            padding: 0;
+            box-shadow: none;
+            margin: 20px auto;
+            transform: rotate(-3deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+            display: block;
+            cursor: default;
+        }
+
+        .img-polaroid.visible {
+            opacity: 1;
+            transform: rotate(2deg) scale(1.1);
+        }
+
+        .img-polaroid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        .modal-footer-gif.shake {
+            animation: gentle-shake 1.8s ease-in-out infinite;
+            cursor: pointer;
+        }
+
+        @keyframes gentle-shake {
+            0% { transform: rotate(2deg) scale(1.1) translateX(0); }
+            20% { transform: rotate(1deg) scale(1.1) translateX(-2px); }
+            40% { transform: rotate(3deg) scale(1.1) translateX(2px); }
+            60% { transform: rotate(1deg) scale(1.1) translateX(-2px); }
+            80% { transform: rotate(3deg) scale(1.1) translateX(2px); }
+            100% { transform: rotate(2deg) scale(1.1) translateX(0); }
+        }
+
+        /* --- MODAL EXTRA DE IMAGEN --- */
+        .modal-extra {
+            position: fixed;
+            inset: 0;
+            z-index: 4000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-extra.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-extra-content {
+            position: relative;
+            width: min(420px, 95vw);
+            background: transparent;
+            border-radius: 18px;
+            padding: 18px 16px 16px;
+            text-align: center;
+            box-shadow: none;
+        }
+
+        .modal-extra-title {
+            margin: 0 0 12px;
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.6rem, 5vw, 2.1rem);
+            color: #111;
+            font-weight: 700;
+            text-shadow: 0 1px 6px rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.75);
+            border-radius: 999px;
+            padding: 6px 14px;
+            display: inline-block;
+        }
+
+        .modal-extra-img {
+            width: 100%;
+            max-height: 65vh;
+            object-fit: cover;
+            border-radius: 12px;
+            display: block;
+            animation: modal-image-float 2.4s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        @keyframes modal-image-float {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-6px) scale(1.02); }
+            100% { transform: translateY(0) scale(1); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .modal-extra-img {
+                animation: none;
+            }
+        }
+
+        .modal-extra-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 50%;
+            background: #f48fb1;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* --- MODAL IMAGEN AMPLIADA --- */
+        .modal-imagen-flotante {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 3000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+        
+        .modal-imagen-flotante img {
+            max-width: 90%;
+            max-height: 80%;
+            border: 10px solid white;
+            border-radius: 5px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-gif-fijo" aria-hidden="true">
+        <img class="photo-one" src="https://i.postimg.cc/HWzV28w8/Whats-App-Image-2026-10-09-at-12-23-54-PM.jpg" alt="">
+        <img class="photo-one" src="https://i.postimg.cc/HWzV28w8/Whats-App-Image-2026-10-09-at-12-23-54-PM.jpg" alt="">
+        <img class="photo-one" src="https://i.postimg.cc/HWzV28w8/Whats-App-Image-2026-10-09-at-12-23-54-PM.jpg" alt="">
+        <img class="photo-two" src="https://i.postimg.cc/bYgsTSxb/Whats-App-Image-2026-10-09-at-12-23-54-PM-(2).jpg" alt="">
+        <img class="photo-two" src="https://i.postimg.cc/bYgsTSxb/Whats-App-Image-2026-10-09-at-12-23-54-PM-(2).jpg" alt="">
+        <img class="photo-two" src="https://i.postimg.cc/bYgsTSxb/Whats-App-Image-2026-10-09-at-12-23-54-PM-(2).jpg" alt="">
+        <img class="photo-three" src="https://i.postimg.cc/wx27VRXh/Whats-App-Image-2026-10-09-at-12-23-54-PM-(3).jpg" alt="">
+        <img class="photo-three" src="https://i.postimg.cc/wx27VRXh/Whats-App-Image-2026-10-09-at-12-23-54-PM-(3).jpg" alt="">
+        <img class="photo-three" src="https://i.postimg.cc/wx27VRXh/Whats-App-Image-2026-10-09-at-12-23-54-PM-(3).jpg" alt="">
+    </div>
+    <div class="heart-rain" aria-hidden="true">
+        <span style="--left: 4%; --size: 1.3rem; --duration: 9s; --delay: -2s; --drift: 7vw;">❤️</span>
+        <span style="--left: 13%; --size: 1.7rem; --duration: 12s; --delay: -8s; --drift: -5vw;">💖</span>
+        <span style="--left: 22%; --size: 1.1rem; --duration: 10s; --delay: -5s; --drift: 8vw;">💕</span>
+        <span style="--left: 31%; --size: 1.5rem; --duration: 13s; --delay: -11s; --drift: -7vw;">❤️</span>
+        <span style="--left: 40%; --size: 1.2rem; --duration: 9s; --delay: -6s; --drift: 6vw;">💗</span>
+        <span style="--left: 49%; --size: 1.8rem; --duration: 11s; --delay: -3s; --drift: -4vw;">💖</span>
+        <span style="--left: 58%; --size: 1.2rem; --duration: 12s; --delay: -9s; --drift: 9vw;">❤️</span>
+        <span style="--left: 67%; --size: 1.6rem; --duration: 10s; --delay: -7s; --drift: -6vw;">💕</span>
+        <span style="--left: 76%; --size: 1.1rem; --duration: 13s; --delay: -4s; --drift: 5vw;">💗</span>
+        <span style="--left: 85%; --size: 1.7rem; --duration: 9s; --delay: -10s; --drift: -8vw;">❤️</span>
+        <span style="--left: 94%; --size: 1.3rem; --duration: 11s; --delay: -1s; --drift: 6vw;">💖</span>
+    </div>
+
+    <!-- Audio Oculto -->
+    <audio id="audioCarta" loop>
+        <source src="https://github.com/Cotipo12/video/raw/refs/heads/main/CHARIJAYAC%20NOS%20VEMOS%20EN%20LA%20PR%C3%93XIMA%20VIDA.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Sobre -->
+    <div class="envelope" id="envelope">
+        <div class="envelope-inner">
+            <div class="envelope-front">
+                <img src="https://i.pinimg.com/1200x/95/7d/6e/957d6e96c7e17b1a6391d6a33db34e8f.jpg" class="stamp" alt="sello">
+                <div style="text-align: left; color: white;">
+                    <p><b>Para:</b> Vannesa ❤️</p>
+                    <p><b>De:</b> mi</p>
+                </div>
+            </div>
+            <div class="envelope-back">
+                <div class="top-fold"></div>
+                <div class="letter-preview">
+                    <img src="https://img.freepik.com/vector-premium/pulgar-dedos-imprimir-marca-huella-dactilar-amor-corazon_53500-1839.jpg" style="width: 50px;" alt="">
+                    <p style="color: #ad1457; font-weight: bold; font-size: 0.9rem;">Ábreme para ver tu sorpresa...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de la Carta -->
+    <div class="modal-carta" id="modalCarta">
+        <div class="modal-carta-content">
+            <button class="modal-carta-close" id="closeModalCarta">&times;</button>
+            
+            <div class="modal-carta-body">
+                <div style="text-align: center;">
+                    <div class="letra-flotante-badge">¡Feliz Cumpleaños!</div>
+                    
+                    <div class="img-polaroid" id="imgPrincipal">
+                        <img src="https://i.postimg.cc/Wp8hnqG0/Whats-App-Image-2026-10-09-at-12-23-54-PM-(1).jpg" alt="imagen especial para mamá">
+                    </div>
+
+                    <div class="texto-carta">
+                        <strong class="resaltado">Feliz cumpleaños, Vannesa ❤️🎂🥹</strong><br><br>
+                        Eres una mujer guerrera, de esas que admiro por todo lo que han luchado para salir adelante, incluso estando lejos de su familia. Sé que no todo ha sido fácil para ti, pero siempre has encontrado la manera de seguir adelante.<br><br>
+                        Quiero que sepas que has sido una persona muy especial en mi vida. Tal vez nunca te lo dije, pero en esos momentos en los que tú estabas conmigo, yo me sentía perdido, estaba pasando por muchas cosas y quizás ni siquiera sabía cómo expresar lo que sentía. Aun así, tú estuviste ahí, acompañándome, y ese gesto es algo que nunca voy a olvidar. ❤️ A veces uno no se da cuenta de cuánto significa alguien hasta que mira atrás y recuerda quién estuvo a su lado en los momentos difíciles.<br><br>
+                        A pesar de la distancia, quería tener este pequeño detalle contigo, porque te tengo mucho cariño y sigues siendo alguien especial para mí. 🥹❤️ Espero que algún día podamos volver a vernos, conversar de tantas cosas pendientes y compartir un cafecito, sin apuros, como dos personas que tienen bonitos recuerdos que compartir. ☕😊<br><br>
+                        Que Dios te bendiga siempre, te cuide dondequiera que estés y te permita cumplir cada uno de tus sueños. ¡Feliz cumpleaños, Vannesa! Te mereces muchas cosas bonitas en esta vida. ❤️✨
+                    </div>
+
+                    <div class="gift-hint">Tu regalo!! Abrelo!</div>
+                    <!-- Nuevo GIF solicitado -->
+                    <img id="giftDebajo" src="https://i.pinimg.com/1200x/d9/c2/ad/d9c2ad0f69b6bf26777b1992334a482a.jpg" class="modal-footer-gif shake" alt="gif cumpleaños">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal extra -->
+    <div class="modal-extra" id="modalExtra">
+        <div class="modal-extra-content">
+            <button class="modal-extra-close" id="closeModalExtra" aria-label="Cerrar">&times;</button>
+            <h3 class="modal-extra-title">Sorpresa!! tu regalo soy yo!</h3>
+            <img class="modal-extra-img" src="https://i.pinimg.com/736x/e1/78/ed/e178ed3d4101a7f87d89db1b9338f440.jpg" alt="detalle de cumpleaños">
+        </div>
+    </div>
+
+    <script>
+        // Bloqueo de seguridad básico
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        const envelope = document.getElementById('envelope');
+        const modal = document.getElementById('modalCarta');
+        const closeBtn = document.getElementById('closeModalCarta');
+        const audio = document.getElementById('audioCarta');
+        const imgPolaroid = document.getElementById('imgPrincipal');
+        const giftDebajo = document.getElementById('giftDebajo');
+        const modalExtra = document.getElementById('modalExtra');
+        const closeModalExtraBtn = document.getElementById('closeModalExtra');
+
+        // Función para abrir la carta
+        envelope.addEventListener('click', () => {
+            const isOpening = !envelope.classList.contains('open');
+            envelope.classList.toggle('open');
+
+            if (isOpening) {
+                // Iniciar música solo si no se está reproduciendo ya
+                if (audio.paused) {
+                    audio.currentTime = 15; 
+                    audio.play().catch(() => console.log("Se requiere interacción para iniciar audio"));
+                }
+
+                // Abrir modal tras la animación del sobre
+                setTimeout(() => {
+                    modal.classList.add('active');
+                    setTimeout(() => {
+                        imgPolaroid.classList.add('visible');
+                    }, 500);
+                }, 1200);
+            }
+        });
+
+        // Cerrar modal
+        function closeModal() {
+            modal.classList.remove('active');
+            imgPolaroid.classList.remove('visible');
+            setTimeout(() => {
+                envelope.classList.remove('open');
+            }, 300);
+            // La música sigue sonando
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if(e.target === modal) closeModal();
+        });
+
+        function openModalExtra() {
+            modalExtra.classList.add('active');
+        }
+
+        function closeModalExtra() {
+            modalExtra.classList.remove('active');
+        }
+
+        // Click en el gift inferior para abrir modal extra
+        giftDebajo.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openModalExtra();
+        });
+
+        closeModalExtraBtn.addEventListener('click', closeModalExtra);
+        modalExtra.addEventListener('click', (e) => {
+            if (e.target === modalExtra) closeModalExtra();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalExtra.classList.contains('active')) {
+                closeModalExtra();
+            }
+        });
+    </script>
+</body>
+</html>
