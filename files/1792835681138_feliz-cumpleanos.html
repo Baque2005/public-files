@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños!</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #05020a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Fondo de estrellas */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Contenedor principal */
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        /* Texto superior */
+        .top-text {
+            position: absolute;
+            top: 8%;
+            color: #ff99cc;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ff3399, 0 0 20px #ff3399;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .top-text:active {
+            transform: scale(1.1);
+        }
+
+        /* Título Principal de Cumpleaños */
+        .title {
+            position: absolute;
+            top: 15%;
+            color: #ff66b2;
+            font-size: 2.8rem;
+            font-weight: 900;
+            text-align: center;
+            text-shadow: 0 0 15px #ff007f, 0 0 30px #ff007f, 0 0 45px #ff007f;
+            animation: floatTitle 3s ease-in-out infinite alternate;
+            padding: 0 20px;
+        }
+
+        @keyframes floatTitle {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        /* Corazón Interactivo Central */
+        .heart-container {
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: heartbeat 1.2s infinite;
+        }
+
+        .heart {
+            width: 100px;
+            height: 90px;
+            position: relative;
+            transform: rotate(-45deg);
+            background-color: #ff1493;
+            box-shadow: 0 0 30px #ff1493, 0 0 60px #ff1493;
+            transition: background-color 0.3s;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            width: 100px;
+            height: 90px;
+            position: absolute;
+            background-color: #ff1493;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -50px;
+            left: 0;
+        }
+
+        .heart::after {
+            left: 50px;
+            top: 0;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.25); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
+        }
+
+        /* Frases flotantes aleatorias alrededor */
+        .floating-phrase {
+            position: absolute;
+            color: #ffb3d1;
+            font-size: 1rem;
+            font-weight: 600;
+            text-shadow: 0 0 8px #ff66b2;
+            pointer-events: none;
+            opacity: 0.8;
+            animation: fadeInOut 4s infinite alternate;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0.3; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fondo de estrellas generadas por script -->
+    <div class="stars" id="stars"></div>
+
+    <div class="container">
+        <!-- Texto superior interactivo -->
+        <div class="top-text" onclick="tocaCorazon()">✨ Toca el corazón ✨</div>
+
+        <!-- Título principal -->
+        <div class="title">¡Feliz Cumpleaños!</div>
+
+        <!-- Corazón central -->
+        <div class="heart-container" onclick="tocaCorazon()">
+            <div class="heart" id="mainHeart"></div>
+        </div>
+    </div>
+
+    <script>
+        // Generar estrellas de fondo aleatorias
+        const starsContainer = document.getElementById('stars');
+        const numStars = 100;
+
+        for (let i = 0; i < numStars; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            const size = Math.random() * 3 + 'px';
+            star.style.width = size;
+            star.style.height = size;
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.animationDuration = (Math.random() * 3 + 1) + 's';
+            star.style.animationDelay = (Math.random() * 2) + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Frases flotantes automáticas
+        const frases = [
+            "¡Qué alegría! 🎉", "A seguir soñando ✨", "¡Lo mejor para ti! 💖",
+            "A celebrar 🥳", "¡Disfruta mucho! 🎁", "Risas y buenos momentos 🌟",
+            "Muchos éxitos 🚀", "Momento inolvidable ✨"
+        ];
+
+        function crearFrasesFlotantes() {
+            const phraseDiv = document.createElement('div');
+            phraseDiv.classList.add('floating-phrase');
+            phraseDiv.innerText = frases[Math.floor(Math.random() * frases.length)];
+            
+            // Posición aleatoria evitando el centro exacto
+            let posX = Math.random() * 80 + 10;
+            let posY = Math.random() * 80 + 10;
+            while(posX > 30 && posX < 70 && posY > 35 && posY < 65) {
+                posX = Math.random() * 80 + 10;
+                posY = Math.random() * 80 + 10;
+            }
+
+            phraseDiv.style.left = posX + '%';
+            phraseDiv.style.top = posY + '%';
+            
+            document.body.appendChild(phraseDiv);
+
+            // Eliminar después de unos segundos
+            setTimeout(() => {
+                phraseDiv.remove();
+            }, 4000);
+        }
+
+        // Crear nuevas frases cada 1.5 segundos
+        setInterval(crearFrasesFlotantes, 1500);
+
+        // Acción al tocar el corazón o texto superior
+        function tocaCorazon() {
+            const heart = document.getElementById('mainHeart');
+            const colores = ['#ff1493', '#ff4500', '#9400d3', '#00ffff', '#ff69b4'];
+            const colorAleatorio = colores[Math.floor(Math.random() * colores.length)];
+            
+            heart.style.backgroundColor = colorAleatorio;
+            alert("¡Feliz día! Que todos tus deseos se cumplan hoy y siempre. 💖");
+        }
+    </script>
+</body>
+</html>
