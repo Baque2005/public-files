@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz cumpleaños</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            background: #000;
+            font-family: Arial, sans-serif;
+        }
+
+        #video-fondo {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #reproducir {
+            position: relative;
+            z-index: 1;
+            max-width: calc(100vw - 2rem);
+            padding: 1rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+            transition: background-color 160ms ease, transform 160ms ease;
+        }
+
+        #reproducir:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.04);
+        }
+
+        #reproducir:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 4px;
+        }
+
+        #reproducir[hidden] {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            #video-fondo {
+                object-fit: contain;
+            }
+
+            #reproducir {
+                padding: 1.1rem 2rem;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <video id="video-fondo" playsinline preload="metadata" aria-label="Video de cumpleaños">
+        <source src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/AQPKl6_Pd_94n0f0e_JbQyBiQkm-HC5isfBKCYBUWvg0D2cyP9vMmLmRCh56_6r6sTYAVhWPluoiNOaDt9X0oitmJycuOMVMvs_sxJVw7A%20(1).mp4" type="video/mp4">
+        Tu navegador no puede reproducir este video.
+    </video>
+    <button id="reproducir" type="button">Toca aqui</button>
+
+    <script>
+        const video = document.getElementById("video-fondo");
+        const boton = document.getElementById("reproducir");
+
+        video.addEventListener("ended", () => {
+            video.currentTime = 0;
+            boton.textContent = "Toca aqui";
+            boton.hidden = false;
+        });
+
+        boton.addEventListener("click", async () => {
+            try {
+                await video.play();
+                boton.hidden = true;
+            } catch (error) {
+                boton.textContent = "No se pudo reproducir. Haz clic para intentar de nuevo.";
+                console.error("No se pudo reproducir el video:", error);
+            }
+        });
+    </script>
+</body>
+</html>
