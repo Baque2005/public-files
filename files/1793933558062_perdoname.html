@@ -211,71 +211,32 @@
 
     <!-- 3D Canvas element -->
     <canvas id="galaxyCanvas"></canvas>
+    <audio id="backgroundMusic" src="https://github.com/Baque2005/Organizador/raw/refs/heads/master/As%20The%20World%20Caves%20In%20-%20Matt%20Maltese%20(Cover%20by%20Sarah%20Cothran).mp3" preload="none" loop></audio>
 
     <script>
         /* -------------------------------------------------------------
-           1. AUDIO SYNTHESIZER (Ambient Melodic Sound Without External Files)
+           1. BACKGROUND MUSIC
            ------------------------------------------------------------- */
-        let audioCtx = null;
+        const backgroundMusic = document.getElementById('backgroundMusic');
         let isAudioPlaying = false;
-        let audioInterval = null;
-
-        function initAmbientAudio() {
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContext();
-
-                // Pentatonic warm melodic scale (C Major / A Minor Pentatonic)
-                const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99];
-
-                function playRandomNote() {
-                    if (!isAudioPlaying || !audioCtx) return;
-
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-
-                    // Choose soft sine/triangle hybrid feel
-                    osc.type = Math.random() > 0.5 ? 'sine' : 'triangle';
-                    
-                    const freq = scale[Math.floor(Math.random() * scale.length)];
-                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-                    // Soft attack & slow decay
-                    gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.06, audioCtx.currentTime + 1.2);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 4.5);
-
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 4.6);
-                }
-
-                audioInterval = setInterval(playRandomNote, 1800);
-                playRandomNote();
-            } catch (e) {
-                console.log("Audio not supported or blocked", e);
-            }
-        }
 
         const musicToggleBtn = document.getElementById('musicToggleBtn');
         const musicIcon = document.getElementById('musicIcon');
         const musicText = document.getElementById('musicText');
 
-        musicToggleBtn.addEventListener('click', () => {
+        musicToggleBtn.addEventListener('click', async () => {
             if (!isAudioPlaying) {
-                if (!audioCtx) {
-                    initAmbientAudio();
-                } else if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
+                try {
+                    await backgroundMusic.play();
+                    isAudioPlaying = true;
+                    musicIcon.className = "fas fa-volume-up text-yellow-400";
+                    musicText.textContent = "Música Activada";
+                } catch (error) {
+                    console.error("No se pudo reproducir la música.", error);
                 }
-                isAudioPlaying = true;
-                musicIcon.className = "fas fa-volume-up text-yellow-400";
-                musicText.textContent = "Música Activada";
             } else {
                 isAudioPlaying = false;
-                if (audioCtx) audioCtx.suspend();
+                backgroundMusic.pause();
                 musicIcon.className = "fas fa-music text-yellow-400";
                 musicText.textContent = "Música de Fondo";
             }
