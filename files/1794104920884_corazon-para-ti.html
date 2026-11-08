@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para una chica maravillosa ❤️</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #050505;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+canvas {
+    width: 100%;
+    max-width: 700px;
+    height: auto;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="heart"></canvas>
+
+<script>
+
+const canvas = document.getElementById("heart");
+const ctx = canvas.getContext("2d");
+
+canvas.width = 700;
+canvas.height = 700;
+
+const cx = 350;
+const cy = 350;
+
+const SCALE = 10;
+const K = 2.1;
+const N = 140;
+
+function heart(t) {
+
+    let x = 16 * Math.pow(Math.sin(t), 3);
+
+    let y = 13 * Math.cos(t)
+          - 5 * Math.cos(2*t)
+          - 2 * Math.cos(3*t)
+          - Math.cos(4*t);
+
+    return {x, y};
+}
+
+function drawHeart(time) {
+
+    ctx.clearRect(0, 0, 700, 700);
+
+    ctx.fillStyle = "#050505";
+    ctx.fillRect(0, 0, 700, 700);
+
+    // Efecto de latido
+    let pulse = 1 + 0.035 * Math.sin(time * 0.003);
+
+    // Dibujar rayos luminosos
+    for (let i = 0; i < N; i++) {
+
+        let angle = 2 * Math.PI * i / N;
+
+        let p = heart(angle);
+
+        let hx = p.x * SCALE * pulse;
+        let hy = p.y * SCALE * pulse;
+
+        let ex = hx * K;
+        let ey = hy * K;
+
+        let x1 = cx + hx;
+        let y1 = cy - hy;
+
+        let x2 = cx + ex;
+        let y2 = cy - ey;
+
+        let gradient = ctx.createLinearGradient(
+            x1, y1, x2, y2
+        );
+
+        gradient.addColorStop(0, "rgba(255,45,25,1)");
+        gradient.addColorStop(0.25, "rgba(230,25,15,0.8)");
+        gradient.addColorStop(0.65, "rgba(160,10,5,0.4)");
+        gradient.addColorStop(1, "rgba(80,0,0,0)");
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 1.5;
+
+        ctx.shadowColor = "#ff1600";
+        ctx.shadowBlur = 5;
+
+        ctx.stroke();
+    }
+
+    ctx.shadowBlur = 0;
+
+    // Silueta negra del corazón
+    ctx.beginPath();
+
+    for (let i = 0; i <= 1000; i++) {
+
+        let t = 2 * Math.PI * i / 1000;
+        let p = heart(t);
+
+        let x = cx + p.x * SCALE * pulse;
+        let y = cy - p.y * SCALE * pulse;
+
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+
+    ctx.closePath();
+    ctx.fillStyle = "#000000";
+    ctx.fill();
+
+    // MENSAJE EN EL CENTRO
+    ctx.save();
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillStyle = "#ffffff";
+    ctx.shadowColor = "#ff7777";
+    ctx.shadowBlur = 12;
+
+    const lines = [
+        "Eres una chica",
+        "hermosa y maravillosa,",
+        "tú vales la pena de amar,",
+        "eres demasiado increíble",
+        "y te amo demasiado ❤️"
+    ];
+
+    const fontSize = 16;
+
+    ctx.font = `bold ${fontSize}px Arial`;
+
+    const lineHeight = 25;
+    const startY = cy - (lines.length - 1) * lineHeight / 2;
+
+    lines.forEach((line, index) => {
+
+        ctx.fillText(
+            line,
+            cx,
+            startY + index * lineHeight
+        );
+
+    });
+
+    ctx.restore();
+}
+
+// Animación continua
+function animate(time) {
+
+    drawHeart(time);
+
+    requestAnimationFrame(animate);
+}
+
+requestAnimationFrame(animate);
+
+</script>
+
+</body>
+</html>
